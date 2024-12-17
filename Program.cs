@@ -11,39 +11,40 @@ namespace AiryBotCode
 
         private static async Task MainAsync(string[] args)
         {
-
-            // Register services
-            ServiceRegistration.RegisterServices(new ServiceCollection());
-
-            // Build the service provider
+            // Register services and build the service provider
             var serviceProvider = ServiceRegistration.BuildServiceProvider();
 
             try
             {
-                IBot bot = serviceProvider.GetRequiredService<IBot>();
+                // Resolve the IBot instance
+                var bot = serviceProvider.GetRequiredService<IBot>();
 
+                // Start the bot
                 await bot.StartAsync(serviceProvider);
 
                 Console.WriteLine("Connected to Discord");
 
-                do
+                // Keep running until 'Q' is pressed
+                while (true)
                 {
-                    var keyInfo = Console.ReadKey();
+                    var keyInfo = Console.ReadKey(intercept: true); // Intercept the key press
 
                     if (keyInfo.Key == ConsoleKey.Q)
                     {
                         Console.WriteLine("\nShutting down!");
 
+                        // Stop the bot and exit
                         await bot.StopAsync();
                         return;
                     }
-                } while (true);
+                }
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Console.WriteLine(exception.Message);
-                Environment.Exit(-1);
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                Environment.Exit(-1); // Exit with error code
             }
         }
+
     }
 }
