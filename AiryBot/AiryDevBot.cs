@@ -18,7 +18,7 @@ namespace AiryBotCode
         private readonly IConfigurationReader _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly MessageSendHandler _messageSendHandler;
-        private readonly SlashCommandHandler _slashCommandHandler;
+        private readonly JoinServerHandler _slashCommandHandler;
 
         public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider)
         {
@@ -29,7 +29,7 @@ namespace AiryBotCode
             _commands = _serviceProvider.GetRequiredService<CommandService>();
 
             _messageSendHandler = _serviceProvider.GetRequiredService<MessageSendHandler>();
-            _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
+            _slashCommandHandler = _serviceProvider.GetRequiredService<JoinServerHandler>();
 
             var config = new DiscordSocketConfig
             {
@@ -46,13 +46,11 @@ namespace AiryBotCode
             var discordToken = _configuration.GetBotToken();
             await _client.LoginAsync(TokenType.Bot, discordToken);
             await _client.StartAsync();
-
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
+            // Event liseners
             _client.Ready += _slashCommandHandler.RegisterComands;
             _client.MessageReceived += _messageSendHandler.HandleCommandAsync;
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-
-
         }
 
         private Task getAllGuildChannels()

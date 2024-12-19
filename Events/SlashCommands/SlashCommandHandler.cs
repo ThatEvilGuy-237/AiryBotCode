@@ -5,20 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Events.SlashCommands
 {
-    public class SlashCommandHandler
+    public class JoinServerHandler : MyEventHandeler
     {
-        private DiscordSocketClient _client;
-        private readonly IServiceProvider _serviceProvider;
-
-        public SlashCommandHandler(IServiceProvider serviceProvider)
+        public JoinServerHandler(IServiceProvider serviceProvider) 
+            : base(serviceProvider)
         {
-            _serviceProvider = serviceProvider;
-            _client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
-        }
-
-        public void AssingClient(DiscordSocketClient discordClient)
-        {
-            _client = discordClient;
         }
         public async Task RegisterComands()
         {
