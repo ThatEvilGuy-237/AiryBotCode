@@ -8,6 +8,7 @@ using AiryBotCode.AiryBot;
 using AiryBotCode.Interfaces;
 using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SlashCommands;
+using AiryBotCode.Events.JoinServer;
 
 namespace AiryBotCode
 {
@@ -18,7 +19,8 @@ namespace AiryBotCode
         private readonly IConfigurationReader _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly MessageSendHandler _messageSendHandler;
-        private readonly JoinServerHandler _slashCommandHandler;
+        private readonly SlashCommandHandler _slashCommandHandler;
+        private readonly JoinServerHandler _joinServerHandle;
 
         public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider)
         {
@@ -27,18 +29,21 @@ namespace AiryBotCode
 
             _client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
             _commands = _serviceProvider.GetRequiredService<CommandService>();
-
+            // EVENTS init
             _messageSendHandler = _serviceProvider.GetRequiredService<MessageSendHandler>();
-            _slashCommandHandler = _serviceProvider.GetRequiredService<JoinServerHandler>();
+            _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
+            _joinServerHandle = _serviceProvider.GetRequiredService<JoinServerHandler>();
 
             var config = new DiscordSocketConfig
             {
-                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent
+                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers
             };
 
             _client = new DiscordSocketClient(config);
             // add correct client
             _slashCommandHandler.AssingClient(_client);
+            _messageSendHandler.AssingClient(_client);
+            _joinServerHandle.AssingClient(_client);
         }
 
         public async Task StartAsync(IServiceProvider services)
@@ -47,16 +52,11 @@ namespace AiryBotCode
             await _client.LoginAsync(TokenType.Bot, discordToken);
             await _client.StartAsync();
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
-            // Event liseners
+            // Assign Event liseners
             _client.Ready += _slashCommandHandler.RegisterComands;
             _client.MessageReceived += _messageSendHandler.HandleCommandAsync;
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-        }
-
-        private Task getAllGuildChannels()
-        {
-            var guilds = _client.Guilds;
-            return Task.CompletedTask;
+            _client.UserJoined += _joinServerHandle.OnUserJoined;
         }
 
         public async Task StopAsync()

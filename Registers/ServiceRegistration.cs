@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.AiryBot;
+using AiryBotCode.Events.JoinServer;
 using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Interfaces;
@@ -20,8 +21,9 @@ namespace AiryBotCode.Registers
             services.AddSingleton<CommandService>();       
             services.AddSingleton<MessageSendHandler>();
             // register comands
-           services = MessageSendRegistrator.RegisterServices(services);
-           services = SlashCommandRegistrator.RegisterServices(services);
+            services = MessageSendRegistrator.RegisterServices(services);
+            services = SlashCommandRegistrator.RegisterServices(services);
+            services = JoinServerRegistrator.RegisterServices(services);
             // Register other services if necessary
             services.AddScoped<IBot, AiryDevBot>();
 

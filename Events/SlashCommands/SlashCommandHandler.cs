@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Events.SlashCommands
 {
-    public class JoinServerHandler : MyEventHandeler
+    public class SlashCommandHandler : MyEventHandeler
     {
-        public JoinServerHandler(IServiceProvider serviceProvider) 
+        public SlashCommandHandler(IServiceProvider serviceProvider) 
             : base(serviceProvider)
         {
         }
