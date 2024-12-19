@@ -6,33 +6,39 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using AiryBotCode.AiryBot;
 using AiryBotCode.Interfaces;
-using AiryBotCode.Events;
+using AiryBotCode.Events.SendMessage;
+using AiryBotCode.Events.SlashCommands;
 
 namespace AiryBotCode
 {
-    public class Bot : IBot
+    public class AiryDevBot : IBot
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IConfigurationReader _configuration;
         private readonly IServiceProvider _serviceProvider;
         private readonly MessageSendHandler _messageSendHandler;
+        private readonly SlashCommandHandler _slashCommandHandler;
 
-        public Bot(IConfigurationReader configuration, IServiceProvider serviceProvider)
+        public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
 
             _client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
             _commands = _serviceProvider.GetRequiredService<CommandService>();
+
             _messageSendHandler = _serviceProvider.GetRequiredService<MessageSendHandler>();
+            _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
 
             var config = new DiscordSocketConfig
             {
-                GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent
             };
 
             _client = new DiscordSocketClient(config);
+            // add correct client
+            _slashCommandHandler.AssingClient(_client);
         }
 
         public async Task StartAsync(IServiceProvider services)
@@ -42,9 +48,17 @@ namespace AiryBotCode
             await _client.StartAsync();
 
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
-
+            _client.Ready += _slashCommandHandler.RegisterComands;
             _client.MessageReceived += _messageSendHandler.HandleCommandAsync;
+            _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
 
+
+        }
+
+        private Task getAllGuildChannels()
+        {
+            var guilds = _client.Guilds;
+            return Task.CompletedTask;
         }
 
         public async Task StopAsync()

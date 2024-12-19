@@ -1,14 +1,13 @@
 ﻿using AiryBotCode.AiryBot;
-using AiryBotCode.Events;
+using AiryBotCode.Events.SendMessage;
+using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Interfaces;
-using AiryBotCode.Registers;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
-namespace AiryBotCode.Register
+namespace AiryBotCode.Registers
 {
     internal static class ServiceRegistration
     {
@@ -16,12 +15,15 @@ namespace AiryBotCode.Register
         {
             // Register required services
             services.AddScoped<IConfigurationReader, ConfigurationReader>();
-            services.AddSingleton<DiscordSocketClient>(); // Ensure the client is registered as Singleton
-            services.AddSingleton<CommandService>();        // Ensure the command service is registered
-            services.AddSingleton<MessageSendHandler>();        // Ensure the command service is registered
-
+            services.AddSingleton<DiscordSocketClient>();
+            //services.AddSingleton<CommandService>();
+            services.AddSingleton<CommandService>();       
+            services.AddSingleton<MessageSendHandler>();
+            // register comands
+           services = MessageSendRegistrator.RegisterServices(services);
+           services = SlashCommandRegistrator.RegisterServices(services);
             // Register other services if necessary
-            services.AddScoped<IBot, Bot>();
+            services.AddScoped<IBot, AiryDevBot>();
 
             return services;
         }

@@ -1,5 +1,5 @@
 ﻿using AiryBotCode.AiryBot;
-using AiryBotCode.Register;
+using AiryBotCode.Registers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode
