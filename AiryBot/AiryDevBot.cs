@@ -14,6 +14,9 @@ namespace AiryBotCode
 {
     public class AiryDevBot : IBot
     {
+        public static readonly string Name = "Airy";
+        public static readonly ulong Id = 1318870826862379018;
+
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
         private readonly IConfigurationReader _configuration;
@@ -53,12 +56,21 @@ namespace AiryBotCode
             await _client.StartAsync();
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
             // Assign Event liseners
-            _client.Ready += _slashCommandHandler.RegisterComands;
+            _client.Ready += this.OnReady;
             _client.MessageReceived += _messageSendHandler.HandleCommandAsync;
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
             _client.UserJoined += _joinServerHandle.OnUserJoined;
-        }
+            _client.InteractionCreated += InteractionHandeling;
 
+        }
+        private async Task InteractionHandeling(SocketInteraction interaction)
+        {
+           await _slashCommandHandler.InteractionHandelingAsync(interaction);
+        }
+        private async Task OnReady()
+        {
+           await _slashCommandHandler.RegisterComands();
+        }
         public async Task StopAsync()
         {
             if (_client != null)

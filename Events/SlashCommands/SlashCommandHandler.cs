@@ -2,14 +2,18 @@
 using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using AiryBotCode.Events.SlashCommands.Commands;
 
 namespace AiryBotCode.Events.SlashCommands
 {
     public class SlashCommandHandler : MyEventHandeler
     {
+        private readonly RockPaperScissors _rockPaperScissors;
         public SlashCommandHandler(IServiceProvider serviceProvider) 
             : base(serviceProvider)
         {
+            _rockPaperScissors = serviceProvider.GetRequiredService<RockPaperScissors>();
         }
         public async Task RegisterComands()
         {
@@ -21,39 +25,25 @@ namespace AiryBotCode.Events.SlashCommands
                 Console.WriteLine("Bot is not in any guilds.");
                 return;
             }
-
-            // Define the commands to register
-            var commands = new List<SlashCommandBuilder>
-            {
-                new SlashCommandBuilder()
-                    .WithName("ping")
-                    .WithDescription("Replies with Pong!"),
-
-                new SlashCommandBuilder()
-                    .WithName("greet")
-                    .WithDescription("Greets the user.")
-                    .AddOption("name", ApplicationCommandOptionType.String, "Your name", isRequired: true),
-
-                // Add more commands as needed
-            };
-
-            // Register commands in each guild
+            Console.WriteLine("guilds: ");
             foreach (var guild in guilds)
             {
-                Console.WriteLine($"Registering commands in guild: {guild.Name} ({guild.Id})");
-                foreach (var command in commands)
-                {
-                    try
-                    {
-                        await guild.CreateApplicationCommandAsync(command.Build());
-                        Console.WriteLine($"Command {command.Name} registered in guild {guild.Name}.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error registering command {command.Name} in guild {guild.Name}: {ex.Message}");
-                    }
-                }
-            }
+                Console.WriteLine("guild: " + guild.Name + guild.NsfwLevel);
+                await ClearExistingCommands(guild);
+
+                await _rockPaperScissors.CreateCommand(guild);
+            }           
+        }
+        public async Task ClearExistingCommands(SocketGuild guild)
+        {
+            var existingCommands = await guild.GetApplicationCommandsAsync();
+            await guild.DeleteApplicationCommandsAsync();
+
+            Console.WriteLine($"All comands where cleard from {guild.Name}.");
+        }
+        public async Task InteractionHandelingAsync(SocketInteraction interaction)
+        {
+            await _rockPaperScissors.InteractionHandeling(interaction);
         }
 
         public async Task HandleInteractionAsync(SocketInteraction interaction)
@@ -61,20 +51,9 @@ namespace AiryBotCode.Events.SlashCommands
             if (interaction is not SocketSlashCommand command)
                 return;
 
-            switch (command.Data.Name)
+            if(command.Data.Name == _rockPaperScissors.Name)
             {
-                case "ping":
-                    await command.RespondAsync("Pong!");
-                    break;
-
-                case "greet":
-                    var name = command.Data.Options.FirstOrDefault()?.Value?.ToString();
-                    await command.RespondAsync($"Hello, {name}!");
-                    break;
-
-                default:
-                    await command.RespondAsync("Unknown command.");
-                    break;
+               await _rockPaperScissors.Execute(interaction, command);
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry.TalkWithAiryManager;
 
 namespace AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry
 {

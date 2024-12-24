@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AiryBotCode.Events.SlashCommands.Commands;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Events.SlashCommands
 {
@@ -8,6 +9,8 @@ namespace AiryBotCode.Events.SlashCommands
         {
             // Register as Singleton
             services.AddSingleton<SlashCommandHandler>();
+            services.AddSingleton<BaseSlashCommand>();
+            services.AddSingleton<RockPaperScissors>();
 
             return services;
         }
