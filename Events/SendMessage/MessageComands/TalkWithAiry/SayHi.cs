@@ -12,6 +12,7 @@ namespace AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry
     {
         public static TalkWithAiryComandList CommandType { get; }
         = TalkWithAiryComandList.SayHi;
+
         public static string Key = "hi";
 
         public static async Task Execute(SocketMessage arg)

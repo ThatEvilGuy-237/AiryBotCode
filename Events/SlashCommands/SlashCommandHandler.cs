@@ -2,9 +2,14 @@
 using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using AiryBotCode.Events.SlashCommands.Commands;
 
 namespace AiryBotCode.Events.SlashCommands
 {
+    public enum CommandType
+    {
+        Timeout,
+    }
     public class SlashCommandHandler : MyEventHandeler
     {
         public SlashCommandHandler(IServiceProvider serviceProvider) 
@@ -25,22 +30,21 @@ namespace AiryBotCode.Events.SlashCommands
             // Define the commands to register
             var commands = new List<SlashCommandBuilder>
             {
-                new SlashCommandBuilder()
-                    .WithName("ping")
-                    .WithDescription("Replies with Pong!"),
-
-                new SlashCommandBuilder()
-                    .WithName("greet")
-                    .WithDescription("Greets the user.")
-                    .AddOption("name", ApplicationCommandOptionType.String, "Your name", isRequired: true),
-
-                // Add more commands as needed
+               TimeoutCommand.GetCommand(),
+               UntimeoutCommand.GetCommand()
             };
 
-            // Register commands in each guild
+            // Register commands for all guilds
             foreach (var guild in guilds)
             {
                 Console.WriteLine($"Registering commands in guild: {guild.Name} ({guild.Id})");
+                var existingCommands = await guild.GetApplicationCommandsAsync();
+                foreach (var command in existingCommands)
+                {
+                    await command.DeleteAsync();
+                    Console.WriteLine($"Deleted command: {command.Name}");
+                }
+
                 foreach (var command in commands)
                 {
                     try
@@ -63,10 +67,12 @@ namespace AiryBotCode.Events.SlashCommands
 
             switch (command.Data.Name)
             {
-                case "ping":
-                    await command.RespondAsync("Pong!");
+                case TimeoutCommand.name:
+                    await TimeoutCommand.TimeoutUser(command, _client);
                     break;
-
+                case UntimeoutCommand.name:
+                    await UntimeoutCommand.UntimeoutUser(command, _client);
+                    break;
                 case "greet":
                     var name = command.Data.Options.FirstOrDefault()?.Value?.ToString();
                     await command.RespondAsync($"Hello, {name}!");

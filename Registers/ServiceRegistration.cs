@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.AiryBot;
+using AiryBotCode.Events.ButtonPress;
 using AiryBotCode.Events.JoinServer;
 using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SlashCommands;
@@ -24,6 +25,7 @@ namespace AiryBotCode.Registers
             services = MessageSendRegistrator.RegisterServices(services);
             services = SlashCommandRegistrator.RegisterServices(services);
             services = JoinServerRegistrator.RegisterServices(services);
+            services = ButtonPressRegistrator.RegisterServices(services);
             // Register other services if necessary
             services.AddScoped<IBot, AiryDevBot>();
 
