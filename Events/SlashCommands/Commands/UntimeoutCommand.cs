@@ -4,11 +4,11 @@ using AiryBotCode.Frontend;
 
 namespace AiryBotCode.Events.SlashCommands.Commands
 {
-    public static class UntimeoutCommand
+    public class UntimeoutCommand
     {
         public const string name = "untimeout";
 
-        public static SlashCommandBuilder GetCommand()
+        public SlashCommandBuilder GetCommand()
         {
             return new SlashCommandBuilder()
                 .WithName(name)
@@ -16,7 +16,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 .AddOption("user", ApplicationCommandOptionType.User, "Select the user to untimeout", isRequired: true);
         }
 
-        public static async Task UntimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
+        public async Task UntimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
         {
             // Get user option
             var userOption = command.Data.Options.FirstOrDefault(o => o.Name == "user")?.Value as SocketGuildUser;

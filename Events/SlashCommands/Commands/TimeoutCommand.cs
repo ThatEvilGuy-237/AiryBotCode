@@ -4,10 +4,10 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Events.SlashCommands.Commands
 {
-    public static class TimeoutCommand
+    public class TimeoutCommand
     {
         public const string name = "timeout";
-        public static SlashCommandBuilder GetCommand()
+        public SlashCommandBuilder GetCommand()
         {
             var clearMessagesChoices = new[]
             {
@@ -27,7 +27,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 choices: clearMessagesChoices);
 
         }
-        private static async Task ClearMessage(int time, SocketGuildUser user)
+        private async Task ClearMessage(int time, SocketGuildUser user)
         {
             if (user == null || user.Guild == null)
                 return;
@@ -65,7 +65,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
             }
         }
 
-        public static async Task TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
+        public async Task TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
         {
             // Get user option
             var userOption = command.Data.Options.FirstOrDefault(o => o.Name == "user")?.Value as SocketGuildUser;

@@ -3,6 +3,7 @@ using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Events.SlashCommands.Commands;
+using AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry;
 
 namespace AiryBotCode.Events.SlashCommands
 {
@@ -12,9 +13,15 @@ namespace AiryBotCode.Events.SlashCommands
     }
     public class SlashCommandHandler : MyEventHandeler
     {
+        private readonly TimeoutCommand _timeoutCommand;
+        private readonly UntimeoutCommand _untimeoutCommand;
+        private readonly UserLogsCommand _userLogsCommand;
         public SlashCommandHandler(IServiceProvider serviceProvider) 
             : base(serviceProvider)
         {
+            _timeoutCommand = _serviceProvider.GetRequiredService<TimeoutCommand>();
+            _untimeoutCommand = _serviceProvider.GetRequiredService<UntimeoutCommand>();
+            _userLogsCommand = _serviceProvider.GetRequiredService<UserLogsCommand>();
         }
         public async Task RegisterComands()
         {
@@ -30,8 +37,9 @@ namespace AiryBotCode.Events.SlashCommands
             // Define the commands to register
             var commands = new List<SlashCommandBuilder>
             {
-               TimeoutCommand.GetCommand(),
-               UntimeoutCommand.GetCommand()
+               _timeoutCommand.GetCommand(),
+               _untimeoutCommand.GetCommand(),
+               _userLogsCommand.GetCommand(),
             };
 
             // Register commands for all guilds
@@ -68,10 +76,13 @@ namespace AiryBotCode.Events.SlashCommands
             switch (command.Data.Name)
             {
                 case TimeoutCommand.name:
-                    await TimeoutCommand.TimeoutUser(command, _client);
+                    await _timeoutCommand.TimeoutUser(command, _client);
                     break;
                 case UntimeoutCommand.name:
-                    await UntimeoutCommand.UntimeoutUser(command, _client);
+                    await _untimeoutCommand.UntimeoutUser(command, _client);
+                    break;
+                case UserLogsCommand.Name:
+                    await _userLogsCommand.Log(command, _client);
                     break;
                 case "greet":
                     var name = command.Data.Options.FirstOrDefault()?.Value?.ToString();

@@ -1,0 +1,13 @@
+{
+    "workbench.colorCustomizations": {
+        "editorCursor.foreground": "#df2302",
+        "terminalCursor.foreground": "#e61401",
+        "terminal.foreground": "#d4d4d4",
+        "terminal.selectionForeground": "#5f3434",
+        "scrollbarSlider.background": "#941a1a64",
+        "scrollbarSlider.hoverBackground": "#941a1ab1",
+        "activityBar.background": "#101F82",
+        "titleBar.activeBackground": "#162BB7",
+        "titleBar.activeForeground": "#FCFCFF"
+    }
+}

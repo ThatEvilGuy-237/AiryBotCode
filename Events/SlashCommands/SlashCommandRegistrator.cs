@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AiryBotCode.Events.SlashCommands.Commands;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Events.SlashCommands
 {
@@ -8,7 +9,11 @@ namespace AiryBotCode.Events.SlashCommands
         {
             // Register as Singleton
             services.AddSingleton<SlashCommandHandler>();
-
+            // timeout and untimeout commands
+            services.AddSingleton<TimeoutCommand>();
+            services.AddSingleton<UntimeoutCommand>();
+            // user logs command
+            services.AddSingleton<UserLogsCommand>();
             return services;
         }
     }
