@@ -9,6 +9,7 @@ using AiryBotCode.Interfaces;
 using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Events.JoinServer;
+using AiryBotCode.Events.ButtonPress;
 
 namespace AiryBotCode
 {
@@ -20,8 +21,8 @@ namespace AiryBotCode
         private readonly IServiceProvider _serviceProvider;
         private readonly MessageSendHandler _messageSendHandler;
         private readonly SlashCommandHandler _slashCommandHandler;
-        private readonly JoinServerHandler _joinServerHandle;
-
+        private readonly JoinServerHandler _joinServerHandler;
+        private readonly ButtonPressHandler _buttonPressHandler;
         public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
@@ -32,8 +33,8 @@ namespace AiryBotCode
             // EVENTS init
             _messageSendHandler = _serviceProvider.GetRequiredService<MessageSendHandler>();
             _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
-            _joinServerHandle = _serviceProvider.GetRequiredService<JoinServerHandler>();
-
+            _joinServerHandler = _serviceProvider.GetRequiredService<JoinServerHandler>();
+            _buttonPressHandler = _serviceProvider.GetRequiredService<ButtonPressHandler>();
             var config = new DiscordSocketConfig
             {
                 GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers
@@ -43,7 +44,9 @@ namespace AiryBotCode
             // add correct client
             _slashCommandHandler.AssingClient(_client);
             _messageSendHandler.AssingClient(_client);
-            _joinServerHandle.AssingClient(_client);
+            _joinServerHandler.AssingClient(_client);
+            _buttonPressHandler.AssingClient(_client);
+
         }
 
         public async Task StartAsync(IServiceProvider services)
@@ -57,7 +60,8 @@ namespace AiryBotCode
             _client.Ready += _slashCommandHandler.RegisterComands;
             _client.MessageReceived += _messageSendHandler.HandleCommandAsync;
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-            _client.UserJoined += _joinServerHandle.OnUserJoined;
+            _client.UserJoined += _joinServerHandler.OnUserJoined;
+            _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
         }
 
         public async Task StopAsync()

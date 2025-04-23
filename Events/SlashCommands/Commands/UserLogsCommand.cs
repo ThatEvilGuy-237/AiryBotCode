@@ -1,13 +1,12 @@
-﻿using AiryBotCode.Frontend;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using Discord;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using AiryBotCode.Events.ButtonPress;
 
 namespace AiryBotCode.Events.SlashCommands.Commands
 {
     class UserLogsCommand
     {
+        public const int comandId = 2;
         public const string Name = "userlog";
         public const string ActionEdit = "edit";
         public const string ActionAddReference = "reference";
@@ -28,7 +27,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 .AddOption("type", ApplicationCommandOptionType.String, "Type of log", true, choices: LogTypeChoices)
                 .AddOption("target", ApplicationCommandOptionType.User, "Target user", true);
         }
-
+      
         public async Task Log(SocketSlashCommand command, DiscordSocketClient client)
         {
             var type = command.Data.Options.FirstOrDefault(o => o.Name == "type")?.Value?.ToString();
@@ -41,8 +40,14 @@ namespace AiryBotCode.Events.SlashCommands.Commands
             }
 
             var embed = LogFrontend.CreateLogEmbed(command.User, target, type);
-
-            var buttonId = ButtonIdEncoder.Encode(Name, ActionEdit, command.User.Id.ToString(), target.Id.ToString());
+            ButtonEncoder buttonEncripter = new ButtonEncoder
+            {
+                Command = Name,
+                Action = ActionEdit,
+                UsersId = new List<ulong> { command.User.Id },
+                TargetId = new List<ulong> { target.Id }
+            };
+            var buttonId = buttonEncripter.Encript();
             var button = new ComponentBuilder()
                 .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
                 .Build();
@@ -50,41 +55,26 @@ namespace AiryBotCode.Events.SlashCommands.Commands
             await command.RespondAsync(embed: embed, components: button);
         }
 
-        public async Task<bool> HandleButtonPress(SocketMessageComponent component)
+        public static async Task<bool> HandleButtonPress(SocketMessageComponent component, ButtonEncoder button)
         {
             var buttonValue = component.Data.CustomId;
-            var decoded = ButtonIdEncoder.Decode(buttonValue);
-            //if (decoded == null || decoded.CommandName != Name) return false;
 
-            //switch (decoded.Action)
-            //{
-            //    case ActionEdit:
-            //        await component.RespondAsync($"Editing log for <@{decoded.TargetId}>", ephemeral: true);
-            //        break;
-            //    case ActionAddReference:
-            //        await component.RespondAsync("Feature not implemented yet.", ephemeral: true);
-            //        break;
-            //    default:
-            //        return false;
-            //}
+            switch (button.Action)
+            {
+                case ActionEdit:
+                    await component.RespondAsync($"Editing log for <@{button.TargetId[0]}>", ephemeral: true);
+                    
+
+
+                    break;
+                case ActionAddReference:
+                    await component.RespondAsync("Feature not implemented yet.", ephemeral: true);
+                    break;
+                default:
+                    return false;
+            }
 
             return true;
-        }
-    }
-
-
-    public class ButtonIdEncoder
-    {
-        public static string Encode(string commandName, string action, string actorId, string targetId)
-        {
-            return $"{commandName}-{action}-{actorId}-{targetId}";
-        }
-
-        public static (string CommandName, string Action, string ActorId, string TargetId)? Decode(string buttonId)
-        {
-            var parts = buttonId.Split('-');
-            if (parts.Length < 4) return null;
-            return (parts[0], parts[1], parts[2], parts[3]);
         }
     }
 }
