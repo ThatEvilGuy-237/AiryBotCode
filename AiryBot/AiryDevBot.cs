@@ -10,6 +10,7 @@ using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Events.JoinServer;
 using AiryBotCode.Events.ButtonPress;
+using AiryBotCode.Events.Forms;
 
 namespace AiryBotCode
 {
@@ -23,6 +24,7 @@ namespace AiryBotCode
         private readonly SlashCommandHandler _slashCommandHandler;
         private readonly JoinServerHandler _joinServerHandler;
         private readonly ButtonPressHandler _buttonPressHandler;
+        private readonly FormHandler _formHandler;
         public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider)
         {
             _configuration = configuration;
@@ -35,6 +37,7 @@ namespace AiryBotCode
             _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
             _joinServerHandler = _serviceProvider.GetRequiredService<JoinServerHandler>();
             _buttonPressHandler = _serviceProvider.GetRequiredService<ButtonPressHandler>();
+            _formHandler = _serviceProvider.GetRequiredService<FormHandler>();
             var config = new DiscordSocketConfig
             {
                 GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers
@@ -46,6 +49,7 @@ namespace AiryBotCode
             _messageSendHandler.AssingClient(_client);
             _joinServerHandler.AssingClient(_client);
             _buttonPressHandler.AssingClient(_client);
+            _formHandler.AssingClient(_client);
 
         }
 
@@ -62,6 +66,7 @@ namespace AiryBotCode
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
             _client.UserJoined += _joinServerHandler.OnUserJoined;
             _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
+            _client.ModalSubmitted += _formHandler.HandleFormInteraction;
         }
 
         public async Task StopAsync()

@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using AiryBotCode.Events.ButtonPress;
+using AiryBotCode.Frontend;
 
 namespace AiryBotCode.Events.SlashCommands.Commands
 {
@@ -9,7 +10,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
         public const int comandId = 2;
         public const string Name = "userlog";
         public const string ActionEdit = "edit";
-        public const string ActionAddReference = "reference";
+        //public const string ActionAddReference = "reference";
 
         private static readonly ApplicationCommandOptionChoiceProperties[] LogTypeChoices =
         {
@@ -27,7 +28,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 .AddOption("type", ApplicationCommandOptionType.String, "Type of log", true, choices: LogTypeChoices)
                 .AddOption("target", ApplicationCommandOptionType.User, "Target user", true);
         }
-      
+
         public async Task Log(SocketSlashCommand command, DiscordSocketClient client)
         {
             var type = command.Data.Options.FirstOrDefault(o => o.Name == "type")?.Value?.ToString();
@@ -39,14 +40,29 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 return;
             }
 
-            var embed = LogFrontend.CreateLogEmbed(command.User, target, type);
-            ButtonEncoder buttonEncripter = new ButtonEncoder
+            var logData = new UserLogData
+            {
+                UserMention = target.Mention,
+                Username = target.Username,
+                UserId = target.Id.ToString(),
+                Type = type,
+                Reason = "",
+                Action = "",
+                Consequences = "",
+                LoggedBy = command.User.Mention,
+                LoggedByName = command.User.Username,
+                AvatarUrl = target.GetAvatarUrl() ?? target.GetDefaultAvatarUrl()
+            };
+
+            var embed = LogFrontend.CreateLogEmbed(logData);
+            var buttonEncripter = new CustomIdEncription
             {
                 Command = Name,
                 Action = ActionEdit,
                 UsersId = new List<ulong> { command.User.Id },
-                TargetId = new List<ulong> { target.Id }
+                TargetsId = new List<ulong> { target.Id }
             };
+
             var buttonId = buttonEncripter.Encript();
             var button = new ComponentBuilder()
                 .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
@@ -55,26 +71,60 @@ namespace AiryBotCode.Events.SlashCommands.Commands
             await command.RespondAsync(embed: embed, components: button);
         }
 
-        public static async Task<bool> HandleButtonPress(SocketMessageComponent component, ButtonEncoder button)
+        public static async Task<bool> HandleButtonPress(SocketMessageComponent component, CustomIdEncription button)
         {
-            var buttonValue = component.Data.CustomId;
-
             switch (button.Action)
             {
                 case ActionEdit:
-                    await component.RespondAsync($"Editing log for <@{button.TargetId[0]}>", ephemeral: true);
-                    
+                    {
+                        var embed = component.Message.Embeds.FirstOrDefault();
+                        if (embed == null || string.IsNullOrWhiteSpace(embed.Description))
+                        {
+                            await component.RespondAsync("❌ No valid embed description to edit.", ephemeral: true);
+                            return false;
+                        }
 
+                        var customId = new CustomIdEncription
+                        {
+                            Command = Name,
+                            Action = ActionEdit,
+                            MessagesId = new List<ulong> { component.Message.Id },
+                            ChannelsId = new List<ulong> { component.Channel.Id },
+                        };
 
-                    break;
-                case ActionAddReference:
-                    await component.RespondAsync("Feature not implemented yet.", ephemeral: true);
-                    break;
+                        var logData = LogFrontend.ExtractLogData(embed);
+                        var modal = LogFrontend.CreateEditForm(logData, customId.Encript());
+
+                        await component.RespondWithModalAsync(modal.Build());
+                        break;
+                    }
+
                 default:
                     return false;
             }
 
             return true;
         }
+
+        public static async Task<bool> HandleForm(SocketModal modal, DiscordSocketClient client, CustomIdEncription button)
+        {
+            var channel = client.GetChannel(button.ChannelsId[0]) as IMessageChannel;
+            var message = await channel.GetMessageAsync(button.MessagesId[0]) as IUserMessage;
+            var embed = message.Embeds.FirstOrDefault();
+
+            if (embed == null)
+            {
+                await modal.RespondAsync("❌ No embed found in the message.", ephemeral: true);
+                return false;
+            }
+
+            UserLogData userLogData = LogFrontend.ExtractLogData(embed);
+
+            await LogFrontend.EditLogEmbedAsync(modal, userLogData, message);
+            await modal.RespondAsync("✅ Your changes have been saved.", ephemeral: true);
+            return true;
+        }
+
+
     }
 }

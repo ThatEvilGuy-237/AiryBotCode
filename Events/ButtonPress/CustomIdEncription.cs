@@ -7,29 +7,36 @@ namespace AiryBotCode.Events.ButtonPress
     // encription: c:command|a:action|u:userId|al:allowedRoleId|t:targetId|ts:timestamp
     // example: c:edit|a:update|u:123456789|al:987654321|t:111111111|t:111111112|ts:12454548775757
 
-    public class ButtonEncoder
+    public class CustomIdEncription
     {
         public string Command; // c:
         public string Action; // a:
         public List<ulong> UsersId; // u: // can be more than 1, the user wants it too.
-        public List<ulong> AllowedRoleId; // al: // can be more than 1, the user wants it too.
-        public List<ulong> TargetId; // t: // can be more than 1, the user wants it too.
+        public List<ulong> AllowedRolesId; // al: // can be more than 1, the user wants it too.
+        public List<ulong> TargetsId; // t: // can be more than 1, the user wants it too.
+        public List<ulong> MessagesId; // m: // can be more than 1, the user wants it too.
+        public List<ulong> ChannelsId; // ch: // can be more than 1, the user wants it too.
         public DateTime Timestamp; // ts:
 
-        public ButtonEncoder()
+
+        public CustomIdEncription()
         {
             UsersId = new List<ulong>();
-            AllowedRoleId = new List<ulong>();
-            TargetId = new List<ulong>();
+            AllowedRolesId = new List<ulong>();
+            TargetsId = new List<ulong>();
+            MessagesId = new List<ulong>();
+            ChannelsId = new List<ulong>();
         }
-        public ButtonEncoder(string command, string action, List<ulong> usersId, List<ulong> allowedRoleId, List<ulong> targetId, DateTime timestamp)
+        public CustomIdEncription(string command, string action, List<ulong> usersId, List<ulong> allowedRoleId, List<ulong> targetId, List<ulong> messagesId, List<ulong> channelsId, DateTime timestamp)
         {
             Command = command;
             Action = action;
             UsersId = usersId;
-            AllowedRoleId = allowedRoleId;
-            TargetId = targetId;
+            AllowedRolesId = allowedRoleId;
+            TargetsId = targetId;
+            MessagesId = messagesId;
             Timestamp = timestamp;
+            ChannelsId = channelsId;
         }
 
         // Encryption
@@ -48,20 +55,38 @@ namespace AiryBotCode.Events.ButtonPress
             }
 
             // Roles
-            if (AllowedRoleId.Count > 0)
+            if (AllowedRolesId.Count > 0)
             {
-                foreach (var roleId in AllowedRoleId)
+                foreach (var roleId in AllowedRolesId)
                 {
                     result += $"|al:{roleId}";
                 }
             }
 
             // Targets
-            if (TargetId.Count > 0)
+            if (TargetsId.Count > 0)
             {
-                foreach (var target in TargetId)
+                foreach (var target in TargetsId)
                 {
                     result += $"|t:{target}";
+                }
+            }
+
+            // Messages
+            if (MessagesId.Count > 0)
+            {
+                foreach (var messageId in MessagesId)
+                {
+                    result += $"|m:{messageId}";
+                }
+            }
+
+            // Channels
+            if (ChannelsId.Count > 0)
+            {
+                foreach (var channelId in ChannelsId)
+                {
+                    result += $"|ch:{channelId}";
                 }
             }
 
@@ -91,7 +116,7 @@ namespace AiryBotCode.Events.ButtonPress
         }
 
         // Decryption
-        public ButtonEncoder Decript(string code)
+        public CustomIdEncription Decrypt(string code)
         {
 
             var parts = code.Split('|');
@@ -109,8 +134,10 @@ namespace AiryBotCode.Events.ButtonPress
                     case "c": Command = value; break;
                     case "a": Action = value; break;
                     case "u": UsersId.Add(ulong.Parse(value)); break;
-                    case "al": AllowedRoleId.Add(ulong.Parse(value)); break;
-                    case "t": TargetId.Add(ulong.Parse(value)); break;
+                    case "al": AllowedRolesId.Add(ulong.Parse(value)); break;
+                    case "t": TargetsId.Add(ulong.Parse(value)); break;
+                    case "m": MessagesId.Add(ulong.Parse(value)); break;
+                    case "ch": ChannelsId.Add(ulong.Parse(value)); break;
                     case "ts": Timestamp = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(value)).DateTime; break;
                 }
             }

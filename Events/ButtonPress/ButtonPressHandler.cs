@@ -12,10 +12,10 @@ namespace AiryBotCode.Events.ButtonPress
 
         public async Task HandleButtonInteraction(SocketMessageComponent component)
         {
-            var guild = _client.GetGuild(component.GuildId.Value);
+            //var guild = _client.GetGuild(component.GuildId.Value);
             var buttonValue = component.Data.CustomId;
-            ButtonEncoder button = new ButtonEncoder();
-            button.Decript(buttonValue);
+            CustomIdEncription button = new CustomIdEncription();
+            button.Decrypt(buttonValue);
             // somthing not realy needed now
             switch (button.Command)
             {
