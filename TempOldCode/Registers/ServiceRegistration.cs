@@ -29,7 +29,7 @@ namespace AiryBotCode.Registers
             services = ButtonPressRegistrator.RegisterServices(services);
             services = FormRegistrator.RegisterServices(services);
             // Register other services if necessary
-            services.AddScoped<IBot, AiryDevBot>();
+            //services.AddScoped<IBot, AiryDevBot>();
 
             return services;
         }

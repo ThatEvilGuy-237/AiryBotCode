@@ -4,15 +4,15 @@ using Discord;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using AiryBotCode.AiryBot;
-using AiryBotCode.Interfaces;
 using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Events.JoinServer;
 using AiryBotCode.Events.ButtonPress;
 using AiryBotCode.Events.Forms;
+using AiryBotCode.Infrastructure.Configuration;
+using AiryBotCode.Bot.Interfaces;
 
-namespace AiryBotCode
+namespace AiryBotCode.Bot.Bots
 {
     public class AiryDevBot : IBot
     {

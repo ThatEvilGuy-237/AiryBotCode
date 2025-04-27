@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace AiryBotCode.AiryBot
+﻿namespace AiryBotCode.Bot.Interfaces
 {
     public interface IBot
     {
