@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
-namespace AiryBotCode.Events.SlashCommands
+using AiryBotCode.Events;
+
+namespace AiryBotCode.Infrastructure.Events
 {
     public class SlashCommandHandler : MyEventHandeler
     {
@@ -14,6 +16,7 @@ namespace AiryBotCode.Events.SlashCommands
             _slashEvents = new List<EvilEvent>
             {
                 serviceProvider.GetRequiredService<TimeoutEvent>(),
+                serviceProvider.GetRequiredService<UntimeOutEvent>(),
                 serviceProvider.GetRequiredService<UserlogsEvent>(),
             };
         }

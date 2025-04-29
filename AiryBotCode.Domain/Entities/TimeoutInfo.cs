@@ -2,27 +2,17 @@
 
 namespace AiryBotCode.Domain.Entities
 {
-    public class TimeoutInfo
+    public class UntimeOutInfo
     {
         public SocketGuildUser Target { get; set; }
-        public object DurationOption { get; set; }
-        public string Reason { get; set; }
-        public int ClearMessagesTime { get; set; }
 
-        public TimeoutInfo()
+        public UntimeOutInfo()
         {
 
         }
-        public TimeoutInfo(
-            SocketGuildUser target,
-            object durationOption,
-            string reason,
-            int clearMessagesTime)
+        public UntimeOutInfo(SocketGuildUser target)
         {
             Target = target;
-            DurationOption = durationOption;
-            Reason = reason;
-            ClearMessagesTime = clearMessagesTime;
         }
     }
 }

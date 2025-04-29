@@ -4,10 +4,11 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Application.Services.Loging
 {
-    public class LogService: ClientService
+    public class LogService : ClientService
     {
-        public const ulong LogChannelId = 1364679724269305967;
-        const ulong ErrorChannelEvilId = 1364679746356514936;
+        public readonly ulong LogChannelId  = 1364679724269305967;
+        public readonly ulong ErrorChannelEvilId = 1364679746356514936;
+
         public readonly UserService _userService;
         public LogService(IServiceProvider serviceProvider) : base(serviceProvider)
         {

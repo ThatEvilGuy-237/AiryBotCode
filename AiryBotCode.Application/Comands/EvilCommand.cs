@@ -10,6 +10,7 @@ namespace AiryBotCode.Application.Comands
         }
         public virtual SlashCommandBuilder GetCommand()
         {
+            Console.WriteLine("EvilCommand: GetCommand must be implemented by the child class!");
             throw new NotImplementedException("GetCommand must be implemented by the child class!");
         }
 

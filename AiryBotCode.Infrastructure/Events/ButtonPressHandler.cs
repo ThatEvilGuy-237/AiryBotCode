@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.Application.Services;
+using AiryBotCode.Events;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 
-namespace AiryBotCode.Events.ButtonPress
+namespace AiryBotCode.Infrastructure.Events
 {
     public class ButtonPressHandler : MyEventHandeler
     {

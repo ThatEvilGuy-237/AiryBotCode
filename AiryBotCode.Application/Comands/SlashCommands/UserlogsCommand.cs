@@ -7,13 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Domain.Entities;
+using System.Threading.Channels;
 
 namespace AiryBotCode.Application.Comands.SlashCommands
 {
     public class UserlogsCommand : EvilCommand
     {
         public const string ActionEdit = "edit";
-
+        protected LogService _logservice;
         private static readonly ApplicationCommandOptionChoiceProperties[] LogTypeChoices =
         {
             new() { Name = "Warning", Value = "Warning" },
@@ -22,9 +23,10 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             new() { Name = "Mute", Value = "Mute" }
         };
 
-        public UserlogsCommand(IServiceProvider serviceProvider) : base()
+        public UserlogsCommand(IServiceProvider service) : base()
         {
             Name = "userlog";
+            _logservice = service.GetRequiredService<LogService>();
         }
 
         public override SlashCommandBuilder GetCommand()
@@ -39,16 +41,18 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         public async Task<bool> HandleSlashCommand(SocketSlashCommand command, DiscordSocketClient client)
         {
             var typeString = command.Data.Options.FirstOrDefault(o => o.Name == "type")?.Value?.ToString();
-            LogType logType = Enum.TryParse(typeString, ignoreCase: true, out LogType parsedType) ? parsedType : LogType.Other;
-            var target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser;
-
-            if (string.IsNullOrEmpty(typeString) || target == null)
+            LogInfo logInfo = new LogInfo()
             {
-                await command.RespondAsync("Invalid input.", ephemeral: true);
+                Target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser,
+                Type = Enum.TryParse(typeString, ignoreCase: true, out LogType parsedType) ? parsedType : LogType.Other
+            };
+
+            if (string.IsNullOrEmpty(typeString) || logInfo.Target == null)
+            {
+                await command.RespondAsync("Invalid inputs.", ephemeral: true);
                 return false;
             }
-
-            var logInfo = new LogInfo(logType, target);
+            await command.RespondAsync($"Prossessing..", ephemeral: true);
             await SendUserLog(command, client, logInfo);
             return true;
         }
@@ -78,7 +82,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
                 .Build();
 
-            var channel = (SocketTextChannel)await client.GetChannelAsync(LogService.LogChannelId);
+            var channel = (SocketTextChannel)await client.GetChannelAsync(_logservice.LogChannelId);
             await channel.SendMessageAsync(embed: embed, components: button);
             await command.FollowupAsync($"✅ Log has been created! {channel.Mention}", ephemeral: true);
         }
@@ -116,22 +120,27 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             return true;
         }
 
-        public async Task<bool> HandleForm(SocketModal modal, DiscordSocketClient client, ButtonEncriptionService buttonEncription)
+        public async Task<UserlogFormInfo> HandleForm(SocketModal modal, DiscordSocketClient client, ButtonEncriptionService buttonEncription)
         {
             var channel = client.GetChannel(buttonEncription.ChannelsId[0]) as IMessageChannel;
             var message = await channel?.GetMessageAsync(buttonEncription.MessagesId[0]) as IUserMessage;
-            var embed = message?.Embeds.FirstOrDefault();
+            UserlogFormInfo info = new UserlogFormInfo()
+            {
+                Channel = channel,
+                Message = message,
+                Embed = message?.Embeds.FirstOrDefault()
+            };
 
-            if (embed == null || message == null)
+            if (info.Embed == null || message == null)
             {
                 await modal.RespondAsync("❌ No embed found in the message." + message, ephemeral: true);
-                return false;
+                return info;
             }
 
-            var logData = LogFrontend.ExtractLogData(embed);
-            await LogFrontend.EditLogEmbedAsync(modal, logData, message);
+            var logData = LogFrontend.ExtractLogData(info.Embed);
+            await LogFrontend.EditLogEmbedAsync(modal, logData, info.Message);
             await modal.RespondAsync("✅ Your changes have been saved.", ephemeral: true);
-            return true;
+            return info;
         }
     }
 }

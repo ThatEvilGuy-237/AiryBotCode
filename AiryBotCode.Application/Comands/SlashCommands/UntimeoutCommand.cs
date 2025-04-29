@@ -1,63 +1,68 @@
-﻿//using Discord;
-//using Discord.WebSocket;
-//using AiryBotCode.Frontend;
+﻿using AiryBotCode.Application.Services.User;
+using AiryBotCode.Domain.Entities;
+using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
-//namespace AiryBotCode.Application.Comands.SlashCommands
-//{
-//    public class UntimeoutCommand
-//    {
-//        public const string name = "untimeout";
+namespace AiryBotCode.Application.Comands.SlashCommands
+{
+    public class UntimeoutCommand : EvilCommand
+    {
+        protected readonly UserService userService;
 
-//        public SlashCommandBuilder GetCommand()
-//        {
-//            return new SlashCommandBuilder()
-//                .WithName(name)
-//                .WithDescription("Remove a user's timeout and log the action for admins")
-//                .AddOption("user", ApplicationCommandOptionType.User, "Select the user to untimeout", isRequired: true);
-//        }
+        public UntimeoutCommand(IServiceProvider serviceProvider)
+            :base()
+        {
+            userService = serviceProvider.GetRequiredService<UserService>();
+            Name = "untimeout";
+        }
 
-//        public async Task UntimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
-//        {
-//            // Get user option
-//            var userOption = command.Data.Options.FirstOrDefault(o => o.Name == "user")?.Value as SocketGuildUser;
+        public override SlashCommandBuilder GetCommand()
+        {
+            return new SlashCommandBuilder()
+                .WithName(Name)
+                .WithDescription("Remove a user's timeout")
+                .AddOption("target", ApplicationCommandOptionType.User, "Select the user to untimeout", isRequired: true);
+        }
 
-//            // Validate options
-//            if (userOption == null)
-//            {
-//                await command.RespondAsync("Something went wrong", ephemeral: true);
-//                return;
-//            }
-//            if (userOption.TimedOutUntil == null || userOption.TimedOutUntil <= DateTimeOffset.UtcNow)
-//            {
-//                await command.RespondAsync($"{userOption.Mention} is not currently timed out.", ephemeral: true);
-//                return;
-//            }
-//            // Get admin role ID
-//            var adminRoleId = ulong.TryParse(Environment.GetEnvironmentVariable("ADMINROLEID"), out var roleId) ? roleId : 0;
-//            if (adminRoleId == 0)
-//            {
-//                await command.RespondAsync("Admin role ID not found in environment variables. CONTACT evil", ephemeral: true);
-//                return;
-//            }
+        public async Task<UntimeOutInfo> UntimeoutUser(SocketSlashCommand command)
+        {
+            // Get user option
+            UntimeOutInfo info = new UntimeOutInfo()
+            {
+                Target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser
+            };
 
-//            // Check user permissions
-//            var user = command.User as SocketGuildUser;
-//            if (user == null || !user.Roles.Any(r => r.Id == adminRoleId))
-//            {
-//                await command.RespondAsync("You do not have permission to use this command.", ephemeral: true);
-//                return;
-//            }
+            // Validate options
+            if (info.Target == null)
+            {
+                await command.RespondAsync("Something went wrong", ephemeral: true);
+                return info;
+            }
 
-//            // Log action
-//            var logChannel = client.GetGuild(command.GuildId!.Value)?.GetTextChannel(1182267222152982533);
-//            if (logChannel != null)
-//            {
-//                UntimeoutFrontend.RespondToCommand(command, logChannel, userOption);
-//            }
+            // Check if user is currently timed out
+            if (info.Target.TimedOutUntil == null || info.Target.TimedOutUntil <= DateTimeOffset.UtcNow)
+            {
+                await command.RespondAsync($"{info.Target.Mention} is not currently timed out.", ephemeral: true);
+                return info;
+            }
 
-//            // Remove timeout
-//            await userOption.RemoveTimeOutAsync();
-//            await command.RespondAsync($"Timeout removed for {userOption.Username}.", ephemeral: true);
-//        }
-//    }
-//}
+            // Check permissions
+            if (!await userService.UserIsAdmin(command))
+            {
+                return info;
+            }
+
+            // Remove timeout
+            await userService.UntimeOut(command, info.Target);
+            await command.RespondAsync(
+                $"✅ Timeout removed from **{info.Target.Mention}**.\n" +
+                $"They were previously timed out until: `{info.Target.TimedOutUntil?.ToString("f") ?? "unknown"}`\n" +
+                $"⏱ remaining Timeout was: **{(info.Target.TimedOutUntil.HasValue ? (info.Target.TimedOutUntil.Value - DateTimeOffset.UtcNow).ToString("hh\\:mm\\:ss") : "N/A")}**",
+                ephemeral: true
+            );
+
+            return info;
+        }
+    }
+}

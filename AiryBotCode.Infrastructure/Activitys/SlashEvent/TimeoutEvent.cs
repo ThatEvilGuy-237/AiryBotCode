@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.Application.Comands;
+using AiryBotCode.Application.Comands;
 using AiryBotCode.Application.Comands.SlashCommands;
 using AiryBotCode.Domain.Entities;
 using AiryBotCode.Infrastructure.Configuration;
@@ -28,8 +29,15 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
 
             TimeoutCommand timeoutCommand = (TimeoutCommand)Command;
             TimeoutInfo info = await timeoutCommand.TimeoutUser(command, _client);
-            await userlogsCommand.SendUserLog(command, _client, 
-                new LogInfo(LogType.Timeout, info.Target, info.Reason, $"Timed out for {info.DurationOption} minutes."));
+            if(info.Target != null || info.Duration != 0)
+            {
+
+            }
+
+            var message = $"Timed out for {info.Duration} minutes." +
+              (info.MessagesCleared > 0 ? $" Messages cleared: {info.MessagesCleared}" : "");
+            var log = new LogInfo(LogType.Timeout, info.Target, info.Reason, message);
+            await userlogsCommand.SendUserLog(command, _client, log);
         }
 
         public void SetClient(DiscordSocketClient client)

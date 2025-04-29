@@ -33,42 +33,50 @@ namespace AiryBotCode.Application.Comands
                 .WithDescription("Timeout a user and log the action for admins")
                 .AddOption("target", ApplicationCommandOptionType.User, "Select the user to timeout", isRequired: true)
                 .AddOption("duration", ApplicationCommandOptionType.Integer, "Timeout duration in minutes", isRequired: true)
-                .AddOption("reason", ApplicationCommandOptionType.String, "Reason for the timeout", isRequired: true)
+                .AddOption("reason", ApplicationCommandOptionType.String, "Reason for the timeout", isRequired: false)
                 .AddOption("clear", ApplicationCommandOptionType.Integer, "Clear messages from past hours", isRequired: false, choices: clearMessagesChoices);
         }
 
         public async Task<TimeoutInfo> TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
         {
-            TimeoutInfo info = new TimeoutInfo(
-                command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser,
-                command.Data.Options.FirstOrDefault(o => o.Name == "duration")?.Value,
-                command.Data.Options.FirstOrDefault(o => o.Name == "reason")?.Value?.ToString(),
-                command.Data.Options.FirstOrDefault(o => o.Name == "clear") is { Value: var val } ? Convert.ToInt32(val) : 0
-            );
+            TimeoutInfo info = new TimeoutInfo()
+            {
+                Target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser,
+                Duration = Convert.ToInt32(command.Data.Options.FirstOrDefault(o => o.Name == "duration")?.Value),
+                Reason = command.Data.Options.FirstOrDefault(o => o.Name == "reason")?.Value?.ToString(),
+                ClearMessagesTime = command.Data.Options.FirstOrDefault(o => o.Name == "clear") is { Value: var val } ? Convert.ToInt32(val) : 0
+            };
+
 
             // Validate inputs
-            if (info.Target == null || info.DurationOption == null || info.Reason == null ||
-                !int.TryParse(info.DurationOption.ToString(), out int durationMinutes))
+            if (info.Target == null || info.Duration == 0 || !int.TryParse(info.Duration.ToString(), out int durationMinutes))
             {
                 await command.RespondAsync("Invalid parameters provided.", ephemeral: true);
-                return info;
+                throw new Exception("not valdig input");
             }
 
             // Check permissions
             if (!await userService.UserIsAdmin(command))
             {
-                await command.RespondAsync("Admin role not found or insufficient permissions.", ephemeral: true);
-                return info;
+                throw new Exception("not valdig input");
             }
             // responde before calculations
-            await command.RespondAsync($"{info.Target.Mention} has been timed out for {durationMinutes} minutes. Reason: {info.Reason}", ephemeral: true);
+            var timeoutEnd = DateTimeOffset.UtcNow.AddMinutes(durationMinutes);
+
+            await command.RespondAsync(
+                $"🔇 **{info.Target.Mention}** has been timed out for **{durationMinutes} minutes**.\n" +
+                $"⏰ They will be able to chat again at `{timeoutEnd.ToString("f")}`.\n" +
+                $"🛠️ Logs are being processed...",
+                ephemeral: true
+            );
 
             // Apply timeout
             await userService.TimeOutUser(command, info.Target, durationMinutes);
+
             // Clear messages if needed
             if (info.ClearMessagesTime > 0)
             {
-                await userService.ClearMessage(info.ClearMessagesTime, info.Target);
+                info.MessagesCleared = await userService.ClearMessage(info.ClearMessagesTime, info.Target);
             }
 
             return info;

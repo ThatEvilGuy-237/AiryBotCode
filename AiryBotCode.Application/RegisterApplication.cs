@@ -18,6 +18,7 @@ namespace AiryBotCode.Application
             // INDEPENDENT
             // COMMAND
             services.AddScoped<TimeoutCommand>();
+            services.AddScoped<UntimeoutCommand>();
             services.AddScoped<UserlogsCommand>();
             // SERIVCES
             services.AddScoped<ClientService>();

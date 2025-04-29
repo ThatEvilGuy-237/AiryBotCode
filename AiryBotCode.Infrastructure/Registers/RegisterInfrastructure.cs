@@ -1,11 +1,8 @@
 ﻿using AiryBotCode.Application;
-using AiryBotCode.Events.ButtonPress;
-using AiryBotCode.Events.Forms;
-using AiryBotCode.Events.SendMessage;
 using AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry;
-using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Configuration;
+using AiryBotCode.Infrastructure.Events;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,6 +31,7 @@ namespace AiryBotCode.Infrastructure.Registers
         {
             services.AddScoped<TalkWithAiryManager>();
             services.AddScoped<TimeoutEvent>();
+            services.AddScoped<UntimeOutEvent>();
             services.AddScoped<UserlogsEvent>();
             return services;
         }

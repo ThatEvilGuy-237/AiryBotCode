@@ -1,10 +1,11 @@
 ﻿using AiryBotCode.Application.Services;
+using AiryBotCode.Events;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Events.Forms
+namespace AiryBotCode.Infrastructure.Events
 {
     public class FormHandler : MyEventHandeler
     {

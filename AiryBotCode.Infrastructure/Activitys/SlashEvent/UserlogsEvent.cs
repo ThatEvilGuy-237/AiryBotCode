@@ -1,5 +1,6 @@
 ﻿using AiryBotCode.Application.Comands.SlashCommands;
 using AiryBotCode.Application.Services;
+using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord;
@@ -12,6 +13,7 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
     {
         protected DiscordSocketClient _client;
         protected IConfigurationReader _config;
+
         public UserlogsEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
             base(serviceProvider.GetRequiredService<UserlogsCommand>(), serviceProvider)
         {

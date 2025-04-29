@@ -3,12 +3,9 @@ using Discord.WebSocket;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using AiryBotCode.Events.SendMessage;
-using AiryBotCode.Events.SlashCommands;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Bot.Interfaces;
-using AiryBotCode.Events.ButtonPress;
-using AiryBotCode.Events.Forms;
+using AiryBotCode.Infrastructure.Events;
 
 namespace AiryBotCode.Bot.Bots
 {

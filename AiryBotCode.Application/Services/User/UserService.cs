@@ -82,5 +82,14 @@ namespace AiryBotCode.Application.Services.User
             var timeoutDuration = TimeSpan.FromMinutes(durationMinutes);
             await target.SetTimeOutAsync(timeoutDuration);
         }
+        public async Task UntimeOut(SocketInteraction command, SocketGuildUser target)
+        {
+            if (target == null)
+            {
+                await command.RespondAsync("Somthing went wrong." + target.ToString(), ephemeral: true);
+                return;
+            }
+            await target.RemoveTimeOutAsync();
+        }
     }
 }
