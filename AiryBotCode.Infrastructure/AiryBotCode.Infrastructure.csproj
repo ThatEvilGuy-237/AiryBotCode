@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <ProjectReference Include="..\AiryBotCode.Application\AiryBotCode.Application.csproj" />
   </ItemGroup>
 </Project>

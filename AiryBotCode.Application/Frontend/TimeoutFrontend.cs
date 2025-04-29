@@ -1,7 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 
-namespace AiryBotCode.Tool.Frontend
+namespace AiryBotCode.Application.Frontend
 {
     public class TimeoutFrontend
     {

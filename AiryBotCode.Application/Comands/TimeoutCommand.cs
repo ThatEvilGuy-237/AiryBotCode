@@ -1,13 +1,23 @@
-﻿using AiryBotCode.Frontend;
+﻿using AiryBotCode.Application.Frontend;
+using AiryBotCode.Application.Services.User;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
 
-namespace AiryBotCode.Events.SlashCommands.Commands
+namespace AiryBotCode.Application.Comands
 {
-    public class TimeoutCommand
+    public class TimeoutCommand : EvilCommand
     {
-        public const string name = "timeout";
-        public SlashCommandBuilder GetCommand()
+        protected readonly UserService userService;
+        public TimeoutCommand(IServiceProvider serviceProvider)
+            : base()
+        {
+            Name = "timeout";
+            userService = serviceProvider.GetRequiredService<UserService>();
+        }
+
+        public override SlashCommandBuilder GetCommand()
         {
             var clearMessagesChoices = new[]
             {
@@ -17,7 +27,7 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 new ApplicationCommandOptionChoiceProperties { Name = "24 hours", Value = 24 * 60 }
             };
             return new SlashCommandBuilder()
-                .WithName(name)
+                .WithName(Name)
                 .WithDescription("Timeout a user and log the action for admins")
                 .AddOption("user", ApplicationCommandOptionType.User, "Select the user to timeout", isRequired: true)
                 .AddOption("duration", ApplicationCommandOptionType.Integer, "Timeout duration in minutes", isRequired: true)
@@ -25,45 +35,8 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 .AddOption("clear", ApplicationCommandOptionType.Integer, "clear messages of the past hours", 
                 isRequired: false, 
                 choices: clearMessagesChoices);
-
         }
-        private async Task ClearMessage(int time, SocketGuildUser user)
-        {
-            if (user == null || user.Guild == null)
-                return;
-
-            // Get the guild and text channels
-            var guild = user.Guild;
-            foreach (var channel in guild.TextChannels)
-            {
-                try
-                {
-                    // Fetch recent messages
-                    var messages = await channel.GetMessagesAsync(100).FlattenAsync();
-
-                    // Get messages sent by the user within the specified time range
-                    var deleteBefore = DateTimeOffset.UtcNow.AddMinutes(-time);
-                    var userMessages = messages
-                        .Where(m => m.Author.Id == user.Id && m.Timestamp >= deleteBefore)
-                        .ToList();
-
-                    // Delete messages in bulk
-                    if (userMessages.Count > 0)
-                    {
-                        var chunkSize = 100;
-                        for (var i = 0; i < userMessages.Count; i += chunkSize)
-                        {
-                            var chunk = userMessages.GetRange(i, Math.Min(chunkSize, userMessages.Count - i));
-                            await channel.DeleteMessagesAsync(chunk);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to delete messages in {channel.Name}: {ex.Message}");
-                }
-            }
-        }
+       
 
         public async Task TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
         {
@@ -81,25 +54,15 @@ namespace AiryBotCode.Events.SlashCommands.Commands
                 return;
             }
 
-
-            // Get admin role ID
-            var adminRoleId = ulong.TryParse(Environment.GetEnvironmentVariable("ADMINROLEID"), out var roleId) ? roleId : 0;
-            if (adminRoleId == 0)
+            // Is admin?
+            if (!await userService.UserIsAdmin(command))
             {
                 await command.RespondAsync("Admin role ID not found in environment variables. CONTACT evil", ephemeral: true);
                 return;
             }
 
-            // Check user permissions
-            var user = command.User as SocketGuildUser;
-            if (user == null || !user.Roles.Any(r => r.Id == adminRoleId))
-            {
-                await command.RespondAsync("You do not have permission to use this command.", ephemeral: true);
-                return;
-            }
-
             // Log action
-            var logChannel = client.GetGuild(command.GuildId!.Value)?.GetTextChannel(1182267222152982533);
+            var logChannel = client.GetGuild(command.GuildId!.Value)?.GetTextChannel(1364679724269305967);
             if (logChannel != null)
             {
                 TimeoutFrontend.RespondToCommand(command, logChannel, userOption, (int)durationMinutes, reason);
@@ -107,11 +70,12 @@ namespace AiryBotCode.Events.SlashCommands.Commands
             // clear messages
             if (clearMessagesTime > 0)
             {
-                await ClearMessage(clearMessagesTime, userOption);
+                await userService.ClearMessage(clearMessagesTime, userOption);
             }
             // Set timeout duration
             var timeoutDuration = TimeSpan.FromMinutes(durationMinutes);
             await userOption.SetTimeOutAsync(timeoutDuration);
         }
+    
     }
 }

@@ -12,7 +12,7 @@ namespace AiryBotCode.Bot.Registers
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            services = Register.RegisterServices(services);
+            services = RegisterInfrastructure.RegisterServices(services);
             // Register required services
             services.AddSingleton<DiscordSocketClient>();
             services.AddScoped<IBot, AiryDevBot>();

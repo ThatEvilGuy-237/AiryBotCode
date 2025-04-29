@@ -3,7 +3,7 @@
 //using AiryBotCode.Events.ButtonPress;
 //using AiryBotCode.Frontend;
 
-//namespace AiryBotCode.Application.Comands.SlashCommands
+//namespace AiryBotCode.Events.SlashCommands.Commands
 //{
 //    class UserLogsCommand
 //    {

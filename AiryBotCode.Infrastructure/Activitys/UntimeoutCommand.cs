@@ -2,7 +2,7 @@
 //using Discord.WebSocket;
 //using AiryBotCode.Frontend;
 
-//namespace AiryBotCode.Application.Comands.SlashCommands
+//namespace AiryBotCode.Events.SlashCommands.Commands
 //{
 //    public class UntimeoutCommand
 //    {
