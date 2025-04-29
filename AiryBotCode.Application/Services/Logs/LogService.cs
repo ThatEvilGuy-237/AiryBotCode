@@ -6,7 +6,7 @@ namespace AiryBotCode.Application.Services.Loging
 {
     public class LogService: ClientService
     {
-        const ulong LogChannelId = 1364679710130442351;
+        public const ulong LogChannelId = 1364679724269305967;
         const ulong ErrorChannelEvilId = 1364679746356514936;
         public readonly UserService _userService;
         public LogService(IServiceProvider serviceProvider) : base(serviceProvider)
@@ -17,16 +17,12 @@ namespace AiryBotCode.Application.Services.Loging
         public async Task LogToMainChannel(SocketSlashCommand command, Embed message)
         {
             var logChannel = _client.GetGuild(command.GuildId!.Value)?.GetTextChannel(LogChannelId);
-            if (logChannel != null)
+            if (logChannel == null)
             {
-
-            }
-            else
-            {
-               await ContactEvil(SimpleLog("LogChannel", "Log channel not found 'LogChannelId'"));
+                await ContactEvil(SimpleLog("LogChannel", "Log channel not found 'LogChannelId'"));
             }
         }
-        //       const ulong errorChannelEvilId = 1364679746356514936;
+        // const ulong errorChannelEvilId = 1364679746356514936;
         public async Task ContactEvil(Embed embed, bool ping = true)
         {
             string owner = ping ? (await GetEvilId()).ToString() : "";

@@ -32,11 +32,8 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
             ClientNullCheck();
 
             UserlogsCommand userlogs = (UserlogsCommand)Command;
-            Embed? embed = await userlogs.CreateLog(command);
-            if (embed == null) return;
-            ulong channelId = _config.GetLogChannelId();
-            var socketTextChannel = (SocketTextChannel)await _client.GetChannelAsync(channelId);
-            await userlogs.SendUserLog(command, embed, socketTextChannel);
+            bool worked = await userlogs.HandleSlashCommand(command, _client);
+            //if (!worked) return;
         }
 
         public async Task HandleButtonPressAsync(SocketMessageComponent component, ButtonEncriptionService buttonEncription)
@@ -44,7 +41,7 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
             ClientNullCheck();
 
             UserlogsCommand userlogs = (UserlogsCommand)Command;
-            await userlogs.ShowEditForm(component, buttonEncription);
+            await userlogs.HandelEditButton(component, buttonEncription);
         }
 
         public async Task HanndelFormAsync(SocketModal modal, ButtonEncriptionService buttonEncription)

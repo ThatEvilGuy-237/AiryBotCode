@@ -10,44 +10,45 @@ namespace AiryBotCode.Application.Services.User
 {
     public class UserService
     {
-        public async Task ClearMessage(int time, SocketGuildUser user)
+        public async Task<int> ClearMessage(int timeInMinutes, SocketGuildUser user)
         {
             if (user == null || user.Guild == null)
-                return;
+                return 0;
 
-            // Get the guild and text channels
-            var guild = user.Guild;
-            foreach (var channel in guild.TextChannels)
+            int totalDeleted = 0;
+            var cutoff = DateTimeOffset.UtcNow.AddMinutes(-timeInMinutes);
+
+            try
             {
-                try
+                // Go through each text channel in the guild
+                foreach (var channel in user.Guild.TextChannels)
                 {
-                    // Fetch recent messages
-                    var messages = await channel.GetMessagesAsync(100).FlattenAsync();
+                    // Fetch the most recent 100 messages from the channel
+                    var messages = await channel.GetMessagesAsync(limit: 100).FlattenAsync();
 
-                    // Get messages sent by the user within the specified time range
-                    var deleteBefore = DateTimeOffset.UtcNow.AddMinutes(-time);
+                    // Filter the messages by user and time range
                     var userMessages = messages
-                        .Where(m => m.Author.Id == user.Id && m.Timestamp >= deleteBefore)
+                        .Where(m => m.Author.Id == user.Id && m.Timestamp >= cutoff)
                         .ToList();
 
-                    // Delete messages in bulk
+                    // Delete the messages in bulk if any are found
                     if (userMessages.Count > 0)
                     {
-                        var chunkSize = 100;
-                        for (var i = 0; i < userMessages.Count; i += chunkSize)
-                        {
-                            var chunk = userMessages.GetRange(i, Math.Min(chunkSize, userMessages.Count - i));
-                            await channel.DeleteMessagesAsync(chunk);
-                        }
+                        await channel.DeleteMessagesAsync(userMessages);
+                        totalDeleted += userMessages.Count;
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to delete messages in {channel.Name}: {ex.Message}");
-                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ClearMessage] Error: {ex.Message}");
+            }
+
+            return totalDeleted;
         }
-        
+
+
+
         public async Task<ulong> GetAdminRole(SocketInteraction command)
         {
             var adminRoleId = ulong.TryParse(Environment.GetEnvironmentVariable("ADMINROLEID"), out var roleId) ? roleId : 0;
@@ -71,16 +72,15 @@ namespace AiryBotCode.Application.Services.User
             return true;
         }
 
-        public async Task TimeOutUser(SocketInteraction command, int durationMinutes)
+        public async Task TimeOutUser(SocketInteraction command, SocketGuildUser target, int durationMinutes)
         {
-            var user = command.User as SocketGuildUser;
-            if (user == null)
+            if (target == null)
             {
-                await command.RespondAsync("You do not have permission to use this command.", ephemeral: true);
+                await command.RespondAsync("Somthing went wrong." + target.ToString(), ephemeral: true);
                 return;
             }
             var timeoutDuration = TimeSpan.FromMinutes(durationMinutes);
-            await user.SetTimeOutAsync(timeoutDuration);
+            await target.SetTimeOutAsync(timeoutDuration);
         }
     }
 }

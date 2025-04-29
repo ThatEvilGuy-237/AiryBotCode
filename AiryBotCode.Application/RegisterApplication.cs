@@ -1,6 +1,7 @@
 ﻿using AiryBotCode.Application.Comands;
 using AiryBotCode.Application.Comands.SlashCommands;
 using AiryBotCode.Application.Services;
+using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,7 @@ namespace AiryBotCode.Application
             // SERIVCES
             services.AddScoped<ClientService>();
             services.AddScoped<UserService>();
+            services.AddScoped<LogService>();
 
             return services;
         }

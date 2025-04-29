@@ -1,15 +1,16 @@
-﻿using AiryBotCode.Application.Frontend;
-using AiryBotCode.Application.Services.User;
+﻿using AiryBotCode.Application.Services.User;
+using AiryBotCode.Domain.Entities;
+using AiryBotCode.Tool.Frontend;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
 
 namespace AiryBotCode.Application.Comands
 {
     public class TimeoutCommand : EvilCommand
     {
         protected readonly UserService userService;
+
         public TimeoutCommand(IServiceProvider serviceProvider)
             : base()
         {
@@ -26,56 +27,51 @@ namespace AiryBotCode.Application.Comands
                 new ApplicationCommandOptionChoiceProperties { Name = "10 hours", Value = 10 * 60 },
                 new ApplicationCommandOptionChoiceProperties { Name = "24 hours", Value = 24 * 60 }
             };
+
             return new SlashCommandBuilder()
                 .WithName(Name)
                 .WithDescription("Timeout a user and log the action for admins")
-                .AddOption("user", ApplicationCommandOptionType.User, "Select the user to timeout", isRequired: true)
+                .AddOption("target", ApplicationCommandOptionType.User, "Select the user to timeout", isRequired: true)
                 .AddOption("duration", ApplicationCommandOptionType.Integer, "Timeout duration in minutes", isRequired: true)
                 .AddOption("reason", ApplicationCommandOptionType.String, "Reason for the timeout", isRequired: true)
-                .AddOption("clear", ApplicationCommandOptionType.Integer, "clear messages of the past hours", 
-                isRequired: false, 
-                choices: clearMessagesChoices);
+                .AddOption("clear", ApplicationCommandOptionType.Integer, "Clear messages from past hours", isRequired: false, choices: clearMessagesChoices);
         }
-       
 
-        public async Task TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
+        public async Task<TimeoutInfo> TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
         {
-            // Get user option
-            var userOption = command.Data.Options.FirstOrDefault(o => o.Name == "user")?.Value as SocketGuildUser;
-            var durationOption = command.Data.Options.FirstOrDefault(o => o.Name == "duration")?.Value;
-            var reason = command.Data.Options.FirstOrDefault(o => o.Name == "reason")?.Value?.ToString();
-            var clearMessagesOption = command.Data.Options.FirstOrDefault(o => o.Name == "clear_messages")?.Value;
-            int clearMessagesTime = clearMessagesOption != null ? Convert.ToInt32(clearMessagesOption) : 0;
+            TimeoutInfo info = new TimeoutInfo(
+                command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser,
+                command.Data.Options.FirstOrDefault(o => o.Name == "duration")?.Value,
+                command.Data.Options.FirstOrDefault(o => o.Name == "reason")?.Value?.ToString(),
+                command.Data.Options.FirstOrDefault(o => o.Name == "clear") is { Value: var val } ? Convert.ToInt32(val) : 0
+            );
 
-            // Validate options
-            if (userOption == null || durationOption == null || reason == null || !(durationOption is int durationMinutes))
+            // Validate inputs
+            if (info.Target == null || info.DurationOption == null || info.Reason == null ||
+                !int.TryParse(info.DurationOption.ToString(), out int durationMinutes))
             {
-                await command.RespondAsync("Something went wrong", ephemeral: true);
-                return;
+                await command.RespondAsync("Invalid parameters provided.", ephemeral: true);
+                return info;
             }
 
-            // Is admin?
+            // Check permissions
             if (!await userService.UserIsAdmin(command))
             {
-                await command.RespondAsync("Admin role ID not found in environment variables. CONTACT evil", ephemeral: true);
-                return;
+                await command.RespondAsync("Admin role not found or insufficient permissions.", ephemeral: true);
+                return info;
+            }
+            // responde before calculations
+            await command.RespondAsync($"{info.Target.Mention} has been timed out for {durationMinutes} minutes. Reason: {info.Reason}", ephemeral: true);
+
+            // Apply timeout
+            await userService.TimeOutUser(command, info.Target, durationMinutes);
+            // Clear messages if needed
+            if (info.ClearMessagesTime > 0)
+            {
+                await userService.ClearMessage(info.ClearMessagesTime, info.Target);
             }
 
-            // Log action
-            var logChannel = client.GetGuild(command.GuildId!.Value)?.GetTextChannel(1364679724269305967);
-            if (logChannel != null)
-            {
-
-                TimeoutFrontend.RespondToCommand(command, logChannel, userOption, durationMinutes, reason);
-            }
-            // clear messages
-            if (clearMessagesTime > 0)
-            {
-                await userService.ClearMessage(clearMessagesTime, userOption);
-            }
-            // Set timeout duration
-            await userService.TimeOutUser(command, durationMinutes);
+            return info;
         }
-    
     }
 }

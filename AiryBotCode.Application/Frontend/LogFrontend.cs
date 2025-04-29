@@ -1,17 +1,10 @@
-﻿using Discord;
+﻿using AiryBotCode.Domain.Entities;
+using Discord;
 using Discord.WebSocket;
 using System.ComponentModel;
 using System.Text;
 namespace AiryBotCode.Tool.Frontend
 {
-    public enum LogType
-    {
-        Warning,
-        Ban,
-        Kick,
-        Timeout,
-        Other
-    }
     public struct UserLogData
     {
         public string TargetMention { get; set; }
@@ -41,29 +34,23 @@ namespace AiryBotCode.Tool.Frontend
                 UserName = UserName
             };
         }
-        public UserLogData ExtractCommandData(SocketSlashCommand command, LogType Type)
+        public UserLogData ExtractCommandData(SocketSlashCommand command, LogType type)
         {
-            UserLogData userLog = new UserLogData
-            {
-                Type = Type,
-                Reason = string.IsNullOrWhiteSpace(Reason) ? "[Fill in]" : Reason,
-                Action = string.IsNullOrWhiteSpace(Action) ? "[Fill in]" : Action,
-                Consequences = string.IsNullOrWhiteSpace(Consequences) ? "[Fill in]" : Consequences,
-                UserPing = command.User.Mention,
-                UserName = command.User.Username,
-            };
-            return userLog;
+            Type = type;
+            Reason = string.IsNullOrWhiteSpace(Reason) ? "[Fill in]" : Reason;
+            Action = string.IsNullOrWhiteSpace(Action) ? "[Fill in]" : Action;
+            Consequences = string.IsNullOrWhiteSpace(Consequences) ? "[Fill in]" : Consequences;
+            UserPing = command.User.Mention;
+            UserName = command.User.Username;
+            return this;
         }
         public UserLogData SetTarget(SocketGuildUser target)
         {
-            UserLogData userLog = new UserLogData
-            {
-                TargetMention = target.Mention,
-                TargetName = target.GlobalName,
-                TargetId = target.Id.ToString(),
-                TargetAvatarUrl = target.GetDisplayAvatarUrl(),
-            };
-            return userLog;
+            TargetMention = target.Mention;
+            TargetName = target.Username;
+            TargetId = target.Id.ToString();
+            TargetAvatarUrl = target.GetDisplayAvatarUrl();
+            return this;
         }
         public UserLogData SetTarget(SocketUser target)
         {
@@ -112,7 +99,7 @@ namespace AiryBotCode.Tool.Frontend
                     embed.WithColor(Color.Red).WithTitle("🚪 User Kicked");
                     break;
                 case LogType.Timeout:
-                    embed.WithColor(Color.LightGrey).WithTitle("🔇 User Muted");
+                    embed.WithColor(Color.LightGrey).WithTitle("🚫 Timedout");
                     break;
                 default:
                     embed.WithColor(Color.Blue);
@@ -121,7 +108,6 @@ namespace AiryBotCode.Tool.Frontend
 
             return embed.Build();
         }
-
         public static async Task EditLogEmbedAsync(SocketModal modal, UserLogData existingData, IUserMessage message)
         {
             var formValues = new Dictionary<string, string>();
