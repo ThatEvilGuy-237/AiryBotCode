@@ -48,5 +48,19 @@ namespace AiryBotCode.Infrastructure.Configuration
 
             return value;
         }
+        public ulong GetLogChannelId()
+        {
+            string? logChannelIdStr = Environment.GetEnvironmentVariable("LOGCHANNELID");
+
+            // Validate the token
+            if (string.IsNullOrWhiteSpace(logChannelIdStr))
+                throw new InvalidOperationException("Log channel ID is missing. Ensure LOGCHANNELID is set.");
+            // Try parse to ulong
+            if (!ulong.TryParse(logChannelIdStr, out ulong logChannelId))
+                throw new InvalidOperationException("Invalid log channel ID. Ensure LOGCHANNELID is a valid ulong.");
+
+            return logChannelId;
+        }
+
     }
 }

@@ -48,7 +48,7 @@ namespace AiryBotCode.Application.Comands
             int clearMessagesTime = clearMessagesOption != null ? Convert.ToInt32(clearMessagesOption) : 0;
 
             // Validate options
-            if (userOption == null || durationOption == null || reason == null || !(durationOption is long durationMinutes))
+            if (userOption == null || durationOption == null || reason == null || !(durationOption is int durationMinutes))
             {
                 await command.RespondAsync("Something went wrong", ephemeral: true);
                 return;
@@ -66,7 +66,7 @@ namespace AiryBotCode.Application.Comands
             if (logChannel != null)
             {
 
-                TimeoutFrontend.RespondToCommand(command, logChannel, userOption, (int)durationMinutes, reason);
+                TimeoutFrontend.RespondToCommand(command, logChannel, userOption, durationMinutes, reason);
             }
             // clear messages
             if (clearMessagesTime > 0)
@@ -74,8 +74,7 @@ namespace AiryBotCode.Application.Comands
                 await userService.ClearMessage(clearMessagesTime, userOption);
             }
             // Set timeout duration
-            var timeoutDuration = TimeSpan.FromMinutes(durationMinutes);
-            await userOption.SetTimeOutAsync(timeoutDuration);
+            await userService.TimeOutUser(command, durationMinutes);
         }
     
     }

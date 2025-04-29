@@ -4,74 +4,114 @@ using System.ComponentModel;
 using System.Text;
 namespace AiryBotCode.Tool.Frontend
 {
+    public enum LogType
+    {
+        Warning,
+        Ban,
+        Kick,
+        Timeout,
+        Other
+    }
     public struct UserLogData
     {
-        public string UserMention { get; set; }
-        public string Username { get; set; }
-        public string UserId { get; set; }
-        public string Type { get; set; }
+        public string TargetMention { get; set; }
+        public string TargetName { get; set; }
+        public string TargetId { get; set; }
+        public LogType Type { get; set; }
         public string Reason { get; set; }
         public string Action { get; set; }
         public string Consequences { get; set; }
-        public string LoggedBy { get; set; }
-        public string LoggedByName { get; set; }
-        public string AvatarUrl { get; set; }
+        public string UserPing { get; set; }
+        public string UserName { get; set; }
+        public string TargetAvatarUrl { get; set; }
 
-        public UserLogData FillMeIn()
+        public UserLogData Build()
         {
             return new UserLogData
             {
-                UserMention = UserMention,
-                Username = Username,
-                UserId = UserId,
+                TargetMention = TargetMention,
+                TargetName = TargetName,
+                TargetId = TargetId,
+                TargetAvatarUrl = TargetAvatarUrl,
                 Type = Type,
                 Reason = string.IsNullOrWhiteSpace(Reason) ? "[Fill in]" : Reason,
                 Action = string.IsNullOrWhiteSpace(Action) ? "[Fill in]" : Action,
                 Consequences = string.IsNullOrWhiteSpace(Consequences) ? "[Fill in]" : Consequences,
-                LoggedBy = LoggedBy,
-                LoggedByName = LoggedByName,
-                AvatarUrl = AvatarUrl
+                UserPing = UserPing,
+                UserName = UserName
             };
+        }
+        public UserLogData ExtractCommandData(SocketSlashCommand command, LogType Type)
+        {
+            UserLogData userLog = new UserLogData
+            {
+                Type = Type,
+                Reason = string.IsNullOrWhiteSpace(Reason) ? "[Fill in]" : Reason,
+                Action = string.IsNullOrWhiteSpace(Action) ? "[Fill in]" : Action,
+                Consequences = string.IsNullOrWhiteSpace(Consequences) ? "[Fill in]" : Consequences,
+                UserPing = command.User.Mention,
+                UserName = command.User.Username,
+            };
+            return userLog;
+        }
+        public UserLogData SetTarget(SocketGuildUser target)
+        {
+            UserLogData userLog = new UserLogData
+            {
+                TargetMention = target.Mention,
+                TargetName = target.GlobalName,
+                TargetId = target.Id.ToString(),
+                TargetAvatarUrl = target.GetDisplayAvatarUrl(),
+            };
+            return userLog;
+        }
+        public UserLogData SetTarget(SocketUser target)
+        {
+            UserLogData userLog = new UserLogData
+            {
+                TargetMention = target.Mention,
+                TargetName = target.GlobalName,
+                TargetId = target.Id.ToString(),
+                TargetAvatarUrl = target.GetDisplayAvatarUrl(),
+            };
+            return userLog;
         }
     }
     public static class LogFrontend
     {
-
-
-        public static Embed CreateLogEmbed(UserLogData logData)
+        public static Embed CreateLogEmbed(UserLogData userLog)
         {
-            logData = logData.FillMeIn();
 
             var descriptionBuilder = new StringBuilder()
-                .AppendLine($"👤 **User:** {logData.UserMention}")
-                .AppendLine($"🔹 **Username:** {logData.Username}")
-                .AppendLine($"🆔 **User ID:** `{logData.UserId}`")
+                .AppendLine($"👤 **User:** {userLog.TargetMention}")
+                .AppendLine($"🔹 **Username:** {userLog.TargetName}")
+                .AppendLine($"🆔 **User ID:** `{userLog.TargetId}`")
                 .AppendLine()
-                .AppendLine($"🔍 **Type:** {logData.Type}")
-                .AppendLine($"📜 **Reason:** {logData.Reason}")
-                .AppendLine($"⚡ **Action:** {logData.Action}")
-                .AppendLine($"🚨 **Consequences:** {logData.Consequences}")
+                .AppendLine($"🔍 **Type:** {userLog.Type.ToString()}")
+                .AppendLine($"📜 **Reason:** {userLog.Reason}")
+                .AppendLine($"⚡ **Action:** {userLog.Action}")
+                .AppendLine($"🚨 **Consequences:** {userLog.Consequences}")
                 .AppendLine()
-                .AppendLine($"👮 **Logged by:** {logData.LoggedBy}");
+                .AppendLine($"👮 **Logged by:** {userLog.UserPing}");
 
             var embed = new EmbedBuilder()
-                .WithTitle($"User Log - {logData.Username}")
+                .WithTitle($"User Log - {userLog.TargetName}")
                 .WithDescription(descriptionBuilder.ToString())
-                .WithFooter($"Logged by {logData.LoggedByName}")
-                .WithThumbnailUrl(logData.AvatarUrl);
+                .WithFooter($"Logged by {userLog.UserName}")
+                .WithThumbnailUrl(userLog.TargetAvatarUrl);
 
-            switch (logData.Type)
+            switch (userLog.Type)
             {
-                case "Warning":
+                case LogType.Warning:
                     embed.WithColor(Color.Orange).WithTitle("⚠ Warning Issued");
                     break;
-                case "Ban":
+                case LogType.Ban:
                     embed.WithColor(Color.DarkRed).WithTitle("⛔ User Banned");
                     break;
-                case "Kick":
+                case LogType.Kick:
                     embed.WithColor(Color.Red).WithTitle("🚪 User Kicked");
                     break;
-                case "Mute":
+                case LogType.Timeout:
                     embed.WithColor(Color.LightGrey).WithTitle("🔇 User Muted");
                     break;
                 default:
@@ -113,12 +153,8 @@ namespace AiryBotCode.Tool.Frontend
             });
         }
 
-
-
-
         public static ModalBuilder CreateEditForm(UserLogData logData, string? customId = null)
         {
-
             var modal = new ModalBuilder()
                 .WithCustomId(customId)
                 .WithTitle("Edit User Log Details")
@@ -128,7 +164,6 @@ namespace AiryBotCode.Tool.Frontend
 
             return modal;
         }
-
 
         public static UserLogData ExtractLogData(IEmbed embed)
         {
@@ -143,17 +178,18 @@ namespace AiryBotCode.Tool.Frontend
 
             return new UserLogData
             {
-                UserMention = Extract("👤 **User:**"),
-                Username = Extract("🔹 **Username:**"),
-                UserId = Extract("🆔 **User ID:**").Trim('`'),
-                Type = Extract("🔍 **Type:**"),
+                TargetMention = Extract("👤 **User:**"),
+                TargetName = Extract("🔹 **Username:**"),
+                TargetId = Extract("🆔 **User ID:**").Trim('`'),
+                Type = Enum.TryParse<LogType>(Extract("🔍 **Type:**"), ignoreCase: true, out var parsed) ? parsed : LogType.Other,
                 Reason = Extract("📜 **Reason:**"),
                 Action = Extract("⚡ **Action:**"),
                 Consequences = Extract("🚨 **Consequences:**"),
-                LoggedBy = Extract("👮 **Logged by:**"),
-                LoggedByName = embed.Footer?.Text.Replace("Logged by ", "") ?? "",
-                AvatarUrl = embed.Thumbnail?.Url ?? ""
+                UserPing = Extract("👮 **Logged by:**"),
+                UserName = embed.Footer?.Text.Replace("Logged by ", "") ?? "",
+                TargetAvatarUrl = embed.Thumbnail?.Url ?? ""
             };
         }
+
     }
 }

@@ -70,5 +70,17 @@ namespace AiryBotCode.Application.Services.User
             }
             return true;
         }
+
+        public async Task TimeOutUser(SocketInteraction command, int durationMinutes)
+        {
+            var user = command.User as SocketGuildUser;
+            if (user == null)
+            {
+                await command.RespondAsync("You do not have permission to use this command.", ephemeral: true);
+                return;
+            }
+            var timeoutDuration = TimeSpan.FromMinutes(durationMinutes);
+            await user.SetTimeOutAsync(timeoutDuration);
+        }
     }
 }

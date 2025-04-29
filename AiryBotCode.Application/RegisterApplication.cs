@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.Application.Comands;
+using AiryBotCode.Application.Comands.SlashCommands;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.User;
 using Microsoft.Extensions.DependencyInjection;

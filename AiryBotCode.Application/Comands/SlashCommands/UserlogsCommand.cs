@@ -4,8 +4,10 @@ using AiryBotCode.Tool.Frontend;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.User;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Channels;
+using System.ComponentModel;
 
-namespace AiryBotCode.Application.Comands
+namespace AiryBotCode.Application.Comands.SlashCommands
 {
     public class UserlogsCommand : EvilCommand
     {
@@ -35,54 +37,71 @@ namespace AiryBotCode.Application.Comands
                 .AddOption("target", ApplicationCommandOptionType.User, "Target user", true);
         }
 
-        public async Task SlashCommandLog(SocketSlashCommand command)
+        public async Task<Embed?> CreateLog(SocketSlashCommand command)
         {
-            var type = command.Data.Options.FirstOrDefault(o => o.Name == "type")?.Value?.ToString();
+            var typeString = command.Data.Options.FirstOrDefault(o => o.Name == "type")?.Value?.ToString();
+            LogType type = Enum.TryParse(typeString, ignoreCase: true, out LogType parsedType) ? parsedType : LogType.Other;
             var target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketUser;
 
-            if (type == null || target == null)
+            if (typeString == null || target == null)
             {
                 await command.RespondAsync("Invalid input.", ephemeral: true);
-                return;
+                return null;
             }
 
             var logData = new UserLogData
             {
-                UserMention = target.Mention,
-                Username = target.Username,
-                UserId = target.Id.ToString(),
+                TargetMention = target.Mention,
+                TargetName = target.Username,
+                TargetId = target.Id.ToString(),
                 Type = type,
                 Reason = "",
                 Action = "",
                 Consequences = "",
-                LoggedBy = command.User.Mention,
-                LoggedByName = command.User.Username,
-                AvatarUrl = target.GetAvatarUrl() ?? target.GetDefaultAvatarUrl()
+                UserPing = command.User.Mention,
+                UserName = command.User.Username,
+                TargetAvatarUrl = target.GetAvatarUrl() ?? target.GetDefaultAvatarUrl()
             };
+            logData.ExtractCommandData(command, type);
+            logData.SetTarget(target);
+            logData = logData.Build();
 
-            var embed = LogFrontend.CreateLogEmbed(logData);
-            var buttonEncripter = new ButtonEncriptionService
+            Embed embed = LogFrontend.CreateLogEmbed(logData);
+            await command.RespondAsync("Log prossessing...", ephemeral: true);
+            return embed;
+        }
+
+        public async Task SendUserLog(SocketSlashCommand command, Embed embed, SocketTextChannel channel)
+        {
+            var target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketUser;
+            ButtonEncriptionService buttonEncripter = new ButtonEncriptionService
             {
                 CommandName = Name,
                 Action = ActionEdit,
                 UsersId = new List<ulong> { command.User.Id },
-                TargetsId = new List<ulong> { target.Id }
+                TargetsId = new List<ulong> { target!.Id }
             };
 
-            var buttonId = buttonEncripter.Encript();
+            string buttonId = buttonEncripter.Encript();
             var button = new ComponentBuilder()
                 .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
                 .Build();
-
-            await command.RespondAsync(embed: embed, components: button);
+            await channel.SendMessageAsync(embed: embed, components: button);
+            await command.FollowupAsync($"✅ Log has been created! {channel.Mention}", ephemeral: true);
         }
-
         public async Task<bool> ShowEditForm(SocketMessageComponent component, ButtonEncriptionService buttonEncription)
         {
             switch (buttonEncription.Action)
             {
                 case ActionEdit:
                     {
+                        if (!buttonEncription.UsersId.Contains(component.User.Id))
+                        {
+                            string usersAccess = string.Join(", ", buttonEncription.UsersId.Select(u => $"<@{u}>"));
+                            await component.RespondAsync($"Only {usersAccess} can edit this message", ephemeral: true);
+                            return false;
+                        }
+
                         var embed = component.Message.Embeds.FirstOrDefault();
                         if (embed == null || string.IsNullOrWhiteSpace(embed.Description))
                         {

@@ -5,5 +5,6 @@ namespace AiryBotCode.Infrastructure.Configuration
     {
         void LoadConfig(string? path = null);
         public string GetBotToken();
+        public ulong GetLogChannelId();
     }
 }
