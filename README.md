@@ -58,15 +58,18 @@ After that:
 **Once everything is wired up, run and test your code!**
 
 *(dont forget to set your evn file to your bot and check the AiryDevBot.cs for evenes that you want to use for your bot)*
+
 ---
 ## Current Features
 - Time out a user and create userlog
 - Untime out a user
 - Creating editable userlogs
+- 
 ---
 ## TODO
 - Logchannel (make better settings/env file handeling)
 - Remind a user of somthing (with punshments? *hehehe*)
+
 ---
 ## FUTURE UPGRADES AND IDEAS
 - [ ] Expend the readabilty and services
@@ -74,6 +77,7 @@ After that:
 - [ ] Better naming for command and events
 - [ ] Database per server insted of ENV file [low-priority]
 - ~~[ ] Tests?? XD~~
+
 ---
 # Current ENV file:
 - DISCORD_AIRYBOT_TOKEN=[DISCORD_TOKEN]
