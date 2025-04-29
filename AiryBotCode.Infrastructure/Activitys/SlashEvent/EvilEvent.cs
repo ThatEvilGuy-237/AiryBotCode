@@ -9,12 +9,10 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
     public abstract class EvilEvent
     {
         public EvilCommand Command { get; }
-        protected DiscordSocketClient _client;
         protected SlashCommandBuilder commandBuilder;
         protected EvilEvent(EvilCommand command, IServiceProvider serviceProvider)
         {
             Command = command;
-            _client = serviceProvider.GetRequiredService<DiscordSocketClient>();
         }
 
         public async Task RegisterCommandAsync(IReadOnlyCollection<SocketGuild?> socketGuilds)

@@ -1,6 +1,5 @@
 ﻿
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Events
 {
@@ -11,7 +10,6 @@ namespace AiryBotCode.Events
         public MyEventHandeler(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
         }
         public void AssingClient(DiscordSocketClient discordClient)
         {

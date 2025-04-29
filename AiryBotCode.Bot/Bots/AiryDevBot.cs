@@ -41,8 +41,8 @@ namespace AiryBotCode.Bot.Bots
 
             _client = new DiscordSocketClient(config);
             // add correct client
-            //_slashCommandHandler.AssingClient(_client);
-            //_messageSendHandler.AssingClient(_client);
+            _slashCommandHandler.AssingClient(_client);
+            _messageSendHandler.AssingClient(_client);
             //_joinServerHandler.AssingClient(_client);
             //_buttonPressHandler.AssingClient(_client);
             //_formHandler.AssingClient(_client);

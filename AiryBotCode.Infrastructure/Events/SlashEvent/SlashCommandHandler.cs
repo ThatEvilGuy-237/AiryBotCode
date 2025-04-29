@@ -73,8 +73,13 @@ namespace AiryBotCode.Events.SlashCommands
             {
                 if (slashEvent.Command.Name == command.Data.Name)
                 {
+
                     if (slashEvent is ISlashEvent slashEventHandler)
                     {
+                        if (slashEvent is IClientAccess slasheventClient)
+                        {
+                            slasheventClient.SetClient(_client);
+                        }
                         await slashEventHandler.ExecuteSlashCommandAsync(command);
                         return;
                     }
