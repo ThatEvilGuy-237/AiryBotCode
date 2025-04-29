@@ -65,6 +65,7 @@ namespace AiryBotCode.Application.Comands
             var logChannel = client.GetGuild(command.GuildId!.Value)?.GetTextChannel(1364679724269305967);
             if (logChannel != null)
             {
+
                 TimeoutFrontend.RespondToCommand(command, logChannel, userOption, (int)durationMinutes, reason);
             }
             // clear messages

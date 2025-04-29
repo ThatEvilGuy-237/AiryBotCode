@@ -14,8 +14,7 @@ namespace AiryBotCode.Events.SlashCommands
             _slashEvents = new List<EvilEvent>
             {
                 serviceProvider.GetRequiredService<TimeoutEvent>(),
-                //serviceProvider.GetRequiredService<BanEvent>(),
-                // Add other events here
+                serviceProvider.GetRequiredService<UserlogsEvent>(),
             };
         }
 

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AiryBotCode.Events.ButtonPress
+namespace AiryBotCode.Application.Services
 {
     // encription: c:command|a:action|u:userId|al:allowedRoleId|t:targetId|ts:timestamp
     // example: c:edit|a:update|u:123456789|al:987654321|t:111111111|t:111111112|ts:12454548775757
 
-    public class CustomIdEncription
+    public class ButtonEncriptionService
     {
-        public string Command; // c:
+        public string CommandName; // c:
         public string Action; // a:
         public List<ulong> UsersId; // u: // can be more than 1, the user wants it too.
         public List<ulong> AllowedRolesId; // al: // can be more than 1, the user wants it too.
@@ -19,7 +19,7 @@ namespace AiryBotCode.Events.ButtonPress
         public DateTime Timestamp; // ts:
 
 
-        public CustomIdEncription()
+        public ButtonEncriptionService()
         {
             UsersId = new List<ulong>();
             AllowedRolesId = new List<ulong>();
@@ -27,9 +27,9 @@ namespace AiryBotCode.Events.ButtonPress
             MessagesId = new List<ulong>();
             ChannelsId = new List<ulong>();
         }
-        public CustomIdEncription(string command, string action, List<ulong> usersId, List<ulong> allowedRoleId, List<ulong> targetId, List<ulong> messagesId, List<ulong> channelsId, DateTime timestamp)
+        public ButtonEncriptionService(string command, string action, List<ulong> usersId, List<ulong> allowedRoleId, List<ulong> targetId, List<ulong> messagesId, List<ulong> channelsId, DateTime timestamp)
         {
-            Command = command;
+            CommandName = command;
             Action = action;
             UsersId = usersId;
             AllowedRolesId = allowedRoleId;
@@ -43,7 +43,7 @@ namespace AiryBotCode.Events.ButtonPress
         public string Encript()
         {
             // Command and Action: REQUIRED
-            string result = $"c:{Command}|a:{Action}";
+            string result = $"c:{CommandName}|a:{Action}";
 
             // Users
             if (UsersId.Count > 0)
@@ -102,9 +102,9 @@ namespace AiryBotCode.Events.ButtonPress
         // IsValid: debug method. Best not to use in practice.
         public bool IsValid(string code, ref string error)
         {
-            if (string.IsNullOrWhiteSpace(Command) || string.IsNullOrWhiteSpace(Action))
+            if (string.IsNullOrWhiteSpace(CommandName) || string.IsNullOrWhiteSpace(Action))
             {
-                error = $"Command:'{Command}' and Action:'{Action}' must be set.";
+                error = $"Command:'{CommandName}' and Action:'{Action}' must be set.";
                 return false;
             }
             if (code.Count() > 100)
@@ -116,7 +116,7 @@ namespace AiryBotCode.Events.ButtonPress
         }
 
         // Decryption
-        public CustomIdEncription Decrypt(string code)
+        public ButtonEncriptionService Decrypt(string code)
         {
 
             var parts = code.Split('|');
@@ -131,7 +131,7 @@ namespace AiryBotCode.Events.ButtonPress
 
                 switch (key)
                 {
-                    case "c": Command = value; break;
+                    case "c": CommandName = value; break;
                     case "a": Action = value; break;
                     case "u": UsersId.Add(ulong.Parse(value)); break;
                     case "al": AllowedRolesId.Add(ulong.Parse(value)); break;
