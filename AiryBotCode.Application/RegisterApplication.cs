@@ -21,7 +21,6 @@ namespace AiryBotCode.Application
             services.AddScoped<UntimeoutCommand>();
             services.AddScoped<UserlogsCommand>();
             // SERIVCES
-            services.AddScoped<ClientService>();
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();
 

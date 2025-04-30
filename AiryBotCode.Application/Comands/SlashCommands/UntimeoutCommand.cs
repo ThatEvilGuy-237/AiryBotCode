@@ -11,7 +11,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         protected readonly UserService userService;
 
         public UntimeoutCommand(IServiceProvider serviceProvider)
-            :base()
+            :base(serviceProvider)
         {
             userService = serviceProvider.GetRequiredService<UserService>();
             Name = "untimeout";

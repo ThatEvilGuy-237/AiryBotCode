@@ -1,17 +1,17 @@
 ﻿using AiryBotCode.Application.Services.User;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
 namespace AiryBotCode.Application.Services.Loging
 {
-    public class LogService : ClientService
+    public class LogService
     {
-
-        public readonly UserService _userService;
-        public LogService(IServiceProvider serviceProvider) : base(serviceProvider)
+        private DiscordSocketClient _client;
+        public LogService(IServiceProvider serviceProvider)
         {
-
+            _client = serviceProvider.GetRequiredService<DiscordSocketClient>();
         }
 
         public async Task<ulong> GetLogChannelId()
@@ -30,7 +30,7 @@ namespace AiryBotCode.Application.Services.Loging
             var errorChannelEvilId = ulong.TryParse(Environment.GetEnvironmentVariable("EVILLOGCHANNELID"), out var channelId) ? channelId : 0;
             if (errorChannelEvilId == 0)
             {
-                await ContactEvil(SimpleLog("ENV", "There is no ERRORCHANELEVILID"), false);
+                Console.WriteLine($"[LogService] Error: EVILLOGCHANNELID not found in environment variables.");
                 return 0;
             }
             return errorChannelEvilId;

@@ -1,6 +1,6 @@
 ﻿using Discord.WebSocket;
 
-namespace AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry
+namespace AiryBotCode.Infrastructure.DiscordEvents.SendMessage.MessageComands.TalkWithAiry
 {
     public enum TalkWithAiryComandList
     {

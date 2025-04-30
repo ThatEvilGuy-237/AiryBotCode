@@ -12,7 +12,7 @@ namespace AiryBotCode.Application.Comands
         protected readonly UserService userService;
 
         public TimeoutCommand(IServiceProvider serviceProvider)
-            : base()
+            : base(serviceProvider)
         {
             Name = "timeout";
             userService = serviceProvider.GetRequiredService<UserService>();
@@ -37,7 +37,7 @@ namespace AiryBotCode.Application.Comands
                 .AddOption("clear", ApplicationCommandOptionType.Integer, "Clear messages from past hours", isRequired: false, choices: clearMessagesChoices);
         }
 
-        public async Task<TimeoutInfo> TimeoutUser(SocketSlashCommand command, DiscordSocketClient client)
+        public async Task<TimeoutInfo> TimeoutUser(SocketSlashCommand command)
         {
             TimeoutInfo info = new TimeoutInfo()
             {

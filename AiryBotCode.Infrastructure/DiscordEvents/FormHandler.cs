@@ -1,11 +1,10 @@
 ﻿using AiryBotCode.Application.Services;
-using AiryBotCode.Events;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Infrastructure.Events
+namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class FormHandler : MyEventHandeler
     {
@@ -31,11 +30,6 @@ namespace AiryBotCode.Infrastructure.Events
                 {
                     if (Event is IFormEvent formEvent)
                     {
-                        if (formEvent is IClientAccess EventClient)
-                        {
-                            EventClient.SetClient(_client);
-                        }
-
                         await formEvent.HanndelFormAsync(modal, button);
                         return;
                     }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Bot.Interfaces;
-using AiryBotCode.Infrastructure.Events;
+using AiryBotCode.Infrastructure.DiscordEvents;
 
 namespace AiryBotCode.Bot.Bots
 {
@@ -33,21 +33,29 @@ namespace AiryBotCode.Bot.Bots
             _buttonPressHandler = _serviceProvider.GetRequiredService<ButtonPressHandler>();
             _formHandler = _serviceProvider.GetRequiredService<FormHandler>();
             //_joinServerHandler = _serviceProvider.GetRequiredService<JoinServerHandler>();
+
+        }
+        // Create a gloabal client service
+        public static IServiceCollection CreateClientService(IServiceCollection services)
+        {
             var config = new DiscordSocketConfig
             {
                 GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers
             };
+            services.AddSingleton(sp =>
+            {
+                var config = new DiscordSocketConfig
+                {
+                    GatewayIntents = GatewayIntents.Guilds |
+                                     GatewayIntents.GuildMessages |
+                                     GatewayIntents.MessageContent |
+                                     GatewayIntents.GuildMembers
+                };
+                return new DiscordSocketClient(config);
+            });
 
-            _client = new DiscordSocketClient(config);
-            // add correct client
-            _slashCommandHandler.AssingClient(_client);
-            _messageSendHandler.AssingClient(_client);
-            _buttonPressHandler.AssingClient(_client);
-            _formHandler.AssingClient(_client);
-            //_joinServerHandler.AssingClient(_client);
-
+            return services;
         }
-
         public async Task StartAsync(IServiceProvider services)
         {
             var discordToken = _configuration.GetBotToken();
