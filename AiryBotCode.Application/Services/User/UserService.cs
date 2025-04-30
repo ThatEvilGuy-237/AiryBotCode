@@ -1,10 +1,5 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AiryBotCode.Application.Services.User
 {
@@ -20,7 +15,6 @@ namespace AiryBotCode.Application.Services.User
 
             try
             {
-                // Go through each text channel in the guild
                 foreach (var channel in user.Guild.TextChannels)
                 {
                     // Fetch the most recent 100 messages from the channel
@@ -31,7 +25,7 @@ namespace AiryBotCode.Application.Services.User
                         .Where(m => m.Author.Id == user.Id && m.Timestamp >= cutoff)
                         .ToList();
 
-                    // Delete the messages in bulk if any are found
+                    // Delete the messages
                     if (userMessages.Count > 0)
                     {
                         await channel.DeleteMessagesAsync(userMessages);
@@ -46,8 +40,6 @@ namespace AiryBotCode.Application.Services.User
 
             return totalDeleted;
         }
-
-
 
         public async Task<ulong> GetAdminRole(SocketInteraction command)
         {

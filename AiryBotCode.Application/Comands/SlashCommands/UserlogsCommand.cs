@@ -82,7 +82,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
                 .Build();
 
-            var channel = (SocketTextChannel)await client.GetChannelAsync(_logservice.LogChannelId);
+            var channel = (SocketTextChannel)await client.GetChannelAsync(await _logservice.GetLogChannelId());
             await channel.SendMessageAsync(embed: embed, components: button);
             await command.FollowupAsync($"✅ Log has been created! {channel.Mention}", ephemeral: true);
         }
