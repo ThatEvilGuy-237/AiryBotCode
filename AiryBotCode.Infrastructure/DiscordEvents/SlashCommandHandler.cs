@@ -2,9 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
-using AiryBotCode.Events;
 
-namespace AiryBotCode.Infrastructure.Events
+namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class SlashCommandHandler : MyEventHandeler
     {
@@ -65,7 +64,6 @@ namespace AiryBotCode.Infrastructure.Events
             }
         }
 
-
         public async Task HandleInteractionAsync(SocketInteraction interaction)
         {
             if (interaction is not SocketSlashCommand command)
@@ -75,13 +73,8 @@ namespace AiryBotCode.Infrastructure.Events
             {
                 if (slashEvent.Command.Name == command.Data.Name)
                 {
-
                     if (slashEvent is ISlashEvent slashEventHandler)
                     {
-                        if (slashEvent is IClientAccess slasheventClient)
-                        {
-                            slasheventClient.SetClient(_client);
-                        }
                         await slashEventHandler.ExecuteSlashCommandAsync(command);
                         return;
                     }

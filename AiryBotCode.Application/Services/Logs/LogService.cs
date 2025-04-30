@@ -1,23 +1,44 @@
 ﻿using AiryBotCode.Application.Services.User;
 using Discord;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 namespace AiryBotCode.Application.Services.Loging
 {
-    public class LogService : ClientService
+    public class LogService
     {
-        public readonly ulong LogChannelId  = 1364679724269305967;
-        public readonly ulong ErrorChannelEvilId = 1364679746356514936;
-
-        public readonly UserService _userService;
-        public LogService(IServiceProvider serviceProvider) : base(serviceProvider)
+        private DiscordSocketClient _client;
+        public LogService(IServiceProvider serviceProvider)
         {
+            _client = serviceProvider.GetRequiredService<DiscordSocketClient>();
+        }
 
+        public async Task<ulong> GetLogChannelId()
+        {
+            var logChannelId = ulong.TryParse(Environment.GetEnvironmentVariable("LOGCHANNELID"), out var channelId) ? channelId : 0;
+            if (logChannelId == 0)
+            {
+                await ContactEvil(SimpleLog("ENV", "There is no LOGCHANNELID"), false);
+                return 0;
+            }
+            return logChannelId;
+        }
+
+        public async Task<ulong> GetErrorChannelEvilId()
+        {
+            var errorChannelEvilId = ulong.TryParse(Environment.GetEnvironmentVariable("EVILLOGCHANNELID"), out var channelId) ? channelId : 0;
+            if (errorChannelEvilId == 0)
+            {
+                Console.WriteLine($"[LogService] Error: EVILLOGCHANNELID not found in environment variables.");
+                return 0;
+            }
+            return errorChannelEvilId;
         }
 
         public async Task LogToMainChannel(SocketSlashCommand command, Embed message)
         {
-            var logChannel = _client.GetGuild(command.GuildId!.Value)?.GetTextChannel(LogChannelId);
+            var logChannel = _client.GetGuild(command.GuildId!.Value)?.GetTextChannel(await GetLogChannelId());
             if (logChannel == null)
             {
                 await ContactEvil(SimpleLog("LogChannel", "Log channel not found 'LogChannelId'"));
@@ -28,7 +49,7 @@ namespace AiryBotCode.Application.Services.Loging
         {
             string owner = ping ? (await GetEvilId()).ToString() : "";
 
-            var channel = (ITextChannel)await _client.GetChannelAsync(ErrorChannelEvilId);
+            var channel = (ITextChannel)await _client.GetChannelAsync(await GetErrorChannelEvilId());
 
             await channel.SendMessageAsync(
                 text: $"<@{owner}>",

@@ -1,5 +1,4 @@
 ﻿using AiryBotCode.Application.Services;
-using AiryBotCode.Events;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
@@ -7,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 
-namespace AiryBotCode.Infrastructure.Events
+namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class ButtonPressHandler : MyEventHandeler
     {
@@ -34,10 +33,6 @@ namespace AiryBotCode.Infrastructure.Events
                 {
                     if (Event is IButtonEvent buttonEvent)
                     {
-                        if (buttonEvent is IClientAccess EventClient)
-                        {
-                            EventClient.SetClient(_client);
-                        }
                         await buttonEvent.HandleButtonPressAsync(component, button);
                         return;
                     }

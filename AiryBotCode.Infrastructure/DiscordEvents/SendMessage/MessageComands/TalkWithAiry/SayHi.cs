@@ -1,11 +1,6 @@
 ﻿using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry
+namespace AiryBotCode.Infrastructure.DiscordEvents.SendMessage.MessageComands.TalkWithAiry
 {
 
     public class SayHi

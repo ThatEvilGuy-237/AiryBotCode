@@ -1,9 +1,8 @@
-﻿using AiryBotCode.Events;
-using AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry;
+﻿using AiryBotCode.Infrastructure.DiscordEvents.SendMessage.MessageComands.TalkWithAiry;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Infrastructure.Events
+namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class MessageSendHandler: MyEventHandeler
     {

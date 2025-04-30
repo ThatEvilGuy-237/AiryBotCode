@@ -23,10 +23,10 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             new() { Name = "Mute", Value = "Mute" }
         };
 
-        public UserlogsCommand(IServiceProvider service) : base()
+        public UserlogsCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             Name = "userlog";
-            _logservice = service.GetRequiredService<LogService>();
+            _logservice = serviceProvider.GetRequiredService<LogService>();
         }
 
         public override SlashCommandBuilder GetCommand()
@@ -38,7 +38,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 .AddOption("target", ApplicationCommandOptionType.User, "Target user", true);
         }
 
-        public async Task<bool> HandleSlashCommand(SocketSlashCommand command, DiscordSocketClient client)
+        public async Task<bool> HandleSlashCommand(SocketSlashCommand command)
         {
             var typeString = command.Data.Options.FirstOrDefault(o => o.Name == "type")?.Value?.ToString();
             LogInfo logInfo = new LogInfo()
@@ -53,11 +53,11 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 return false;
             }
             await command.RespondAsync($"Prossessing..", ephemeral: true);
-            await SendUserLog(command, client, logInfo);
+            await SendUserLog(command, logInfo);
             return true;
         }
 
-        public async Task SendUserLog(SocketSlashCommand command, DiscordSocketClient client, LogInfo logInfo)
+        public async Task SendUserLog(SocketSlashCommand command, LogInfo logInfo)
         {
             var buttonEncripter = new ButtonEncriptionService
             {
@@ -82,7 +82,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
                 .Build();
 
-            var channel = (SocketTextChannel)await client.GetChannelAsync(_logservice.LogChannelId);
+            var channel = (SocketTextChannel)await _client.GetChannelAsync(await _logservice.GetLogChannelId());
             await channel.SendMessageAsync(embed: embed, components: button);
             await command.FollowupAsync($"✅ Log has been created! {channel.Mention}", ephemeral: true);
         }
@@ -120,9 +120,9 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             return true;
         }
 
-        public async Task<UserlogFormInfo> HandleForm(SocketModal modal, DiscordSocketClient client, ButtonEncriptionService buttonEncription)
+        public async Task<UserlogFormInfo> HandleForm(SocketModal modal, ButtonEncriptionService buttonEncription)
         {
-            var channel = client.GetChannel(buttonEncription.ChannelsId[0]) as IMessageChannel;
+            var channel = _client.GetChannel(buttonEncription.ChannelsId[0]) as IMessageChannel;
             var message = await channel?.GetMessageAsync(buttonEncription.MessagesId[0]) as IUserMessage;
             UserlogFormInfo info = new UserlogFormInfo()
             {

@@ -12,9 +12,8 @@ using System.Threading.Channels;
 
 namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
 {
-    public class TimeoutEvent : EvilEvent, ISlashEvent, IClientAccess
+    public class TimeoutEvent : EvilEvent, ISlashEvent
     {
-        protected DiscordSocketClient _client;
         protected UserlogsCommand userlogsCommand;
         protected IConfigurationReader _config;
         public TimeoutEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
@@ -25,10 +24,9 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
         }
         public async Task ExecuteSlashCommandAsync(SocketSlashCommand command)
         {
-            if (_client == null) throw new Exception("No cient assinged");
 
             TimeoutCommand timeoutCommand = (TimeoutCommand)Command;
-            TimeoutInfo info = await timeoutCommand.TimeoutUser(command, _client);
+            TimeoutInfo info = await timeoutCommand.TimeoutUser(command);
             if(info.Target != null || info.Duration != 0)
             {
 
@@ -37,12 +35,7 @@ namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
             var message = $"Timed out for {info.Duration} minutes." +
               (info.MessagesCleared > 0 ? $" Messages cleared: {info.MessagesCleared}" : "");
             var log = new LogInfo(LogType.Timeout, info.Target, info.Reason, message);
-            await userlogsCommand.SendUserLog(command, _client, log);
-        }
-
-        public void SetClient(DiscordSocketClient client)
-        {
-            _client = client;
+            await userlogsCommand.SendUserLog(command, log);
         }
     }
 }

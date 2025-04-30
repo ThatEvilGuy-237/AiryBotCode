@@ -1,8 +1,8 @@
 ﻿using AiryBotCode.Application;
-using AiryBotCode.Events.SendMessage.MessageComands.TalkWithAiry;
 using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Configuration;
-using AiryBotCode.Infrastructure.Events;
+using AiryBotCode.Infrastructure.DiscordEvents;
+using AiryBotCode.Infrastructure.DiscordEvents.SendMessage.MessageComands.TalkWithAiry;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 

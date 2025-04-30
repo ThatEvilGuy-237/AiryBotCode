@@ -1,12 +1,16 @@
 ﻿using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Application.Comands
 {
     public class EvilCommand
     {
+        protected readonly DiscordSocketClient _client;
         public string Name { get; protected set; } = "none";
-        public EvilCommand()
+        public EvilCommand(IServiceProvider serviceProvider)
         {
+            _client = serviceProvider.GetRequiredService<DiscordSocketClient>();
         }
         public virtual SlashCommandBuilder GetCommand()
         {

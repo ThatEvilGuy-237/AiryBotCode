@@ -1,6 +1,7 @@
 ﻿using AiryBotCode.Bot.Bots;
 using AiryBotCode.Bot.Interfaces;
 using AiryBotCode.Infrastructure.Registers;
+using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,8 +15,8 @@ namespace AiryBotCode.Bot.Registers
         {
             services = RegisterInfrastructure.RegisterServices(services);
             // Register required services
-            services.AddScoped<DiscordSocketClient>();
             services.AddScoped<IBot, AiryDevBot>();
+            services = AiryDevBot.CreateClientService(services);
             return services;
         }
 
