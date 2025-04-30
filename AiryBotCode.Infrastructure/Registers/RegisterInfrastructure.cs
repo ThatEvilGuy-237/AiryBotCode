@@ -1,5 +1,5 @@
 ﻿using AiryBotCode.Application;
-using AiryBotCode.Infrastructure.Activitys.SlashEvents;
+using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.DiscordEvents;
 using AiryBotCode.Infrastructure.DiscordEvents.SendMessage.MessageComands.TalkWithAiry;
@@ -33,6 +33,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<TimeoutEvent>();
             services.AddScoped<UntimeOutEvent>();
             services.AddScoped<UserlogsEvent>();
+            services.AddScoped<ReminderEvent>();
             return services;
         }
     }

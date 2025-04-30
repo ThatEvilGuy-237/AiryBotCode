@@ -5,7 +5,7 @@ using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
+namespace AiryBotCode.Infrastructure.Activitys
 {
     public class UntimeOutEvent : EvilEvent, ISlashEvent
     {

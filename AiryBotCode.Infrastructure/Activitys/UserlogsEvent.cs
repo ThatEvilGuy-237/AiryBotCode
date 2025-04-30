@@ -7,7 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
+namespace AiryBotCode.Infrastructure.Activitys
 {
     public class UserlogsEvent : EvilEvent, ISlashEvent, IButtonEvent, IFormEvent
     {

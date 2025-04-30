@@ -1,5 +1,5 @@
 ﻿using AiryBotCode.Application.Services;
-using AiryBotCode.Infrastructure.Activitys.SlashEvents;
+using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;

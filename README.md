@@ -70,6 +70,7 @@ After that:
 
 ## FUTURE UPGRADES AND IDEAS
 - [ ] Expend the readabilty and services
+- [ ] Await/async refacto to better using Task returns
 - [ ] Better way of using ENV
 - [ ] Better naming for command and events
 - [ ] Database per server insted of ENV file [low-priority]

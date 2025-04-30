@@ -1,7 +1,7 @@
 ﻿using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using AiryBotCode.Infrastructure.Activitys.SlashEvents;
 using AiryBotCode.Infrastructure.Interfaces;
+using AiryBotCode.Infrastructure.Activitys;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
@@ -17,6 +17,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 serviceProvider.GetRequiredService<TimeoutEvent>(),
                 serviceProvider.GetRequiredService<UntimeOutEvent>(),
                 serviceProvider.GetRequiredService<UserlogsEvent>(),
+                serviceProvider.GetRequiredService<ReminderEvent>(),
             };
         }
 
@@ -64,10 +65,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             }
         }
 
-        public async Task HandleInteractionAsync(SocketInteraction interaction)
+        public Task HandleInteractionAsync(SocketInteraction interaction)
         {
             if (interaction is not SocketSlashCommand command)
-                return;
+                return Task.CompletedTask;
 
             foreach (var slashEvent in _slashEvents)
             {
@@ -75,10 +76,9 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 {
                     if (slashEvent is ISlashEvent slashEventHandler)
                     {
-                        await slashEventHandler.ExecuteSlashCommandAsync(command);
-                        return;
+                        return slashEventHandler.ExecuteSlashCommandAsync(command); 
                     }
-                    return;
+                    return Task.CompletedTask;
                 }
             }
 
