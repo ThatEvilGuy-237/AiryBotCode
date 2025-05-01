@@ -65,10 +65,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             }
         }
 
-        public Task HandleInteractionAsync(SocketInteraction interaction)
+        public async Task HandleInteractionAsync(SocketInteraction interaction)
         {
             if (interaction is not SocketSlashCommand command)
-                return Task.CompletedTask;
+                return;
 
             foreach (var slashEvent in _slashEvents)
             {
@@ -76,9 +76,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 {
                     if (slashEvent is ISlashEvent slashEventHandler)
                     {
-                        return slashEventHandler.ExecuteSlashCommandAsync(command); 
+                        await slashEventHandler.ExecuteSlashCommandAsync(command);
+                        return;
                     }
-                    return Task.CompletedTask;
+                    return;
                 }
             }
 

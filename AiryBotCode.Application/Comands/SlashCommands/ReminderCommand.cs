@@ -43,15 +43,26 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         public async Task SendReminderEditor(Reminder reminder, SocketSlashCommand command)
         {
             // Build the embed
+            string taskListDisplay = reminder.Tasks.Count == 0
+            ? "*No tasks assigned.*"
+            : string.Join("\n", reminder.Tasks.Select((t, i) =>
+             $"{(t.IsCompleted ? "✅" : "⬜")} **Task {i + 1}:** {t.Task}"));
+
             var embed = new EmbedBuilder()
-                .WithTitle($"🕒 Reminder: {reminder.Title}")
-                .WithDescription(reminder.Description ?? "No description provided.")
-                .AddField("⏰ Reminder Time","`" + reminder.ReminderTime.ToString("f") + "`", true)
-                .AddField("👤 Created by", $"<@{reminder.UserId}>", true)
-                .WithColor(Color.Gold)
-                .WithFooter(footer => footer.Text = "Reminder System")
-                .WithTimestamp(DateTime.UtcNow)
-                .Build();
+             .WithTitle("⏰ Reminder Set!")
+             .AddField("📝 Description",
+                 string.IsNullOrWhiteSpace(reminder.Description)
+                     ? "*No description provided.*"
+                     : reminder.Description,
+                 false)
+             .AddField("📋 Tasks", taskListDisplay, false)
+             .AddField("👤 Created by", $"<@{reminder.UserId}>", true)
+             .AddField("🗓️ Reminder Time", reminder.ReminderTime.ToString("g"), true)
+             .WithColor(Color.Gold)
+             .WithThumbnailUrl("https://cdn-icons-png.flaticon.com/512/4893/4893024.png")
+             .WithFooter(footer => footer.Text = "⏳ Reminder System")
+             .WithTimestamp(DateTime.UtcNow)
+             .Build();
 
             // Create the "Edit" button
             var component = new ComponentBuilder()
@@ -61,7 +72,6 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             // Send the embed with the button to the channel
             await command.RespondAsync(embed: embed, components: component);
         }
-
 
 
         private TimeSpan? ParseTimeSpan(string input)

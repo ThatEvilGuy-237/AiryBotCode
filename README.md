@@ -74,7 +74,7 @@ After that:
 - [ ] Better way of using ENV
 - [ ] Better naming for command and events
 - [ ] Database per server insted of ENV file [low-priority]
-- ~~[ ] Tests?? XD~~
+- [ ] ~~Tests?? XD~~
 
 # Current ENV file:
 - DISCORD_AIRYBOT_TOKEN=[DISCORD_TOKEN]
