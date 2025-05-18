@@ -9,11 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.Activitys
 {
-    public class UserlogsEvent : EvilEvent, ISlashEvent, IButtonEvent, IFormEvent
+    public class UserlogsAction : EvilAction, ISlashAction, IButtonAction, IFormAction
     {
         protected IConfigurationReader _config;
 
-        public UserlogsEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
+        public UserlogsAction(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
             base(serviceProvider.GetRequiredService<UserlogsCommand>(), serviceProvider)
         {
             _config = configuration;

@@ -12,10 +12,10 @@ using System.Threading.Channels;
 
 namespace AiryBotCode.Infrastructure.Activitys
 {
-    public class ReminderEvent : EvilEvent, ISlashEvent
+    public class ReminderAction : EvilAction, ISlashAction
     {
         protected IConfigurationReader _config;
-        public ReminderEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
+        public ReminderAction(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
             base(serviceProvider.GetRequiredService<ReminderCommand>(), serviceProvider)
         {
             _config = configuration;

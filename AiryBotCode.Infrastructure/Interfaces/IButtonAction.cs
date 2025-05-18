@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Infrastructure.Interfaces
 {
-    public interface IButtonEvent
+    public interface IButtonAction
     {
         Task HandleButtonPressAsync(SocketMessageComponent component, ButtonEncriptionService buttonEncription);
     }

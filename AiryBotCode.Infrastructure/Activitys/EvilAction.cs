@@ -4,11 +4,11 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Infrastructure.Activitys
 {
-    public abstract class EvilEvent
+    public abstract class EvilAction
     {
         public EvilCommand Command { get; }
         protected SlashCommandBuilder commandBuilder;
-        protected EvilEvent(EvilCommand command, IServiceProvider serviceProvider)
+        protected EvilAction(EvilCommand command, IServiceProvider serviceProvider)
         {
             Command = command;
         }

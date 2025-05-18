@@ -8,11 +8,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.Activitys
 {
-    public class TimeoutEvent : EvilEvent, ISlashEvent
+    public class TimeoutAction : EvilAction, ISlashAction
     {
         protected UserlogsCommand userlogsCommand;
         protected IConfigurationReader _config;
-        public TimeoutEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
+        public TimeoutAction(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
             base(serviceProvider.GetRequiredService<TimeoutCommand>(), serviceProvider)
         {
             userlogsCommand = serviceProvider.GetRequiredService<UserlogsCommand>();

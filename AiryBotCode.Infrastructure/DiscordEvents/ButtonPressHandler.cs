@@ -10,14 +10,15 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class ButtonPressHandler : MyEventHandeler
     {
-        private readonly List<EvilEvent> _buttonEvents;
+        private List<EvilAction> _buttonEvents;
+
+        public void AssignActions(List<EvilAction> events)
+        {
+            _buttonEvents = events.OfType<IButtonAction>().Cast<EvilAction>().ToList();
+        }
 
         public ButtonPressHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _buttonEvents = new List<EvilEvent>
-            {
-                serviceProvider.GetRequiredService<UserlogsEvent>(),
-            };
         }
 
         public async Task HandleButtonInteraction(SocketMessageComponent component)
@@ -31,7 +32,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             {
                 if (Event.Command.Name == button.CommandName)
                 {
-                    if (Event is IButtonEvent buttonEvent)
+                    if (Event is IButtonAction buttonEvent)
                     {
                         await buttonEvent.HandleButtonPressAsync(component, button);
                         return;
