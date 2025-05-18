@@ -1,22 +1,18 @@
 ﻿using AiryBotCode.Application.Comands;
-using AiryBotCode.Application.Comands;
 using AiryBotCode.Application.Comands.SlashCommands;
 using AiryBotCode.Domain.Entities;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Interfaces;
-using AiryBotCode.Tool.Frontend;
-using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Channels;
 
-namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
+namespace AiryBotCode.Infrastructure.Activitys
 {
-    public class TimeoutEvent : EvilEvent, ISlashEvent
+    public class TimeoutAction : EvilAction, ISlashAction
     {
         protected UserlogsCommand userlogsCommand;
         protected IConfigurationReader _config;
-        public TimeoutEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
+        public TimeoutAction(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
             base(serviceProvider.GetRequiredService<TimeoutCommand>(), serviceProvider)
         {
             userlogsCommand = serviceProvider.GetRequiredService<UserlogsCommand>();

@@ -1,5 +1,5 @@
 ﻿using AiryBotCode.Application.Services;
-using AiryBotCode.Infrastructure.Activitys.SlashEvents;
+using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,14 +8,15 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class FormHandler : MyEventHandeler
     {
-        private readonly List<EvilEvent> _formEvents;
+        private List<EvilAction> _formEvents;
+
+        public void AssignActions(List<EvilAction> events)
+        {
+            _formEvents = events.OfType<IFormAction>().Cast<EvilAction>().ToList();
+        }
 
         public FormHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            _formEvents = new List<EvilEvent>
-            {
-                serviceProvider.GetRequiredService<UserlogsEvent>(),
-            };
         }
 
         public async Task HandleFormInteraction(SocketModal modal)
@@ -28,7 +29,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             {
                 if (Event.Command.Name == button.CommandName)
                 {
-                    if (Event is IFormEvent formEvent)
+                    if (Event is IFormAction formEvent)
                     {
                         await formEvent.HanndelFormAsync(modal, button);
                         return;

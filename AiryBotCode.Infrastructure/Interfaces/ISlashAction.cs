@@ -2,7 +2,7 @@
 
 namespace AiryBotCode.Infrastructure.Interfaces
 {
-    public interface ISlashEvent
+    public interface ISlashAction
     {
         Task RegisterCommandAsync(IReadOnlyCollection<SocketGuild?> socketGuilds);
         Task RemoveCommandAsync(IReadOnlyCollection<SocketGuild?> socketGuilds);

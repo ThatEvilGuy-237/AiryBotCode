@@ -1,23 +1,21 @@
-﻿using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using AiryBotCode.Infrastructure.Activitys.SlashEvents;
+﻿using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class SlashCommandHandler : MyEventHandeler
     {
-        private readonly List<EvilEvent> _slashEvents;
+        private List<EvilAction> _slashAction;
+        public void AssignActions(List<EvilAction> events)
+        {
+            _slashAction = events.OfType<ISlashAction>().Cast<EvilAction>().ToList();
+        }
 
         public SlashCommandHandler(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            _slashEvents = new List<EvilEvent>
-            {
-                serviceProvider.GetRequiredService<TimeoutEvent>(),
-                serviceProvider.GetRequiredService<UntimeOutEvent>(),
-                serviceProvider.GetRequiredService<UserlogsEvent>(),
-            };
         }
 
         public async Task RegisterCommandsAsync()
@@ -38,7 +36,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             }
 
             // Register new commands
-            foreach (var slashEvent in _slashEvents)
+            foreach (var slashEvent in _slashAction)
             {
                 await slashEvent.RegisterCommandAsync(guilds);
             }
@@ -69,11 +67,11 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             if (interaction is not SocketSlashCommand command)
                 return;
 
-            foreach (var slashEvent in _slashEvents)
+            foreach (var slashEvent in _slashAction)
             {
                 if (slashEvent.Command.Name == command.Data.Name)
                 {
-                    if (slashEvent is ISlashEvent slashEventHandler)
+                    if (slashEvent is ISlashAction slashEventHandler)
                     {
                         await slashEventHandler.ExecuteSlashCommandAsync(command);
                         return;

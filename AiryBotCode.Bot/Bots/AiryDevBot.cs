@@ -6,57 +6,36 @@ using System.Reflection;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Bot.Interfaces;
 using AiryBotCode.Infrastructure.DiscordEvents;
+using AiryBotCode.Infrastructure.Activitys;
 
 namespace AiryBotCode.Bot.Bots
 {
-    public class AiryDevBot : IBot
+    public class AiryDevBot : Bot
     {
-        private readonly DiscordSocketClient _client;
-        private readonly CommandService _commands;
-        private readonly IConfigurationReader _configuration;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly MessageSendHandler _messageSendHandler;
-        private readonly SlashCommandHandler _slashCommandHandler;
-        private readonly ButtonPressHandler _buttonPressHandler;
-        private readonly FormHandler _formHandler;
-        //private readonly JoinServerHandler _joinServerHandler;
-        public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider)
+        public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider) 
+            : base(serviceProvider, configuration)
         {
-            _configuration = configuration;
-            _serviceProvider = serviceProvider;
-
-            _client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
-            _commands = _serviceProvider.GetRequiredService<CommandService>();
-            // EVENTS init
-            _messageSendHandler = _serviceProvider.GetRequiredService<MessageSendHandler>();
-            _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
-            _buttonPressHandler = _serviceProvider.GetRequiredService<ButtonPressHandler>();
-            _formHandler = _serviceProvider.GetRequiredService<FormHandler>();
-            //_joinServerHandler = _serviceProvider.GetRequiredService<JoinServerHandler>();
-
+            List<EvilAction> actions = GetWantedActions(serviceProvider);
+            _slashCommandHandler.AssignActions(actions);
+            _messageSendHandler.AssignActions(actions);
+            _buttonPressHandler.AssignActions(actions);
+            _formHandler.AssignActions(actions);
         }
-        // Create a gloabal client service
-        public static IServiceCollection CreateClientService(IServiceCollection services)
+        // Assing wanted actions to the bot
+        // The interfaces of the action will auto assing the action to the correct event handler
+        private List<EvilAction> GetWantedActions(IServiceProvider serviceProvider)
         {
-            var config = new DiscordSocketConfig
+            List<EvilAction> actions = new List<EvilAction>
             {
-                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers
+                serviceProvider.GetRequiredService<UserlogsAction>(),
+                serviceProvider.GetRequiredService<TimeoutAction>(),
+                serviceProvider.GetRequiredService<UntimeOutAction>(),
+                serviceProvider.GetRequiredService<ReminderAction>(),
             };
-            services.AddSingleton(sp =>
-            {
-                var config = new DiscordSocketConfig
-                {
-                    GatewayIntents = GatewayIntents.Guilds |
-                                     GatewayIntents.GuildMessages |
-                                     GatewayIntents.MessageContent |
-                                     GatewayIntents.GuildMembers
-                };
-                return new DiscordSocketClient(config);
-            });
-
-            return services;
+            return actions;
         }
-        public async Task StartAsync(IServiceProvider services)
+            
+        public override async Task StartAsync(IServiceProvider services)
         {
             var discordToken = _configuration.GetBotToken();
             await _client.LoginAsync(TokenType.Bot, discordToken);
@@ -65,14 +44,13 @@ namespace AiryBotCode.Bot.Bots
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
             // Assign Event liseners
             _client.Ready += _slashCommandHandler.RegisterCommandsAsync;
-            _client.MessageReceived += _messageSendHandler.HandleCommandAsync;
+            _client.MessageReceived += _messageSendHandler.HandelMessageSend;
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
             _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
             _client.ModalSubmitted += _formHandler.HandleFormInteraction;
-            //_client.UserJoined += _joinServerHandler.OnUserJoined;
         }
 
-        public async Task StopAsync()
+        public override async Task StopAsync()
         {
             if (_client != null)
             {

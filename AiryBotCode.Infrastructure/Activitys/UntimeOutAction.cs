@@ -5,12 +5,12 @@ using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Infrastructure.Activitys.SlashEvents
+namespace AiryBotCode.Infrastructure.Activitys
 {
-    public class UntimeOutEvent : EvilEvent, ISlashEvent
+    public class UntimeOutAction : EvilAction, ISlashAction
     {
         protected IConfigurationReader _config;
-        public UntimeOutEvent(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
+        public UntimeOutAction(IServiceProvider serviceProvider, IConfigurationReader configuration) : 
             base(serviceProvider.GetRequiredService<UntimeoutCommand>(), serviceProvider)
         {
             _config = configuration;

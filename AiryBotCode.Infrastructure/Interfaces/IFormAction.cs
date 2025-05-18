@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Infrastructure.Interfaces
 {
-    public interface IFormEvent
+    public interface IFormAction
     {
         Task HanndelFormAsync(SocketModal modal, ButtonEncriptionService buttonEncription);
     }

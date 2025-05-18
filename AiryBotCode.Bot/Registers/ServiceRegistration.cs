@@ -15,7 +15,7 @@ namespace AiryBotCode.Bot.Registers
         {
             services = RegisterInfrastructure.RegisterServices(services);
             // Register required services
-            services.AddScoped<IBot, AiryDevBot>();
+            services.AddScoped<AiryDevBot>();
             services = AiryDevBot.CreateClientService(services);
             return services;
         }
