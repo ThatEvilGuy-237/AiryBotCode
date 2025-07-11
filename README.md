@@ -1,4 +1,4 @@
-# AiryBotCode
+# Airy Discord Bot Code
 
 ## Project Overview
 
