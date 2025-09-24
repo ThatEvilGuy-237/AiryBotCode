@@ -21,6 +21,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<ButtonPressHandler>();
             services.AddScoped<FormHandler>();
             services.AddScoped<CommandService>();
+            services.AddScoped<BanHandler>();
             // command and events 
             services = RegisterEvents(services);
             return services;
@@ -33,6 +34,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<UntimeOutAction>();
             services.AddScoped<UserlogsAction>();
             services.AddScoped<ReminderAction>();
+            services.AddScoped<VerifyUserAgeAction>();
             return services;
         }
     }

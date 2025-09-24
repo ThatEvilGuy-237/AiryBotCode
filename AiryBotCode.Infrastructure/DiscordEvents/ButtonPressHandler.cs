@@ -2,24 +2,23 @@
 using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
-    public class ButtonPressHandler : MyEventHandeler
+    public class ButtonPressHandler : EvilEventHandler
     {
         private List<EvilAction> _buttonEvents;
-
-        public void AssignActions(List<EvilAction> events)
-        {
-            _buttonEvents = events.OfType<IButtonAction>().Cast<EvilAction>().ToList();
-        }
 
         public ButtonPressHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
+
+        public void AssignActions(List<EvilAction> events)
+        {
+            _buttonEvents = events.OfType<IButtonAction>().Cast<EvilAction>().ToList();
+            Console.WriteLine("ButtonPressHandler");
+        }
+
 
         public async Task HandleButtonInteraction(SocketMessageComponent component)
         {

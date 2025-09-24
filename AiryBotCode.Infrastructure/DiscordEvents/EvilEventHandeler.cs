@@ -3,11 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
-    public class MyEventHandeler
+    public class EvilEventHandler
     {
         protected DiscordSocketClient _client;
         protected readonly IServiceProvider _serviceProvider;
-        public MyEventHandeler(IServiceProvider serviceProvider)
+        public EvilEventHandler(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
             _client = serviceProvider.GetRequiredService<DiscordSocketClient>();

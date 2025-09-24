@@ -21,6 +21,7 @@ namespace AiryBotCode.Application
             services.AddScoped<UntimeoutCommand>();
             services.AddScoped<UserlogsCommand>();
             services.AddScoped<ReminderCommand>();
+            services.AddScoped<VerifyUserAgeCommand>();
 
             // SERIVCES
             services.AddScoped<UserService>();

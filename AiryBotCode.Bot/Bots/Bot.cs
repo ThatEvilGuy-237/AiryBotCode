@@ -2,11 +2,6 @@
 using Discord.WebSocket;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.DiscordEvents;
 using Discord.Commands;
@@ -23,6 +18,7 @@ namespace AiryBotCode.Bot.Bots
         protected readonly SlashCommandHandler _slashCommandHandler;
         protected readonly ButtonPressHandler _buttonPressHandler;
         protected readonly FormHandler _formHandler;
+        protected readonly BanHandler _banHandler;
 
         public Bot(IServiceProvider serviceProvider, IConfigurationReader configuration)
         {
@@ -36,13 +32,14 @@ namespace AiryBotCode.Bot.Bots
             _slashCommandHandler = _serviceProvider.GetRequiredService<SlashCommandHandler>();
             _buttonPressHandler = _serviceProvider.GetRequiredService<ButtonPressHandler>();
             _formHandler = _serviceProvider.GetRequiredService<FormHandler>();
+            _banHandler = _serviceProvider.GetRequiredService<BanHandler>();
         }
         // Create a gloabal client service
         public static IServiceCollection CreateClientService(IServiceCollection services)
         {
             var config = new DiscordSocketConfig
             {
-                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers
+                GatewayIntents = GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent | GatewayIntents.GuildMembers | GatewayIntents.GuildBans
             };
             services.AddSingleton(sp =>
             {
@@ -51,7 +48,7 @@ namespace AiryBotCode.Bot.Bots
                     GatewayIntents = GatewayIntents.Guilds |
                                      GatewayIntents.GuildMessages |
                                      GatewayIntents.MessageContent |
-                                     GatewayIntents.GuildMembers
+                                     GatewayIntents.GuildMembers | GatewayIntents.GuildBans
                 };
                 return new DiscordSocketClient(config);
             });

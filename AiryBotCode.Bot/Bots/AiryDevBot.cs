@@ -20,6 +20,8 @@ namespace AiryBotCode.Bot.Bots
             _messageSendHandler.AssignActions(actions);
             _buttonPressHandler.AssignActions(actions);
             _formHandler.AssignActions(actions);
+            _banHandler.AssignActions(actions);
+
         }
         // Assing wanted actions to the bot
         // The interfaces of the action will auto assing the action to the correct event handler
@@ -30,7 +32,8 @@ namespace AiryBotCode.Bot.Bots
                 serviceProvider.GetRequiredService<UserlogsAction>(),
                 serviceProvider.GetRequiredService<TimeoutAction>(),
                 serviceProvider.GetRequiredService<UntimeOutAction>(),
-                serviceProvider.GetRequiredService<ReminderAction>(),
+                serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
+                //serviceProvider.GetRequiredService<ReminderAction>(),
             };
             return actions;
         }
@@ -48,6 +51,8 @@ namespace AiryBotCode.Bot.Bots
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
             _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
             _client.ModalSubmitted += _formHandler.HandleFormInteraction;
+            _client.UserBanned += _banHandler.HandleInteractionAsync;
+
         }
 
         public override async Task StopAsync()
