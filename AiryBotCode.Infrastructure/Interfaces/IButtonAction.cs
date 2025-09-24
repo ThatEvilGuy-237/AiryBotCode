@@ -4,8 +4,8 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Infrastructure.Interfaces
 {
-    public interface IButtonAction
+    public interface IBanAction
     {
-        Task HandleButtonPressAsync(SocketMessageComponent component, ButtonEncriptionService buttonEncription);
+        Task HandleBanAsync(SocketUser user, SocketGuild guild);
     }
 }

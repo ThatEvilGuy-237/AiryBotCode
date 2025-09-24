@@ -1,0 +1,8 @@
+services:
+  airybot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: europe-west1-docker.pkg.dev/melodic-map-460716-a1/airy-guardian/airybot:latest
+    env_file:
+      - ./AiryBotCode.Infrastructure/.env

@@ -4,12 +4,13 @@ using Discord.WebSocket;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
-    public class MessageSendHandler : MyEventHandeler
+    public class MessageSendHandler : EvilEventHandler
     {
         private List<EvilAction> _messageAction;
         public void AssignActions(List<EvilAction> events)
         {
             _messageAction = events.OfType<IMessageAction>().Cast<EvilAction>().ToList();
+            Console.WriteLine("MessageSendHandler");
         }
         public MessageSendHandler(IServiceProvider serviceProvider) : base(serviceProvider)
         {

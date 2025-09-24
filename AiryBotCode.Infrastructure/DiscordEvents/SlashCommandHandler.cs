@@ -5,12 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
-    public class SlashCommandHandler : MyEventHandeler
+    public class SlashCommandHandler : EvilEventHandler
     {
         private List<EvilAction> _slashAction;
         public void AssignActions(List<EvilAction> events)
         {
             _slashAction = events.OfType<ISlashAction>().Cast<EvilAction>().ToList();
+            Console.WriteLine("SlashCommandHandler");
         }
 
         public SlashCommandHandler(IServiceProvider serviceProvider)
@@ -73,6 +74,8 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 {
                     if (slashEvent is ISlashAction slashEventHandler)
                     {
+                        //TODO: [READ ABOUT RESPONSES TO USER]
+                        //await command.DeferAsync(ephemeral: true);
                         await slashEventHandler.ExecuteSlashCommandAsync(command);
                         return;
                     }

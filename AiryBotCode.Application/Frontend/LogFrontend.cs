@@ -63,6 +63,12 @@ namespace AiryBotCode.Tool.Frontend
             };
             return userLog;
         }
+        public UserLogData SetUser(IUser user)
+        {
+            UserPing = user.Mention;
+            UserName = user.Username;
+            return this;
+        }
     }
     public static class LogFrontend
     {
@@ -128,7 +134,7 @@ namespace AiryBotCode.Tool.Frontend
             existingData.Reason = reason;
             existingData.Action = action;
             existingData.Consequences = consequences;
-
+            existingData.SetUser(modal.User);
             // Create the new embed with the updated data
             var newEmbed = CreateLogEmbed(existingData);
 

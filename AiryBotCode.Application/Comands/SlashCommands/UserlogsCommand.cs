@@ -1,13 +1,11 @@
-﻿using Discord.WebSocket;
-using Discord;
-using AiryBotCode.Tool.Frontend;
-using AiryBotCode.Application.Services;
-using AiryBotCode.Application.Services.User;
-using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel;
+﻿using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
+using AiryBotCode.Application.Services.User;
 using AiryBotCode.Domain.Entities;
-using System.Threading.Channels;
+using AiryBotCode.Tool.Frontend;
+using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Application.Comands.SlashCommands
 {
@@ -15,6 +13,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
     {
         public const string ActionEdit = "edit";
         protected LogService _logservice;
+        protected UserService _userService;
         private static readonly ApplicationCommandOptionChoiceProperties[] LogTypeChoices =
         {
             new() { Name = "Warning", Value = "Warning" },
@@ -27,6 +26,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         {
             Name = "userlog";
             _logservice = serviceProvider.GetRequiredService<LogService>();
+            _userService = serviceProvider.GetRequiredService<UserService>();
         }
 
         public override SlashCommandBuilder GetCommand()
@@ -86,12 +86,55 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             await channel.SendMessageAsync(embed: embed, components: button);
             await command.FollowupAsync($"✅ Log has been created! {channel.Mention}", ephemeral: true);
         }
+        public async Task SendUserLog(IUser user, LogInfo logInfo)
+        {
+            var buttonEncripter = new ButtonEncriptionService
+            {
+                CommandName = Name,
+                Action = ActionEdit,
+                UsersId = new List<ulong> { user.Id },
+                TargetsId = new List<ulong> { logInfo.Target.Id }
+            };
+
+            var logData = new UserLogData();
+            logData.SetUser(user);
+            logData.Type = logInfo.Type;
+            logData.SetTarget(logInfo.Target);
+            logData.Reason = logInfo.Reason;
+            logData.Action = logInfo.Action;
+            logData.Consequences = logInfo.Consequences;
+            logData = logData.Build();
+
+            var embed = LogFrontend.CreateLogEmbed(logData);
+
+            var buttonId = buttonEncripter.Encript();
+            var button = new ComponentBuilder()
+                .WithButton("Edit", customId: buttonId, ButtonStyle.Primary)
+                .Build();
+
+            var channel = (SocketTextChannel)await _client.GetChannelAsync(await _logservice.GetLogChannelId());
+            await channel.SendMessageAsync(embed: embed, components: button);
+        }
+
 
         public async Task<bool> HandelEditButton(SocketMessageComponent component, ButtonEncriptionService buttonEncription)
         {
             if (buttonEncription.Action != ActionEdit) return false;
+            ulong makerId = buttonEncription.UsersId.FirstOrDefault();
+            IUser makerUser = await _client.GetUserAsync(makerId);
+            bool hasAccessPass = false;
+            if (makerUser != null && makerUser.IsBot)
+            {
+                bool isAdmin = await _userService.UserIsAdmin(component);
+                if (!isAdmin)
+                {
+                    await component.RespondAsync("Only admins can edit logs created by bots.", ephemeral: true);
+                    return false;
+                }
+                hasAccessPass = true;
+            }
 
-            if (!buttonEncription.UsersId.Contains(component.User.Id))
+            if (!hasAccessPass && !buttonEncription.UsersId.Contains(component.User.Id))
             {
                 var usersAccess = string.Join(", ", buttonEncription.UsersId.Select(u => $"<@{u}>"));
                 await component.RespondAsync($"Only {usersAccess} can edit this message", ephemeral: true);

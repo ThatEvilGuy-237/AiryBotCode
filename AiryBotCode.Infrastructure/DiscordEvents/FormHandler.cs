@@ -6,13 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
-    public class FormHandler : MyEventHandeler
+    public class FormHandler : EvilEventHandler
     {
         private List<EvilAction> _formEvents;
 
         public void AssignActions(List<EvilAction> events)
         {
             _formEvents = events.OfType<IFormAction>().Cast<EvilAction>().ToList();
+            Console.WriteLine("FormHandler");
         }
 
         public FormHandler(IServiceProvider serviceProvider) : base(serviceProvider)
