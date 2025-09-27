@@ -48,10 +48,10 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             }
 
             // Check permissions
-            if (!await userService.UserIsAdmin(command))
-            {
-                return info;
-            }
+            //if (!await userService.UserIsAdmin(command))
+            //{
+            //    return info;
+            //}
 
             // Remove timeout
             await userService.UntimeOut(command, info.Target);

@@ -35,6 +35,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<UserlogsAction>();
             services.AddScoped<ReminderAction>();
             services.AddScoped<VerifyUserAgeAction>();
+            services.AddScoped<ContactUserAction>();
             return services;
         }
     }

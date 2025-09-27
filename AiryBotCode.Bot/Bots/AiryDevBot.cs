@@ -33,6 +33,7 @@ namespace AiryBotCode.Bot.Bots
                 serviceProvider.GetRequiredService<TimeoutAction>(),
                 serviceProvider.GetRequiredService<UntimeOutAction>(),
                 serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
+                serviceProvider.GetRequiredService<ContactUserAction>(),
                 //serviceProvider.GetRequiredService<ReminderAction>(),
             };
             return actions;

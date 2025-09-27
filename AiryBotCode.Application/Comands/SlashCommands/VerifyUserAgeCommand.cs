@@ -11,13 +11,11 @@ namespace AiryBotCode.Application.Comands.SlashCommands
     public class VerifyUserAgeCommand : EvilCommand
     {
         public const string ActionEdit = "edit";
-        protected LogService _logservice;
         protected UserService _userService;
 
         public VerifyUserAgeCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             Name = "verif";
-            _logservice = serviceProvider.GetRequiredService<LogService>();
             _userService = serviceProvider.GetRequiredService<UserService>();
         }
 
@@ -40,10 +38,10 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 // The staff/admin who ran the command
                 var executedBy = command.User as SocketGuildUser;
 
-                if (!await _userService.UserIsAdmin(command))
-                {
-                    throw new Exception("not valdig input");
-                }
+                //if (!await _userService.UserIsAdmin(command))
+                //{
+                //    throw new Exception("not valdig input");
+                //}
                 // The target user passed as option
                 var targetOption = command.Data.Options.FirstOrDefault(opt => opt.Name == "target")?.Value as SocketGuildUser;
                 if (executedBy == null || targetOption == null)

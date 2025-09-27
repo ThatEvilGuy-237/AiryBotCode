@@ -55,11 +55,11 @@ namespace AiryBotCode.Application.Comands
                 throw new Exception("not valdig input");
             }
 
-            // Check permissions
-            if (!await userService.UserIsAdmin(command))
-            {
-                throw new Exception("not valdig input");
-            }
+            //// Check permissions
+            //if (!await userService.UserIsAdmin(command))
+            //{
+            //    throw new Exception("not valdig input");
+            //}
             // responde before calculations
             var timeoutEnd = DateTimeOffset.UtcNow.AddMinutes(durationMinutes);
 

@@ -22,6 +22,7 @@ namespace AiryBotCode.Application
             services.AddScoped<UserlogsCommand>();
             services.AddScoped<ReminderCommand>();
             services.AddScoped<VerifyUserAgeCommand>();
+            services.AddScoped<ContactUserCommand>();
 
             // SERIVCES
             services.AddScoped<UserService>();
