@@ -1,6 +1,6 @@
 ﻿using AiryBotCode.Application.Comands;
+using AiryBotCode.Application.Comands.ConversationalInteractions;
 using AiryBotCode.Application.Comands.SlashCommands;
-using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +23,8 @@ namespace AiryBotCode.Application
             services.AddScoped<ReminderCommand>();
             services.AddScoped<VerifyUserAgeCommand>();
             services.AddScoped<ContactUserCommand>();
+            // MESSAGE SEND
+            services.AddScoped<TalkToAiry>();
 
             // SERIVCES
             services.AddScoped<UserService>();

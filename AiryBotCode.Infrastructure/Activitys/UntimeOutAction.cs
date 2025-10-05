@@ -18,7 +18,7 @@ namespace AiryBotCode.Infrastructure.Activitys
         public async Task ExecuteSlashCommandAsync(SocketSlashCommand command)
         {
             UntimeoutCommand timeoutCommand = (UntimeoutCommand)Command;
-            UntimeOutInfo info = await timeoutCommand.UntimeoutUser(command);
+            UntimeoutInfo info = await timeoutCommand.UntimeoutUser(command);
         }
     }
 }

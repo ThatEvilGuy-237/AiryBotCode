@@ -19,6 +19,7 @@
   <None Update="..\AiryBotCode.Infrastructure\.env">
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </None>
+  <ProjectReference Include="..\AiryBotCode.AIModels\AiryBotCode.AIModels.csproj" />
     <ProjectReference Include="..\AiryBotCode.Domain\AiryBotCode.Domain.csproj" />
   </ItemGroup>
 </Project>
