@@ -17,7 +17,7 @@ namespace AiryBotCode.Bot.Bots
         {
             List<EvilAction> actions = GetWantedActions(serviceProvider);
             _slashCommandHandler.AssignActions(actions);
-            _messageSendHandler.AssignActions(actions);
+            //_messageSendHandler.AssignActions(actions);
             _buttonPressHandler.AssignActions(actions);
             _formHandler.AssignActions(actions);
             _banHandler.AssignActions(actions);
