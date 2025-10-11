@@ -45,6 +45,11 @@ namespace AiryBotCode.Bot.Bots
             var discordToken = _configuration.GetBotToken();
             await _client.LoginAsync(TokenType.Bot, discordToken);
             await _client.StartAsync();
+            _client.Ready += async () =>
+            {
+                Console.WriteLine("- Bot is fully connected and ready!");
+                Console.WriteLine("[Actions And Interactions] Registering...");
+            };
             // await _client.SetStatusAsync(UserStatus.Online);
             await _commands.AddModulesAsync(Assembly.GetExecutingAssembly(), services);
             // Assign Event liseners

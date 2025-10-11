@@ -1,28 +1,13 @@
-﻿using System;
+﻿using AiryBotCode.Domain.database;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace AiryBotCode.AIModels.Ollama
+namespace AiryBotCode.Application.Ollama
 {
-    public enum ChatRole
-    {
-        System,
-        User,
-        Assistant
-    }
-
-    public class Message
-    {
-        public ChatRole Role { get; set; }
-        public string Content { get; set; }
-        public string UserName { get; set; }
-    }
-
     public class OllamaClient
     {
         private readonly HttpClient _httpClient;
@@ -39,31 +24,11 @@ namespace AiryBotCode.AIModels.Ollama
             _httpClient = new HttpClient { BaseAddress = new Uri(_baseUrl) };
         }
 
-        //public void StartModelIfNotRunning()
-        //{
-        //    if (_ollamaProcess != null && !_ollamaProcess.HasExited)
-        //        return;
-
-        //    var startInfo = new ProcessStartInfo
-        //    {
-        //        FileName = "ollama",
-        //        Arguments = $"run {_modelName}",
-        //        UseShellExecute = true,
-        //        CreateNoWindow = false
-        //    };
-
-        //    _ollamaProcess = Process.Start(startInfo);
-
-        //    Console.WriteLine("boot in 10s");
-        //    Thread.Sleep(10000); // Wait for model to load (adjust if needed)
-        //}
-
         public async Task<string> SendMessageAsync(List<Message> messages)
         {
-            //StartModelIfNotRunning();
-
             var prompt = BuildPrompt(messages);
-
+            Console.WriteLine("[OLLAMA] prompt input:");
+            Console.WriteLine(prompt);
             var requestBody = new
             {
                 model = _modelName,
@@ -91,6 +56,8 @@ namespace AiryBotCode.AIModels.Ollama
             }
 
             var result = await response.Content.ReadFromJsonAsync<OllamaResponse>();
+            Console.WriteLine("[OLLAMA] Response:");
+            Console.WriteLine(result);
             return result?.Response ?? string.Empty;
         }
 
@@ -99,16 +66,16 @@ namespace AiryBotCode.AIModels.Ollama
             var prompt = "";
             foreach (var msg in messages)
             {
-                switch (msg.Role)
+                switch (msg.User.Role)
                 {
                     case ChatRole.System:
-                        prompt += $"[System]: {msg.Content}\n";
+                        prompt += $"[System]: {msg.Context}\n";
                         break;
                     case ChatRole.User:
-                        prompt += $"[User {msg.UserName}]: {msg.Content}\n";
+                        prompt += $"[User {msg.User.UserName}]: {msg.Context}\n";
                         break;
                     case ChatRole.Assistant:
-                        prompt += $"[Assistant]: {msg.Content}\n";
+                        prompt += $"[Assistant]: {msg.Context}\n";
                         break;
                 }
             }

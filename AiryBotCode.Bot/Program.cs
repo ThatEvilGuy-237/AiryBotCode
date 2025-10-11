@@ -27,7 +27,7 @@ namespace AiryBotCode
                 var bot = serviceProvider.GetRequiredService<AiryDevBot>();
                 await bot.StartAsync(serviceProvider);
 
-                Console.WriteLine("Connected to Discord");
+                Console.WriteLine("[DISCORD] Connecting to Discord...");
 
                 // Keep the app alive forever (Docker will stop it externally)
                 await Task.Delay(Timeout.Infinite);
