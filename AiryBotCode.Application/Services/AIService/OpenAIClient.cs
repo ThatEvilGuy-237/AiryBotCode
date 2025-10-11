@@ -11,7 +11,7 @@ namespace AiryBotCode.Application.Services.AIService
         private readonly string _apiKey;
 
         public OpenAIClient(string apiKey,
-            string modelName = "gpt-3.5-turbo")
+            string modelName = "gpt-4o")
         {
             _modelName = modelName;
             _apiKey = apiKey;

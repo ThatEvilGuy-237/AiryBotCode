@@ -3,6 +3,7 @@ using AiryBotCode.Domain.database;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Database.Interfaces;
 using AiryBotCode.Infrastructure.Interfaces;
+using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -61,12 +62,15 @@ namespace AiryBotCode.Infrastructure.Activitys
             }
             // Get or create chat user
             var chatUser = await _chatUserRepo.GetByIdAsync(message.Author.Id);
+            var guildChannel = message.Channel as SocketGuildChannel;
+            string serverName = guildChannel != null ? guildChannel.Guild.Name : "Direct Message";
+            string displayName = (message.Author as SocketGuildUser)?.Nickname ?? message.Author.Username;
             if (chatUser == null)
             {
                 chatUser = new ChatUser
                 {
                     Id = message.Author.Id,
-                    UserName = message.Author.Username,
+                    UserName = displayName,
                     Role = ChatRole.User,
                     CreatedAt = DateTime.UtcNow,
                     AiOpinion = "A friendly Discord user"
