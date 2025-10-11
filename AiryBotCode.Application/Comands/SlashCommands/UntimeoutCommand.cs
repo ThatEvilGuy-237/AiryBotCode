@@ -25,10 +25,10 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 .AddOption("target", ApplicationCommandOptionType.User, "Select the user to untimeout", isRequired: true);
         }
 
-        public async Task<UntimeOutInfo> UntimeoutUser(SocketSlashCommand command)
+        public async Task<UntimeoutInfo> UntimeoutUser(SocketSlashCommand command)
         {
             // Get user option
-            UntimeOutInfo info = new UntimeOutInfo()
+            UntimeoutInfo info = new UntimeoutInfo()
             {
                 Target = command.Data.Options.FirstOrDefault(o => o.Name == "target")?.Value as SocketGuildUser
             };

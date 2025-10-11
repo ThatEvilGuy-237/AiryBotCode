@@ -19,7 +19,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
         // TODO: this should be reworked to handel diffrent type of messages check that we want.
         public async Task HandelMessageSend(SocketMessage message)
         {
-            // somthing not realy needed now
+            // Skip messages from bots (including this bot itself)
+            if (message.Author.IsBot)
+                return;
+
             foreach (var Event in _messageAction)
             {
                 if (Event is IMessageAction messageEvent)
@@ -28,5 +31,6 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 }
             }
         }
+
     }
 }

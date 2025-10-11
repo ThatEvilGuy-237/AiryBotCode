@@ -4,7 +4,12 @@ namespace AiryBotCode.Infrastructure.Configuration
     public interface IConfigurationReader
     {
         void LoadConfig(string? path = null);
-        public string GetBotToken();
-        public ulong GetLogChannelId();
+        string GetBotToken();
+        ulong GetBotId();
+        ulong GetLogChannelId();
+        string GetSection(string key);
+        string GetDatabaseConnectionString();
+        string GetOpenAIApiKey();
     }
+
 }

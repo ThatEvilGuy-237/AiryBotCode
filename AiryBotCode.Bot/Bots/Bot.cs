@@ -24,7 +24,7 @@ namespace AiryBotCode.Bot.Bots
         {
             _configuration = configuration;
             _serviceProvider = serviceProvider;
-
+            Console.WriteLine("[DISCORD SOCKETS SETUP] Registering...");
             _client = _serviceProvider.GetRequiredService<DiscordSocketClient>();
             _commands = _serviceProvider.GetRequiredService<CommandService>();
             // EVENTS init

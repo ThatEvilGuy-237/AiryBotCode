@@ -40,6 +40,17 @@ namespace AiryBotCode.Infrastructure.Configuration
 
             return botToken;
         }
+        public ulong GetBotId()
+        {
+            string? botIdStr = Environment.GetEnvironmentVariable("DISCORD_AIRYBOT_ID");
+            // Validate the token
+            if (string.IsNullOrWhiteSpace(botIdStr))
+                throw new InvalidOperationException("Bot ID is missing. Ensure DISCORD_BOT_ID is set.");
+            // Try parse to ulong
+            if (!ulong.TryParse(botIdStr, out ulong botId))
+                throw new InvalidOperationException("Invalid bot ID. Ensure DISCORD_BOT_ID is a valid ulong.");
+            return botId;
+        }
         public string GetSection(string key)
         {
             string? value = _configuration[key];
@@ -61,6 +72,29 @@ namespace AiryBotCode.Infrastructure.Configuration
 
             return logChannelId;
         }
+        public string GetDatabaseConnectionString()
+        {
+            var host = Environment.GetEnvironmentVariable("DB_HOST");
+            var port = Environment.GetEnvironmentVariable("DB_PORT");
+            var name = Environment.GetEnvironmentVariable("DB_NAME");
+            var user = Environment.GetEnvironmentVariable("DB_USER");
+            var pass = Environment.GetEnvironmentVariable("DB_PASSWORD");
 
+            string connectionString = $"Host={host};Port={port};Database={name};Username={user};Password={pass}";
+            // Validate the token
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new InvalidOperationException("Database connection string is missing. Ensure DATABASE_CONNECTION_STRING is set.");
+            return connectionString;
+        }
+
+        public string GetOpenAIApiKey()
+        {
+            var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+            // Validate the token
+            if (string.IsNullOrWhiteSpace(apiKey))
+                throw new InvalidOperationException("OpenAI API key is missing. Ensure OPENAI_API_KEY is set.");
+            return apiKey;
+        }
     }
 }

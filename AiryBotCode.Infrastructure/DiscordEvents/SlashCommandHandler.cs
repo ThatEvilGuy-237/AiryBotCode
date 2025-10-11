@@ -41,6 +41,8 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             {
                 await slashEvent.RegisterCommandAsync(guilds);
             }
+            Console.WriteLine("- Commands Registerd!");
+            Console.WriteLine("BOT IS RUNNING CORRECTLY!");
         }
         public async Task ClearServerCommands(SocketGuild guild)
         {

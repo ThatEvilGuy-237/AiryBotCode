@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace AiryBotCode.Application.Services
+﻿namespace AiryBotCode.Application.Services
 {
     // encription: c:command|a:action|u:userId|al:allowedRoleId|t:targetId|ts:timestamp
     // example: c:edit|a:update|u:123456789|al:987654321|t:111111111|t:111111112|ts:12454548775757
