@@ -11,7 +11,7 @@ namespace AiryBotCode.Application.Services.AIService
         private readonly string _apiKey;
 
         public OpenAIClient(string apiKey,
-            string modelName = "gpt-4o")
+            string modelName = "gpt-4o-mini")
         {
             _modelName = modelName;
             _apiKey = apiKey;
@@ -32,11 +32,12 @@ namespace AiryBotCode.Application.Services.AIService
             {
                 model = _modelName,
                 messages = new[] { new { role = "system", content = prompt } },
-                max_tokens = 500
+                max_tokens = 800
             };
 
             HttpResponseMessage response;
-            int retries = 5;
+            int retries = 2;
+            int countTry = 0;
             while (true)
             {
                 try
@@ -47,12 +48,16 @@ namespace AiryBotCode.Application.Services.AIService
                 }
                 catch (HttpRequestException)
                 {
+                    countTry++;
                     if (retries-- <= 0) throw;
                     Console.WriteLine("OpenAI not ready, retrying in 1s...");
                     await Task.Delay(1000);
                 }
             }
-
+            if(countTry > 2)
+            {
+                return "Airy ren out of funds. :money:";
+            }
             var result = await response.Content.ReadFromJsonAsync<OpenAIResponse>();
             Console.WriteLine("[OpenAI] Response:");
             Console.WriteLine(result?.Choices[0]?.Message.Content);

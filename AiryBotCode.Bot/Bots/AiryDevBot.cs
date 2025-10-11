@@ -1,12 +1,8 @@
-﻿using Discord.Commands;
-using Discord.WebSocket;
+﻿using AiryBotCode.Infrastructure.Activitys;
+using AiryBotCode.Infrastructure.Configuration;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using AiryBotCode.Infrastructure.Configuration;
-using AiryBotCode.Bot.Interfaces;
-using AiryBotCode.Infrastructure.DiscordEvents;
-using AiryBotCode.Infrastructure.Activitys;
 
 namespace AiryBotCode.Bot.Bots
 {
@@ -17,7 +13,7 @@ namespace AiryBotCode.Bot.Bots
         {
             List<EvilAction> actions = GetWantedActions(serviceProvider);
             _slashCommandHandler.AssignActions(actions);
-            //_messageSendHandler.AssignActions(actions);
+            _messageSendHandler.AssignActions(actions);
             _buttonPressHandler.AssignActions(actions);
             _formHandler.AssignActions(actions);
             _banHandler.AssignActions(actions);
@@ -29,11 +25,11 @@ namespace AiryBotCode.Bot.Bots
         {
             List<EvilAction> actions = new List<EvilAction>
             {
-                serviceProvider.GetRequiredService<UserlogsAction>(),
-                serviceProvider.GetRequiredService<TimeoutAction>(),
-                serviceProvider.GetRequiredService<UntimeOutAction>(),
-                serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
-                serviceProvider.GetRequiredService<ContactUserAction>(),
+                //serviceProvider.GetRequiredService<UserlogsAction>(),
+                //serviceProvider.GetRequiredService<TimeoutAction>(),
+                //serviceProvider.GetRequiredService<UntimeOutAction>(),
+                //serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
+                //serviceProvider.GetRequiredService<ContactUserAction>(),
                 serviceProvider.GetRequiredService<TalkToAiryAction>(),
                 //serviceProvider.GetRequiredService<ReminderAction>(),
             };
@@ -55,10 +51,10 @@ namespace AiryBotCode.Bot.Bots
             // Assign Event liseners
             _client.Ready += _slashCommandHandler.RegisterCommandsAsync;
             _client.MessageReceived += _messageSendHandler.HandelMessageSend;
-            _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-            _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
-            _client.ModalSubmitted += _formHandler.HandleFormInteraction;
-            _client.UserBanned += _banHandler.HandleInteractionAsync;
+            //_client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
+            //_client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
+            //_client.ModalSubmitted += _formHandler.HandleFormInteraction;
+            //_client.UserBanned += _banHandler.HandleInteractionAsync;
 
         }
 

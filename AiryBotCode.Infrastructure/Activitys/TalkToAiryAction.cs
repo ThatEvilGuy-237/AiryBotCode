@@ -33,7 +33,7 @@ namespace AiryBotCode.Infrastructure.Activitys
         public async Task HandleMessageReceivedAsync(SocketMessage message)
         {
             if (!message.Content.Contains($"<@{_config.GetBotId()}>")) return;
-
+            if(message.Channel.Id != 1422972239808299098) return; // Ignore bot spam channel
             // Get or create conversation
             var conv = await _channelConversationRepo.GetByChannelIdAsync(message.Channel.Id);
             if (conv == null)
@@ -50,13 +50,13 @@ namespace AiryBotCode.Infrastructure.Activitys
 
             // Get conversation history
             List<Message> history = (List<Message>)await _messageRepo.GetMessagesByConversationIdAsync(conv.Id);
-            if (history.Count >= 12)
+            if (history.Count >= 6)
             {
                 var messagesToDelete = history.OrderBy(m => m.CreatedAt).Take(2).ToList();
                 foreach (var msg in messagesToDelete)
                 {
-                    await _messageRepo.DeleteAsync(msg); // assumes you have a DeleteAsync method
-                    history.Remove(msg); // also remove from local list
+                    await _messageRepo.DeleteAsync(msg);
+                    history.Remove(msg);
                 }
                 await _messageRepo.SaveChangesAsync();
             }
