@@ -273,6 +273,7 @@ __pycache__/
 
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
 .env
+appsettings.json
 .vscode/settings.json
 
 *Backup.csproj
