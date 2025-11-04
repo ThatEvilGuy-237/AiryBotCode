@@ -58,12 +58,12 @@ namespace AiryBotCode.Infrastructure.Activitys
             if(target == null)
             {
                 await _logService.ContactEvil(
-                  _logService.SimpleLog("Ban ERROR", "No been able to get the TARGET that got baned", Color.Red), true);
+                  _logService.SimpleLog("Ban ERROR", "Not been able to get the TARGET that got baned", Color.Red), true);
             } 
             if (moderator == null)
             {
                await _logService.ContactEvil(
-                   _logService.SimpleLog("Ban ERROR", "No been able to get the user that did the ban Action", Color.Red),true);
+                   _logService.SimpleLog("Ban ERROR", "Not been able to get the user that did the ban Action", Color.Red),true);
             }
           
             await userlogs.SendUserLog(moderator, log);
