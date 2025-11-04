@@ -25,6 +25,7 @@ WORKDIR /app
 
 # Copy published output
 COPY --from=build /app/publish .
+COPY --from=build /src/AiryBotCode.Bot/appsettings.json .
 
 # Expose any ports if needed (uncomment if your bot uses a web server)
 # EXPOSE 5000

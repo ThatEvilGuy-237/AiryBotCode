@@ -3,23 +3,27 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
+using AiryBotCode.Application.Interfaces; // Added
 
 namespace AiryBotCode.Application.Services.Loging
 {
     public class LogService
     {
         private DiscordSocketClient _client;
-        public LogService(IServiceProvider serviceProvider)
+        private readonly IConfigurationReader _configurationReader; // Added
+
+        public LogService(IServiceProvider serviceProvider, IConfigurationReader configurationReader) // Modified constructor
         {
             _client = serviceProvider.GetRequiredService<DiscordSocketClient>();
+            _configurationReader = configurationReader; // Assigned
         }
 
         public async Task<ulong> GetLogChannelId()
         {
-            var logChannelId = ulong.TryParse(Environment.GetEnvironmentVariable("LOGCHANNELID"), out var channelId) ? channelId : 0;
+            var logChannelId = _configurationReader.GetLogChannelId(); // Using IConfigurationReader
             if (logChannelId == 0)
             {
-                await ContactEvil(SimpleLog("ENV", "There is no LOGCHANNELID"), false);
+                await ContactEvil(SimpleLog("Config", "There is no LOGCHANNELID in appsettings.json"), false);
                 return 0;
             }
             return logChannelId;
@@ -27,10 +31,10 @@ namespace AiryBotCode.Application.Services.Loging
 
         public async Task<ulong> GetErrorChannelEvilId()
         {
-            var errorChannelEvilId = ulong.TryParse(Environment.GetEnvironmentVariable("EVILLOGCHANNELID"), out var channelId) ? channelId : 0;
+            var errorChannelEvilId = ulong.TryParse(_configurationReader.GetSection("Bots:EvilLogChannelId"), out var channelId) ? channelId : 0; // Using IConfigurationReader
             if (errorChannelEvilId == 0)
             {
-                Console.WriteLine($"[LogService] Error: EVILLOGCHANNELID not found in environment variables.");
+                Console.WriteLine($"[LogService] Error: Bots:EvilLogChannelId not found in appsettings.json.");
                 return 0;
             }
             return errorChannelEvilId;
@@ -41,7 +45,7 @@ namespace AiryBotCode.Application.Services.Loging
             var logChannel = _client.GetGuild(command.GuildId!.Value)?.GetTextChannel(await GetLogChannelId());
             if (logChannel == null)
             {
-                await ContactEvil(SimpleLog("LogChannel", "Log channel not found 'LogChannelId'"));
+                await ContactEvil(SimpleLog("LogChannel", "Log channel not found 'LogChannelId'"), false); // Changed ping to false
             }
         }
         // const ulong errorChannelEvilId = 1364679746356514936;
@@ -58,14 +62,14 @@ namespace AiryBotCode.Application.Services.Loging
         }
         private async Task<ulong> GetEvilId()
         {
-            var adminRoleId = ulong.TryParse(Environment.GetEnvironmentVariable("EVILID"), out var roleId) ? roleId : 0;
-            if (adminRoleId == 0)
+            var evilId = ulong.TryParse(_configurationReader.GetSection("Bots:EvilId"), out var id) ? id : 0; // Using IConfigurationReader
+            if (evilId == 0)
             {
-                await ContactEvil(SimpleLog("ENV", "There is no EVILID"), false);
+                await ContactEvil(SimpleLog("Config", "There is no Bots:EvilId in appsettings.json"), false);
                 return 0;
             }
 
-            return adminRoleId;
+            return evilId;
         }
         public Embed SimpleLog(string title, string description, Color? color = null)
         {

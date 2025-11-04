@@ -6,6 +6,8 @@ using AiryBotCode.Infrastructure.Interfaces;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using AiryBotCode.Application.Interfaces;
+
 
 namespace AiryBotCode.Infrastructure.Activitys
 {

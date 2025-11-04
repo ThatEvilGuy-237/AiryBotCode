@@ -4,7 +4,7 @@ using AiryBotCode.Infrastructure.Interfaces;
 using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.Contracts;
+using AiryBotCode.Application.Interfaces;
 
 
 namespace AiryBotCode.Infrastructure.Activitys

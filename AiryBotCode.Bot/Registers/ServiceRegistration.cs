@@ -3,6 +3,7 @@ using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Registers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AiryBotCode.Application.Interfaces;
 
 
 namespace AiryBotCode.Bot.Registers
@@ -11,7 +12,6 @@ namespace AiryBotCode.Bot.Registers
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            services.AddScoped<IConfigurationReader, ConfigurationReader>();
             services = RegisterInfrastructure.RegisterServices(services);
             // Register required services
             services.AddScoped<AiryDevBot>();
@@ -21,15 +21,12 @@ namespace AiryBotCode.Bot.Registers
             return services;
         }
 
-        public static IServiceProvider BuildServiceProvider()
+        public static IServiceProvider BuildServiceProvider(IConfiguration configuration) // Modified to accept IConfiguration
         {
-            var configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .Build();
-
             return new ServiceCollection()
                 .AddLogging()
                 .AddSingleton<IConfiguration>(configuration)
+                .AddScoped<IConfigurationReader, ConfigurationReader>() // Registered ConfigurationReader here
                 .RegisterServices()
                 .BuildServiceProvider();
         }

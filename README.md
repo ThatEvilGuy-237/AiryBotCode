@@ -60,6 +60,38 @@ After that:
 *(dont forget to set your evn file to your bot and check the AiryDevBot.cs for evenes that you want to use for your bot)*
 
 ---
+## Configuration
+
+The bot's configuration is managed through `appsettings.json` and environment variables. A typical `appsettings.json` might look like this:
+
+```json
+{
+  "Database": {
+    "Host": "localhost",
+    "Port": 5432,
+    "Name": "airy_db",
+    "User": "airy_user",
+    "Password": "your_password_here"
+  },
+  "OpenAI": {
+    "ApiKey": "YOUR_OPENAI_API_KEY"
+  },
+  "Bots": {
+    "Name": "DevAiryBot",
+    "Enabled": true,
+    "Token": "YOUR_DISCORD_BOT_TOKEN",
+    "AdminRoleIds": [ "YOUR_ADMIN_ROLE_ID_1", "YOUR_ADMIN_ROLE_ID_2" ],
+    "EvilId": "YOUR_EVIL_ID",
+    "LogChannelId": "YOUR_LOG_CHANNEL_ID",
+    "EvilLogChannelId": "YOUR_EVIL_LOG_CHANNEL_ID",
+    "BotId": "YOUR_BOT_ID"
+  }
+}
+```
+
+**Important:** `appsettings.json` should not be committed to version control as it contains sensitive information. Use environment variables for production settings.
+
+---
 ## Current Features
 - Time out a user and create userlog
 - Untime out a user

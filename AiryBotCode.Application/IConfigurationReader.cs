@@ -1,9 +1,8 @@
 ﻿
-namespace AiryBotCode.Infrastructure.Configuration
+namespace AiryBotCode.Application.Interfaces
 {
     public interface IConfigurationReader
     {
-        void LoadConfig(string? path = null);
         string GetBotToken();
         ulong GetBotId();
         ulong GetLogChannelId();

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.DiscordEvents;
 using Discord.Commands;
+using AiryBotCode.Application.Interfaces;
 
 namespace AiryBotCode.Bot.Bots
 {

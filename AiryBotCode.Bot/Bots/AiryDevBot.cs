@@ -3,6 +3,7 @@ using AiryBotCode.Infrastructure.Configuration;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using AiryBotCode.Application.Interfaces;
 
 namespace AiryBotCode.Bot.Bots
 {
@@ -25,11 +26,11 @@ namespace AiryBotCode.Bot.Bots
         {
             List<EvilAction> actions = new List<EvilAction>
             {
-                //serviceProvider.GetRequiredService<UserlogsAction>(),
-                //serviceProvider.GetRequiredService<TimeoutAction>(),
-                //serviceProvider.GetRequiredService<UntimeOutAction>(),
-                //serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
-                //serviceProvider.GetRequiredService<ContactUserAction>(),
+                serviceProvider.GetRequiredService<UserlogsAction>(),
+                serviceProvider.GetRequiredService<TimeoutAction>(),
+                serviceProvider.GetRequiredService<UntimeOutAction>(),
+                serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
+                serviceProvider.GetRequiredService<ContactUserAction>(),
                 serviceProvider.GetRequiredService<TalkToAiryAction>(),
                 //serviceProvider.GetRequiredService<ReminderAction>(),
             };
@@ -51,10 +52,10 @@ namespace AiryBotCode.Bot.Bots
             // Assign Event liseners
             _client.Ready += _slashCommandHandler.RegisterCommandsAsync;
             _client.MessageReceived += _messageSendHandler.HandelMessageSend;
-            //_client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-            //_client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
-            //_client.ModalSubmitted += _formHandler.HandleFormInteraction;
-            //_client.UserBanned += _banHandler.HandleInteractionAsync;
+            _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
+            _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
+            _client.ModalSubmitted += _formHandler.HandleFormInteraction;
+            _client.UserBanned += _banHandler.HandleInteractionAsync;
 
         }
 

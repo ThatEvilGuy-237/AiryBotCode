@@ -276,3 +276,4 @@ __pycache__/
 .vscode/settings.json
 
 *Backup.csproj
+appsettings.json

@@ -2,6 +2,7 @@
 using AiryBotCode.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using AiryBotCode.Application.Interfaces;
 
 namespace AiryBotCode.Infrastructure.Database.Persistence
 {

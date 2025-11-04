@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using AiryBotCode.Bot.Bots;
+using Microsoft.Extensions.Configuration; // Added
 
 namespace AiryBotCode
 {
@@ -15,8 +16,15 @@ namespace AiryBotCode
 
         private static async Task MainAsync(string[] args)
         {
+            // Build configuration
+            IConfiguration configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
+
             // Register services and build the service provider
-            var serviceProvider = ServiceRegistration.BuildServiceProvider();
+            var serviceProvider = ServiceRegistration.BuildServiceProvider(configuration); // Modified to pass configuration
 
             //// Write a startup log entry to file
             //File.AppendAllText("/app/logs/bot-log.txt", $"[{DateTime.Now}] App started...\n");
