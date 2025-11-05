@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Domain", "AiryB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Application", "AiryBotCode.Application\AiryBotCode.Application.csproj", "{EBA79085-00FE-60B1-73B2-1A9326128403}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Bot", "Bots\AiryBotCode.Bot\AiryBotCode.Bot.csproj", "{25E95C69-B157-A675-C050-5C2989530BDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.AiryDevBot", "Bots\AiryBotCode.AiryDevBot\AiryBotCode.AiryDevBot.csproj", "{25E95C69-B157-A675-C050-5C2989530BDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Infrastructure", "AiryBotCode.Infrastructure\AiryBotCode.Infrastructure.csproj", "{67F08F98-D37A-56CD-DD3E-664F3A091C58}"
 EndProject
