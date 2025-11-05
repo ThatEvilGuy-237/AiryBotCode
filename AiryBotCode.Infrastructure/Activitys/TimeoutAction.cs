@@ -1,7 +1,6 @@
 ﻿using AiryBotCode.Application.Comands;
 using AiryBotCode.Application.Comands.SlashCommands;
 using AiryBotCode.Domain.Entities;
-using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;

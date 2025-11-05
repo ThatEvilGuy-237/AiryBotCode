@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace AiryBotCode.Application.Interfaces
 {
     public interface IConfigurationReader
@@ -9,6 +11,11 @@ namespace AiryBotCode.Application.Interfaces
         string GetSection(string key);
         string GetDatabaseConnectionString();
         string GetOpenAIApiKey();
+        string GetBotName();
+        bool IsBotEnabled();
+        List<ulong> GetAdminRoleIds();
+        ulong GetEvilId();
+        ulong GetEvilLogChannelId();
     }
 
 }

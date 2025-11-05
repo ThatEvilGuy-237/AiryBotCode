@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AiryBotCode.Application.Interfaces
 {
@@ -76,6 +78,47 @@ namespace AiryBotCode.Application.Interfaces
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new InvalidOperationException("OpenAI API key is missing. Ensure OpenAI:ApiKey is set in appsettings.json.");
             return apiKey;
+        }
+
+        public string GetBotName()
+        {
+            var botName = _configuration["Bots:Name"];
+            if (string.IsNullOrWhiteSpace(botName))
+                throw new InvalidOperationException("Bot name is missing. Ensure Bots:Name is set in appsettings.json.");
+            return botName;
+        }
+
+        public bool IsBotEnabled()
+        {
+            var enabledStr = _configuration["Bots:Enabled"];
+            if (string.IsNullOrWhiteSpace(enabledStr) || !bool.TryParse(enabledStr, out bool enabled))
+                throw new InvalidOperationException("Invalid or missing bot enabled flag. Ensure Bots:Enabled is set to 'true' or 'false' in appsettings.json.");
+            return enabled;
+        }
+
+        public List<ulong> GetAdminRoleIds()
+        {
+            var adminRoleIds = _configuration.GetSection("Bots:AdminRoleIds").Get<List<string>>();
+            if (adminRoleIds == null || !adminRoleIds.Any())
+                throw new InvalidOperationException("Admin role IDs are missing. Ensure Bots:AdminRoleIds is set in appsettings.json.");
+
+            return adminRoleIds.Select(ulong.Parse).ToList();
+        }
+
+        public ulong GetEvilId()
+        {
+            var evilIdStr = _configuration["Bots:EvilId"];
+            if (string.IsNullOrWhiteSpace(evilIdStr) || !ulong.TryParse(evilIdStr, out ulong evilId))
+                throw new InvalidOperationException("Invalid or missing Evil ID. Ensure Bots:EvilId is a valid ulong in appsettings.json.");
+            return evilId;
+        }
+
+        public ulong GetEvilLogChannelId()
+        {
+            var evilLogChannelIdStr = _configuration["Bots:EvilLogChannelId"];
+            if (string.IsNullOrWhiteSpace(evilLogChannelIdStr) || !ulong.TryParse(evilLogChannelIdStr, out ulong evilLogChannelId))
+                throw new InvalidOperationException("Invalid or missing Evil Log Channel ID. Ensure Bots:EvilLogChannelId is a valid ulong in appsettings.json.");
+            return evilLogChannelId;
         }
     }
 }
