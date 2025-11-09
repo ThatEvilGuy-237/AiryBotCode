@@ -4,7 +4,8 @@
     {
         System,
         User,
-        Assistant
+        Assistant,
+        Owner //ID:405431299323461634 The creator of the AI
     }
 
     public class ChatUser

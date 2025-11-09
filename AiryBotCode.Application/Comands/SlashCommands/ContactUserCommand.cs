@@ -1,4 +1,4 @@
-﻿using AiryBotCode.Application.Services.Loging;
+﻿using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.User;
 using Discord;
 using Discord.Rest;
@@ -10,10 +10,12 @@ namespace AiryBotCode.Application.Comands.SlashCommands
     public class ContactUserCommand : EvilCommand
     {
         protected UserService _userService;
+        protected DiscordService _discordService;
         public ContactUserCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             Name = "contact";
             _userService = serviceProvider.GetRequiredService<UserService>();
+            _discordService = serviceProvider.GetRequiredService<DiscordService>();
         }
 
         public override SlashCommandBuilder GetCommand()
@@ -49,16 +51,14 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             }
 
             // Create the channel
-            var channel = await guild.CreateTextChannelAsync($"contact-{targetUser.Username}", props =>
-            {
-                props.CategoryId = category.Id;
-            });
+            var channel = await _discordService.CreateTextChannelAsync(guild, $"contact-{targetUser.Username}", category.Id);
 
             // Add target user to it
-            await channel.AddPermissionOverwriteAsync(targetUser, new OverwritePermissions(
-                viewChannel: PermValue.Allow,
-                sendMessages: PermValue.Allow
-            ));
+            if (channel != null)
+            {
+                var users = new List<SocketGuildUser> { targetUser };
+                await _discordService.AddPermissionsToChannelAsync(channel, usersWithPermissions: users);
+            }
 
             await command.RespondAsync($"Private contact channel created: {channel.Mention}", ephemeral: true);
 

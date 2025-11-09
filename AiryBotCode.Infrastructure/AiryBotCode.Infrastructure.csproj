@@ -25,9 +25,6 @@
     <None Update=".env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update=".env-example">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <ProjectReference Include="..\AiryBotCode.Application\AiryBotCode.Application.csproj" />
   </ItemGroup>
 </Project>

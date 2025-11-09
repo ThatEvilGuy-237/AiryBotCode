@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="AI_Implementation_Plan\" />
     <None Update=".env">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

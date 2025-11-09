@@ -29,6 +29,7 @@ namespace AiryBotCode.Application
             // SERIVCES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();
+            services.AddScoped<DiscordService>();
 
             return services;
         }

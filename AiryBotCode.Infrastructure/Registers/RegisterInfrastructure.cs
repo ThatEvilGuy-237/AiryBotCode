@@ -1,13 +1,11 @@
 ﻿using AiryBotCode.Application;
-using AiryBotCode.Domain.database;
+using AiryBotCode.Application.Services;
 using AiryBotCode.Infrastructure.Activitys;
-using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Database.Interfaces;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using AiryBotCode.Infrastructure.Database.Repository;
 using AiryBotCode.Infrastructure.DiscordEvents;
 using Discord.Commands;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -29,6 +27,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<FormHandler>();
             services.AddScoped<CommandService>();
             services.AddScoped<BanHandler>();
+            services.AddScoped<DiscordService>();
             // repositorys
             services.AddScoped(typeof(IEvilRepository<>), typeof(EvilRepository<>));
             services.AddScoped<IChannelConversationRepository, ChannelConversationRepository>();

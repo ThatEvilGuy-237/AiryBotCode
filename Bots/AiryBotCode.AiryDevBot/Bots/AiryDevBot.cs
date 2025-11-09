@@ -1,16 +1,16 @@
-﻿using AiryBotCode.Infrastructure.Activitys;
-using AiryBotCode.Infrastructure.Configuration;
+﻿using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Infrastructure.Activitys;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Reflection;
-using AiryBotCode.Application.Interfaces;
 
 namespace AiryBotCode.Bot.Bots
 {
     public class AiryDevBot : Bot
     {
-        public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider) 
-            : base(serviceProvider, configuration)
+        public AiryDevBot(IConfigurationReader configuration, IServiceProvider serviceProvider, ILogger<AiryDevBot> logger)
+            : base(serviceProvider, configuration, logger)
         {
             Console.WriteLine("[INFO] Loading actions...");
             List<EvilAction> actions = GetWantedActions(serviceProvider);
@@ -23,31 +23,20 @@ namespace AiryBotCode.Bot.Bots
 
         }
         // Assing wanted actions to the bot
-        // The interfaces of the action will auto assing the action to the correct event handler
         private List<EvilAction> GetWantedActions(IServiceProvider serviceProvider)
         {
-            var actions = new List<EvilAction>();
-            var actionTypes = new List<Type>
+            List<EvilAction> actions = new List<EvilAction>
             {
-                typeof(UserlogsAction),
-                typeof(TimeoutAction),
-                typeof(UntimeOutAction),
-                typeof(VerifyUserAgeAction),
-                typeof(ContactUserAction),
-                typeof(TalkToAiryAction),
-                //typeof(ReminderAction),
+                serviceProvider.GetRequiredService<UserlogsAction>(),
+                serviceProvider.GetRequiredService<TimeoutAction>(),
+                serviceProvider.GetRequiredService<UntimeOutAction>(),
+                serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
+                serviceProvider.GetRequiredService<ContactUserAction>(),
+                //serviceProvider.GetRequiredService<ReminderAction>(),
             };
-
-            foreach (var type in actionTypes)
-            {
-                var action = (EvilAction)serviceProvider.GetRequiredService(type);
-                actions.Add(action);
-                Console.WriteLine($"[INFO] Loaded action: {type.Name}");
-            }
-
             return actions;
         }
-            
+
         public override async Task StartAsync(IServiceProvider services)
         {
             var discordToken = _configuration.GetBotToken();
