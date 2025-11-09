@@ -7,3 +7,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - .:/app
     working_dir: /app
+
+  db:
+    image: postgres:latest
+    container_name: airy-postgres-db
+    environment:
+      - POSTGRES_DB=airy_db
+      - POSTGRES_USER=airy_user
+      - POSTGRES_PASSWORD=Forest_Carrot_93@Night
+    ports:
+      - "5432:5432"
+    volumes:
+      - C:\Users\brits\Documents\postgres_data:/var/lib/postgresql/data/pgdata
+
+

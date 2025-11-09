@@ -277,3 +277,5 @@ appsettings.json
 .vscode/settings.json
 GEMINI.md
 *Backup.csproj
+scripts/package-lock.json
+scripts/package.json

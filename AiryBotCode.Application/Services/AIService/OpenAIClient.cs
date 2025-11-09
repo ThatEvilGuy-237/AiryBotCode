@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions; // Added for Regex
 
 namespace AiryBotCode.Application.Services.AIService
 {
@@ -26,16 +27,21 @@ namespace AiryBotCode.Application.Services.AIService
 
         public async Task<string> SendMessageAsync(List<Message> messages)
         {
-            var openAIMessages = messages.Select(msg => new
+            var openAIMessages = messages.Select(msg =>
             {
-                role = msg.User.Role.ToString().ToLower(), // Convert ChatRole enum to lowercase string
-                content = msg.Context
+                var role = msg.User.Role.ToString().ToLower();
+                return new
+                {
+                    role = role,
+                    name = (role == "user") ? SanitizeName(msg.User.UserName) : null, // Ensure 'name' is always present
+                    content = msg.Context
+                };
             }).ToList();
 
             Console.WriteLine("[OpenAI] Prompt:");
             foreach (var msg in openAIMessages)
             {
-                Console.WriteLine($"[{msg.role}]: {msg.content}");
+                Console.WriteLine($"[{msg.role}{(msg.GetType().GetProperty("name") != null ? $" ({msg.GetType().GetProperty("name").GetValue(msg)})" : "")}]: {msg.content}");
             }
 
             var requestBody = new
@@ -73,6 +79,14 @@ namespace AiryBotCode.Application.Services.AIService
             Console.WriteLine(result?.Choices[0]?.Message.Content);
 
             return result?.Choices[0]?.Message.Content ?? string.Empty;
+        }
+
+        private string SanitizeName(string name)
+        {
+            // OpenAI names must be a-z, A-Z, 0-9, dashes, and underscores, max 64 chars.
+            // Replace invalid characters with underscores and truncate if necessary.
+            string sanitized = Regex.Replace(name, "[^a-zA-Z0-9_-]", "_");
+            return sanitized.Length > 64 ? sanitized.Substring(0, 64) : sanitized;
         }
 
         private class OpenAIResponse

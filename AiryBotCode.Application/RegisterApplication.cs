@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Application.Interfaces; // Added for IConversationManagerService, IChannelConversationService, IChatUserService, IMessageService
 using AiryBotCode.Application.Services.Database;
 using AiryBotCode.Application.Interfaces.Service; // Added for ConversationManagerService, ChannelConversationService, ChatUserService, MessageService
+using AiryBotCode.Application.Services.AIService;
 
 namespace AiryBotCode.Application
 {
@@ -15,6 +16,16 @@ namespace AiryBotCode.Application
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
+            // Configuration and AI Clients
+            services.AddSingleton<IConfigurationReader, ConfigurationReader>();
+            services.AddSingleton(provider =>
+            {
+                var configReader = provider.GetRequiredService<IConfigurationReader>();
+                var apiKey = configReader.GetOpenAIApiKey();
+                var modelName = "gpt-4o-mini"; // This could be moved to appsettings.json
+                return new OpenAIClient(apiKey, modelName);
+            });
+
             // Register commands
             // STATIC LIKE (can save run time data)
             //services.AddSingleton<TimeoutCommand>();

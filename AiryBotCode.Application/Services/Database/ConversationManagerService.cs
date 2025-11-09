@@ -40,13 +40,42 @@ namespace AiryBotCode.Application.Services.Database
             var aiUser = await _chatUserService.GetOrCreateAiUserAsync(botId);
             var history = await _messageService.GetAndManageConversationHistoryAsync(conv.Id);
 
+            // Get unique users from history
+            var uniqueUsers = history.Select(m => m.User).DistinctBy(u => u.Id).ToList();
+            var userOpinions = new Dictionary<string, string>();
+
+            foreach (var user in uniqueUsers)
+            {
+                if (!string.IsNullOrEmpty(user.AiOpinion))
+                {
+                    userOpinions[user.UserName] = user.AiOpinion;
+                }
+            }
+
+            // Construct the system prompt
+            var systemPrompt = "You are Airy, a helpful AI assistant in a multi-user Discord channel. Pay attention to the 'name' attribute on each user message to understand who is speaking. Address users by their name when it feels natural. Use Discord markdown format for your responses.";
+            if (!string.IsNullOrEmpty(conv.ConversationSummary))
+            {
+                systemPrompt += $"\n\nChannel Summary: {conv.ConversationSummary}";
+            }
+
+            if (userOpinions.Any())
+            {
+                systemPrompt += "\n\nUser Opinions:";
+                foreach (var opinion in userOpinions)
+                {
+                    systemPrompt += $"\n- {opinion.Key}: {opinion.Value}";
+                }
+            }
+
             return new ConversationContext
             {
                 ChannelConversation = conv,
                 AuthorUser = authorUser,
                 SystemUser = systemUser,
                 AiUser = aiUser,
-                MessageHistory = history
+                MessageHistory = history,
+                SystemPrompt = systemPrompt
             };
         }
 

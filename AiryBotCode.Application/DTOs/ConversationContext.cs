@@ -10,5 +10,6 @@ namespace AiryBotCode.Application.DTOs
         public ChatUser SystemUser { get; set; }
         public ChatUser AiUser { get; set; }
         public List<Message> MessageHistory { get; set; } = new List<Message>();
+        public string SystemPrompt { get; set; }
     }
 }
