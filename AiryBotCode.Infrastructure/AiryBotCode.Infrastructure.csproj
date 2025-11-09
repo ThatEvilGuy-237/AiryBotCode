@@ -27,4 +27,8 @@
     </None>
     <ProjectReference Include="..\AiryBotCode.Application\AiryBotCode.Application.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+  </ItemGroup>
 </Project>

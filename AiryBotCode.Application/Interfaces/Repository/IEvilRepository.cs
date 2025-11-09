@@ -1,5 +1,4 @@
-﻿
-namespace AiryBotCode.Infrastructure.Database.Interfaces
+﻿namespace AiryBotCode.Application.Interfaces.Repository
 {
     public interface IEvilRepository<T> where T : class
     {

@@ -1,6 +1,8 @@
-﻿using AiryBotCode.Domain.database;
+﻿using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Domain.database;
 
-namespace AiryBotCode.Infrastructure.Database.Interfaces
+namespace AiryBotCode.Application.Interfaces.Repository
+
 {
     public interface IChannelConversationRepository : IEvilRepository<ChannelConversation>
     {

@@ -1,6 +1,8 @@
 ﻿using AiryBotCode.Domain.database;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AiryBotCode.Application.Services.AIService
 {
@@ -24,14 +26,22 @@ namespace AiryBotCode.Application.Services.AIService
 
         public async Task<string> SendMessageAsync(List<Message> messages)
         {
-            var prompt = BuildPrompt(messages);
+            var openAIMessages = messages.Select(msg => new
+            {
+                role = msg.User.Role.ToString().ToLower(), // Convert ChatRole enum to lowercase string
+                content = msg.Context
+            }).ToList();
+
             Console.WriteLine("[OpenAI] Prompt:");
-            Console.WriteLine(prompt);
+            foreach (var msg in openAIMessages)
+            {
+                Console.WriteLine($"[{msg.role}]: {msg.content}");
+            }
 
             var requestBody = new
             {
                 model = _modelName,
-                messages = new[] { new { role = "system", content = prompt } },
+                messages = openAIMessages, // Send the structured messages
                 max_tokens = 800
             };
 
@@ -56,34 +66,13 @@ namespace AiryBotCode.Application.Services.AIService
             }
             if(countTry > 2)
             {
-                return "Airy ren out of funds. :money:";
+                return "Airy ran out of funds. :money:";
             }
             var result = await response.Content.ReadFromJsonAsync<OpenAIResponse>();
             Console.WriteLine("[OpenAI] Response:");
             Console.WriteLine(result?.Choices[0]?.Message.Content);
 
             return result?.Choices[0]?.Message.Content ?? string.Empty;
-        }
-
-        private string BuildPrompt(List<Message> messages)
-        {
-            var prompt = "";
-            foreach (var msg in messages)
-            {
-                switch (msg.User.Role)
-                {
-                    case ChatRole.System:
-                        prompt += $"[System]: {msg.Context}\n";
-                        break;
-                    case ChatRole.User:
-                        prompt += $"[User {msg.User.UserName} - ID:{msg.User.Id}]: {msg.Context}\n";
-                        break;
-                    case ChatRole.Assistant:
-                        prompt += $"[Assistant {msg.User.UserName} - ID:{msg.User.Id}]: {msg.Context}\n";
-                        break;
-                }
-            }
-            return prompt.Trim();
         }
 
         private class OpenAIResponse

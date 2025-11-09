@@ -1,6 +1,10 @@
 ﻿using AiryBotCode.Domain.database;
-using AiryBotCode.Infrastructure.Database.Interfaces;
+using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Infrastructure.Database.Persistence;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AiryBotCode.Infrastructure.Database.Repository
 {

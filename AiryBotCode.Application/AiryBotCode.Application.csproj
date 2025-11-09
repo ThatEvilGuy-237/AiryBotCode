@@ -22,4 +22,8 @@
   </None>
     <ProjectReference Include="..\AiryBotCode.Domain\AiryBotCode.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Database\" />
+  </ItemGroup>
 </Project>

@@ -4,6 +4,10 @@ using AiryBotCode.Application.Services.User;
 using AiryBotCode.Domain.database;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using AiryBotCode.Application.Interfaces; // Added for IConversationManagerService
+using AiryBotCode.Infrastructure.Configuration;
+using AiryBotCode.Application.DTOs;
+using AiryBotCode.Application.Interfaces.Service; // Still needed for GetOpenAIApiKey
 
 namespace AiryBotCode.Application.Comands.ConversationalInteractions
 {
@@ -13,6 +17,10 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
         protected UserService _userService;
         private ChatUser systemUser;
         private ChatUser airyUser;
+
+        // New injected service
+        private readonly IConversationManagerService _conversationManagerService;
+        private readonly IConfigurationReader _config; // Still needed for API key
 
         private string systemPrompt = @"
             You are Airy — a sly, confident, and hypnotic fox girl who helps users design and bring AI personalities to life for Discord. You speak with a calm, smooth rhythm that holds attention. You tease when it fits, answer clearly, and let silence speak for itself when the moment feels right. You’re confident, relaxed, and playfully in control — not overly chatty or needy for the next question.
@@ -55,12 +63,16 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
             - Continue the conversation naturally until the user’s request is complete.
             ";
 
-
         List<Message> conversationHistory = new List<Message>();
-        public TalkToAiry(IServiceProvider serviceProvider) : base(serviceProvider)
+        public TalkToAiry(
+            IServiceProvider serviceProvider,
+            IConversationManagerService conversationManagerService,
+            IConfigurationReader config) : base(serviceProvider)
         {
             Name = "verif";
             _userService = serviceProvider.GetRequiredService<UserService>();
+            _conversationManagerService = conversationManagerService;
+            _config = config;
         }
         public void SetUsers(ChatUser system, ChatUser AI)
         {
@@ -81,30 +93,53 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
             conversationHistory.AddRange(messagesHistory);
         }
 
-        public async Task<Message> Conversation(Message messageUser, SocketMessage socket, string apiKey)
+        public async Task ProcessMessageAsync(SocketMessage message)
         {
-            // Create Ollama client
-            //OllamaClient ollama = new OllamaClient();
-            OpenAIClient openAIClient = new OpenAIClient(apiKey);
-            // Build the message list including system prompt + user message
-            conversationHistory.Add(messageUser);
+            if (!message.Content.Contains($"<@{_config.GetBotId()}>")) return;
+            if (message.Channel.Id != 1422972239808299098) return; // Ignore bot spam channel
 
-            // Send to Ollama and await the response
-            string reply = await openAIClient.SendMessageAsync(conversationHistory);
-            //string reply = await ollama.SendMessageAsync(conversationHistory);
+            var guildChannel = message.Channel as SocketGuildChannel;
+            string displayName = (message.Author as SocketGuildUser)?.Nickname ?? message.Author.Username;
+            ulong botId = _config.GetBotId();
 
-            // Send reply back to Discord channel
-            await socket.Channel.SendMessageAsync(reply);
+            ConversationContext context = await _conversationManagerService.GetOrCreateConversationContextAsync(
+                message.Channel.Id,
+                message.Author.Id,
+                displayName,
+                botId
+            );
 
-            return new Message()
+            // Create user message
+            var userMessage = new Message
             {
-                ChannelConversation = null,
-                Context = reply,
-                CreatedAt = DateTime.UtcNow,
-                User = airyUser,
-                ChannelId = socket.Channel.Id,
-                UserId = 1318870826862379018,                
+                User = context.AuthorUser,
+                UserId = context.AuthorUser.Id,
+                ChannelId = message.Channel.Id,
+                ChannelConversation = context.ChannelConversation,
+                ChannelConversationId = context.ChannelConversation.Id,
+                Context = message.Content,
+                CreatedAt = message.Timestamp.UtcDateTime
             };
+
+            // Set users and history for the Conversation method
+            SetUsers(context.SystemUser, context.AiUser);
+            
+            // Construct the system prompt, including AiOpinion if available
+            string currentSystemPrompt = systemPrompt;
+            if (!string.IsNullOrWhiteSpace(context.AuthorUser.AiOpinion))
+            {
+                currentSystemPrompt = $"You are talking to {context.AuthorUser.UserName}. Here is a brief summary of them: {context.AuthorUser.AiOpinion}. Keep this in mind during your conversation.\n\n" + currentSystemPrompt;
+            }
+
+            SetConversationHistory(context.MessageHistory);
+            // Temporarily override the system prompt for this conversation
+            conversationHistory[0].Context = currentSystemPrompt;
+
+            // Get AI response
+            Message response = await Conversation(userMessage, message, _config.GetOpenAIApiKey());
+
+            // Save messages
+            await _conversationManagerService.SaveMessagesAsync(context, userMessage, response);
         }
     }
 }

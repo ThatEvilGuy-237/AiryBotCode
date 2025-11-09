@@ -1,12 +1,13 @@
 ﻿using AiryBotCode.Application;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Infrastructure.Activitys;
-using AiryBotCode.Infrastructure.Database.Interfaces;
+using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using AiryBotCode.Infrastructure.Database.Repository;
 using AiryBotCode.Infrastructure.DiscordEvents;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using AiryBotCode.Application.Interfaces.Repository;
 
 
 namespace AiryBotCode.Infrastructure.Registers
@@ -50,6 +51,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<VerifyUserAgeAction>();
             services.AddScoped<ContactUserAction>();
             services.AddScoped<TalkToAiryAction>();
+            services.AddScoped<SummarizeUserAction>(); // Register the new action
             return services;
         }
     }

@@ -1,4 +1,4 @@
-﻿using AiryBotCode.Infrastructure.Database.Interfaces;
+﻿using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using Microsoft.EntityFrameworkCore;
 
