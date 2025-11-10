@@ -43,15 +43,6 @@ namespace AiryBotCode.Application.Services.Database
 
             // Get unique users from history
             var uniqueUsers = history.Select(m => m.User).DistinctBy(u => u.Id).ToList();
-            var userOpinions = new Dictionary<string, string>();
-
-            foreach (var user in uniqueUsers)
-            {
-                if (!string.IsNullOrEmpty(user.AiOpinion))
-                {
-                    userOpinions[user.UserName] = user.AiOpinion;
-                }
-            }
 
             // Construct the system prompt
             var systemPrompt = _config.GetOpenAIPrompt();
@@ -59,19 +50,22 @@ namespace AiryBotCode.Application.Services.Database
             // Add Owner info to the prompt
             var ownerId = _config.GetEvilId();
             var ownerUser = await _chatUserService.GetOrCreateChatUserAsync(ownerId, "BotOwner", ChatRole.User); // Role here is just a default, won't override if user exists
-            systemPrompt += $"\nThe owner and creator of this bot is '{ownerUser.UserName}'.";
+            systemPrompt += $"\nThe owner and creator of this bot is '{ownerUser.UserName}' '{ownerUser.Id}'.";
 
             if (!string.IsNullOrEmpty(conv.ConversationSummary))
             {
                 systemPrompt += $"\n\nChannel Summary: {conv.ConversationSummary}";
             }
 
-            if (userOpinions.Any())
+            if (uniqueUsers.Any(u => !string.IsNullOrEmpty(u.AiOpinion)))
             {
                 systemPrompt += "\n\nUser Opinions:";
-                foreach (var opinion in userOpinions)
+                foreach (var user in uniqueUsers)
                 {
-                    systemPrompt += $"\n- {opinion.Key}: {opinion.Value}";
+                    if (!string.IsNullOrEmpty(user.AiOpinion))
+                    {
+                        systemPrompt += $"\n- {user.UserName} (ID: {user.Id}): {user.AiOpinion}";
+                    }
                 }
             }
 
@@ -93,8 +87,7 @@ namespace AiryBotCode.Application.Services.Database
             aiResponse.ChannelConversation = context.ChannelConversation;
             aiResponse.ChannelConversationId = context.ChannelConversation.Id;
 
-            await _messageService.SaveMessageAsync(userMessage);
-            await _messageService.SaveMessageAsync(aiResponse);
+            await _messageService.SaveMessagesAsync(userMessage, aiResponse);
 
             //// Update conversation (add messages to the in-memory collection for the current context)
             //context.ChannelConversation.Messages.Add(userMessage);

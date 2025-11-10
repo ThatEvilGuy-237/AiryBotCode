@@ -12,6 +12,7 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
         private readonly IConversationManagerService _conversationManagerService;
         private readonly IConfigurationReader _config;
         private readonly OpenAIClient _openAIClient;
+        private static readonly SemaphoreSlim _messageSavingSemaphore = new SemaphoreSlim(1, 1);
 
         public TalkToAiry(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -79,7 +80,15 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
             };
 
             // Save messages
-            await _conversationManagerService.SaveMessagesAsync(context, userMessage, responseMessage);
+            await _messageSavingSemaphore.WaitAsync();
+            try
+            {
+                await _conversationManagerService.SaveMessagesAsync(context, userMessage, responseMessage);
+            }
+            finally
+            {
+                _messageSavingSemaphore.Release();
+            }
 
             // Send response to Discord
             await message.Channel.SendMessageAsync(responseText);

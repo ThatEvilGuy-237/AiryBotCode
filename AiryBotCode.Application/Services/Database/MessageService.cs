@@ -27,6 +27,13 @@ namespace AiryBotCode.Application.Services.Database
             await _messageRepo.SaveChangesAsync();
         }
 
+        public async Task SaveMessagesAsync(Message userMessage, Message aiResponse)
+        {
+            await _messageRepo.AddAsync(userMessage);
+            await _messageRepo.AddAsync(aiResponse);
+            await _messageRepo.SaveChangesAsync();
+        }
+
         public async Task<List<Message>> GetMessagesByUserIdAsync(ulong userId)
         {
             return (List<Message>)await _messageRepo.GetMessagesByUserIdAsync(userId);
