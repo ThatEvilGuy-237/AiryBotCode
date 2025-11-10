@@ -33,7 +33,7 @@ namespace AiryBotCode.Application.Services.Database
             _openAIClient = openAIClient;
         }
 
-        public async Task<ConversationContext> GetOrCreateConversationContextAsync(ulong channelId, ulong authorId, string authorDisplayName, ulong botId, List<SocketUser> mentionedUsers)
+        public async Task<ConversationContext> GetOrCreateConversationContextAsync(ulong channelId, ulong authorId, string authorDisplayName, ulong botId)
         {
             var conv = await _channelConversationService.GetOrCreateChannelConversationAsync(channelId);
             var authorUser = await _chatUserService.GetOrCreateChatUserAsync(authorId, authorDisplayName, ChatRole.User);
@@ -43,15 +43,6 @@ namespace AiryBotCode.Application.Services.Database
 
             // Get unique users from history
             var uniqueUsers = history.Select(m => m.User).DistinctBy(u => u.Id).ToList();
-
-            foreach (var user in mentionedUsers)
-            {
-                var chatUser = await _chatUserService.GetOrCreateChatUserAsync(user.Id, user.Username, ChatRole.User);
-                if (!uniqueUsers.Any(u => u.Id == chatUser.Id))
-                {
-                    uniqueUsers.Add(chatUser);
-                }
-            }
 
             // Construct the system prompt
             var systemPrompt = _config.GetOpenAIPrompt();
