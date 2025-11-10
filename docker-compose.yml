@@ -1,12 +1,55 @@
 services:
-  launcher:
+  airybot:
     build:
       context: .
-      dockerfile: AiryBotCode.Launcher/Dockerfile
+      dockerfile: Bots.dockerfile
+    container_name: airy-bot
+    command: ["AiryBot/AiryBotCode.AiryBot.dll"]
+    restart: always
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - .:/app
-    working_dir: /app
+      # Ensure you have an 'appsettings.json' file in this bot's directory
+      - ./Bots/AiryBotCode.AiryBot/appsettings.json:/app/AiryBot/appsettings.json
+    depends_on:
+      - db
+
+  airyguardian:
+    build:
+      context: .
+      dockerfile: Bots.dockerfile
+    container_name: airy-guardian
+    command: ["AiryGuardian/AiryBotCode.AiryGuardian.dll"]
+    restart: always
+    volumes:
+      # Ensure you have an 'appsettings.json' file in this bot's directory
+      - ./Bots/AiryBotCode.AiryGuardian/appsettings.json:/app/AiryGuardian/appsettings.json
+    depends_on:
+      - db
+
+  airydevbot:
+    build:
+      context: .
+      dockerfile: Bots.dockerfile
+    container_name: airy-dev-bot
+    command: ["AiryDevBot/AiryBotCode.AiryDevBot.dll"]
+    restart: always
+    volumes:
+      # Ensure you have an 'appsettings.json' file in this bot's directory
+      - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/AiryDevBot/appsettings.json
+    depends_on:
+      - db
+
+  airydevsecondbot:
+    build:
+      context: .
+      dockerfile: Bots.dockerfile
+    container_name: airy-dev-second-bot
+    command: ["AiryDevSecondBot/AiryBotCode.AiryDevSecondBot.dll"]
+    restart: always
+    volumes:
+      # Ensure you have an 'appsettings.json' file in this bot's directory
+      - ./Bots/AiryBotCode.AiryDevSecondBot/appsettings.json:/app/AiryDevSecondBot/appsettings.json
+    depends_on:
+      - db
 
   db:
     image: postgres:latest
@@ -18,6 +61,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - C:\Users\brits\Documents\postgres_data:/var/lib/postgresql/data/pgdata
+      - airy_postgres_data:/var/lib/postgresql/data
 
-
+volumes:
+  airy_postgres_data:
