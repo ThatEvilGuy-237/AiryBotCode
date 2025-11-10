@@ -6,6 +6,9 @@ services:
     container_name: airy-bot
     command: ["AiryBot/AiryBotCode.AiryBot.dll"]
     restart: always
+    environment:
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=airy_db;Username=airy_user;Password=Forest_Carrot_93@Night
     volumes:
       # Ensure you have an 'appsettings.json' file in this bot's directory
       - ./Bots/AiryBotCode.AiryBot/appsettings.json:/app/AiryBot/appsettings.json
@@ -19,6 +22,9 @@ services:
     container_name: airy-guardian
     command: ["AiryGuardian/AiryBotCode.AiryGuardian.dll"]
     restart: always
+    environment:
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=airy_db;Username=airy_user;Password=Forest_Carrot_93@Night
     volumes:
       # Ensure you have an 'appsettings.json' file in this bot's directory
       - ./Bots/AiryBotCode.AiryGuardian/appsettings.json:/app/AiryGuardian/appsettings.json

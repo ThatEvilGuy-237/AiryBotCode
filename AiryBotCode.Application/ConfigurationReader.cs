@@ -57,16 +57,13 @@ namespace AiryBotCode.Application.Interfaces
         }
         public string GetDatabaseConnectionString()
         {
-            var host = _configuration["Database:Host"];
-            var port = _configuration["Database:Port"];
-            var name = _configuration["Database:Name"];
-            var user = _configuration["Database:User"];
-            var pass = _configuration["Database:Password"];
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            string connectionString = $"Host={host};Port={port};Database={name};Username={user};Password={pass}";
-            // Validate the token
-            if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(port) || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(pass))
-                throw new InvalidOperationException("Database connection string is missing. Ensure Database:Host, Database:Port, Database:Name, Database:User, Database:Password are set in appsettings.json.");
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("Database connection string is missing. Ensure 'ConnectionStrings:DefaultConnection' is set in appsettings.json.");
+            }
+
             return connectionString;
         }
 
