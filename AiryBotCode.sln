@@ -24,8 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Infrastructure"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.AiryDevSecondBot", "Bots\AiryBotCode.AiryDevSecondBot\AiryBotCode.AiryDevSecondBot.csproj", "{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Launcher", "AiryBotCode.Launcher\AiryBotCode.Launcher.csproj", "{532090AA-85D7-49A8-96D4-69DA433DECDE}"
-EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,18 +119,7 @@ Global
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x64.Build.0 = Release|Any CPU
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x86.ActiveCfg = Release|Any CPU
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x86.Build.0 = Release|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Debug|x64.Build.0 = Debug|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Debug|x86.Build.0 = Debug|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Release|x64.ActiveCfg = Release|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Release|x64.Build.0 = Release|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Release|x86.ActiveCfg = Release|Any CPU
-		{532090AA-85D7-49A8-96D4-69DA433DECDE}.Release|x86.Build.0 = Release|Any CPU
+
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
