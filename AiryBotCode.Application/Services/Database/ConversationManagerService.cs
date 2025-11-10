@@ -1,12 +1,13 @@
 using AiryBotCode.Application.DTOs;
+using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Service;
+using AiryBotCode.Application.Services.AIService;
 using AiryBotCode.Domain.database;
 using AiryBotCode.Infrastructure.Configuration;
+using Discord;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
-using AiryBotCode.Application.Services.AIService;
-using AiryBotCode.Application.Interfaces;
 
 namespace AiryBotCode.Application.Services.Database
 {
@@ -53,7 +54,13 @@ namespace AiryBotCode.Application.Services.Database
             }
 
             // Construct the system prompt
-            var systemPrompt = "You are Airy, a helpful AI assistant in a multi-user Discord channel. Pay attention to the 'name' attribute on each user message to understand who is speaking. Address users by their name when it feels natural. Use Discord markdown format for your responses.";
+            var systemPrompt = _config.GetOpenAIPrompt();
+
+            // Add Owner info to the prompt
+            var ownerId = _config.GetEvilId();
+            var ownerUser = await _chatUserService.GetOrCreateChatUserAsync(ownerId, "BotOwner", ChatRole.User); // Role here is just a default, won't override if user exists
+            systemPrompt += $"\nThe owner and creator of this bot is '{ownerUser.UserName}'.";
+
             if (!string.IsNullOrEmpty(conv.ConversationSummary))
             {
                 systemPrompt += $"\n\nChannel Summary: {conv.ConversationSummary}";
@@ -86,14 +93,15 @@ namespace AiryBotCode.Application.Services.Database
             aiResponse.ChannelConversation = context.ChannelConversation;
             aiResponse.ChannelConversationId = context.ChannelConversation.Id;
 
-            await _messageService.SaveMessagesAsync(userMessage, aiResponse);
+            await _messageService.SaveMessageAsync(userMessage);
+            await _messageService.SaveMessageAsync(aiResponse);
 
-            // Update conversation (add messages to the in-memory collection for the current context)
-            context.ChannelConversation.Messages.Add(userMessage);
-            context.ChannelConversation.Messages.Add(aiResponse);
-            // No need to call _channelConversationRepo.UpdateAsync(context.ChannelConversation) here
-            // as messages are already saved and linked via foreign keys.
-            // If ConversationSummary needs updating, it would be done here.
+            //// Update conversation (add messages to the in-memory collection for the current context)
+            //context.ChannelConversation.Messages.Add(userMessage);
+            //context.ChannelConversation.Messages.Add(aiResponse);
+            //// No need to call _channelConversationRepo.UpdateAsync(context.ChannelConversation) here
+            //// as messages are already saved and linked via foreign keys.
+            //// If ConversationSummary needs updating, it would be done here.
         }
 
         public async Task<string> GenerateAndSaveUserSummaryAsync(ulong userId, ulong guildId)

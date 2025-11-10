@@ -11,6 +11,7 @@ namespace AiryBotCode.Application.Interfaces
         string GetSection(string key);
         string GetDatabaseConnectionString();
         string GetOpenAIApiKey();
+        string GetOpenAIPrompt();
         string GetBotName();
         bool IsBotEnabled();
         List<ulong> GetAdminRoleIds();

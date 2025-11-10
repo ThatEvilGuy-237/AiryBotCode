@@ -80,6 +80,14 @@ namespace AiryBotCode.Application.Interfaces
             return apiKey;
         }
 
+        public string GetOpenAIPrompt()
+        {
+            var prompt = _configuration["OpenAI:Prompt"];
+            if (string.IsNullOrWhiteSpace(prompt))
+                throw new InvalidOperationException("OpenAI prompt is missing. Ensure OpenAI:Prompt is set in appsettings.json.");
+            return prompt;
+        }
+
         public string GetBotName()
         {
             var botName = _configuration["Bots:Name"];
