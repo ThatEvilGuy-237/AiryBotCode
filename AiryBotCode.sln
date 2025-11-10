@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.AiryDevBot", "Bots\AiryBotCode.AiryDevBot\AiryBotCode.AiryDevBot.csproj", "{25E95C69-B157-A675-C050-5C2989530BDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.AiryGuardian", "Bots\AiryBotCode.AiryGuardian\AiryBotCode.AiryGuardian.csproj", "{3B63D2EF-2D3D-402D-879B-97C2642AAC11}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.AiryBot", "Bots\AiryBotCode.AiryBot\AiryBotCode.AiryBot.csproj", "{D903E5A9-3A91-474B-A292-CF24903209DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Infrastructure", "AiryBotCode.Infrastructure\AiryBotCode.Infrastructure.csproj", "{67F08F98-D37A-56CD-DD3E-664F3A091C58}"
@@ -33,6 +35,174 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+Any CPU
+Any CPU
+x64
+x64
+x86
+x86
+Any CPU
+Any CPU
+x64
+x64
+x86
+x86
+Any CPU.ActiveCfg = Debug
+Any CPU
+Any CPU.Build.0 = Debug
+Any CPU
+x64.ActiveCfg = Debug
+Any CPU
+x64.Build.0 = Debug
+Any CPU
+x86.ActiveCfg = Debug
+Any CPU
+x86.Build.0 = Debug
+Any CPU
+Any CPU.ActiveCfg = Release
+Any CPU
+Any CPU.Build.0 = Release
+Any CPU
+x64.ActiveCfg = Release
+Any CPU
+x64.Build.0 = Release
+Any CPU
+x86.ActiveCfg = Release
+Any CPU
+x86.Build.0 = Release
+Any CPU
+Any CPU.ActiveCfg = Debug
+Any CPU
+Any CPU.Build.0 = Debug
+Any CPU
+x64.ActiveCfg = Debug
+Any CPU
+x64.Build.0 = Debug
+Any CPU
+x86.ActiveCfg = Debug
+Any CPU
+x86.Build.0 = Debug
+Any CPU
+Any CPU.ActiveCfg = Release
+Any CPU
+Any CPU.Build.0 = Release
+Any CPU
+x64.ActiveCfg = Release
+Any CPU
+x64.Build.0 = Release
+Any CPU
+x86.ActiveCfg = Release
+Any CPU
+x86.Build.0 = Release
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Debug
+Any CPU.ActiveCfg = Debug
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Debug
+Any CPU.Build.0 = Debug
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Debug
+x64.ActiveCfg = Debug
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Debug
+x64.Build.0 = Debug
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Debug
+x86.ActiveCfg = Debug
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Debug
+x86.Build.0 = Debug
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Release
+Any CPU.ActiveCfg = Release
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Release
+Any CPU.Build.0 = Release
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Release
+x64.ActiveCfg = Release
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Release
+x64.Build.0 = Release
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Release
+x86.ActiveCfg = Release
+Any CPU
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11}.Release
+x86.Build.0 = Release
+Any CPU
+Any CPU.ActiveCfg = Debug
+Any CPU
+Any CPU.Build.0 = Debug
+Any CPU
+x64.ActiveCfg = Debug
+Any CPU
+x64.Build.0 = Debug
+Any CPU
+x86.ActiveCfg = Debug
+Any CPU
+x86.Build.0 = Debug
+Any CPU
+Any CPU.ActiveCfg = Release
+Any CPU
+Any CPU.Build.0 = Release
+Any CPU
+x64.ActiveCfg = Release
+Any CPU
+x64.Build.0 = Release
+Any CPU
+x86.ActiveCfg = Release
+Any CPU
+x86.Build.0 = Release
+Any CPU
+Any CPU.ActiveCfg = Debug
+Any CPU
+Any CPU.Build.0 = Debug
+Any CPU
+x64.ActiveCfg = Debug
+Any CPU
+x64.Build.0 = Debug
+Any CPU
+x86.ActiveCfg = Debug
+Any CPU
+x86.Build.0 = Debug
+Any CPU
+Any CPU.ActiveCfg = Release
+Any CPU
+Any CPU.Build.0 = Release
+Any CPU
+x64.ActiveCfg = Release
+Any CPU
+x64.Build.0 = Release
+Any CPU
+x86.ActiveCfg = Release
+Any CPU
+x86.Build.0 = Release
+Any CPU
+Any CPU.ActiveCfg = Debug
+Any CPU
+Any CPU.Build.0 = Debug
+Any CPU
+x64.ActiveCfg = Debug
+Any CPU
+x64.Build.0 = Debug
+Any CPU
+x86.ActiveCfg = Debug
+Any CPU
+x86.Build.0 = Debug
+Any CPU
+Any CPU.ActiveCfg = Release
+Any CPU
+Any CPU.Build.0 = Release
+Any CPU
+x64.ActiveCfg = Release
+Any CPU
+x64.Build.0 = Release
+Any CPU
+x86.ActiveCfg = Release
+Any CPU
+x86.Build.0 = Release
+Any CPU
 		{C61DB1E9-0F4F-1460-D55E-35953E0FF64E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C61DB1E9-0F4F-1460-D55E-35953E0FF64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C61DB1E9-0F4F-1460-D55E-35953E0FF64E}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -111,6 +281,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+{3B63D2EF-2D3D-402D-879B-97C2642AAC11} = {28E4A04F-F57C-48E5-A248-AB24903209DC}
 		{C61DB1E9-0F4F-1460-D55E-35953E0FF64E} = {4B4304AE-9849-473F-B91D-B4AEBD6E5A64}
 		{EBA79085-00FE-60B1-73B2-1A9326128403} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{25E95C69-B157-A675-C050-5C2989530BDF} = {28E4A04F-F57C-48E5-A248-AB24903209DC}
