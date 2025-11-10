@@ -29,12 +29,14 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
             var guildChannel = message.Channel as SocketGuildChannel;
             string displayName = (message.Author as SocketGuildUser)?.DisplayName ?? message.Author.Username;
             ulong botId = _config.GetBotId();
+            var mentionedUsers = getUsersFromMessage(message);
 
             ConversationContext context = await _conversationManagerService.GetOrCreateConversationContextAsync(
                 message.Channel.Id,
                 message.Author.Id,
                 displayName,
-                botId
+                botId,
+                mentionedUsers
             );
 
             // Create user message
@@ -64,7 +66,6 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
             conversationHistory.AddRange(context.MessageHistory);
             conversationHistory.Add(userMessage);
 
-
             // Get AI response
             string responseText = await _openAIClient.SendMessageAsync(conversationHistory);
             var responseMessage = new Message
@@ -81,9 +82,17 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
             // Save messages
             await _conversationManagerService.SaveMessagesAsync(context, userMessage, responseMessage);
 
-
             // Send response to Discord
             await message.Channel.SendMessageAsync(responseText);
+        }
+        private List<SocketUser> getUsersFromMessage(SocketMessage message)
+        {
+            var mentionedUsers = new List<SocketUser>();
+            foreach (var user in message.MentionedUsers)
+            {
+                mentionedUsers.Add(user);
+            }
+            return mentionedUsers;
         }
     }
 }
