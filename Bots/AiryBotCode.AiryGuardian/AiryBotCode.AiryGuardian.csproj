@@ -21,7 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AiryBotCode.Infrastructure\AiryBotCode.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\AiryBotCode.Launcher\AiryBotCode.Launcher.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
