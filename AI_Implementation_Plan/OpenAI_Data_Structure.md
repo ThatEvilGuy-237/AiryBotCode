@@ -17,7 +17,8 @@ Here's an example of the `messages` array that will be sent in the API request b
       Channel Summary: [Insert ChannelConversation.ConversationSummary here]
 
       User Opinions:
-      - Alice: [Insert Alice's ChatUser.AiOpinion here]
+      - Asistent (ID: 1318870826862379018): you*
+      - Alice (ID: 1318870826862379018): [Insert Alice's ChatUser.AiOpinion here]
       - Bob: [Insert Bob's ChatUser.AiOpinion here]"
     },
     {

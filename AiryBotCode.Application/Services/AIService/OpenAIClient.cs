@@ -48,7 +48,7 @@ namespace AiryBotCode.Application.Services.AIService
             {
                 model = _modelName,
                 messages = openAIMessages, // Send the structured messages
-                max_tokens = 800
+                max_tokens = 1000
             };
 
             HttpResponseMessage response;

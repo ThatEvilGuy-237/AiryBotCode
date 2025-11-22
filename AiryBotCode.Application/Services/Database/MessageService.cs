@@ -1,9 +1,6 @@
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Domain.database;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AiryBotCode.Application.Services.Database
 {
@@ -18,7 +15,7 @@ namespace AiryBotCode.Application.Services.Database
 
         public async Task<List<Message>> GetAndManageConversationHistoryAsync(int conversationId)
         {
-            return await _messageRepo.GetAndPruneConversationHistoryAsync(conversationId);
+            return await _messageRepo.GetAndPruneConversationHistoryAsync(conversationId, 15);
         }
 
         public async Task SaveMessageAsync(Message message)
