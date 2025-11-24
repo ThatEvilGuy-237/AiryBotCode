@@ -21,12 +21,12 @@ namespace AiryBotCode.Bot.Registers
             return services;
         }
 
-        public static IServiceProvider BuildServiceProvider(IConfiguration configuration) // Modified to accept IConfiguration
+        public static IServiceProvider BuildServiceProvider(IConfiguration configuration)
         {
             return new ServiceCollection()
                 .AddLogging()
                 .AddSingleton<IConfiguration>(configuration)
-                .AddScoped<IConfigurationReader, ConfigurationReader>() // Registered ConfigurationReader here
+                .AddScoped<IConfigurationReader, ConfigurationReader>()
                 .RegisterServices()
                 .BuildServiceProvider();
         }

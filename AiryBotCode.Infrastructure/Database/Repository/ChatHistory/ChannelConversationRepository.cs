@@ -3,7 +3,7 @@ using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace AiryBotCode.Infrastructure.Database.Repository
+namespace AiryBotCode.Infrastructure.Database.Repository.ChatHistory
 {
     public class ChannelConversationRepository : EvilRepository<ChannelConversation>, IChannelConversationRepository
     {

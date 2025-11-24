@@ -25,7 +25,7 @@ namespace AiryBotCode
                 .Build();
 
             // Register services and build the service provider
-            var serviceProvider = ServiceRegistration.BuildServiceProvider(configuration); // Modified to pass configuration
+            var serviceProvider = ServiceRegistration.BuildServiceProvider(configuration);
 
             var configReader = serviceProvider.GetRequiredService<IConfigurationReader>();
             var botId = configReader.GetBotId();

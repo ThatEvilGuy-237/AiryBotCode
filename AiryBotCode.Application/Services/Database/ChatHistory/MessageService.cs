@@ -2,7 +2,7 @@ using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Domain.database;
 
-namespace AiryBotCode.Application.Services.Database
+namespace AiryBotCode.Application.Services.Database.ChatHistory
 {
     public class MessageService : IMessageService
     {

@@ -5,10 +5,10 @@ using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
 using Microsoft.Extensions.DependencyInjection;
-using AiryBotCode.Application.Interfaces; // Added for IConversationManagerService, IChannelConversationService, IChatUserService, IMessageService
-using AiryBotCode.Application.Services.Database;
-using AiryBotCode.Application.Interfaces.Service; // Added for ConversationManagerService, ChannelConversationService, ChatUserService, MessageService
+using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
+using AiryBotCode.Application.Services.Database.ChatHistory;
 
 namespace AiryBotCode.Application
 {
@@ -22,7 +22,7 @@ namespace AiryBotCode.Application
             {
                 var configReader = provider.GetRequiredService<IConfigurationReader>();
                 var apiKey = configReader.GetOpenAIApiKey();
-                var modelName = "gpt-4o-mini"; // This could be moved to appsettings.json
+                var modelName = configReader.GetOpenAIModel();
                 return new OpenAIClient(apiKey, modelName);
             });
 
@@ -38,18 +38,17 @@ namespace AiryBotCode.Application
             services.AddScoped<ReminderCommand>();
             services.AddScoped<VerifyUserAgeCommand>();
             services.AddScoped<ContactUserCommand>();
-            services.AddScoped<SummarizeUserCommand>(); // Register the new command
+            services.AddScoped<SummarizeUserCommand>();
             // MESSAGE SEND
             services.AddScoped<TalkToAiry>();
-
             // SERIVCES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();
             services.AddScoped<DiscordService>();
-            services.AddScoped<IConversationManagerService, ConversationManagerService>(); // Register the new service
-            services.AddScoped<IChannelConversationService, ChannelConversationService>(); // Register new service
-            services.AddScoped<IChatUserService, ChatUserService>(); // Register new service
-            services.AddScoped<IMessageService, MessageService>(); // Register new service
+            services.AddScoped<IConversationManagerService, ConversationManagerService>();
+            services.AddScoped<IChannelConversationService, ChannelConversationService>();
+            services.AddScoped<IChatUserService, ChatUserService>();
+            services.AddScoped<IMessageService, MessageService>();
 
             return services;
         }

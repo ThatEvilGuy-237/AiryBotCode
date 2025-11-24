@@ -24,6 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Database\" />
+    <Folder Include="Services\Database\BotSettings\" />
   </ItemGroup>
 </Project>

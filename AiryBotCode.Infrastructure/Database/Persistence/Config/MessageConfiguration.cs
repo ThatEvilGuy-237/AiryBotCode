@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AiryBotCode.Infrastructure.Database.Persistence
+namespace AiryBotCode.Infrastructure.Database.Persistence.Config
 {
     public class MessageConfiguration : IEntityTypeConfiguration<Message>
     {

@@ -4,7 +4,7 @@ using AiryBotCode.Infrastructure.Database.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace AiryBotCode.Infrastructure.Database.Repository
+namespace AiryBotCode.Infrastructure.Database.Repository.ChatHistory
 {
     internal class MessageRepository : EvilRepository<Message>, IMessageRepository
     {

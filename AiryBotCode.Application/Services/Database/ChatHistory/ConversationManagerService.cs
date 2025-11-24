@@ -3,13 +3,9 @@ using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
 using AiryBotCode.Domain.database;
-using AiryBotCode.Infrastructure.Configuration;
-using Discord;
 using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
 
-namespace AiryBotCode.Application.Services.Database
+namespace AiryBotCode.Application.Services.Database.ChatHistory
 {
     public class ConversationManagerService : IConversationManagerService
     {

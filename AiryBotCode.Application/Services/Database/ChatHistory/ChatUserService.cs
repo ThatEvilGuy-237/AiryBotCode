@@ -4,7 +4,7 @@ using AiryBotCode.Domain.database;
 using System;
 using System.Threading.Tasks;
 
-namespace AiryBotCode.Application.Services.Database
+namespace AiryBotCode.Application.Services.Database.ChatHistory
 {
     public class ChatUserService : IChatUserService
     {

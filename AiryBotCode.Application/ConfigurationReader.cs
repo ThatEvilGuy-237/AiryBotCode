@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AiryBotCode.Domain.database;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +13,22 @@ namespace AiryBotCode.Application.Interfaces
         {
             _configuration = configuration;
         }
-
+        public BotSetting GetBotSettings()
+        {
+            return new BotSetting
+            {
+                BotId = GetBotId(),
+                Token = GetBotToken(),
+                BotName = GetBotName(),
+                Enabled = IsBotEnabled(),
+                OpenAIModel = GetOpenAIModel(),
+                OpenAIPrompt = GetOpenAIPrompt(),
+                AdminRoleIds = string.Join(",", GetAdminRoleIds()),
+                EvilId = GetEvilId(),
+                EvilLogChannelId = GetEvilLogChannelId(),
+                LogChannelId = GetLogChannelId(),
+            };
+        }
         public string GetBotToken()
         {
             var botToken = _configuration["Bots:Token"];
@@ -55,6 +71,14 @@ namespace AiryBotCode.Application.Interfaces
 
             return logChannelId;
         }
+        public string GetDatabaseHost()
+        {
+            var host = _configuration["Database:Host"];
+            if (string.IsNullOrWhiteSpace(host))
+                throw new InvalidOperationException("Host. Ensure host is in appsettings.json.");
+
+            return host;
+        }
         public string GetDatabaseConnectionString()
         {
             var host = _configuration["Database:Host"];
@@ -74,12 +98,18 @@ namespace AiryBotCode.Application.Interfaces
         {
             var apiKey = _configuration["OpenAI:ApiKey"];
 
-            // Validate the token
+            // Validate the token :TODO
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new InvalidOperationException("OpenAI API key is missing. Ensure OpenAI:ApiKey is set in appsettings.json.");
             return apiKey;
         }
-
+        public string GetOpenAIModel()
+        {
+            var prompt = _configuration["OpenAI:Model"];
+            if (string.IsNullOrWhiteSpace(prompt))
+                throw new InvalidOperationException("OpenAI prompt is missing. Ensure OpenAI:Prompt is set in appsettings.json.");
+            return prompt;
+        }
         public string GetOpenAIPrompt()
         {
             var prompt = _configuration["OpenAI:Prompt"];
