@@ -5,7 +5,7 @@ namespace AiryBotCode.Infrastructure.Interfaces
 {
     public interface IFormAction
     {
-        Task HanndelFormAsync(SocketModal modal, ButtonEncriptionService buttonEncription);
+        Task HandleFormAsync(SocketModal modal, ButtonEncriptionService buttonEncription);
     }
 
 }

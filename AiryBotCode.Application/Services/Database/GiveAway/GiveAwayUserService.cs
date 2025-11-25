@@ -36,5 +36,11 @@ namespace AiryBotCode.Application.Services.Database.GiveAway
             await _giveAwayUser.AddAsync(user);
             await _giveAwayUser.SaveChangesAsync();
         }
+
+        public async Task<bool> IsUserRegistered(ulong userId)
+        {
+            var user = await _giveAwayUser.GetByIdAsync(userId);
+            return user != null;
+        }
     }
 }

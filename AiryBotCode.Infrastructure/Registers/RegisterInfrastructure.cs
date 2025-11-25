@@ -58,6 +58,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<ContactUserAction>();
             services.AddScoped<TalkToAiryAction>();
             services.AddScoped<SummarizeUserAction>();
+            services.AddScoped<GiveawayAction>();
             return services;
         }
     }

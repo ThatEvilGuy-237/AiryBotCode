@@ -8,5 +8,6 @@ namespace AiryBotCode.Application.Interfaces.Service
         Task<List<GiveAwayUser>> GetRandomUsers(int ammount);
         Task<List<GiveAwayUser>> GetAllUsers();
         Task CreateUser(GiveAwayUser user);
+        Task<bool> IsUserRegistered(ulong userId);
     }
 }

@@ -9,6 +9,7 @@ using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
 using AiryBotCode.Application.Services.Database.ChatHistory;
+using AiryBotCode.Application.Services.Database.GiveAway;
 
 namespace AiryBotCode.Application
 {
@@ -39,6 +40,7 @@ namespace AiryBotCode.Application
             services.AddScoped<VerifyUserAgeCommand>();
             services.AddScoped<ContactUserCommand>();
             services.AddScoped<SummarizeUserCommand>();
+            services.AddScoped<GiveawayCommand>();
             // MESSAGE SEND
             services.AddScoped<TalkToAiry>();
             // SERIVCES
@@ -47,8 +49,10 @@ namespace AiryBotCode.Application
             services.AddScoped<DiscordService>();
             services.AddScoped<IConversationManagerService, ConversationManagerService>();
             services.AddScoped<IChannelConversationService, ChannelConversationService>();
-            services.AddScoped<IChatUserService, GiveAwayUserService>();
+            services.AddScoped<IChatUserService, ChatUserService>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IGiveAwayUserService, GiveAwayUserService>();
+            services.AddScoped<GiveAwayUserService>();
 
             return services;
         }
