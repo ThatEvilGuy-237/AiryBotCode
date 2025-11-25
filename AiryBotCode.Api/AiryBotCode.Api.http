@@ -1,0 +1,6 @@
+@AiryBotCode.Api_HostAddress = http://localhost:5245
+
+GET {{AiryBotCode.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

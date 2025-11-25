@@ -4,10 +4,6 @@ using AiryBotCode.Infrastructure.Database.Persistence.Config;
 using AiryBotCode.Infrastructure.Database.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace AiryBotCode.Infrastructure.Database.Persistence
 {
@@ -20,6 +16,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChannelConversation> ChannelConversations { get; set; }
         public DbSet<BotSetting> BotSettings { get; set; }
+        public DbSet<GiveAwayUser> GiveAwayUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,8 +26,8 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
             modelBuilder.ApplyConfiguration(new MessageConfiguration());
             modelBuilder.ApplyConfiguration(new ChannelConversationConfiguration());
             modelBuilder.ApplyConfiguration(new BotSettingConfiguration());
+            modelBuilder.ApplyConfiguration(new GiveAwayUserConfiguration());
         }
-
 
         public static  IServiceCollection registerDbContext(IServiceCollection services)
         {
@@ -38,7 +35,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
             IConfigurationReader _config = services.BuildServiceProvider().GetRequiredService<IConfigurationReader>();
             string connectionString = _config.GetDatabaseConnectionString();
 
-            if (string.IsNullOrWhiteSpace(_config.GetDatabaseHost())) // Basic validation
+            if (string.IsNullOrWhiteSpace(_config.GetDatabaseHost()))
                 throw new InvalidOperationException("Database configuration 'Host' is missing from appsettings.json.");
             services.AddDbContext<AIDbContext>(options =>
                 options.UseNpgsql(connectionString));

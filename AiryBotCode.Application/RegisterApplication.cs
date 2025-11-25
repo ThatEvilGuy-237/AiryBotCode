@@ -47,7 +47,7 @@ namespace AiryBotCode.Application
             services.AddScoped<DiscordService>();
             services.AddScoped<IConversationManagerService, ConversationManagerService>();
             services.AddScoped<IChannelConversationService, ChannelConversationService>();
-            services.AddScoped<IChatUserService, ChatUserService>();
+            services.AddScoped<IChatUserService, GiveAwayUserService>();
             services.AddScoped<IMessageService, MessageService>();
 
             return services;

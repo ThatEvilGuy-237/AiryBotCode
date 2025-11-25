@@ -10,6 +10,7 @@ using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Infrastructure.Database.Repository.ChatHistory;
 using AiryBotCode.Infrastructure.Database.Repository;
 using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
+using AiryBotCode.Infrastructure.Database.Repository.GiveAway;
 
 
 namespace AiryBotCode.Infrastructure.Registers
@@ -25,6 +26,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<IChatUserRepository, ChatUserRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IBotSettingRepository, BotSettingRepository>();
+            services.AddScoped<IGiveAwayUserRepository, GiveAwayUserRepository>();
             // DbContext
             services = AIDbContext.registerDbContext(services);
             // Other
