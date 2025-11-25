@@ -13,18 +13,32 @@ namespace AiryBotCode.Application.Frontend
         {
             return new EmbedBuilder()
                 .WithTitle("🎉 Giveaway Event!")
-                .WithDescription("Click the button below to register for the giveaway.")
+                .AddField("Description", "Click the button below to register for the giveaway and get a chance to win amazing prizes!", false)
+                .WithImageUrl("https://iili.io/fq5u5ue.png")
                 .WithColor(Color.Gold)
                 .Build();
         }
 
-        public static Embed CreateScoreboardEmbed(int userCount)
+        public static Embed CreateScoreboardEmbed(int userCount, string status)
         {
-            return new EmbedBuilder()
-                .WithTitle("🏆 Giveaway Scoreboard")
-                .WithDescription($"**{userCount}** users have registered so far.")
-                .WithColor(Color.Blue)
-                .Build();
+            var embedBuilder = new EmbedBuilder()
+                .WithTitle("🏆 Giveaway Scoreboard 🏆")
+                .WithDescription("Here is the current status of the giveaway event.")
+                .AddField("Registered Users", $"**{userCount}** participants", true)
+                .AddField("Status", status, true)
+                .WithTimestamp(DateTimeOffset.UtcNow)
+                .WithFooter("AiryBot Giveaway", "https://i.imgur.com/example.png"); // Replace with a real icon URL if you have one
+
+            if (status == "Accepting Registrations")
+            {
+                embedBuilder.WithColor(Color.Green);
+            }
+            else
+            {
+                embedBuilder.WithColor(Color.Red);
+            }
+
+            return embedBuilder.Build();
         }
         public static ModalBuilder CreateGetRandomForm(string customId)
         {

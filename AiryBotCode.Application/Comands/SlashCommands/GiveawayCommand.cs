@@ -28,6 +28,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         public const string GetRandomAction = "get-random";
         public const string EndEventAction = "end-event";
         public const string ClearUsersAction = "clear-users";
+        public const string ConfirmClearUsersAction = "confirm-clear-users";
 
         public GiveawayCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -54,7 +55,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
 
             // Create and send initial scoreboard embed
             var allUsers = await _giveAwayUserService.GetAllUsers();
-            var initialScoreboardEmbed = GiveawayFrontend.CreateScoreboardEmbed(allUsers.Count);
+            var initialScoreboardEmbed = GiveawayFrontend.CreateScoreboardEmbed(allUsers.Count, "Accepting Registrations");
             var buttonEncryptorAllUsers = new ButtonEncriptionService
             {
                 CommandName = Name,
@@ -82,8 +83,29 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 .WithButton("End Event", buttonEncryptorEndEvent.Encript(), ButtonStyle.Danger)
                 .WithButton("Clear Users", buttonEncryptorClearUsers.Encript(), ButtonStyle.Danger)
                 .Build();
-            var scoreboardMessage = await scoreboardChannel.SendMessageAsync(embed: initialScoreboardEmbed, components: scoreboardComponents);
-            ScoreboardMessageIds[guildId] = scoreboardMessage.Id;
+
+            if (ScoreboardMessageIds.TryGetValue(guildId, out ulong messageId))
+            {
+                var existingMessage = await scoreboardChannel.GetMessageAsync(messageId) as IUserMessage;
+                if (existingMessage != null)
+                {
+                    await existingMessage.ModifyAsync(props =>
+                    {
+                        props.Embed = initialScoreboardEmbed;
+                        props.Components = scoreboardComponents;
+                    });
+                }
+                else
+                {
+                    var scoreboardMessage = await scoreboardChannel.SendMessageAsync(embed: initialScoreboardEmbed, components: scoreboardComponents);
+                    ScoreboardMessageIds[guildId] = scoreboardMessage.Id;
+                }
+            }
+            else
+            {
+                var scoreboardMessage = await scoreboardChannel.SendMessageAsync(embed: initialScoreboardEmbed, components: scoreboardComponents);
+                ScoreboardMessageIds[guildId] = scoreboardMessage.Id;
+            }
 
             // Create the main giveaway embed and button
             var giveawayEmbed = GiveawayFrontend.CreateGiveawayEmbed();
@@ -124,6 +146,14 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             {
                 await HandleClearUsersButton(component);
             }
+            else if (buttonData.Action == ConfirmClearUsersAction)
+            {
+                await HandleConfirmClearUsersButton(component);
+            }
+            else if (component.Data.CustomId == "cancel-clear")
+            {
+                await component.Message.DeleteAsync();
+            }
         }
 
         private async Task HandleClearUsersButton(SocketMessageComponent component)
@@ -134,12 +164,46 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 return;
             }
 
+            var buttonEncryptor = new ButtonEncriptionService
+            {
+                CommandName = Name,
+                Action = ConfirmClearUsersAction
+            };
+
+            var confirmationComponents = new ComponentBuilder()
+                .WithButton("Yes, I'm sure", buttonEncryptor.Encript(), ButtonStyle.Danger)
+                .WithButton("Cancel", "cancel-clear", ButtonStyle.Secondary)
+                .Build();
+
+            await component.RespondAsync("Are you sure you want to clear all users? This action cannot be undone.", components: confirmationComponents, ephemeral: true);
+        }
+
+        private async Task HandleConfirmClearUsersButton(SocketMessageComponent component)
+        {
+            if (component.User.Id != 405431299323461634)
+            {
+                await component.RespondAsync("You do not have permission to use this button.", ephemeral: true);
+                return;
+            }
+
             await _giveAwayUserService.DeleteAllUsersAsync();
 
-            var updatedEmbed = GiveawayFrontend.CreateScoreboardEmbed(0);
-            await component.Message.ModifyAsync(props => props.Embed = updatedEmbed);
-
-            await component.RespondAsync("All users have been cleared from the giveaway.", ephemeral: true);
+            var guildId = component.GuildId.Value;
+            if (ScoreboardMessageIds.TryGetValue(guildId, out var scoreboardMessageId))
+            {
+                var scoreboardChannel = _client.GetChannel(ScoreboardChannelId) as SocketTextChannel;
+                var scoreboardMessage = await scoreboardChannel.GetMessageAsync(scoreboardMessageId) as IUserMessage;
+                if (scoreboardMessage != null)
+                {
+                    var updatedEmbed = GiveawayFrontend.CreateScoreboardEmbed(0, "Accepting Registrations");
+                    await scoreboardMessage.ModifyAsync(props => props.Embed = updatedEmbed);
+                }
+            }
+            
+            await component.UpdateAsync(props => {
+                props.Content = "All users have been cleared from the giveaway.";
+                props.Components = new ComponentBuilder().Build();
+            });
         }
 
 
@@ -167,7 +231,6 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                     var giveawayMessage = await giveawayChannel.GetMessageAsync(giveawayInfo.messageId) as IUserMessage;
                     if (giveawayMessage != null)
                     {
-                        var embed = giveawayMessage.Embeds.FirstOrDefault();
                         var updatedComponents = new ComponentBuilder()
                             .WithButton("Registration Closed", "event-ended", ButtonStyle.Secondary, disabled: true)
                             .Build();
@@ -180,6 +243,17 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                         await component.RespondAsync("Giveaway registration has been closed.", ephemeral: true);
                         //GiveawayMessageIds.Remove(guildId); // Clean up
                     }
+                }
+            }
+            if (ScoreboardMessageIds.TryGetValue(guildId, out var scoreboardMessageId))
+            {
+                var scoreboardChannel = _client.GetChannel(ScoreboardChannelId) as SocketTextChannel;
+                var scoreboardMessage = await scoreboardChannel.GetMessageAsync(scoreboardMessageId) as IUserMessage;
+                if (scoreboardMessage != null)
+                {
+                    var allUsers = await _giveAwayUserService.GetAllUsers();
+                    var updatedEmbed = GiveawayFrontend.CreateScoreboardEmbed(allUsers.Count, "Ended");
+                    await scoreboardMessage.ModifyAsync(props => props.Embed = updatedEmbed);
                 }
             }
         }
@@ -241,7 +315,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 var scoreboardMessage = await scoreboardChannel.GetMessageAsync(messageId) as IUserMessage;
                 if (scoreboardMessage != null)
                 {
-                    var updatedEmbed = GiveawayFrontend.CreateScoreboardEmbed(allUsers.Count);
+                    var updatedEmbed = GiveawayFrontend.CreateScoreboardEmbed(allUsers.Count, "Accepting Registrations");
                      var buttonEncryptor = new ButtonEncriptionService
                     {
                         CommandName = Name,
