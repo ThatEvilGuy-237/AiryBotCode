@@ -27,22 +27,26 @@ namespace AiryBotCode.Infrastructure.Database.Repository
 
         public async Task<T> AddAsync(T entity)
         {
-            _dbSet.Add(entity);
-            await _context.SaveChangesAsync();
+            await _dbSet.AddAsync(entity);
             return entity;
         }
 
         public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            return await Task.FromResult(entity);
         }
 
         public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            await Task.CompletedTask;
+        }
+
+        public async Task DeleteAllAsync()
+        {
+            var allEntities = await _dbSet.ToListAsync();
+            _dbSet.RemoveRange(allEntities);
         }
 
         public async Task SaveChangesAsync()

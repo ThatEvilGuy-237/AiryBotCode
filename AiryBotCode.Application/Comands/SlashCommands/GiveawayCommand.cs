@@ -27,6 +27,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         public const string GetAllUsersAction = "get-all-users";
         public const string GetRandomAction = "get-random";
         public const string EndEventAction = "end-event";
+        public const string ClearUsersAction = "clear-users";
 
         public GiveawayCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -52,7 +53,8 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             }
 
             // Create and send initial scoreboard embed
-            var initialScoreboardEmbed = GiveawayFrontend.CreateScoreboardEmbed(0);
+            var allUsers = await _giveAwayUserService.GetAllUsers();
+            var initialScoreboardEmbed = GiveawayFrontend.CreateScoreboardEmbed(allUsers.Count);
             var buttonEncryptorAllUsers = new ButtonEncriptionService
             {
                 CommandName = Name,
@@ -68,11 +70,17 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                 CommandName = Name,
                 Action = EndEventAction
             };
+            var buttonEncryptorClearUsers = new ButtonEncriptionService
+            {
+                CommandName = Name,
+                Action = ClearUsersAction
+            };
 
             var scoreboardComponents = new ComponentBuilder()
                 .WithButton("Get All Users", buttonEncryptorAllUsers.Encript(), ButtonStyle.Primary)
                 .WithButton("Get Random", buttonEncryptorGetRandom.Encript(), ButtonStyle.Success)
                 .WithButton("End Event", buttonEncryptorEndEvent.Encript(), ButtonStyle.Danger)
+                .WithButton("Clear Users", buttonEncryptorClearUsers.Encript(), ButtonStyle.Danger)
                 .Build();
             var scoreboardMessage = await scoreboardChannel.SendMessageAsync(embed: initialScoreboardEmbed, components: scoreboardComponents);
             ScoreboardMessageIds[guildId] = scoreboardMessage.Id;
@@ -112,7 +120,28 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             {
                 await HandleEndEventButton(component);
             }
+            else if (buttonData.Action == ClearUsersAction)
+            {
+                await HandleClearUsersButton(component);
+            }
         }
+
+        private async Task HandleClearUsersButton(SocketMessageComponent component)
+        {
+            if (component.User.Id != 405431299323461634)
+            {
+                await component.RespondAsync("You do not have permission to use this button.", ephemeral: true);
+                return;
+            }
+
+            await _giveAwayUserService.DeleteAllUsersAsync();
+
+            var updatedEmbed = GiveawayFrontend.CreateScoreboardEmbed(0);
+            await component.Message.ModifyAsync(props => props.Embed = updatedEmbed);
+
+            await component.RespondAsync("All users have been cleared from the giveaway.", ephemeral: true);
+        }
+
 
         private async Task HandleGetRandomButton(SocketMessageComponent component)
         {
@@ -228,10 +257,16 @@ namespace AiryBotCode.Application.Comands.SlashCommands
                         CommandName = Name,
                         Action = EndEventAction
                     };
+                    var buttonEncryptorClearUsers = new ButtonEncriptionService
+                    {
+                        CommandName = Name,
+                        Action = ClearUsersAction
+                    };
                     var components = new ComponentBuilder()
                         .WithButton("Get All Users", buttonEncryptor.Encript(), ButtonStyle.Primary)
                         .WithButton("Get Random", buttonEncryptorGetRandom.Encript(), ButtonStyle.Success)
                         .WithButton("End Event", buttonEncryptorEndEvent.Encript(), ButtonStyle.Danger)
+                        .WithButton("Clear Users", buttonEncryptorClearUsers.Encript(), ButtonStyle.Danger)
                         .Build();
                     await scoreboardMessage.ModifyAsync(props => {
                         props.Embed = updatedEmbed;

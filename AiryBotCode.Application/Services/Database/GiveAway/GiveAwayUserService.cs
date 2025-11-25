@@ -42,5 +42,11 @@ namespace AiryBotCode.Application.Services.Database.GiveAway
             var user = await _giveAwayUser.GetByIdAsync(userId);
             return user != null;
         }
+
+        public async Task DeleteAllUsersAsync()
+        {
+            await _giveAwayUser.DeleteAllAsync();
+            await _giveAwayUser.SaveChangesAsync();
+        }
     }
 }
