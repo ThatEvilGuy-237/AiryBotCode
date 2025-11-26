@@ -1,9 +1,4 @@
 using Discord;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AiryBotCode.Application.Frontend
 {
@@ -12,11 +7,36 @@ namespace AiryBotCode.Application.Frontend
         public static Embed CreateGiveawayEmbed()
         {
             return new EmbedBuilder()
-                .WithTitle("🎉 Giveaway Event!")
-                .AddField("Description", "Click the button below to register for the giveaway and get a chance to win amazing prizes!", false)
+                .WithTitle("🎁 Cookie & Cream’s Christmas Giveaway! 🎁")
+                .AddField(
+                    "Info",
+                    "To celebrate the season, we’re hosting a special giveaway where you can win a 1 month of Patreon tier listed bellow. The event stays open until **24 December**, and the winners will be revealed on **25 December**. A small thank-you from us to the community.\n",
+                    false
+                )
+                .AddField(
+                    "Prizes",
+                    "- 5 winners get **1 month of SFW Tier**\n- 5 winners get **1 month of NSFW Tier**",
+                    false
+                )
+                .AddField(
+                    "How to Join",
+                    "Click the button below to register for the giveaway and wait for your Christmas present on the 25th of December. Nothing else needed!\n",
+                    false
+                )
+                .AddField(
+                    "How do I win?",
+                    "There will be 5 winners for SFW and 5 diffrent winners for NSFW Patreon tier. The winners will be chosen randomly and will receive their reward through a **Discord DM**.",
+                    false
+                )
+                .AddField(
+                    "Big Thanks",
+                    "Thank you all for the support and for being part of Cookie & Cream community. Good luck!",
+                    false
+                )
                 .WithImageUrl("https://iili.io/fq5u5ue.png")
                 .WithColor(Color.Gold)
                 .Build();
+
         }
 
         public static Embed CreateScoreboardEmbed(int userCount, string status)

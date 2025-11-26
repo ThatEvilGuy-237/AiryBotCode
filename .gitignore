@@ -280,3 +280,4 @@ GEMINI.md
 scripts/package-lock.json
 scripts/package.json
 AI_Implementation_Plan/AI_Personality_Questions.md
+/AiryBotCode.Api/appsettings.Development.json

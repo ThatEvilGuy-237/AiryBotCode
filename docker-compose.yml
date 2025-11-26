@@ -11,3 +11,41 @@ services:
       - "5432:5432"
     volumes:
       - C:\Users\brits\Documents\postgres_data:/var/lib/postgresql/data/pgdata
+  # airybot:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     args:
+  #       PROJECT_PATH: "Bots/AiryBotCode.AiryBot/AiryBotCode.AiryBot.csproj"
+  #       DLL_NAME: "AiryBotCode.AiryBot.dll"
+  #   depends_on:
+  #     - db
+  #   restart: always
+  #   volumes:
+  #     - ./Bots/AiryBotCode.AiryBot/appsettings.json:/app/appsettings.json
+  airydevbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: "Bots/AiryBotCode.AiryDevBot/AiryBotCode.AiryDevBot.csproj"
+        DLL_NAME: "AiryBotCode.AiryDevBot.dll"
+        SLN_PATH: "AiryBotCode.sln"
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
+  # 
+  # airyguardian:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     args:
+  #       PROJECT_PATH: "Bots/AiryBotCode.AiryGuardian/AiryBotCode.AiryGuardian.csproj"
+  #       DLL_NAME: "AiryBotCode.AiryGuardian.dll"
+  #   depends_on:
+  #     - db
+  #   restart: always
+  #   volumes:
+  #     - ./Bots/AiryBotCode.AiryGuardian/appsettings.json:/app/appsettings.json
