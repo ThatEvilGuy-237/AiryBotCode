@@ -24,7 +24,6 @@
 
   .main-content {
     background-color: var(--background-color, #f4f7fa);
-    padding: 2rem;
     overflow-y: auto;
     height: 100vh;
   }

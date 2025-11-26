@@ -1,83 +1,88 @@
 <!-- src/routes/Database.svelte -->
 <script lang="ts">
     import DataTable from '../lib/components/DataTable.svelte';
+    import TableList from '../lib/components/TableList.svelte';
     import { mockChatUsers, mockMessages, mockChannelConversations, mockGiveAwayUsers } from '../lib/mock';
 
-    let activeTab: 'chatUsers' | 'messages' | 'conversations' | 'giveaways' = 'chatUsers';
+    let selectedTableId = 'chatUsers';
 
-    const userColumns = [
-        { key: 'id', label: 'ID', type: 'number' },
-        { key: 'userName', label: 'Username', type: 'string' },
-        { key: 'role', label: 'Role', type: 'string' },
-        { key: 'createdAt', label: 'Created At', type: 'date' }
+    const tables = [
+        { id: 'chatUsers', name: 'Chat Users' },
+        { id: 'messages', name: 'Messages' },
+        { id: 'conversations', name: 'Conversations' },
+        { id: 'giveaways', name: 'Giveaways' },
     ];
 
-    const messageColumns = [
-        { key: 'id', label: 'ID', type: 'number' },
-        { key: 'userId', label: 'User ID', type: 'number' },
-        { key: 'context', label: 'Content', type: 'string' },
-        { key: 'createdAt', label: 'Sent At', type: 'date' }
-    ];
+    const columnConfig = {
+        chatUsers: [
+            { key: 'id', label: 'ID', type: 'number' },
+            { key: 'userName', label: 'Username', type: 'string' },
+            { key: 'role', label: 'Role', type: 'string' },
+            { key: 'createdAt', label: 'Created At', type: 'date' }
+        ],
+        messages: [
+            { key: 'id', label: 'ID', type: 'number' },
+            { key: 'userId', label: 'User ID', type: 'number' },
+            { key: 'context', label: 'Content', type: 'string' },
+            { key: 'createdAt', label: 'Sent At', type: 'date' }
+        ],
+        conversations: [
+            { key: 'id', label: 'ID', type: 'number' },
+            { key: 'channelId', label: 'Channel ID', type: 'number' },
+            { key: 'conversationSummary', label: 'Summary', type: 'string' },
+            { key: 'updatedAt', label: 'Last Updated', type: 'date' }
+        ],
+        giveaways: [
+            { key: 'id', label: 'User ID', type: 'number' },
+            { key: 'userName', label: 'Username', type: 'string' },
+            { key: 'submitedAt', label: 'Submitted At', type: 'date' }
+        ]
+    };
 
-    const conversationColumns = [
-        { key: 'id', label: 'ID', type: 'number' },
-        { key: 'channelId', label: 'Channel ID', type: 'number' },
-        { key: 'conversationSummary', label: 'Summary', type: 'string' },
-        { key: 'updatedAt', label: 'Last Updated', type: 'date' }
-    ];
+    const dataConfig = {
+        chatUsers: mockChatUsers,
+        messages: mockMessages,
+        conversations: mockChannelConversations,
+        giveaways: mockGiveAwayUsers
+    };
 
-    const giveawayColumns = [
-        { key: 'id', label: 'User ID', type: 'number' },
-        { key: 'userName', label: 'Username', type: 'string' },
-        { key: 'submitedAt', label: 'Submitted At', type: 'date' }
-    ];
-
+    function handleTableSelect(event: any) {
+        selectedTableId = event.detail;
+    }
 </script>
 
-<h1>Database Management</h1>
-
-<div class="tabs">
-    <button on:click={() => activeTab = 'chatUsers'} class:active={activeTab === 'chatUsers'}>Chat Users</button>
-    <button on:click={() => activeTab = 'messages'} class:active={activeTab === 'messages'}>Messages</button>
-    <button on:click={() => activeTab = 'conversations'} class:active={activeTab === 'conversations'}>Conversations</button>
-    <button on:click={() => activeTab = 'giveaways'} class:active={activeTab === 'giveaways'}>Giveaways</button>
-</div>
-
-<div class="tab-content">
-    {#if activeTab === 'chatUsers'}
-        <DataTable items={mockChatUsers} columns={userColumns} />
-    {:else if activeTab === 'messages'}
-        <DataTable items={mockMessages} columns={messageColumns} />
-    {:else if activeTab === 'conversations'}
-        <DataTable items={mockChannelConversations} columns={conversationColumns} />
-    {:else if activeTab === 'giveaways'}
-        <DataTable items={mockGiveAwayUsers} columns={giveawayColumns} />
-    {/if}
+<div class="page-layout">
+    <TableList {tables} on:select={handleTableSelect} />
+    <div class="content-area">
+        <h1>{tables.find(t => t.id === selectedTableId)?.name}</h1>
+        <div class="card">
+            <DataTable items={dataConfig[selectedTableId]} columns={columnConfig[selectedTableId]} />
+        </div>
+    </div>
 </div>
 
 <style>
-    .tabs {
-        display: flex;
-        border-bottom: 2px solid #ccc;
-        margin-bottom: 1rem;
+    .page-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        height: 100%;
+        align-items: start;
     }
-    .tabs button {
-        padding: 10px 20px;
-        cursor: pointer;
-        border: none;
-        background-color: transparent;
-        font-size: 1rem;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -2px;
+
+    .content-area {
+        padding: 1.5rem;
     }
-    .tabs button.active {
-        border-bottom-color: var(--primary-color, #646cff);
-        font-weight: bold;
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
     }
-    .tab-content {
-        padding: 1rem;
-        border: 1px solid #ddd;
-        border-top: none;
-        border-radius: 0 0 8px 8px;
+
+    .card {
+        background-color: var(--card-background, white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 </style>
