@@ -23,7 +23,7 @@
 
 <aside class="table-list-sidebar">
     <div class="search-container">
-        <SearchIcon size="20" class="search-icon" />
+        <SearchIcon size="20" />
         <input type="text" placeholder="Search tables..." bind:value={searchTerm} />
     </div>
     <nav>
@@ -49,24 +49,28 @@
     }
 
     .search-container {
-        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0 0.75rem;
         margin-bottom: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color, #e0e0e0);
+        background-color: white;
     }
-
-    .search-icon {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
+    
+    .search-container :global(svg) {
         color: #999;
+        flex-shrink: 0;
     }
 
     input[type="text"] {
         width: 100%;
-        padding: 0.75rem 0.75rem 0.75rem 35px;
-        border-radius: 8px;
-        border: 1px solid var(--border-color, #e0e0e0);
+        border: none;
+        outline: none;
+        padding: 0.75rem 0;
         font-size: 1rem;
+        background-color: transparent;
     }
 
     ul {
