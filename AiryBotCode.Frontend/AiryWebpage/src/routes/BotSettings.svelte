@@ -1,15 +1,26 @@
 <!-- src/routes/BotSettings.svelte -->
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { mockBotSettings } from '../lib/mock';
     import type { BotSetting } from '../lib/types/database';
+    import BotList from '../lib/components/BotList.svelte';
 
     let selectedBotId: number | null = null;
     let selectedBot: BotSetting | null = null;
     let bots = mockBotSettings;
+    let showSuccess = false;
+    let successTimeout: number;
+
+    function handleBotSelect(event: any) {
+        selectedBotId = event.detail;
+        showSuccess = false; // Hide message when switching bots
+        clearTimeout(successTimeout);
+    }
 
     $: {
         if (selectedBotId) {
-            selectedBot = bots.find(b => b.botId === selectedBotId) || null;
+            const foundBot = bots.find(b => b.botId === selectedBotId);
+            selectedBot = foundBot ? { ...foundBot } : null;
         } else {
             selectedBot = null;
         }
@@ -17,116 +28,158 @@
 
     function saveSettings() {
         if (selectedBot) {
-            console.log('Saving settings for:', selectedBot);
-            alert('Settings saved! (Check console for details)');
+            const index = bots.findIndex(b => b.botId === selectedBot.botId);
+            if (index !== -1) {
+                bots[index] = selectedBot;
+            }
+            
+            showSuccess = true;
+            clearTimeout(successTimeout);
+            successTimeout = setTimeout(() => {
+                showSuccess = false;
+            }, 3000);
         }
     }
+    
+    onMount(() => {
+        if (bots.length > 0) {
+            selectedBotId = bots[0].botId;
+        }
+    });
+
 </script>
 
-<h1>Bot Settings</h1>
-
-<div class="settings-container">
-    <div class="bot-selector">
-        <label for="bot-select">Select a Bot:</label>
-        <select id="bot-select" bind:value={selectedBotId}>
-            <option value={null}>-- Choose a bot --</option>
-            {#each bots as bot}
-                <option value={bot.botId}>{bot.botName}</option>
-            {/each}
-        </select>
-    </div>
-
-    {#if selectedBot}
-        <div class="settings-form">
+<div class="page-layout">
+    <BotList {bots} {selectedBotId} on:select={handleBotSelect} />
+    <div class="content-area">
+        {#if selectedBot}
             <h2>Settings for {selectedBot.botName}</h2>
-            <form on:submit|preventDefault={saveSettings}>
-                <div class="form-group">
-                    <label for="botName">Bot Name</label>
-                    <input id="botName" type="text" bind:value={selectedBot.botName}>
-                </div>
-                <div class="form-group">
-                    <label for="openAIModel">OpenAI Model</label>
-                    <input id="openAIModel" type="text" bind:value={selectedBot.openAIModel}>
-                </div>
-                <div class="form-group">
-                    <label for="openAIPrompt">OpenAI Prompt</label>
-                    <textarea id="openAIPrompt" rows="4" bind:value={selectedBot.openAIPrompt}></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="adminRoleIds">Admin Role IDs</label>
-                    <input id="adminRoleIds" type="text" bind:value={selectedBot.adminRoleIds}>
-                </div>
-                <div class="form-group">
-                    <label for="logChannelId">Log Channel ID</label>
-                    <input id="logChannelId" type="number" bind:value={selectedBot.logChannelId}>
-                </div>
-                 <div class="form-group">
-                    <label for="evilLogChannelId">Evil Log Channel ID</label>
-                    <input id="evilLogChannelId" type="number" bind:value={selectedBot.evilLogChannelId}>
-                </div>
-                <div class="form-group-check">
-                    <label for="enabled">Enabled</label>
-                    <input id="enabled" type="checkbox" bind:checked={selectedBot.enabled}>
-                </div>
-                <button type="submit">Save Settings</button>
-            </form>
-        </div>
-    {/if}
+            <div class="card">
+                <form on:submit|preventDefault={saveSettings}>
+                    <div class="form-group">
+                        <label for="botName">Bot Name</label>
+                        <input id="botName" type="text" bind:value={selectedBot.botName}>
+                    </div>
+                    <div class="form-group">
+                        <label for="openAIModel">OpenAI Model</label>
+                        <input id="openAIModel" type="text" bind:value={selectedBot.openAIModel}>
+                    </div>
+                    <div class="form-group">
+                        <label for="openAIPrompt">OpenAI Prompt</label>
+                        <textarea id="openAIPrompt" rows="4" bind:value={selectedBot.openAIPrompt}></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminRoleIds">Admin Role IDs</label>
+                        <input id="adminRoleIds" type="text" bind:value={selectedBot.adminRoleIds}>
+                    </div>
+                    <div class="form-group">
+                        <label for="logChannelId">Log Channel ID</label>
+                        <input id="logChannelId" type="number" bind:value={selectedBot.logChannelId}>
+                    </div>
+                     <div class="form-group">
+                        <label for="evilLogChannelId">Evil Log Channel ID</label>
+                        <input id="evilLogChannelId" type="number" bind:value={selectedBot.evilLogChannelId}>
+                    </div>
+                    <div class="form-group-check">
+                        <input id="enabled" type="checkbox" bind:checked={selectedBot.enabled}>
+                        <label for="enabled">Enabled</label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="save-btn">Save Settings</button>
+                        {#if showSuccess}
+                            <span class="success-message">Success!</span>
+                        {/if}
+                    </div>
+                </form>
+            </div>
+        {:else}
+            <h2>Select a bot to view its settings.</h2>
+        {/if}
+    </div>
 </div>
 
+
 <style>
-    .settings-container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 1rem;
+    .page-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 2rem;
+        height: 100%;
+        align-items: start;
     }
-    .bot-selector {
-        margin-bottom: 2rem;
+
+    .content-area {
+        padding: 1.5rem;
     }
-    select {
-        padding: 0.5rem;
-        font-size: 1rem;
-    }
-    .settings-form {
-        border: 1px solid #ddd;
-        border-radius: 8px;
+
+    .card {
+        background-color: var(--card-background, white);
+        border-radius: 12px;
         padding: 2rem;
-        background-color: #f9f9f9;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
+
+    h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+
     .form-group {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
     }
-     .form-group-check {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
+    .form-group-check {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
         align-items: center;
     }
     label {
-        font-weight: bold;
+        font-weight: 500;
         text-align: left;
+        color: #374151;
     }
-    input[type="text"], input[type="number"], textarea, select {
+    input[type="text"], input[type="number"], textarea {
         width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        padding: 0.6rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+    }
+    input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        order: -1;
     }
     textarea {
         resize: vertical;
+        min-height: 80px;
     }
-    button {
-        padding: 0.75rem 1.5rem;
-        background-color: var(--primary-color, #646cff);
-        color: white;
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .save-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
         border: none;
         border-radius: 8px;
-        cursor: pointer;
+        padding: 0.75rem 1.5rem;
         font-size: 1rem;
-        margin-top: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background-color: var(--primary-color, #4a90e2);
+        color: white;
+    }
+    .success-message {
+        color: #16a34a;
+        font-weight: 500;
     }
 </style>

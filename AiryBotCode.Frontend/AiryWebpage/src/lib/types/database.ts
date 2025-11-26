@@ -45,6 +45,7 @@ export interface GiveAwayUser {
 export interface BotSetting {
     botId: number; // ulong
     botName: string;
+    avatarUrl?: string; // Add optional avatar URL
     openAIModel: string;
     openAIPrompt: string;
     enabled: boolean;

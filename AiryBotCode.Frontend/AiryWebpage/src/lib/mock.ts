@@ -6,6 +6,7 @@ export const mockBotSettings: BotSetting[] = [
     {
         botId: 1,
         botName: "AiryBot",
+        avatarUrl: "https://placehold.co/64x64/4a90e2/ffffff?text=A",
         openAIModel: "text-davinci-003",
         openAIPrompt: "You are a helpful assistant.",
         enabled: true,
@@ -18,6 +19,7 @@ export const mockBotSettings: BotSetting[] = [
     {
         botId: 2,
         botName: "AiryGuardian",
+        avatarUrl: "https://placehold.co/64x64/2c3e50/ffffff?text=G",
         openAIModel: "text-davinci-003",
         openAIPrompt: "You are a moderator.",
         enabled: true,

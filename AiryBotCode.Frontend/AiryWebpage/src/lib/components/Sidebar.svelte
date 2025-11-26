@@ -18,7 +18,7 @@
         </a>
         <a href="/bot-settings">
             <SettingsIcon size="24" />
-            <span>Bot Settings</span>
+            <span>Bots Settings</span>
         </a>
     </nav>
 </aside>
