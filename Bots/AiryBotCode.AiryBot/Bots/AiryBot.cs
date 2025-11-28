@@ -28,6 +28,7 @@ namespace AiryBotCode.Bot.Bots
             List<EvilAction> actions = new List<EvilAction>
             {
                 serviceProvider.GetRequiredService<TalkToAiryAction>(),
+                serviceProvider.GetRequiredService<GiveawayAction>(),
                 //serviceProvider.GetRequiredService<UserlogsAction>(),
                 //serviceProvider.GetRequiredService<TimeoutAction>(),
                 //serviceProvider.GetRequiredService<UntimeOutAction>(),
@@ -54,10 +55,10 @@ namespace AiryBotCode.Bot.Bots
             Console.WriteLine("[INFO] Hooking up Discord events...");
             _client.Ready += _slashCommandHandler.RegisterCommandsAsync;
             _client.MessageReceived += _messageSendHandler.HandelMessageSend;
-            //_client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-            //_client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
-            //_client.ModalSubmitted += _formHandler.HandleFormInteraction;
-            //_client.UserBanned += _banHandler.HandleInteractionAsync;
+            _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
+            _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
+            _client.ModalSubmitted += _formHandler.HandleFormInteraction;
+            _client.UserBanned += _banHandler.HandleInteractionAsync;
 
         }
 

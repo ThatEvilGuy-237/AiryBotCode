@@ -2,12 +2,10 @@
 ﻿using Discord.WebSocket;
 ﻿using Discord;
 ﻿using Microsoft.Extensions.DependencyInjection;
-﻿using AiryBotCode.Infrastructure.Configuration;
 ﻿using AiryBotCode.Infrastructure.DiscordEvents;
 ﻿using Discord.Commands;
 ﻿using AiryBotCode.Application.Interfaces;
-﻿using Microsoft.Extensions.Logging; // Added for logging
-﻿
+﻿using Microsoft.Extensions.Logging; // Added for logging﻿
 ﻿namespace AiryBotCode.Bot.Bots
 ﻿{
 ﻿    public class Bot : IBot

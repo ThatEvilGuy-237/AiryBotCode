@@ -13,6 +13,10 @@ namespace AiryBotCode.Application.Interfaces
         string GetSection(string key);
         string GetDatabaseConnectionString();
         string GetDatabaseHost();
+        int GetDatabasePort();
+        string GetDatabaseName();
+        string GetDatabaseUser();
+        string GetDatabasePassword();
         string GetOpenAIApiKey();
         string GetOpenAIModel();
         string GetOpenAIPrompt();

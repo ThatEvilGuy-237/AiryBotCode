@@ -79,16 +79,48 @@ namespace AiryBotCode.Application.Interfaces
 
             return host;
         }
+
+        public int GetDatabasePort()
+        {
+            var portStr = _configuration["Database:Port"];
+            if (string.IsNullOrWhiteSpace(portStr) || !int.TryParse(portStr, out int port))
+                throw new InvalidOperationException("Invalid or missing database port. Ensure Database:Port is a valid integer in appsettings.json.");
+            return port;
+        }
+
+        public string GetDatabaseName()
+        {
+            var name = _configuration["Database:Name"];
+            if (string.IsNullOrWhiteSpace(name))
+                throw new InvalidOperationException("Database name is missing. Ensure Database:Name is set in appsettings.json.");
+            return name;
+        }
+
+        public string GetDatabaseUser()
+        {
+            var user = _configuration["Database:User"];
+            if (string.IsNullOrWhiteSpace(user))
+                throw new InvalidOperationException("Database user is missing. Ensure Database:User is set in appsettings.json.");
+            return user;
+        }
+
+        public string GetDatabasePassword()
+        {
+            var password = _configuration["Database:Password"];
+            if (string.IsNullOrWhiteSpace(password))
+                throw new InvalidOperationException("Database password is missing. Ensure Database:Password is set in appsettings.json.");
+            return password;
+        }
+
         public string GetDatabaseConnectionString()
         {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+            var host = GetDatabaseHost();
+            var port = GetDatabasePort();
+            var name = GetDatabaseName();
+            var user = GetDatabaseUser();
+            var password = GetDatabasePassword();
 
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new InvalidOperationException("Database connection string is missing. Ensure 'ConnectionStrings:DefaultConnection' is set in appsettings.json.");
-            }
-
-            return connectionString;
+            return $"Host={host};Port={port};Database={name};Username={user};Password={password}";
         }
 
         public string GetOpenAIApiKey()
