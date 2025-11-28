@@ -36,6 +36,19 @@ services:
     restart: always
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
+  # airydevbot-arm:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.arm
+  #     args:
+  #       PROJECT_PATH: "Bots/AiryBotCode.AiryDevBot/AiryBotCode.AiryDevBot.csproj"
+  #       DLL_NAME: "AiryBotCode.AiryDevBot.dll"
+  #       SLN_PATH: "AiryBotCode.sln"
+  #   depends_on:
+  #     - db
+  #   restart: always
+  #   volumes:
+  #     - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
   # 
   # airyguardian:
   #   build:
