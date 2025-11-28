@@ -14,7 +14,7 @@ namespace AiryBotCode.Application.Services.AIService
         private readonly string _apiKey;
 
         public OpenAIClient(string apiKey,
-            string modelName = "gpt-4o-mini")
+            string modelName = "gpt-4.1-mini")
         {
             _modelName = modelName;
             _apiKey = apiKey;
@@ -48,7 +48,7 @@ namespace AiryBotCode.Application.Services.AIService
             {
                 model = _modelName,
                 messages = openAIMessages, // Send the structured messages
-                max_tokens = 800
+                max_tokens = 1000
             };
 
             HttpResponseMessage response;

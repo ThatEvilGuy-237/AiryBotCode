@@ -35,7 +35,7 @@ namespace AiryBotCode.Infrastructure.Activitys
             await userlogs.HandelEditButton(component, buttonEncription);
         }
 
-        public async Task HanndelFormAsync(SocketModal modal, ButtonEncriptionService buttonEncription)
+        public async Task HandleFormAsync(SocketModal modal, ButtonEncriptionService buttonEncription)
         {
             UserlogsCommand userlogs = (UserlogsCommand)Command;
             await userlogs.HandleForm(modal, buttonEncription);

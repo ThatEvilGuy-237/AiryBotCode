@@ -1,3 +1,4 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11201.2
@@ -8,7 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00_domain", "00_domain", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02_Infrastructure", "02_Infrastructure", "{9D3209BD-EDA1-4DF2-B557-882FE8C12351}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_Bot", "03_Bot", "{28E4A04F-F57C-48E5-A248-AB24903209DC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03_api", "03_api", "{24423ADD-3957-4445-8C33-4794165723E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04_bots", "04_bots", "{28E4A04F-F57C-48E5-A248-AB24903209DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05_frontend", "05_frontend", "{E33C6543-3639-4C67-8524-7F85449A3215}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Domain", "AiryBotCode.Domain\AiryBotCode.Domain.csproj", "{C61DB1E9-0F4F-1460-D55E-35953E0FF64E}"
 EndProject
@@ -23,7 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Infrastructure"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.AiryDevSecondBot", "Bots\AiryBotCode.AiryDevSecondBot\AiryBotCode.AiryDevSecondBot.csproj", "{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}"
 EndProject
-
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiryBotCode.Api", "AiryBotCode.Api\AiryBotCode.Api.csproj", "{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +68,22 @@ Global
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x64.ActiveCfg = Release|Any CPU
+		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x64.Build.0 = Release|Any CPU
+		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x86.ActiveCfg = Release|Any CPU
+		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863}.Release|x86.Build.0 = Release|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Debug|x64.Build.0 = Debug|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Debug|x86.Build.0 = Debug|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Release|x64.ActiveCfg = Release|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Release|x64.Build.0 = Release|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Release|x86.ActiveCfg = Release|Any CPU
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +96,7 @@ Global
 		{D903E5A9-3A91-474B-A292-CF24903209DD} = {28E4A04F-F57C-48E5-A248-AB24903209DC}
 		{67F08F98-D37A-56CD-DD3E-664F3A091C58} = {9D3209BD-EDA1-4DF2-B557-882FE8C12351}
 		{C33CCD1F-DD0D-441E-8F90-F3ED92EDD863} = {28E4A04F-F57C-48E5-A248-AB24903209DC}
+		{3FB9E8B6-271C-4208-AEF0-C48F9E7A45EF} = {24423ADD-3957-4445-8C33-4794165723E2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B18C5258-3806-44AA-B477-7ED1432B3596}

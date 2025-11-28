@@ -32,7 +32,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 {
                     if (Event is IFormAction formEvent)
                     {
-                        await formEvent.HanndelFormAsync(modal, button);
+                        await formEvent.HandleFormAsync(modal, button);
                         return;
                     }
 

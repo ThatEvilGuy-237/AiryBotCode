@@ -1,9 +1,7 @@
-﻿using AiryBotCode.Application.Services.User;
+﻿using AiryBotCode.Application.Interfaces; // Added
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
-using AiryBotCode.Application.Interfaces; // Added
 
 namespace AiryBotCode.Application.Services.Loging
 {

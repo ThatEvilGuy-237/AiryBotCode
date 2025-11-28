@@ -28,11 +28,12 @@ namespace AiryBotCode.Bot.Bots
             List<EvilAction> actions = new List<EvilAction>
             {
                 serviceProvider.GetRequiredService<TalkToAiryAction>(),
-                serviceProvider.GetRequiredService<UserlogsAction>(),
-                serviceProvider.GetRequiredService<TimeoutAction>(),
-                serviceProvider.GetRequiredService<UntimeOutAction>(),
-                serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
-                serviceProvider.GetRequiredService<ContactUserAction>(),
+                serviceProvider.GetRequiredService<GiveawayAction>(),
+                //serviceProvider.GetRequiredService<UserlogsAction>(),
+                //serviceProvider.GetRequiredService<TimeoutAction>(),
+                //serviceProvider.GetRequiredService<UntimeOutAction>(),
+                //serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
+                //serviceProvider.GetRequiredService<ContactUserAction>(),
                 //serviceProvider.GetRequiredService<ReminderAction>(),
             };
             return actions;

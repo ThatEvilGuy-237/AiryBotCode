@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configuration\**" />
+    <EmbeddedResource Remove="Configuration\**" />
+    <None Remove="Configuration\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.17.1" />
     <PackageReference Include="dotenv.net" Version="4.0.0" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
@@ -26,9 +32,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <ProjectReference Include="..\AiryBotCode.Application\AiryBotCode.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>
