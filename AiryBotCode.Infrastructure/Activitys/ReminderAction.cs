@@ -1,4 +1,4 @@
-﻿using AiryBotCode.Application.Comands.SlashCommands;
+﻿using AiryBotCode.Application.Features.Reminders;
 using AiryBotCode.Domain.Entities;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;

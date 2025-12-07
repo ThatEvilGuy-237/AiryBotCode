@@ -5,7 +5,7 @@ using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.ContactUser
 {
     public class ContactUserCommand : EvilCommand
     {

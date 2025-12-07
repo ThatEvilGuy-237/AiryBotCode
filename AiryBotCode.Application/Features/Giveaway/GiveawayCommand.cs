@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Giveaway
 {
     public class GiveawayCommand : EvilCommand
     {

@@ -7,7 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Logging
 {
     public class UserlogsCommand : EvilCommand
     {

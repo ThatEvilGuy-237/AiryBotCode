@@ -4,7 +4,7 @@ using Discord;
 using Discord.WebSocket;
 using System.Text.RegularExpressions;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Reminders
 {
     public class ReminderCommand : EvilCommand
     {

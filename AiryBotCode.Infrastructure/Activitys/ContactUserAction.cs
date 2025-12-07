@@ -1,9 +1,9 @@
-﻿using AiryBotCode.Application.Comands.SlashCommands;
-using AiryBotCode.Infrastructure.Interfaces;
+﻿using AiryBotCode.Infrastructure.Interfaces;
 using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Application.Features.ContactUser;
 
 
 namespace AiryBotCode.Infrastructure.Activitys

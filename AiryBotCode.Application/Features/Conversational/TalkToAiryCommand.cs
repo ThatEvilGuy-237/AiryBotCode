@@ -5,7 +5,7 @@ using AiryBotCode.Application.Services.AIService;
 using AiryBotCode.Domain.database;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-namespace AiryBotCode.Application.Comands.ConversationalInteractions
+namespace AiryBotCode.Application.Features.Conversational
 {
     public class TalkToAiry : EvilCommand
     {

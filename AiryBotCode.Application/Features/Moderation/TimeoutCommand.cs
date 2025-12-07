@@ -5,7 +5,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Application.Comands
+namespace AiryBotCode.Application.Features.Moderation
 {
     public class TimeoutCommand : EvilCommand
     {

@@ -1,12 +1,8 @@
+using AiryBotCode.Application.Interfaces.Service;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AiryBotCode.Application.Interfaces.Service; // Added for IConversationManagerService
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Conversational
 {
     public class SummarizeUserCommand : EvilCommand
     {
