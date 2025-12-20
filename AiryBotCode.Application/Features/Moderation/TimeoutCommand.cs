@@ -1,14 +1,34 @@
 ﻿using AiryBotCode.Application.Services.User;
+using AiryBotCode.Domain.Configuration.Attributes;
 using AiryBotCode.Domain.Entities;
 using AiryBotCode.Tool.Frontend;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace AiryBotCode.Application.Features.Moderation
 {
+    [ConfigurableCommand("TimeoutCommand")]
     public class TimeoutCommand : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("The primary description for the command.")]
+        public string Description { get; } = "Timeout a user and log the action for admins";
+
+        [LiveSetting("Message sent for invalid parameters.")]
+        public string InvalidParamsMessage { get; } = "Invalid parameters provided.";
+
+        [LiveSetting("Success message format. {0}=User, {1}=Minutes, {2}=End Time")]
+        public string SuccessMessageFormat { get; } = "🔇 **{0}** has been timed out for **{1} minutes**.\n⏰ They will be able to chat again at `{2}`.\n🛠️ Logs are being processed...";
+        
+        [LiveSetting("Choices for the 'clear' option.", Category = "Moderation", UiHint = "json")]
+        public Dictionary<string, int> ClearMessageChoices { get; } = new()
+        {
+            { "1 hour ago", 60 }, { "5 hours", 300 }, { "10 hours", 600 }, { "24 hours", 1440 }
+        };
+        // --- End of Settings Declaration ---
+
         protected readonly UserService userService;
 
         public TimeoutCommand(IServiceProvider serviceProvider)
@@ -82,4 +102,3 @@ namespace AiryBotCode.Application.Features.Moderation
             return info;
         }
     }
-}
