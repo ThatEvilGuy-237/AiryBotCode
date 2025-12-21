@@ -21,7 +21,7 @@ namespace AiryBotCode.Application.Features.Moderation
 
         [LiveSetting("Success message format. {0}=User, {1}=Minutes, {2}=End Time")]
         public string SuccessMessageFormat { get; } = "🔇 **{0}** has been timed out for **{1} minutes**.\n⏰ They will be able to chat again at `{2}`.\n🛠️ Logs are being processed...";
-        
+
         [LiveSetting("Choices for the 'clear' option.", Category = "Moderation", UiHint = "json")]
         public Dictionary<string, int> ClearMessageChoices { get; } = new()
         {
@@ -102,3 +102,4 @@ namespace AiryBotCode.Application.Features.Moderation
             return info;
         }
     }
+}
