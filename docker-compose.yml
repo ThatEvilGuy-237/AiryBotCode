@@ -39,6 +39,21 @@ services:
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
 
+  airydevsecondbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: "Bots/AiryBotCode.AiryDevSecondBot/AiryBotCode.AiryDevSecondBot.csproj"
+        DLL_NAME: "AiryBotCode.AiryDevSecondBot.dll"
+        SLN_PATH: "AiryBotCode.sln"
+    depends_on:
+      - db
+      - interpreter-sandbox
+    restart: always
+    volumes:
+      - ./Bots/AiryBotCode.AiryDevSecondBot/appsettings.json:/app/appsettings.json
+
   interpreter-sandbox:
     image: python:3.10-slim
     container_name: airy-interpreter-sandbox

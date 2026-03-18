@@ -21,4 +21,5 @@ FROM mcr.microsoft.com/dotnet/runtime:8.0
 ARG DLL_NAME
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT ["dotnet", "AiryBotCode.AiryDevBot.dll"]
+ENV DLL_NAME_ENV=$DLL_NAME
+ENTRYPOINT ["sh", "-c", "dotnet $DLL_NAME_ENV"]
