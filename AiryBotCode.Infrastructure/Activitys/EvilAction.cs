@@ -1,4 +1,4 @@
-﻿using AiryBotCode.Application.Comands;
+﻿using AiryBotCode.Application.Features;
 using Discord;
 using Discord.WebSocket;
 
