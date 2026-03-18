@@ -19,13 +19,30 @@ namespace AiryBotCode.Application
         {
             // Configuration and AI Clients
             services.AddSingleton<IConfigurationReader, ConfigurationReader>();
-            services.AddSingleton(provider =>
+            services.AddSingleton<IAIService>(provider =>
             {
                 var configReader = provider.GetRequiredService<IConfigurationReader>();
-                var apiKey = configReader.GetOpenAIApiKey();
-                var modelName = configReader.GetOpenAIModel();
-                return new OpenAIClient(apiKey, modelName);
+                var serviceType = configReader.GetAIServiceType();
+
+                if (serviceType.ToLower() == "ollama")
+                {
+                    return new OllamaClient(configReader.GetOllamaUrl(), configReader.GetOllamaModel());
+                }
+                else
+                {
+                    var apiKey = configReader.GetOpenAIApiKey();
+                    var modelName = configReader.GetOpenAIModel();
+                    return new OpenAIClient(apiKey, modelName);
+                }
             });
+
+            services.AddSingleton<IInterpreterService>(provider =>
+            {
+                var configReader = provider.GetRequiredService<IConfigurationReader>();
+                return new InterpreterService(configReader.GetInterpreterUrl());
+            });
+
+            services.AddSingleton<IPermissionService, PermissionService>();
 
             // Register commands
             // STATIC LIKE (can save run time data)

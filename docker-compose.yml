@@ -33,9 +33,45 @@ services:
         SLN_PATH: "AiryBotCode.sln"
     depends_on:
       - db
+      - interpreter-sandbox
     restart: always
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
+
+  interpreter-sandbox:
+    image: python:3.10-slim
+    container_name: airy-interpreter-sandbox
+    working_dir: /sandbox
+    volumes:
+      - ./sandbox:/sandbox
+    command: >
+      bash -c "pip install flask &&
+               echo 'from flask import Flask, request, jsonify
+      import subprocess, os
+      app = Flask(__name__)
+      @app.route(\"/execute\", methods=[\"POST\"])
+      def execute():
+          try:
+              cmd = request.json.get(\"command\")
+              res = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
+              return jsonify({\"output\": res.stdout, \"error\": res.stderr, \"exit_code\": res.returncode})
+          except Exception as e: return jsonify({\"error\": str(e), \"exit_code\": -1})
+      @app.route(\"/read\", methods=[\"GET\"])
+      def read():
+          try:
+              path = request.args.get(\"path\")
+              if not os.path.exists(path): return jsonify({\"error\": \"File not found\"}), 404
+              with open(path, \"r\") as f: return jsonify({\"content\": f.read()})
+          except Exception as e: return jsonify({\"error\": str(e)}), 500
+      @app.route(\"/write\", methods=[\"POST\"])
+      def write():
+          try:
+              path, content = request.json.get(\"path\"), request.json.get(\"content\")
+              os.makedirs(os.path.dirname(path), exist_ok=True)
+              with open(path, \"w\") as f: f.write(content)
+              return jsonify({\"status\": \"ok\"})
+          except Exception as e: return jsonify({\"error\": str(e)}), 500
+      app.run(host=\"0.0.0.0\", port=5000)' > /app.py && python /app.py"
   # airydevbot-arm:
   #   build:
   #     context: .
