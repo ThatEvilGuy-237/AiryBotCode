@@ -23,7 +23,7 @@ namespace AiryBotCode.Application.Features.Conversational
 
         public async Task ProcessMessageAsync(SocketMessage message)
         {
-            List<ulong> channelsId = new List<ulong> { 1182267222152982533, 1182267222152982535, 1182267222152982534, 1182267779135590490, 1236609199144697938 };
+            List<ulong> channelsId = new List<ulong> { 1463248705523290133, 1463248955910393938, 1182267222152982533, 1182267222152982535, 1182267222152982534, 1182267779135590490, 1236609199144697938 };
             if (!message.Content.Contains($"<@{_config.GetBotId()}>")) return;
             if (!channelsId.Contains(message.Channel.Id)) return; // Ignore bot spam channel
 
