@@ -25,6 +25,12 @@ namespace AiryBotCode.Application.Interfaces
         List<ulong> GetAdminRoleIds();
         ulong GetEvilId();
         ulong GetEvilLogChannelId();
+
+        // AI and Interpreter
+        string GetAIServiceType(); // "openai" or "ollama"
+        string GetOllamaUrl();
+        string GetOllamaModel();
+        string GetInterpreterUrl();
     }
 
 }

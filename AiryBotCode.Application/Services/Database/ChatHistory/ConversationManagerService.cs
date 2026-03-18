@@ -13,20 +13,20 @@ namespace AiryBotCode.Application.Services.Database.ChatHistory
         private readonly IChatUserService _chatUserService;
         private readonly IMessageService _messageService;
         private readonly IConfigurationReader _config;
-        private readonly OpenAIClient _openAIClient;
+        private readonly IAIService _aiService;
 
         public ConversationManagerService(
             IChannelConversationService channelConversationService,
             IChatUserService chatUserService,
             IMessageService messageService,
             IConfigurationReader config,
-            OpenAIClient openAIClient)
+            IAIService aiService)
         {
             _channelConversationService = channelConversationService;
             _chatUserService = chatUserService;
             _messageService = messageService;
             _config = config;
-            _openAIClient = openAIClient;
+            _aiService = aiService;
         }
 
         public async Task<ConversationContext> GetOrCreateConversationContextAsync(ulong channelId, ulong authorId, string authorDisplayName, ulong botId)
@@ -126,7 +126,7 @@ namespace AiryBotCode.Application.Services.Database.ChatHistory
                 });
             }
 
-            string summary = await _openAIClient.SendMessageAsync(promptMessages);
+            string summary = await _aiService.SendMessageAsync(promptMessages);
 
             await _chatUserService.UpdateUserAiOpinionAsync(user, summary);
 

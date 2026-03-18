@@ -22,6 +22,19 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 
         public async Task HandleButtonInteraction(SocketMessageComponent component)
         {
+            // Special handling for TalkToAiry permissions which don't use ButtonEncriptionService
+            if (component.Data.CustomId.Contains("_install_"))
+            {
+                foreach (var Event in _buttonEvents)
+                {
+                    if (Event is TalkToAiryAction talkToAiryAction)
+                    {
+                        await talkToAiryAction.HandleButtonPressAsync(component, null);
+                        return;
+                    }
+                }
+            }
+
             //var guild = _client.GetGuild(component.GuildId.Value);
             var buttonValue = component.Data.CustomId;
             ButtonEncriptionService button = new ButtonEncriptionService();

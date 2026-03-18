@@ -1,12 +1,11 @@
 ﻿using AiryBotCode.Application.Frontend;
-using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Moderation
 {
     public class VerifyUserAgeCommand : EvilCommand
     {

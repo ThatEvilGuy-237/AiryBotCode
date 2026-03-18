@@ -187,5 +187,25 @@ namespace AiryBotCode.Application.Interfaces
                 throw new InvalidOperationException("Invalid or missing Evil Log Channel ID. Ensure Bots:EvilLogChannelId is a valid ulong in appsettings.json.");
             return evilLogChannelId;
         }
+
+        public string GetAIServiceType()
+        {
+            return _configuration["AI:ServiceType"] ?? "openai";
+        }
+
+        public string GetOllamaUrl()
+        {
+            return _configuration["Ollama:Url"] ?? "http://localhost:11434";
+        }
+
+        public string GetOllamaModel()
+        {
+            return _configuration["Ollama:Model"] ?? "qwen2.5-coder:3b";
+        }
+
+        public string GetInterpreterUrl()
+        {
+            return _configuration["Interpreter:Url"] ?? "http://localhost:5000";
+        }
     }
 }

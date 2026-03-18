@@ -1,4 +1,4 @@
-﻿using AiryBotCode.Application.Comands.SlashCommands;
+﻿using AiryBotCode.Application.Features.Logging;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Domain.Entities;

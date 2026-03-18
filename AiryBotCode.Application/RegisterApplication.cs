@@ -1,6 +1,8 @@
-﻿using AiryBotCode.Application.Comands;
-using AiryBotCode.Application.Comands.ConversationalInteractions;
-using AiryBotCode.Application.Comands.SlashCommands;
+﻿using AiryBotCode.Application.Features.Conversational;
+using AiryBotCode.Application.Features.Giveaway;
+using AiryBotCode.Application.Features.Logging;
+using AiryBotCode.Application.Features.Moderation;
+using AiryBotCode.Application.Features.Reminders;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
@@ -10,6 +12,7 @@ using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
 using AiryBotCode.Application.Services.Database.ChatHistory;
 using AiryBotCode.Application.Services.Database.GiveAway;
+using AiryBotCode.Application.Features.ContactUser;
 
 namespace AiryBotCode.Application
 {
@@ -19,13 +22,30 @@ namespace AiryBotCode.Application
         {
             // Configuration and AI Clients
             services.AddSingleton<IConfigurationReader, ConfigurationReader>();
-            services.AddSingleton(provider =>
+            services.AddSingleton<IAIService>(provider =>
             {
                 var configReader = provider.GetRequiredService<IConfigurationReader>();
-                var apiKey = configReader.GetOpenAIApiKey();
-                var modelName = configReader.GetOpenAIModel();
-                return new OpenAIClient(apiKey, modelName);
+                var serviceType = configReader.GetAIServiceType();
+
+                if (serviceType.ToLower() == "ollama")
+                {
+                    return new OllamaClient(configReader.GetOllamaUrl(), configReader.GetOllamaModel());
+                }
+                else
+                {
+                    var apiKey = configReader.GetOpenAIApiKey();
+                    var modelName = configReader.GetOpenAIModel();
+                    return new OpenAIClient(apiKey, modelName);
+                }
             });
+
+            services.AddSingleton<IInterpreterService>(provider =>
+            {
+                var configReader = provider.GetRequiredService<IConfigurationReader>();
+                return new InterpreterService(configReader.GetInterpreterUrl());
+            });
+
+            services.AddSingleton<IPermissionService, PermissionService>();
 
             // Register commands
             // STATIC LIKE (can save run time data)

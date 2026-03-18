@@ -1,12 +1,14 @@
-﻿using AiryBotCode.Application.Comands.ConversationalInteractions;
+﻿using AiryBotCode.Application.Features.Conversational;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
 
+using AiryBotCode.Application.Services;
+
 namespace AiryBotCode.Infrastructure.Activitys
 {
-    public class TalkToAiryAction : EvilAction, IMessageAction
+    public class TalkToAiryAction : EvilAction, IMessageAction, IButtonAction
     {
         public TalkToAiryAction(
             IServiceProvider serviceProvider
@@ -18,6 +20,12 @@ namespace AiryBotCode.Infrastructure.Activitys
         {
             var talkToAiry = (TalkToAiry)Command;
             await talkToAiry.ProcessMessageAsync(message);
+        }
+
+        public async Task HandleButtonPressAsync(SocketMessageComponent component, ButtonEncriptionService buttonEncription)
+        {
+            var talkToAiry = (TalkToAiry)Command;
+            await talkToAiry.HandleInteractionAsync(component);
         }
     }
 }

@@ -4,10 +4,11 @@ using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions; // Added for Regex
+using AiryBotCode.Application.Interfaces.Service;
 
 namespace AiryBotCode.Application.Services.AIService
 {
-    public class OpenAIClient
+    public class OpenAIClient : IAIService
     {
         private readonly HttpClient _httpClient;
         private readonly string _modelName;

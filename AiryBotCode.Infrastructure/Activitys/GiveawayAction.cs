@@ -1,4 +1,4 @@
-using AiryBotCode.Application.Comands.SlashCommands;
+using AiryBotCode.Application.Features.Giveaway;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
