@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Static, component-based navigation. Each entry is a router-link so the active
-// route is highlighted automatically via the .router-link-active class.
+// route is highlighted automatically via the exact-active class.
 interface NavItem {
   to: string
   label: string
@@ -15,15 +15,22 @@ const items: NavItem[] = [
 
 <template>
   <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2>Airy Control</h2>
+    <div class="brand">
+      <span class="emblem" aria-hidden="true"></span>
+      <div class="brand-text">
+        <h1>Airy</h1>
+        <p>kitsune control ✦</p>
+      </div>
     </div>
+
     <nav class="sidebar-nav">
       <router-link v-for="item in items" :key="item.to" :to="item.to" class="nav-link">
-        <span class="dot" aria-hidden="true"></span>
+        <span class="orb" aria-hidden="true"></span>
         <span>{{ item.label }}</span>
       </router-link>
     </nav>
+
+    <p class="footer-note">a mystical spirit of the digital realm</p>
   </aside>
 </template>
 
@@ -31,48 +38,117 @@ const items: NavItem[] = [
 .sidebar {
   display: flex;
   flex-direction: column;
-  background-color: #2c3e50;
-  color: #ecf0f1;
+  background: linear-gradient(180deg, #221836, #18102b);
+  border-right: 1px solid var(--border-color);
+  color: var(--text-color);
   height: 100vh;
-  padding: 1rem;
+  padding: 1.5rem 1rem;
 }
 
-.sidebar-header {
-  margin-bottom: 2rem;
-  text-align: center;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 2.25rem;
+  padding: 0 0.25rem;
+}
+
+/* a slow-spinning hypnotic sigil — foxfire bleeding into violet */
+.emblem {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, var(--foxfire), var(--violet), var(--foxfire));
+  box-shadow: 0 0 18px var(--glow);
+  animation: spin 9s linear infinite;
+  flex-shrink: 0;
+}
+.emblem::after {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: #1a1330;
+  box-shadow: inset 0 0 8px var(--violet-glow);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.brand-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(90deg, var(--foxfire), var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-text p {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-color);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #ecf0f1;
+  color: #cfc4e6;
   text-decoration: none;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .nav-link:hover {
-  background-color: #34495e;
+  background-color: var(--violet-soft);
+  color: var(--text-color);
 }
 
 .nav-link.router-link-exact-active {
-  background-color: var(--primary-color);
+  background: linear-gradient(90deg, rgba(255, 138, 61, 0.22), rgba(176, 108, 240, 0.18));
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 138, 61, 0.35);
 }
 
-.dot {
-  width: 8px;
-  height: 8px;
+.orb {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background-color: currentColor;
-  opacity: 0.6;
+  background: var(--muted-color);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover .orb {
+  background: var(--violet);
+}
+
+.nav-link.router-link-exact-active .orb {
+  background: var(--foxfire);
+  box-shadow: 0 0 10px var(--glow);
+}
+
+.footer-note {
+  margin-top: auto;
+  padding: 0 0.5rem;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--muted-color);
+  opacity: 0.7;
 }
 </style>

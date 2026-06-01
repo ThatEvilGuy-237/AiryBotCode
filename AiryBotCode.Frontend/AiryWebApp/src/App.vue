@@ -24,7 +24,7 @@ onMounted(captureTokenFromHash)
 }
 
 .main-content {
-  background-color: var(--background-color);
+  background-color: transparent;
   overflow-y: auto;
   height: 100vh;
 }

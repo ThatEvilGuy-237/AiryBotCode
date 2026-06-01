@@ -99,6 +99,11 @@ onMounted(loadBots)
 
 .page > h1 {
   margin-bottom: 1.5rem;
+  font-size: 1.9rem;
+  background: linear-gradient(90deg, var(--foxfire), var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .notice {
@@ -128,12 +133,14 @@ onMounted(loadBots)
 }
 
 .banner.error {
-  background-color: #fdecec;
+  background-color: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.4);
   color: var(--danger-color);
 }
 
 .banner.success {
-  background-color: #e8f7ee;
+  background-color: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.4);
   color: var(--success-color);
 }
 </style>

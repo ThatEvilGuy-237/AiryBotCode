@@ -148,15 +148,28 @@ const emit = defineEmits<{
 }
 
 .group {
-  background-color: var(--card-background);
-  border-radius: 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
   padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .group h3 {
   margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  color: var(--foxfire);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.group h3::before {
+  content: '';
+  width: 6px;
+  height: 18px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, var(--foxfire), var(--violet));
 }
 
 .hint {
@@ -184,7 +197,7 @@ const emit = defineEmits<{
 
 label {
   font-weight: 500;
-  color: #374151;
+  color: var(--text-color);
 }
 
 input[type='text'],
@@ -192,16 +205,24 @@ input[type='number'],
 input[type='password'],
 textarea {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.6rem 0.7rem;
   border: 1px solid var(--input-border);
-  border-radius: 6px;
+  border-radius: 8px;
   font: inherit;
+  color: var(--text-color);
+  background: var(--surface-2);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input::placeholder {
+  color: var(--muted-color);
 }
 
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: var(--foxfire);
+  box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.18);
 }
 
 textarea {
@@ -232,23 +253,27 @@ small {
 }
 
 .save-btn {
-  background-color: var(--primary-color);
+  background: linear-gradient(90deg, var(--foxfire), var(--foxfire-deep));
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+  padding: 0.75rem 1.85rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  box-shadow: 0 4px 16px var(--glow);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .save-btn:hover:not(:disabled) {
-  background-color: var(--primary-hover);
+  filter: brightness(1.06);
+  box-shadow: 0 6px 22px var(--glow);
+  transform: translateY(-1px);
 }
 
 .save-btn:disabled {
-  background-color: #9bbbe0;
+  filter: grayscale(0.4) brightness(0.8);
+  box-shadow: none;
   cursor: not-allowed;
 }
 </style>

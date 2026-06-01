@@ -44,6 +44,11 @@ const selected = computed(() => tables.find((t) => t.id === selectedId.value) ??
 
 .page > h1 {
   margin-bottom: 0.5rem;
+  font-size: 1.9rem;
+  background: linear-gradient(90deg, var(--foxfire), var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .notice {
@@ -66,9 +71,10 @@ const selected = computed(() => tables.find((t) => t.id === selectedId.value) ??
 
 .table-item {
   text-align: left;
+  color: var(--text-color);
   border: 1px solid var(--border-color);
-  background: #fff;
-  border-radius: 8px;
+  background: var(--surface-2);
+  border-radius: 10px;
   padding: 0.75rem 1rem;
   cursor: pointer;
   font-weight: 500;
@@ -76,12 +82,14 @@ const selected = computed(() => tables.find((t) => t.id === selectedId.value) ??
 }
 
 .table-item:hover {
-  border-color: var(--primary-color);
+  border-color: var(--violet);
+  background: var(--surface-hover);
 }
 
 .table-item.active {
-  border-color: var(--primary-color);
-  background-color: #eef5fd;
+  border-color: var(--foxfire);
+  background: linear-gradient(90deg, rgba(255, 138, 61, 0.16), rgba(176, 108, 240, 0.12));
+  box-shadow: 0 0 14px rgba(255, 138, 61, 0.18);
 }
 
 .content-title {

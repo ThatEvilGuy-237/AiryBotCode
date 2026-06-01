@@ -29,9 +29,10 @@ defineProps<{
 
 <style scoped>
 .table-wrap {
-  background-color: var(--card-background);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   overflow: hidden;
 }
 
@@ -47,12 +48,20 @@ td {
   border-bottom: 1px solid var(--border-color);
 }
 
+td {
+  color: var(--text-color);
+}
+
 th {
-  background-color: #f9fafb;
+  background-color: var(--surface-2);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--muted-color);
+  color: var(--violet);
+}
+
+tbody tr:hover td {
+  background-color: var(--surface-hover);
 }
 
 tbody tr:last-child td {

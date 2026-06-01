@@ -33,10 +33,11 @@ const emit = defineEmits<{
 
 <style scoped>
 .bot-list {
-  background-color: var(--card-background);
-  border-radius: 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
   padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -61,21 +62,24 @@ const emit = defineEmits<{
   align-items: flex-start;
   gap: 0.25rem;
   text-align: left;
+  color: var(--text-color);
   border: 1px solid var(--border-color);
-  background: #fff;
-  border-radius: 8px;
+  background: var(--surface-2);
+  border-radius: 10px;
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .bot-item:hover {
-  border-color: var(--primary-color);
+  border-color: var(--violet);
+  background: var(--surface-hover);
 }
 
 .bot-item.active {
-  border-color: var(--primary-color);
-  background-color: #eef5fd;
+  border-color: var(--foxfire);
+  background: linear-gradient(90deg, rgba(255, 138, 61, 0.16), rgba(176, 108, 240, 0.12));
+  box-shadow: 0 0 14px rgba(255, 138, 61, 0.18);
 }
 
 .bot-name {
