@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --sidebar-width: 250px;
+  --background-color: #f4f7fa;
+  --text-color: #1f2937;
+  --muted-color: #6b7280;
+  --primary-color: #4a90e2;
+  --primary-hover: #3a7bc8;
+  --card-background: #ffffff;
+  --border-color: #e0e0e0;
+  --input-border: #d1d5db;
+  --success-color: #16a34a;
+  --danger-color: #dc2626;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  height: 100vh;
+  width: 100vw;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
