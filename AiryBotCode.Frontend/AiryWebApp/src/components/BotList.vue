@@ -37,7 +37,7 @@ const emit = defineEmits<{
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 1rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px var(--shadow);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -78,8 +78,7 @@ const emit = defineEmits<{
 
 .bot-item.active {
   border-color: var(--foxfire);
-  background: linear-gradient(90deg, rgba(255, 138, 61, 0.16), rgba(176, 108, 240, 0.12));
-  box-shadow: 0 0 14px rgba(255, 138, 61, 0.18);
+  background: linear-gradient(90deg, rgba(232, 70, 122, 0.12), rgba(224, 102, 153, 0.08));
 }
 
 .bot-name {

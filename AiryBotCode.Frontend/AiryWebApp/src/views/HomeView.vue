@@ -84,7 +84,7 @@ async function pingApi(): Promise<void> {
   border-radius: 14px;
   padding: 1.5rem;
   margin-bottom: 1.25rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px var(--shadow);
 }
 
 .card h2 {
@@ -110,19 +110,17 @@ async function pingApi(): Promise<void> {
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
-  box-shadow: 0 4px 16px var(--glow);
-  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.15s ease, filter 0.2s ease;
 }
 
 .btn:hover:not(:disabled) {
-  filter: brightness(1.06);
-  box-shadow: 0 6px 22px var(--glow);
+  filter: brightness(1.05);
   transform: translateY(-1px);
 }
 
 .btn:disabled {
-  filter: grayscale(0.4) brightness(0.7);
-  box-shadow: none;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 

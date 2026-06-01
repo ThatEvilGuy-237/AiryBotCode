@@ -1,46 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap');
 
 /*
- * Airy's theme — a mystical kitsune spirit from the digital realm.
- * Twilight violet-indigo surfaces, kitsune "foxfire" amber, and a hypnotic
- * violet accent with soft ethereal glows. Playful, a little enchanting.
+ * Airy's theme — soft and pink, after her Discord look (red/pink-haired mecha
+ * girl on a light dusty-pink banner). Light surfaces, rose-pink accents, and
+ * only gentle shadows (no heavy glow).
  */
 :root {
   --sidebar-width: 260px;
 
-  /* twilight backdrop */
-  --bg-top: #1a1330;
-  --bg-bottom: #100a20;
-  --background-color: #140d26;
+  /* light dusty-pink backdrop */
+  --bg-top: #fdeef3;
+  --bg-bottom: #f7dde6;
+  --background-color: #fbecf1;
 
   /* surfaces */
-  --surface: #241a3d;
-  --surface-2: #2c2050;
-  --surface-hover: #33264f;
+  --surface: #ffffff;
+  --surface-2: #fdf3f6;
+  --surface-hover: #fbe9ef;
   --card-background: var(--surface);
-  --border-color: #3b2d5e;
-  --input-border: #44356b;
+  --border-color: #f0d3dd;
+  --input-border: #e7c2cf;
 
   /* text */
-  --text-color: #ece6f7;
-  --muted-color: #9b8fbb;
+  --text-color: #3a2c36;
+  --muted-color: #9b8590;
 
-  /* foxfire (kitsune) — primary */
-  --foxfire: #ff8a3d;
-  --foxfire-deep: #f5661f;
+  /* pink — primary (kept under the old token names so all references update) */
+  --foxfire: #e8467a;
+  --foxfire-deep: #d12f63;
   --primary-color: var(--foxfire);
   --primary-hover: var(--foxfire-deep);
 
-  /* hypnotic violet — accent */
-  --violet: #b06cf0;
-  --violet-soft: rgba(176, 108, 240, 0.14);
+  /* rose — secondary accent */
+  --violet: #e06699;
+  --violet-soft: rgba(232, 70, 122, 0.1);
 
-  /* glows */
-  --glow: rgba(255, 138, 61, 0.35);
-  --violet-glow: rgba(176, 108, 240, 0.35);
+  /* shadows — soft, not glowy */
+  --glow: rgba(232, 70, 122, 0.18);
+  --violet-glow: rgba(224, 102, 153, 0.15);
+  --shadow: rgba(120, 40, 70, 0.1);
 
-  --success-color: #4ade80;
-  --danger-color: #f87171;
+  --success-color: #16a34a;
+  --danger-color: #dc2626;
 
   --font-brand: 'Quicksand', 'Inter', sans-serif;
 }
@@ -56,10 +57,9 @@ body {
   color: var(--text-color);
   margin: 0;
   padding: 0;
-  /* faint hypnotic currents drifting in from the corners */
+  /* soft light-pink wash */
   background:
-    radial-gradient(1200px 620px at 82% -12%, rgba(176, 108, 240, 0.13), transparent 60%),
-    radial-gradient(900px 520px at -12% 112%, rgba(255, 138, 61, 0.1), transparent 60%),
+    radial-gradient(1100px 560px at 85% -10%, rgba(240, 152, 188, 0.25), transparent 60%),
     linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
   background-attachment: fixed;
 }

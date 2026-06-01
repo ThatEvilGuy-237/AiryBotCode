@@ -38,7 +38,7 @@ const items: NavItem[] = [
 .sidebar {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #221836, #18102b);
+  background: linear-gradient(180deg, #ffffff, #fdeef3);
   border-right: 1px solid var(--border-color);
   color: var(--text-color);
   height: 100vh;
@@ -53,15 +53,14 @@ const items: NavItem[] = [
   padding: 0 0.25rem;
 }
 
-/* a slow-spinning hypnotic sigil — foxfire bleeding into violet */
+/* a softly spinning pink sigil */
 .emblem {
   position: relative;
   width: 42px;
   height: 42px;
   border-radius: 50%;
   background: conic-gradient(from 0deg, var(--foxfire), var(--violet), var(--foxfire));
-  box-shadow: 0 0 18px var(--glow);
-  animation: spin 9s linear infinite;
+  animation: spin 12s linear infinite;
   flex-shrink: 0;
 }
 .emblem::after {
@@ -69,8 +68,7 @@ const items: NavItem[] = [
   position: absolute;
   inset: 9px;
   border-radius: 50%;
-  background: #1a1330;
-  box-shadow: inset 0 0 8px var(--violet-glow);
+  background: #ffffff;
 }
 
 @keyframes spin {
@@ -107,7 +105,7 @@ const items: NavItem[] = [
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #cfc4e6;
+  color: var(--text-color);
   text-decoration: none;
   padding: 0.7rem 0.9rem;
   border-radius: 10px;
@@ -117,13 +115,12 @@ const items: NavItem[] = [
 
 .nav-link:hover {
   background-color: var(--violet-soft);
-  color: var(--text-color);
 }
 
 .nav-link.router-link-exact-active {
-  background: linear-gradient(90deg, rgba(255, 138, 61, 0.22), rgba(176, 108, 240, 0.18));
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 138, 61, 0.35);
+  background: linear-gradient(90deg, rgba(232, 70, 122, 0.16), rgba(224, 102, 153, 0.12));
+  color: var(--foxfire-deep);
+  box-shadow: inset 0 0 0 1px rgba(232, 70, 122, 0.3);
 }
 
 .orb {
@@ -140,7 +137,6 @@ const items: NavItem[] = [
 
 .nav-link.router-link-exact-active .orb {
   background: var(--foxfire);
-  box-shadow: 0 0 10px var(--glow);
 }
 
 .footer-note {

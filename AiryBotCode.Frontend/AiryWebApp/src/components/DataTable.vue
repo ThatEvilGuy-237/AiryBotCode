@@ -32,7 +32,7 @@ defineProps<{
   background-color: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px var(--shadow);
   overflow: hidden;
 }
 

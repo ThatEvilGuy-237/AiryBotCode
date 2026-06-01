@@ -88,8 +88,7 @@ const selected = computed(() => tables.find((t) => t.id === selectedId.value) ??
 
 .table-item.active {
   border-color: var(--foxfire);
-  background: linear-gradient(90deg, rgba(255, 138, 61, 0.16), rgba(176, 108, 240, 0.12));
-  box-shadow: 0 0 14px rgba(255, 138, 61, 0.18);
+  background: linear-gradient(90deg, rgba(232, 70, 122, 0.12), rgba(224, 102, 153, 0.08));
 }
 
 .content-title {

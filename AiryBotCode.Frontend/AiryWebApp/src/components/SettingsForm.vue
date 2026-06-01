@@ -152,7 +152,7 @@ const emit = defineEmits<{
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 16px var(--shadow);
 }
 
 .group h3 {
@@ -222,7 +222,7 @@ input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--foxfire);
-  box-shadow: 0 0 0 3px rgba(255, 138, 61, 0.18);
+  box-shadow: 0 0 0 3px rgba(232, 70, 122, 0.16);
 }
 
 textarea {
@@ -261,19 +261,17 @@ small {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 16px var(--glow);
-  transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.15s ease, filter 0.2s ease;
 }
 
 .save-btn:hover:not(:disabled) {
-  filter: brightness(1.06);
-  box-shadow: 0 6px 22px var(--glow);
+  filter: brightness(1.05);
   transform: translateY(-1px);
 }
 
 .save-btn:disabled {
-  filter: grayscale(0.4) brightness(0.8);
-  box-shadow: none;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 </style>
