@@ -8,18 +8,18 @@
 :root {
   --sidebar-width: 260px;
 
-  /* light dusty-pink backdrop */
-  --bg-top: #fdeef3;
-  --bg-bottom: #f7dde6;
-  --background-color: #fbecf1;
+  /* white backdrop */
+  --bg-top: #ffffff;
+  --bg-bottom: #fff8fb;
+  --background-color: #ffffff;
 
-  /* surfaces */
-  --surface: #ffffff;
-  --surface-2: #fdf3f6;
-  --surface-hover: #fbe9ef;
+  /* surfaces — pink menu & cards, white inner fields */
+  --surface: #fbe4ec;
+  --surface-2: #ffffff;
+  --surface-hover: #f7d6e2;
   --card-background: var(--surface);
-  --border-color: #f0d3dd;
-  --input-border: #e7c2cf;
+  --border-color: #f0c9d8;
+  --input-border: #ecc0cf;
 
   /* text */
   --text-color: #3a2c36;
@@ -57,9 +57,9 @@ body {
   color: var(--text-color);
   margin: 0;
   padding: 0;
-  /* soft light-pink wash */
+  /* white, with the faintest pink warmth */
   background:
-    radial-gradient(1100px 560px at 85% -10%, rgba(240, 152, 188, 0.25), transparent 60%),
+    radial-gradient(1100px 560px at 85% -10%, rgba(240, 152, 188, 0.1), transparent 60%),
     linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
   background-attachment: fixed;
 }

@@ -38,7 +38,7 @@ const items: NavItem[] = [
 .sidebar {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #ffffff, #fdeef3);
+  background: linear-gradient(180deg, var(--surface), var(--surface-hover));
   border-right: 1px solid var(--border-color);
   color: var(--text-color);
   height: 100vh;
@@ -114,11 +114,11 @@ const items: NavItem[] = [
 }
 
 .nav-link:hover {
-  background-color: var(--violet-soft);
+  background-color: rgba(255, 255, 255, 0.55);
 }
 
 .nav-link.router-link-exact-active {
-  background: linear-gradient(90deg, rgba(232, 70, 122, 0.16), rgba(224, 102, 153, 0.12));
+  background: #ffffff;
   color: var(--foxfire-deep);
   box-shadow: inset 0 0 0 1px rgba(232, 70, 122, 0.3);
 }
