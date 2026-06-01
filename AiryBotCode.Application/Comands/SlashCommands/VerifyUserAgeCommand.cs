@@ -1,6 +1,7 @@
 ﻿using AiryBotCode.Application.Frontend;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
+using AiryBotCode.Application.Settings;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,11 +13,13 @@ namespace AiryBotCode.Application.Comands.SlashCommands
     {
         public const string ActionEdit = "edit";
         protected UserService _userService;
+        private readonly ISettingsProvider _settings;
 
         public VerifyUserAgeCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             Name = "verif";
             _userService = serviceProvider.GetRequiredService<UserService>();
+            _settings = serviceProvider.GetRequiredService<ISettingsProvider>();
         }
 
         public override SlashCommandBuilder GetCommand()
@@ -31,9 +34,9 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         {
             try
             {
-                ulong verifiedRoleId = 1283099014476075151;
-                ulong unverifiedRoleId = 1283101142255144991;
-                ulong logChannelId = 1283102267129724958;
+                ulong verifiedRoleId = _settings.Current.Roles.Verified;
+                ulong unverifiedRoleId = _settings.Current.Roles.Unverified;
+                ulong logChannelId = _settings.Current.Channels.VerifyLog;
 
                 // The staff/admin who ran the command
                 var executedBy = command.User as SocketGuildUser;

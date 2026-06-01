@@ -2,6 +2,7 @@
 using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
+using AiryBotCode.Application.Settings;
 using AiryBotCode.Domain.database;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,21 +12,25 @@ namespace AiryBotCode.Application.Comands.ConversationalInteractions
     {
         private readonly IConversationManagerService _conversationManagerService;
         private readonly IConfigurationReader _config;
+        private readonly ISettingsProvider _settings;
         private readonly OpenAIClient _openAIClient;
         private static readonly SemaphoreSlim _messageSavingSemaphore = new SemaphoreSlim(1, 1);
 
         public TalkToAiry(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _config = serviceProvider.GetRequiredService<IConfigurationReader>();
-            _openAIClient = new OpenAIClient(_config.GetOpenAIApiKey());
+            _settings = serviceProvider.GetRequiredService<ISettingsProvider>();
+            _openAIClient = new OpenAIClient(
+                _config.GetOpenAIApiKey(),
+                _settings.Current.Ai.Model,
+                _settings.Current.Ai.MaxTokens);
             _conversationManagerService = serviceProvider.GetRequiredService<IConversationManagerService>();
         }
 
         public async Task ProcessMessageAsync(SocketMessage message)
         {
-            List<ulong> channelsId = new List<ulong> { 1182267222152982533, 1182267222152982535, 1182267222152982534, 1182267779135590490, 1236609199144697938 };
             if (!message.Content.Contains($"<@{_config.GetBotId()}>")) return;
-            if (!channelsId.Contains(message.Channel.Id)) return; // Ignore bot spam channel
+            if (!_settings.Current.Channels.Listen.Contains(message.Channel.Id)) return; // Only respond in configured channels
 
             var guildChannel = message.Channel as SocketGuildChannel;
             string displayName = (message.Author as SocketGuildUser)?.DisplayName ?? message.Author.Username;
