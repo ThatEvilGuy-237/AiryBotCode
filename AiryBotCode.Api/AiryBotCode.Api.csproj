@@ -11,4 +11,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AiryBotCode.Domain\AiryBotCode.Domain.csproj" />
+    <ProjectReference Include="..\AiryBotCode.Application\AiryBotCode.Application.csproj" />
+    <ProjectReference Include="..\AiryBotCode.Infrastructure\AiryBotCode.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

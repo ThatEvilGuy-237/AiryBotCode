@@ -19,9 +19,20 @@ namespace AiryBotCode.Infrastructure.Database.Repository.BotSettings
             return await _dbSet.FirstOrDefaultAsync(b => b.BotName == botName);
         }
 
+        public async Task<IReadOnlyList<BotSetting>> GetAllBotSettingsAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
         public async Task CreateBotSettingAsync(BotSetting botSetting)
         {
             _dbSet.Add(botSetting);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateBotSettingAsync(BotSetting botSetting)
+        {
+            _dbSet.Update(botSetting);
             await _context.SaveChangesAsync();
         }
     }
