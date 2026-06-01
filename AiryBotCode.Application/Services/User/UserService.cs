@@ -1,10 +1,18 @@
-﻿using Discord;
+﻿using AiryBotCode.Application.Settings;
+using Discord;
 using Discord.WebSocket;
 
 namespace AiryBotCode.Application.Services.User
 {
     public class UserService
     {
+        private readonly ISettingsProvider _settings;
+
+        public UserService(ISettingsProvider settings)
+        {
+            _settings = settings;
+        }
+
         public async Task<int> ClearMessage(int timeInMinutes, SocketGuildUser user)
         {
             if (user == null || user.Guild == null)
@@ -43,10 +51,10 @@ namespace AiryBotCode.Application.Services.User
 
         public async Task<ulong> GetAdminRole(SocketInteraction command)
         {
-            var adminRoleId = ulong.TryParse(Environment.GetEnvironmentVariable("ADMINROLEID"), out var roleId) ? roleId : 0;
+            var adminRoleId = _settings.Current.Roles.Admin.FirstOrDefault();
             if (adminRoleId == 0)
             {
-                await command.RespondAsync("Admin role ID not found in environment variables. CONTACT evil", ephemeral: true);
+                await command.RespondAsync("Admin role ID is not configured. CONTACT evil", ephemeral: true);
                 return 0;
             }
             return adminRoleId;
