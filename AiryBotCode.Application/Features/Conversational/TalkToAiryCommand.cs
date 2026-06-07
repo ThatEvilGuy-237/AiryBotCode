@@ -2,35 +2,43 @@
 using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
-using AiryBotCode.Application.Settings;
+using AiryBotCode.Domain.Configuration.Attributes;
 using AiryBotCode.Domain.database;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
-namespace AiryBotCode.Application.Comands.ConversationalInteractions
+namespace AiryBotCode.Application.Features.Conversational
 {
+    [ConfigurableCommand("TalkToAiry")]
     public class TalkToAiry : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("Comma-separated channel ids Airy listens and responds in.", Category = "Conversation")]
+        public string ListenChannelIds { get; set; } = "1463248705523290133,1463248955910393938,1182267222152982533,1182267222152982535,1182267222152982534,1182267779135590490,1236609199144697938";
+
+        [LiveSetting("System prompt prepended to every conversation.", Category = "AI", UiHint = "textarea")]
+        public string SystemPrompt { get; set; } = "You are Airy, a helpful and playful kitsune assistant.";
+
+        [LiveSetting("Maximum tokens for an AI response.", Category = "AI", UiHint = "number")]
+        public int MaxTokens { get; set; } = 512;
+        // --- End of Settings Declaration ---
+
         private readonly IConversationManagerService _conversationManagerService;
         private readonly IConfigurationReader _config;
-        private readonly ISettingsProvider _settings;
         private readonly OpenAIClient _openAIClient;
         private static readonly SemaphoreSlim _messageSavingSemaphore = new SemaphoreSlim(1, 1);
 
         public TalkToAiry(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             _config = serviceProvider.GetRequiredService<IConfigurationReader>();
-            _settings = serviceProvider.GetRequiredService<ISettingsProvider>();
-            _openAIClient = new OpenAIClient(
-                _config.GetOpenAIApiKey(),
-                _settings.Current.Ai.Model,
-                _settings.Current.Ai.MaxTokens);
+            _openAIClient = new OpenAIClient(_config.GetOpenAIApiKey());
             _conversationManagerService = serviceProvider.GetRequiredService<IConversationManagerService>();
         }
 
         public async Task ProcessMessageAsync(SocketMessage message)
         {
+            List<ulong> channelsId = new List<ulong> { 1463248705523290133, 1463248955910393938, 1182267222152982533, 1182267222152982535, 1182267222152982534, 1182267779135590490, 1236609199144697938 };
             if (!message.Content.Contains($"<@{_config.GetBotId()}>")) return;
-            if (!_settings.Current.Channels.Listen.Contains(message.Channel.Id)) return; // Only respond in configured channels
+            if (!channelsId.Contains(message.Channel.Id)) return; // Ignore bot spam channel
 
             var guildChannel = message.Channel as SocketGuildChannel;
             string displayName = (message.Author as SocketGuildUser)?.DisplayName ?? message.Author.Username;

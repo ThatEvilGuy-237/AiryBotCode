@@ -2,7 +2,7 @@ using AiryBotCode.Application.Services;
 using AiryBotCode.Domain.database;
 using AiryBotCode.Application.Frontend;
 using AiryBotCode.Application.Services.Database.GiveAway;
-using AiryBotCode.Application.Settings;
+using AiryBotCode.Domain.Configuration.Attributes;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,12 +12,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Giveaway
 {
+    [ConfigurableCommand("GiveawayCommand")]
     public class GiveawayCommand : EvilCommand
     {
         private readonly GiveAwayUserService _giveAwayUserService;
-        private readonly ISettingsProvider _settings;
+
+        // --- Settings Declaration for Seeder ---
+        // Channel where the giveaway scoreboard is posted (previously a hardcoded const).
+        [ReloadableSetting("Channel where the giveaway scoreboard is posted.", Category = "Giveaway")]
+        public ulong ScoreboardChannelId { get; set; } = 1182267222152982535; // IMPORTANT: REPLACE THIS
+        // --- End of Settings Declaration ---
 
         private static readonly Dictionary<ulong, ulong> ScoreboardMessageIds = new Dictionary<ulong, ulong>();
         private static readonly Dictionary<ulong, (ulong messageId, ulong channelId)> GiveawayMessageIds = new Dictionary<ulong, (ulong, ulong)>();
@@ -33,7 +39,6 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         {
             Name = "start-event";
             _giveAwayUserService = serviceProvider.GetRequiredService<GiveAwayUserService>();
-            _settings = serviceProvider.GetRequiredService<ISettingsProvider>();
         }
 
         public override SlashCommandBuilder GetCommand()
@@ -46,7 +51,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
         public async Task HandleStartEventCommand(SocketSlashCommand command)
         {
             var guildId = command.GuildId.Value;
-            var scoreboardChannel = _client.GetChannel(_settings.Current.Channels.GiveawayScoreboard) as SocketTextChannel;
+            var scoreboardChannel = _client.GetChannel(ScoreboardChannelId) as SocketTextChannel;
             if (scoreboardChannel == null)
             {
                 await command.RespondAsync("Error: Scoreboard channel not found. Please configure the bot.", ephemeral: true);
@@ -158,7 +163,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
 
         private async Task HandleClearUsersButton(SocketMessageComponent component)
         {
-            if (component.User.Id != _settings.Current.Owner)
+            if (component.User.Id != 405431299323461634)
             {
                 await component.RespondAsync("You do not have permission to use this button.", ephemeral: true);
                 return;
@@ -180,7 +185,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
 
         private async Task HandleConfirmClearUsersButton(SocketMessageComponent component)
         {
-            if (component.User.Id != _settings.Current.Owner)
+            if (component.User.Id != 405431299323461634)
             {
                 await component.RespondAsync("You do not have permission to use this button.", ephemeral: true);
                 return;
@@ -191,7 +196,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             var guildId = component.GuildId.Value;
             if (ScoreboardMessageIds.TryGetValue(guildId, out var scoreboardMessageId))
             {
-                var scoreboardChannel = _client.GetChannel(_settings.Current.Channels.GiveawayScoreboard) as SocketTextChannel;
+                var scoreboardChannel = _client.GetChannel(ScoreboardChannelId) as SocketTextChannel;
                 var scoreboardMessage = await scoreboardChannel.GetMessageAsync(scoreboardMessageId) as IUserMessage;
                 if (scoreboardMessage != null)
                 {
@@ -247,7 +252,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
             }
             if (ScoreboardMessageIds.TryGetValue(guildId, out var scoreboardMessageId))
             {
-                var scoreboardChannel = _client.GetChannel(_settings.Current.Channels.GiveawayScoreboard) as SocketTextChannel;
+                var scoreboardChannel = _client.GetChannel(ScoreboardChannelId) as SocketTextChannel;
                 var scoreboardMessage = await scoreboardChannel.GetMessageAsync(scoreboardMessageId) as IUserMessage;
                 if (scoreboardMessage != null)
                 {
@@ -309,7 +314,7 @@ namespace AiryBotCode.Application.Comands.SlashCommands
 
             // Update scoreboard
             var allUsers = await _giveAwayUserService.GetAllUsers();
-            var scoreboardChannel = _client.GetChannel(_settings.Current.Channels.GiveawayScoreboard) as SocketTextChannel;
+            var scoreboardChannel = _client.GetChannel(ScoreboardChannelId) as SocketTextChannel;
             if (scoreboardChannel != null && ScoreboardMessageIds.TryGetValue(guildId, out var messageId))
             {
                 var scoreboardMessage = await scoreboardChannel.GetMessageAsync(messageId) as IUserMessage;

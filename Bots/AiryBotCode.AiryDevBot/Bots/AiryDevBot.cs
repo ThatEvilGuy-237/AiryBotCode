@@ -1,5 +1,4 @@
 ﻿using AiryBotCode.Application.Interfaces;
-using AiryBotCode.Application.Settings;
 using AiryBotCode.Infrastructure.Activitys;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,10 +41,6 @@ namespace AiryBotCode.Bot.Bots
 
         public override async Task StartAsync(IServiceProvider services)
         {
-            // Preload settings before any events are hooked, so interaction
-            // handlers read the settings registry instead of hardcoded values.
-            await services.GetRequiredService<ISettingsProvider>().LoadAsync();
-
             var discordToken = _configuration.GetBotToken();
             await _client.LoginAsync(TokenType.Bot, discordToken);
             await _client.StartAsync();

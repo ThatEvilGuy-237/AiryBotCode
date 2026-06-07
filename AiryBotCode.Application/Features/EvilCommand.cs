@@ -2,7 +2,7 @@
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Application.Comands
+namespace AiryBotCode.Application.Features
 {
     public class EvilCommand
     {

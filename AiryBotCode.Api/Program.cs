@@ -3,44 +3,31 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using AiryBotCode.Application.Interfaces;
-using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Infrastructure.Database.Persistence;
-using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
+using AiryBotCode.Infrastructure.Database.Repository;
+using AiryBotCode.Application.Interfaces.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
 
-var webAppPolicy = "WebApp";
+var svelteAppPolicy = "SvelteApp";
 
 // Add services to the container.
+// Allowed origins are configurable (Cors:AllowedOrigins). Behind the Caddy proxy
+// the frontend and API share an origin so CORS is moot, but this keeps local
+// dev (vite on :5173) and any future split-origin setup working.
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                  ?? new[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: webAppPolicy,
+    options.AddPolicy(name: svelteAppPolicy,
                       policy  =>
                       {
-                          policy.WithOrigins("http://localhost:5173")
+                          policy.WithOrigins(corsOrigins)
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
                       });
 });
-
-// Persistence for the control-panel settings endpoints. Registered lazily so the
-// API still starts (auth, /ping) in environments without a database configured;
-// the settings routes return 500 until Database:* is set. Unlike the bot's
-// AIDbContext.registerDbContext, this does not seed or probe the connection at
-// startup — the UI talks to the same BotSetting rows the bots read.
-var dbHost = Configuration["Database:Host"];
-if (!string.IsNullOrWhiteSpace(dbHost))
-{
-    var connectionString = new ConfigurationReader(Configuration).GetDatabaseConnectionString();
-    builder.Services.AddDbContext<AIDbContext>(options => options.UseNpgsql(connectionString));
-    builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
-}
-else
-{
-    Console.WriteLine("[API] Database:Host not configured — settings endpoints are disabled.");
-}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -61,6 +48,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Database access for the control panel (shares the bot's CommandSettings table).
+builder.Services.AddDbContext<AIDbContext>(options =>
+    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
+
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
 builder.Services.AddAuthorization();
@@ -80,7 +72,7 @@ if (app.Environment.IsDevelopment())
 
 // app.UseHttpsRedirection();
 
-app.UseCors(webAppPolicy);
+app.UseCors(svelteAppPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();

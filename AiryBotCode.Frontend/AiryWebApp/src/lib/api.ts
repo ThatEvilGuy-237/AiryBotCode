@@ -2,6 +2,20 @@ import { API_BASE_URL } from './config'
 import { token, clearToken } from './auth'
 import type { BotSetting } from '../types/botSetting'
 
+export interface CommandSetting {
+  key: string
+  value: string
+  description: string
+  category: string
+  uiHint: string
+  isReloadable: boolean
+}
+
+export interface CommandConfig {
+  commandName: string
+  settings: CommandSetting[]
+}
+
 export class ApiError extends Error {
   readonly status: number
   constructor(status: number, message: string) {
@@ -63,6 +77,24 @@ export const api = {
       method: 'PUT',
       body: JSON.stringify(setting),
     })
+  },
+
+  // ---- Per-command settings + bot reload ----
+  getCommands(): Promise<CommandConfig[]> {
+    return json<CommandConfig[]>('/api/commands')
+  },
+
+  async saveCommand(commandName: string, settings: { key: string; value: string }[]): Promise<boolean> {
+    const res = await authFetch(`/api/commands/${encodeURIComponent(commandName)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ settings }),
+    })
+    return res.ok
+  },
+
+  async reloadBot(): Promise<boolean> {
+    const res = await authFetch('/api/bot/reload', { method: 'POST' })
+    return res.ok
   },
 
   // ---- Live database explorer ----

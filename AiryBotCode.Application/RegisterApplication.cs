@@ -1,6 +1,8 @@
-﻿using AiryBotCode.Application.Comands;
-using AiryBotCode.Application.Comands.ConversationalInteractions;
-using AiryBotCode.Application.Comands.SlashCommands;
+﻿using AiryBotCode.Application.Features.Conversational;
+using AiryBotCode.Application.Features.Giveaway;
+using AiryBotCode.Application.Features.Logging;
+using AiryBotCode.Application.Features.Moderation;
+using AiryBotCode.Application.Features.Reminders;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
@@ -10,7 +12,7 @@ using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
 using AiryBotCode.Application.Services.Database.ChatHistory;
 using AiryBotCode.Application.Services.Database.GiveAway;
-using AiryBotCode.Application.Settings;
+using AiryBotCode.Application.Features.ContactUser;
 
 namespace AiryBotCode.Application
 {
@@ -20,8 +22,6 @@ namespace AiryBotCode.Application
         {
             // Configuration and AI Clients
             services.AddSingleton<IConfigurationReader, ConfigurationReader>();
-            // Preloaded, UI-reflectable settings registry (single source of truth)
-            services.AddSingleton<ISettingsProvider, SettingsProvider>();
             services.AddSingleton(provider =>
             {
                 var configReader = provider.GetRequiredService<IConfigurationReader>();

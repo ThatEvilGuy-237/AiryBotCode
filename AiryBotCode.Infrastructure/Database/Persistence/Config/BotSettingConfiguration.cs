@@ -34,18 +34,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence.Config
 
             builder.Property(bs => bs.EvilLogChannelId);
 
-            // Values surfaced through the AirySettings registry (all optional).
-            builder.Property(bs => bs.OwnerId);
-            builder.Property(bs => bs.ListenChannelIds)
-                .IsRequired(false); // CSV of channel ids, like AdminRoleIds
-            builder.Property(bs => bs.VerifiedRoleId);
-            builder.Property(bs => bs.UnverifiedRoleId);
-            builder.Property(bs => bs.VerifyLogChannelId);
-            builder.Property(bs => bs.RulesChannelId);
-            builder.Property(bs => bs.GiveawayScoreboardChannelId);
-            builder.Property(bs => bs.ContactCategoryId);
-            builder.Property(bs => bs.MaxTokens);
-            builder.Property(bs => bs.RetryAttempts);
+
         }
     }
 }

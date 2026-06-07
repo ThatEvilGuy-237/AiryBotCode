@@ -8,6 +8,7 @@ interface NavItem {
 
 const items: NavItem[] = [
   { to: '/', label: 'Home' },
+  { to: '/commands', label: 'Commands' },
   { to: '/bot-settings', label: 'Bot Settings' },
   { to: '/database', label: 'Database' },
 ]

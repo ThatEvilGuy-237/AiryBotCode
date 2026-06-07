@@ -1,13 +1,23 @@
 ﻿using AiryBotCode.Application.Services.User;
+using AiryBotCode.Domain.Configuration.Attributes;
 using AiryBotCode.Domain.Entities;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Moderation
 {
+    [ConfigurableCommand("UntimeoutCommand")]
     public class UntimeoutCommand : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("The primary description for the command.")]
+        public string Description { get; set; } = "Remove a user's timeout";
+
+        [LiveSetting("Message sent when the untimeout fails.")]
+        public string FailureMessage { get; set; } = "Something went wrong";
+        // --- End of Settings Declaration ---
+
         protected readonly UserService userService;
 
         public UntimeoutCommand(IServiceProvider serviceProvider)

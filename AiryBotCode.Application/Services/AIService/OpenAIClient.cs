@@ -12,15 +12,12 @@ namespace AiryBotCode.Application.Services.AIService
         private readonly HttpClient _httpClient;
         private readonly string _modelName;
         private readonly string _apiKey;
-        private readonly int _maxTokens;
 
         public OpenAIClient(string apiKey,
-            string modelName = "gpt-4.1-mini",
-            int maxTokens = 1000)
+            string modelName = "gpt-4.1-mini")
         {
             _modelName = modelName;
             _apiKey = apiKey;
-            _maxTokens = maxTokens;
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("https://api.openai.com/v1/")
@@ -51,7 +48,7 @@ namespace AiryBotCode.Application.Services.AIService
             {
                 model = _modelName,
                 messages = openAIMessages, // Send the structured messages
-                max_tokens = _maxTokens
+                max_tokens = 1000
             };
 
             HttpResponseMessage response;

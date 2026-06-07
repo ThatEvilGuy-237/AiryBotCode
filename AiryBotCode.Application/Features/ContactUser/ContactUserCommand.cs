@@ -1,14 +1,24 @@
 ﻿using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.User;
+using AiryBotCode.Domain.Configuration.Attributes;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.ContactUser
 {
+    [ConfigurableCommand("ContactUserCommand")]
     public class ContactUserCommand : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("The primary description for the command.")]
+        public string Description { get; set; } = "Create channel to contact user";
+
+        [ReloadableSetting("Category under which private contact channels are created.", Category = "Channels")]
+        public ulong ContactCategoryId { get; set; } = 1234577123541258280;
+        // --- End of Settings Declaration ---
+
         protected UserService _userService;
         protected DiscordService _discordService;
         public ContactUserCommand(IServiceProvider serviceProvider) : base(serviceProvider)

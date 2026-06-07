@@ -1,15 +1,24 @@
+using AiryBotCode.Application.Interfaces.Service;
+using AiryBotCode.Domain.Configuration.Attributes;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AiryBotCode.Application.Interfaces.Service; // Added for IConversationManagerService
 
-namespace AiryBotCode.Application.Comands.SlashCommands
+namespace AiryBotCode.Application.Features.Conversational
 {
+    [ConfigurableCommand("SummarizeUserCommand")]
     public class SummarizeUserCommand : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("The primary description for the command.")]
+        public string Description { get; set; } = "Generates an AI summary of a user's chat history.";
+
+        [LiveSetting("Acknowledgement sent while the summary is generated. {0}=User", Category = "AI")]
+        public string GeneratingMessage { get; set; } = "Generating summary for {0}...";
+
+        [LiveSetting("Message shown when no summary could be generated. {0}=User", Category = "AI")]
+        public string NoSummaryMessage { get; set; } = "Could not generate a summary for {0}.";
+        // --- End of Settings Declaration ---
+
         private readonly IConversationManagerService _conversationManagerService;
 
         public SummarizeUserCommand(IServiceProvider serviceProvider, IConversationManagerService conversationManagerService) : base(serviceProvider)

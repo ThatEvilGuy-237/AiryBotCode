@@ -27,34 +27,7 @@ namespace AiryBotCode.Application.Interfaces
                 EvilId = GetEvilId(),
                 EvilLogChannelId = GetEvilLogChannelId(),
                 LogChannelId = GetLogChannelId(),
-
-                // Optional values that back the AirySettings registry. These are
-                // default-safe so existing configs keep working until filled in.
-                OwnerId = ReadOptionalUlong("Bots:OwnerId"),
-                ListenChannelIds = ReadOptionalCsvIds("Bots:ListenChannelIds"),
-                VerifiedRoleId = ReadOptionalUlong("Bots:VerifiedRoleId"),
-                UnverifiedRoleId = ReadOptionalUlong("Bots:UnverifiedRoleId"),
-                VerifyLogChannelId = ReadOptionalUlong("Bots:VerifyLogChannelId"),
-                RulesChannelId = ReadOptionalUlong("Bots:RulesChannelId"),
-                GiveawayScoreboardChannelId = ReadOptionalUlong("Bots:GiveawayScoreboardChannelId"),
-                ContactCategoryId = ReadOptionalUlong("Bots:ContactCategoryId"),
-                MaxTokens = ReadOptionalInt("OpenAI:MaxTokens", 1000),
-                RetryAttempts = ReadOptionalInt("OpenAI:RetryAttempts", 2),
             };
-        }
-
-        // --- Tolerant readers for optional, default-safe settings ---
-
-        private ulong ReadOptionalUlong(string key)
-            => ulong.TryParse(_configuration[key], out var value) ? value : 0UL;
-
-        private int ReadOptionalInt(string key, int fallback)
-            => int.TryParse(_configuration[key], out var value) ? value : fallback;
-
-        private string ReadOptionalCsvIds(string key)
-        {
-            var list = _configuration.GetSection(key).Get<List<string>>();
-            return (list == null || !list.Any()) ? string.Empty : string.Join(",", list);
         }
         public string GetBotToken()
         {
