@@ -4,6 +4,7 @@
   import Home from "./routes/Home.svelte";
   import Database from "./routes/Database.svelte";
   import BotSettings from "./routes/BotSettings.svelte";
+  import Commands from "./routes/Commands.svelte";
 </script>
 
 <div class="app-layout">
@@ -12,6 +13,7 @@
     <Route path="/"><Home /></Route>
     <Route path="/database"><Database /></Route>
     <Route path="/bot-settings"><BotSettings /></Route>
+    <Route path="/commands"><Commands /></Route>
   </main>
 </div>
 

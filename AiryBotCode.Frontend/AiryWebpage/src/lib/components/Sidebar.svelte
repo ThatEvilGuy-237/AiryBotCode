@@ -1,6 +1,6 @@
 <!-- src/lib/components/Sidebar.svelte -->
 <script lang="ts">
-    import { HomeIcon, DatabaseIcon, SettingsIcon } from 'svelte-feather-icons';
+    import { HomeIcon, DatabaseIcon, SettingsIcon, TerminalIcon } from 'svelte-feather-icons';
 </script>
 
 <aside class="sidebar">
@@ -15,6 +15,10 @@
         <a href="/database">
             <DatabaseIcon size="24" />
             <span>Database</span>
+        </a>
+        <a href="/commands">
+            <TerminalIcon size="24" />
+            <span>Commands</span>
         </a>
         <a href="/bot-settings">
             <SettingsIcon size="24" />

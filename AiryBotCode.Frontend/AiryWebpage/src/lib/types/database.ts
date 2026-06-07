@@ -55,3 +55,27 @@ export interface BotSetting {
     logChannelId: number; // ulong
     evilLogChannelId: number; // ulong
 }
+
+// --- Command configuration ---
+// Mirrors the backend CommandSetting entity (AiryBotCode.Domain/database/CommandSetting.cs),
+// which is projected from the [ConfigurableCommand] / [LiveSetting] / [ReloadableSetting]
+// attributes declared on each command. The UiHint drives how a value is rendered/edited.
+
+export type CommandSettingUiHint = 'text' | 'number' | 'textarea' | 'json' | 'boolean';
+
+export interface CommandSetting {
+    key: string;            // property name, e.g. "SuccessMessageFormat"
+    value: string;          // current value, stored as string (JSON-encoded for objects)
+    description: string;    // help text from the setting attribute
+    category: string;       // grouping hint, e.g. "General" / "Moderation"
+    uiHint: CommandSettingUiHint;
+    isReloadable: boolean;  // true => [ReloadableSetting] (needs reload), false => [LiveSetting] (hot)
+}
+
+export interface CommandConfig {
+    commandName: string;    // backing class name, e.g. "TimeoutCommand"
+    displayName: string;    // human label, e.g. "Timeout"
+    slug: string;           // discord command name / id, e.g. "timeout"
+    description: string;    // short summary shown on the card
+    settings: CommandSetting[];
+}
