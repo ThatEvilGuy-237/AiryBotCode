@@ -1,14 +1,22 @@
 <!-- src/routes/Commands.svelte -->
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { SearchIcon } from 'svelte-feather-icons';
-    import { mockCommandConfigs } from '../lib/commands';
     import type { CommandConfig } from '../lib/types/database';
+    import { loadCommands, saveCommand } from '../lib/api';
     import CommandCard from '../lib/components/CommandCard.svelte';
 
-    // Working copy of the registry. When the API is wired up this is replaced
-    // by a fetch of the scanned command settings; saving will POST back.
-    let commands: CommandConfig[] = structuredClone(mockCommandConfigs);
+    let commands: CommandConfig[] = [];
     let searchTerm = '';
+    let loading = true;
+    let live = false; // true when settings came from the API, false on local fallback
+
+    onMount(async () => {
+        const result = await loadCommands();
+        commands = result.commands;
+        live = result.live;
+        loading = false;
+    });
 
     $: filtered = searchTerm
         ? commands.filter(
@@ -18,14 +26,16 @@
           )
         : commands;
 
-    function handleSave(event: CustomEvent<CommandConfig>) {
+    async function handleSave(event: CustomEvent<CommandConfig>) {
         const updated = event.detail;
         const index = commands.findIndex((c) => c.commandName === updated.commandName);
         if (index !== -1) {
             commands[index] = updated;
             commands = commands; // trigger reactivity
         }
-        // TODO: persist via PUT /api/commands/{commandName} once the API exists.
+        if (live) {
+            await saveCommand(updated);
+        }
     }
 </script>
 
@@ -41,7 +51,15 @@
         </div>
     </header>
 
-    {#if filtered.length > 0}
+    {#if !loading && !live}
+        <p class="notice">
+            Showing local defaults — the settings API isn't reachable, so edits won't be saved.
+        </p>
+    {/if}
+
+    {#if loading}
+        <p class="empty">Loading commands…</p>
+    {:else if filtered.length > 0}
         <div class="card-grid">
             {#each filtered as command (command.commandName)}
                 <CommandCard {command} on:save={handleSave} />
@@ -111,5 +129,15 @@
     .empty {
         color: #9ca3af;
         font-style: italic;
+    }
+
+    .notice {
+        margin: 0 0 1.5rem;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        background-color: #fff7ed;
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+        font-size: 0.9rem;
     }
 </style>

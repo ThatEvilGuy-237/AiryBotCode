@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.Infrastructure.Activitys;
+using AiryBotCode.Infrastructure.Database.Seeders;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,18 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 
         public async Task RegisterCommandsAsync()
         {
+            // Project the [ConfigurableCommand] attributes into the CommandSettings
+            // table now that the full DI container is available. Failures here must
+            // not stop the bot from registering its slash commands.
+            try
+            {
+                await CommandSettingsSeeder.Seed(_serviceProvider);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CommandSettings] seed failed: {ex.Message}");
+            }
+
             var guilds = _client.Guilds;
 
             if (!guilds.Any())

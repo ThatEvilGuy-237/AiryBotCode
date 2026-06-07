@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using AiryBotCode.Infrastructure.Database.Persistence;
+using AiryBotCode.Infrastructure.Database.Repository;
+using AiryBotCode.Application.Interfaces.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -38,6 +42,11 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]))
     };
 });
+
+// Database access for the control panel (shares the bot's CommandSettings table).
+builder.Services.AddDbContext<AIDbContext>(options =>
+    options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
