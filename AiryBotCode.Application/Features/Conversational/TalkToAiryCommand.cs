@@ -2,13 +2,26 @@
 using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services.AIService;
+using AiryBotCode.Domain.Configuration.Attributes;
 using AiryBotCode.Domain.database;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 namespace AiryBotCode.Application.Features.Conversational
 {
+    [ConfigurableCommand("TalkToAiry")]
     public class TalkToAiry : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("Comma-separated channel ids Airy listens and responds in.", Category = "Conversation")]
+        public string ListenChannelIds { get; } = "1463248705523290133,1463248955910393938,1182267222152982533,1182267222152982535,1182267222152982534,1182267779135590490,1236609199144697938";
+
+        [LiveSetting("System prompt prepended to every conversation.", Category = "AI", UiHint = "textarea")]
+        public string SystemPrompt { get; } = "You are Airy, a helpful and playful kitsune assistant.";
+
+        [LiveSetting("Maximum tokens for an AI response.", Category = "AI", UiHint = "number")]
+        public int MaxTokens { get; } = 512;
+        // --- End of Settings Declaration ---
+
         private readonly IConversationManagerService _conversationManagerService;
         private readonly IConfigurationReader _config;
         private readonly OpenAIClient _openAIClient;

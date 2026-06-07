@@ -1,6 +1,7 @@
 ﻿using AiryBotCode.Application.Services;
 using AiryBotCode.Application.Services.Loging;
 using AiryBotCode.Application.Services.User;
+using AiryBotCode.Domain.Configuration.Attributes;
 using AiryBotCode.Domain.Entities;
 using AiryBotCode.Tool.Frontend;
 using Discord;
@@ -9,8 +10,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Application.Features.Logging
 {
+    [ConfigurableCommand("UserlogsCommand")]
     public class UserlogsCommand : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("The primary description for the command.")]
+        public string Description { get; } = "Manage user logs";
+
+        [LiveSetting("Selectable log types for the 'type' option.", Category = "Logging", UiHint = "json")]
+        public string[] LogTypes { get; } = new[] { "Warning", "Ban", "Kick", "Mute" };
+
+        [LiveSetting("Message shown for invalid inputs.")]
+        public string InvalidInputsMessage { get; } = "Invalid inputs.";
+        // --- End of Settings Declaration ---
+
         public const string ActionEdit = "edit";
         protected LogService _logservice;
         protected UserService _userService;

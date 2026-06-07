@@ -2,6 +2,7 @@ using AiryBotCode.Application.Services;
 using AiryBotCode.Domain.database;
 using AiryBotCode.Application.Frontend;
 using AiryBotCode.Application.Services.Database.GiveAway;
+using AiryBotCode.Domain.Configuration.Attributes;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,12 +14,16 @@ using System.Threading.Tasks;
 
 namespace AiryBotCode.Application.Features.Giveaway
 {
+    [ConfigurableCommand("GiveawayCommand")]
     public class GiveawayCommand : EvilCommand
     {
         private readonly GiveAwayUserService _giveAwayUserService;
 
-        // Replace with your actual channel ID
-        private const ulong ScoreboardChannelId = 1182267222152982535; // IMPORTANT: REPLACE THIS
+        // --- Settings Declaration for Seeder ---
+        // Channel where the giveaway scoreboard is posted (previously a hardcoded const).
+        [ReloadableSetting("Channel where the giveaway scoreboard is posted.", Category = "Giveaway")]
+        public ulong ScoreboardChannelId { get; } = 1182267222152982535; // IMPORTANT: REPLACE THIS
+        // --- End of Settings Declaration ---
 
         private static readonly Dictionary<ulong, ulong> ScoreboardMessageIds = new Dictionary<ulong, ulong>();
         private static readonly Dictionary<ulong, (ulong messageId, ulong channelId)> GiveawayMessageIds = new Dictionary<ulong, (ulong, ulong)>();

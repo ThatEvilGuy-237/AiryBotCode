@@ -5,9 +5,13 @@
 // This mirrors what the backend reflection scanner emits: it reads the
 // [ConfigurableCommand] attribute on each command class and the
 // [LiveSetting] / [ReloadableSetting] attributes on its properties
-// (see AiryBotCode.Domain/Configuration/Attributes/*) and projects them
-// into CommandSetting rows. Until the API endpoint is wired up, this
-// static registry stands in for that response so the UI is testable.
+// (see AiryBotCode.Domain/Configuration/Attributes/* and the settings
+// declarations on each command in AiryBotCode.Application/Features/*) and
+// projects them into CommandSetting rows. Until the API endpoint is wired
+// up, this static registry stands in for that response so the UI is testable.
+//
+// Keep the keys / categories / live-vs-reloadable flags in sync with the
+// attribute declarations on the matching command class.
 
 import type { CommandConfig } from "./types/database";
 
@@ -146,6 +150,14 @@ export const mockCommandConfigs: CommandConfig[] = [
                 uiHint: "text",
                 isReloadable: true,
             },
+            {
+                key: "ReminderSetTitle",
+                value: "⏰ Reminder Set!",
+                description: "Embed title shown when a reminder is created.",
+                category: "General",
+                uiHint: "text",
+                isReloadable: false,
+            },
         ],
     },
     {
@@ -155,11 +167,27 @@ export const mockCommandConfigs: CommandConfig[] = [
         description: "Manage user moderation logs (warnings, bans, kicks, mutes).",
         settings: [
             {
-                key: "LogTypeChoices",
+                key: "Description",
+                value: "Manage user logs",
+                description: "The primary description for the command.",
+                category: "General",
+                uiHint: "text",
+                isReloadable: true,
+            },
+            {
+                key: "LogTypes",
                 value: JSON.stringify(["Warning", "Ban", "Kick", "Mute"], null, 2),
                 description: "Selectable log types for the 'type' option.",
                 category: "Logging",
                 uiHint: "json",
+                isReloadable: false,
+            },
+            {
+                key: "InvalidInputsMessage",
+                value: "Invalid inputs.",
+                description: "Message shown for invalid inputs.",
+                category: "General",
+                uiHint: "text",
                 isReloadable: false,
             },
         ],
@@ -178,6 +206,14 @@ export const mockCommandConfigs: CommandConfig[] = [
                 uiHint: "text",
                 isReloadable: true,
             },
+            {
+                key: "ContactCategoryId",
+                value: "1234577123541258280",
+                description: "Category under which private contact channels are created.",
+                category: "Channels",
+                uiHint: "text",
+                isReloadable: true,
+            },
         ],
     },
     {
@@ -187,9 +223,25 @@ export const mockCommandConfigs: CommandConfig[] = [
         description: "Generate an AI summary of a user's chat history.",
         settings: [
             {
+                key: "Description",
+                value: "Generates an AI summary of a user's chat history.",
+                description: "The primary description for the command.",
+                category: "General",
+                uiHint: "text",
+                isReloadable: true,
+            },
+            {
                 key: "GeneratingMessage",
                 value: "Generating summary for {0}...",
                 description: "Acknowledgement sent while the summary is generated. {0}=User",
+                category: "AI",
+                uiHint: "text",
+                isReloadable: false,
+            },
+            {
+                key: "NoSummaryMessage",
+                value: "Could not generate a summary for {0}.",
+                description: "Message shown when no summary could be generated. {0}=User",
                 category: "AI",
                 uiHint: "text",
                 isReloadable: false,
@@ -202,6 +254,14 @@ export const mockCommandConfigs: CommandConfig[] = [
         slug: "untimeout",
         description: "Remove an active timeout from a user.",
         settings: [
+            {
+                key: "Description",
+                value: "Remove a user's timeout",
+                description: "The primary description for the command.",
+                category: "General",
+                uiHint: "text",
+                isReloadable: true,
+            },
             {
                 key: "FailureMessage",
                 value: "Something went wrong",

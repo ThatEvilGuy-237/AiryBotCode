@@ -1,4 +1,5 @@
 ﻿
+using AiryBotCode.Domain.Configuration.Attributes;
 using AiryBotCode.Domain.Entities;
 using Discord;
 using Discord.WebSocket;
@@ -6,8 +7,17 @@ using System.Text.RegularExpressions;
 
 namespace AiryBotCode.Application.Features.Reminders
 {
+    [ConfigurableCommand("ReminderCommand")]
     public class ReminderCommand : EvilCommand
     {
+        // --- Settings Declaration for Seeder ---
+        [ReloadableSetting("The primary description for the command.")]
+        public string Description { get; } = "Set a reminder";
+
+        [LiveSetting("Embed title shown when a reminder is created.")]
+        public string ReminderSetTitle { get; } = "⏰ Reminder Set!";
+        // --- End of Settings Declaration ---
+
         List<Reminder> reminders { get; set; }
         public ReminderCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
