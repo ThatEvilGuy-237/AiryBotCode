@@ -41,8 +41,9 @@ const items: NavItem[] = [
   background: linear-gradient(180deg, var(--surface), var(--surface-hover));
   border-right: 1px solid var(--border-color);
   color: var(--text-color);
-  height: 100vh;
+  height: 100%;
   padding: 1.5rem 1rem;
+  overflow-y: auto;
 }
 
 .brand {
