@@ -64,4 +64,23 @@ export const api = {
       body: JSON.stringify(setting),
     })
   },
+
+  // ---- Live database explorer ----
+  getDbSchemas(): Promise<string[]> {
+    return json<string[]>('/api/db/schemas')
+  },
+
+  getDbTables(schema: string): Promise<{ name: string; rowCount: number }[]> {
+    return json(`/api/db/tables?schema=${encodeURIComponent(schema)}`)
+  },
+
+  getDbData(
+    schema: string,
+    table: string,
+    limit = 100,
+  ): Promise<{ columns: string[]; rows: Record<string, unknown>[] }> {
+    return json(
+      `/api/db/data?schema=${encodeURIComponent(schema)}&table=${encodeURIComponent(table)}&limit=${limit}`,
+    )
+  },
 }

@@ -33,7 +33,8 @@ defineProps<{
   border: 1px solid var(--border-color);
   border-radius: 14px;
   box-shadow: 0 4px 16px var(--shadow);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -50,6 +51,10 @@ td {
 
 td {
   color: var(--text-color);
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 th {
