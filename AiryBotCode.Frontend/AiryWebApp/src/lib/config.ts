@@ -4,7 +4,7 @@
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:7215'
 
 const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID ?? '1318870826862379018'
-const DISCORD_SCOPE = 'identify guilds guilds.join connections'
+const DISCORD_SCOPE = 'identify'
 const DISCORD_REDIRECT_URI = `${API_BASE_URL}/api/auth/discord/redirect`
 
 export const DISCORD_AUTH_URL =

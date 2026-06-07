@@ -5,12 +5,45 @@ services:
     environment:
       POSTGRES_DB: airy_db
       POSTGRES_USER: airy_user
-      POSTGRES_PASSWORD: Forest_Carrot_93@Night
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     volumes:
-      - C:\Users\brits\Documents\postgres_data:/var/lib/postgresql/data/pgdata
+      - postgres_data:/var/lib/postgresql/data/pgdata
+    restart: always
+
+  # Control-panel API (ASP.NET). Reachable internally as api:8080; exposed only
+  # through Caddy. Edit AiryBotCode.Api/appsettings.json (mounted) to set secrets.
+  api:
+    build:
+      context: .
+      dockerfile: Api.dockerfile
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json
+
+  # Reverse proxy behind Tailscale: password gate, serves the SPA + /api over
+  # plain HTTP on 127.0.0.1:8088. Tailscale Serve/Funnel terminates TLS and
+  # proxies to this port.
+  caddy:
+    build:
+      context: .
+      dockerfile: Caddy.dockerfile
+    depends_on:
+      - api
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8088:8088"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
   # airybot:
   #   build:
   #     context: .
@@ -34,6 +67,10 @@ services:
     depends_on:
       - db
     restart: always
+    # Reach Postgres by its compose service name; overrides Database:Host in the
+    # mounted appsettings.json (which is "localhost" for host runs).
+    environment:
+      - Database__Host=db
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
   # airydevbot-arm:
@@ -62,3 +99,7 @@ services:
   #   restart: always
   #   volumes:
   #     - ./Bots/AiryBotCode.AiryGuardian/appsettings.json:/app/appsettings.json
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:
