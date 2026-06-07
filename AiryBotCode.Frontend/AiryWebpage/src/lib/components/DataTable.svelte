@@ -135,13 +135,22 @@
     .table-controls {
         display: flex;
         justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
         margin-bottom: 1.5rem;
     }
     .table-wrapper {
         border: 1px solid #e5e7eb;
         box-shadow: 2px 4px 6px -1px rgb(0 0 0 / 0.02), 0 2px 4px -2px rgb(0 0 0 / 0.01);
         border-radius: 8px;
-        overflow: hidden;
+        overflow-x: auto; /* wide tables scroll horizontally on small screens */
+        -webkit-overflow-scrolling: touch;
+    }
+    table { min-width: 520px; }
+
+    @media (max-width: 768px) {
+        .table-container { padding: 1rem; }
+        .table-controls button { flex: 1; justify-content: center; }
     }
     button {
         display: inline-flex;

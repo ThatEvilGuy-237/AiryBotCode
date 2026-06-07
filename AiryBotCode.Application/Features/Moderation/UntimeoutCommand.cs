@@ -12,10 +12,10 @@ namespace AiryBotCode.Application.Features.Moderation
     {
         // --- Settings Declaration for Seeder ---
         [ReloadableSetting("The primary description for the command.")]
-        public string Description { get; } = "Remove a user's timeout";
+        public string Description { get; set; } = "Remove a user's timeout";
 
         [LiveSetting("Message sent when the untimeout fails.")]
-        public string FailureMessage { get; } = "Something went wrong";
+        public string FailureMessage { get; set; } = "Something went wrong";
         // --- End of Settings Declaration ---
 
         protected readonly UserService userService;

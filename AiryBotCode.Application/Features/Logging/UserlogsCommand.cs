@@ -15,13 +15,13 @@ namespace AiryBotCode.Application.Features.Logging
     {
         // --- Settings Declaration for Seeder ---
         [ReloadableSetting("The primary description for the command.")]
-        public string Description { get; } = "Manage user logs";
+        public string Description { get; set; } = "Manage user logs";
 
         [LiveSetting("Selectable log types for the 'type' option.", Category = "Logging", UiHint = "json")]
-        public string[] LogTypes { get; } = new[] { "Warning", "Ban", "Kick", "Mute" };
+        public string[] LogTypes { get; set; } = new[] { "Warning", "Ban", "Kick", "Mute" };
 
         [LiveSetting("Message shown for invalid inputs.")]
-        public string InvalidInputsMessage { get; } = "Invalid inputs.";
+        public string InvalidInputsMessage { get; set; } = "Invalid inputs.";
         // --- End of Settings Declaration ---
 
         public const string ActionEdit = "edit";

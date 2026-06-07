@@ -96,11 +96,22 @@
 
     .content-area {
         padding: 1.5rem;
+        min-width: 0; /* let the table scroll instead of overflowing the grid */
     }
 
     h1 {
         font-size: 2rem;
         margin-bottom: 1.5rem;
         text-align: left;
+    }
+
+    @media (max-width: 768px) {
+        .page-layout {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            height: auto;
+        }
+        .content-area { padding: 1rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; }
     }
 </style>

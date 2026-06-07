@@ -7,6 +7,10 @@ namespace AiryBotCode.Infrastructure.Database.Repository
 {
     public class CommandSettingsRepository : ICommandSettingsRepository
     {
+        // Reserved command name for internal control rows (restart signal, etc.).
+        // Hidden from the command listing so it never shows up as a "command".
+        private const string ControlCommand = "$control";
+
         private readonly AIDbContext _context;
 
         public CommandSettingsRepository(AIDbContext context)
@@ -16,7 +20,9 @@ namespace AiryBotCode.Infrastructure.Database.Repository
 
         public async Task<List<CommandSetting>> GetAllSettingsAsync()
         {
-            return await _context.CommandSettings.AsNoTracking().ToListAsync();
+            return await _context.CommandSettings.AsNoTracking()
+                .Where(c => c.CommandName != ControlCommand)
+                .ToListAsync();
         }
 
         public async Task<List<CommandSetting>> GetByCommandAsync(string commandName)
@@ -60,6 +66,47 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             row.LastUpdated = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<DateTime> GetMaxLastUpdatedAsync()
+        {
+            var rows = _context.CommandSettings.Where(c => c.CommandName != ControlCommand);
+            return await rows.AnyAsync()
+                ? await rows.MaxAsync(c => c.LastUpdated)
+                : DateTime.MinValue;
+        }
+
+        public async Task<string?> GetControlValueAsync(string key)
+        {
+            var row = await _context.CommandSettings.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.CommandName == ControlCommand && c.Key == key);
+            return row?.Value;
+        }
+
+        public async Task SetControlValueAsync(string key, string value)
+        {
+            var row = await _context.CommandSettings
+                .FirstOrDefaultAsync(c => c.CommandName == ControlCommand && c.Key == key);
+            if (row == null)
+            {
+                await _context.CommandSettings.AddAsync(new CommandSetting
+                {
+                    CommandName = ControlCommand,
+                    Key = key,
+                    Value = value,
+                    Description = string.Empty,
+                    Category = "Control",
+                    UiHint = "text",
+                    IsReloadable = false,
+                    LastUpdated = DateTime.UtcNow
+                });
+            }
+            else
+            {
+                row.Value = value;
+                row.LastUpdated = DateTime.UtcNow;
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }

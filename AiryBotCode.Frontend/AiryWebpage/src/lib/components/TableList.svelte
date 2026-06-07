@@ -106,4 +106,27 @@
         background-color: var(--primary-color, #4a90e2);
         color: white;
     }
+
+    /* On mobile the table list becomes a horizontal scroll bar above the data. */
+    @media (max-width: 768px) {
+        .table-list-sidebar {
+            height: auto;
+            border-right: none;
+            border-bottom: 1px solid var(--border-color, #e0e0e0);
+            padding: 1rem;
+        }
+        ul {
+            flex-direction: row;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.25rem;
+        }
+        li { flex-shrink: 0; }
+        button {
+            width: auto;
+            white-space: nowrap;
+            background-color: #f1f3f5;
+            min-height: 44px;
+        }
+    }
 </style>

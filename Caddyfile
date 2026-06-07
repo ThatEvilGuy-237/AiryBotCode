@@ -1,0 +1,21 @@
+# Behind Tailscale Serve/Funnel: Tailscale terminates TLS with a valid ts.net
+# cert and proxies here over plain HTTP. So Caddy listens on plain HTTP and just
+# does the password gate, SPA serving, and /api routing — no TLS, no DuckDNS.
+
+:8088 {
+	# API — JWT-protected at the application layer (no basic-auth: it would clash
+	# with the Bearer Authorization header the frontend sends).
+	handle /api/* {
+		reverse_proxy api:8080
+	}
+
+	# Everything else — the SPA, behind the shared password gate.
+	handle {
+		basic_auth {
+			{env.PANEL_USER} {env.PANEL_PASSWORD_HASH}
+		}
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

@@ -22,7 +22,7 @@ namespace AiryBotCode.Application.Features.Giveaway
         // --- Settings Declaration for Seeder ---
         // Channel where the giveaway scoreboard is posted (previously a hardcoded const).
         [ReloadableSetting("Channel where the giveaway scoreboard is posted.", Category = "Giveaway")]
-        public ulong ScoreboardChannelId { get; } = 1182267222152982535; // IMPORTANT: REPLACE THIS
+        public ulong ScoreboardChannelId { get; set; } = 1182267222152982535; // IMPORTANT: REPLACE THIS
         // --- End of Settings Declaration ---
 
         private static readonly Dictionary<ulong, ulong> ScoreboardMessageIds = new Dictionary<ulong, ulong>();

@@ -12,10 +12,10 @@ namespace AiryBotCode.Application.Features.Reminders
     {
         // --- Settings Declaration for Seeder ---
         [ReloadableSetting("The primary description for the command.")]
-        public string Description { get; } = "Set a reminder";
+        public string Description { get; set; } = "Set a reminder";
 
         [LiveSetting("Embed title shown when a reminder is created.")]
-        public string ReminderSetTitle { get; } = "⏰ Reminder Set!";
+        public string ReminderSetTitle { get; set; } = "⏰ Reminder Set!";
         // --- End of Settings Declaration ---
 
         List<Reminder> reminders { get; set; }

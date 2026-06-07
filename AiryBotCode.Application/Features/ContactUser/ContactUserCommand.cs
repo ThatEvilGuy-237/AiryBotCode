@@ -13,10 +13,10 @@ namespace AiryBotCode.Application.Features.ContactUser
     {
         // --- Settings Declaration for Seeder ---
         [ReloadableSetting("The primary description for the command.")]
-        public string Description { get; } = "Create channel to contact user";
+        public string Description { get; set; } = "Create channel to contact user";
 
         [ReloadableSetting("Category under which private contact channels are created.", Category = "Channels")]
-        public ulong ContactCategoryId { get; } = 1234577123541258280;
+        public ulong ContactCategoryId { get; set; } = 1234577123541258280;
         // --- End of Settings Declaration ---
 
         protected UserService _userService;

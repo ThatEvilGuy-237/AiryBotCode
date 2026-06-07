@@ -10,13 +10,13 @@ namespace AiryBotCode.Application.Features.Conversational
     {
         // --- Settings Declaration for Seeder ---
         [ReloadableSetting("The primary description for the command.")]
-        public string Description { get; } = "Generates an AI summary of a user's chat history.";
+        public string Description { get; set; } = "Generates an AI summary of a user's chat history.";
 
         [LiveSetting("Acknowledgement sent while the summary is generated. {0}=User", Category = "AI")]
-        public string GeneratingMessage { get; } = "Generating summary for {0}...";
+        public string GeneratingMessage { get; set; } = "Generating summary for {0}...";
 
         [LiveSetting("Message shown when no summary could be generated. {0}=User", Category = "AI")]
-        public string NoSummaryMessage { get; } = "Could not generate a summary for {0}.";
+        public string NoSummaryMessage { get; set; } = "Could not generate a summary for {0}.";
         // --- End of Settings Declaration ---
 
         private readonly IConversationManagerService _conversationManagerService;

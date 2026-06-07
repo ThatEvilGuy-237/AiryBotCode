@@ -13,13 +13,13 @@ namespace AiryBotCode.Application.Features.Moderation
     {
         // --- Settings Declaration for Seeder ---
         [ReloadableSetting("Role granted once a user is verified.", Category = "Roles")]
-        public ulong VerifiedRoleId { get; } = 1283099014476075151;
+        public ulong VerifiedRoleId { get; set; } = 1283099014476075151;
 
         [ReloadableSetting("Role removed once a user is verified.", Category = "Roles")]
-        public ulong UnverifiedRoleId { get; } = 1283101142255144991;
+        public ulong UnverifiedRoleId { get; set; } = 1283101142255144991;
 
         [ReloadableSetting("Channel where verification actions are logged.", Category = "Logging")]
-        public ulong LogChannelId { get; } = 1283102267129724958;
+        public ulong LogChannelId { get; set; } = 1283102267129724958;
         // --- End of Settings Declaration ---
 
         public const string ActionEdit = "edit";

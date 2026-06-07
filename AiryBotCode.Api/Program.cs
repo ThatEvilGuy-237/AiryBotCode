@@ -13,12 +13,17 @@ var Configuration = builder.Configuration;
 var svelteAppPolicy = "SvelteApp";
 
 // Add services to the container.
+// Allowed origins are configurable (Cors:AllowedOrigins). Behind the Caddy proxy
+// the frontend and API share an origin so CORS is moot, but this keeps local
+// dev (vite on :5173) and any future split-origin setup working.
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                  ?? new[] { "http://localhost:5173" };
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: svelteAppPolicy,
                       policy  =>
                       {
-                          policy.WithOrigins("http://localhost:5173")
+                          policy.WithOrigins(corsOrigins)
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
                       });

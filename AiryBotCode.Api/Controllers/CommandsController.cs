@@ -1,5 +1,6 @@
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Domain.database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
@@ -7,8 +8,9 @@ namespace AiryBotCode.Api.Controllers
     /// <summary>
     /// Serves the per-command settings (projected from the command attributes and
     /// stored in the CommandSettings table) to the control panel, and persists
-    /// edits made there.
+    /// edits made there. Requires a valid JWT (issued after Discord login).
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CommandsController : ControllerBase

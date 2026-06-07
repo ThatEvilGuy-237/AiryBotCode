@@ -1,4 +1,6 @@
-﻿using AiryBotCode.Infrastructure.Activitys;
+﻿using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Application.Services;
+using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Database.Seeders;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
@@ -28,10 +30,14 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             try
             {
                 await CommandSettingsSeeder.Seed(_serviceProvider);
+                // Apply the stored values onto the live commands, then watch for
+                // changes / restart requests in the background.
+                await ApplySettingsAsync(reloadableOnly: false);
+                StartReloadWatcher();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[CommandSettings] seed failed: {ex.Message}");
+                Console.WriteLine($"[CommandSettings] seed/apply failed: {ex.Message}");
             }
 
             var guilds = _client.Guilds;
@@ -57,6 +63,68 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             Console.WriteLine("- Commands Registerd!");
             Console.WriteLine("BOT IS RUNNING CORRECTLY!");
         }
+        // Apply stored CommandSettings onto the live command instances.
+        private async Task<int> ApplySettingsAsync(bool reloadableOnly)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
+            // Resolve command instances from the ROOT provider so we mutate the same
+            // long-lived instances the action handlers use.
+            var applier = new CommandSettingsApplier(_serviceProvider, repo);
+            return await applier.ApplyAsync(reloadableOnly);
+        }
+
+        // Background loop: hot-applies reloadable settings when they change, and
+        // restarts the process when a reload is requested from the control panel
+        // (the bot runs under Docker `restart: always`, so exiting restarts it).
+        private void StartReloadWatcher()
+        {
+            _ = Task.Run(async () =>
+            {
+                string? startRestartSignal;
+                DateTime lastSeen;
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
+                    startRestartSignal = await repo.GetControlValueAsync("restart");
+                    lastSeen = await repo.GetMaxLastUpdatedAsync();
+                }
+
+                while (true)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(5));
+                    try
+                    {
+                        string? restartSignal;
+                        DateTime maxUpdated;
+                        using (var scope = _serviceProvider.CreateScope())
+                        {
+                            var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
+                            restartSignal = await repo.GetControlValueAsync("restart");
+                            maxUpdated = await repo.GetMaxLastUpdatedAsync();
+                        }
+
+                        if (restartSignal != startRestartSignal)
+                        {
+                            Console.WriteLine("[Reload] Restart requested from control panel — exiting for restart.");
+                            Environment.Exit(0);
+                        }
+
+                        if (maxUpdated > lastSeen)
+                        {
+                            lastSeen = maxUpdated;
+                            var n = await ApplySettingsAsync(reloadableOnly: true);
+                            Console.WriteLine($"[Reload] Hot-applied {n} reloadable setting(s).");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Reload] watcher error: {ex.Message}");
+                    }
+                }
+            });
+        }
+
         public async Task ClearServerCommands(SocketGuild guild)
         {
             var applicationCommands = await guild.GetApplicationCommandsAsync();

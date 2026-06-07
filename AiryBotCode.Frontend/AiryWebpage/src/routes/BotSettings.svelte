@@ -110,6 +110,7 @@
 
     .content-area {
         padding: 1.5rem;
+        min-width: 0;
     }
 
     .card {
@@ -117,6 +118,17 @@
         border-radius: 12px;
         padding: 2rem;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 768px) {
+        .page-layout {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            height: auto;
+        }
+        .content-area { padding: 1rem; }
+        .card { padding: 1.25rem; }
+        h2 { font-size: 1.4rem; }
     }
 
     h2 {

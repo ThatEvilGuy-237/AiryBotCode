@@ -61,6 +61,14 @@ namespace AiryBotCode.Api.Controllers
                     return Unauthorized("Failed to get user info from Discord.");
                 }
 
+                // 2b. Enforce the allowlist: if Discord:AllowedUserIds is configured,
+                // only those Discord user IDs may obtain a token. Empty/absent = allow any.
+                var allowed = _configuration.GetSection("Discord:AllowedUserIds").Get<string[]>();
+                if (allowed is { Length: > 0 } && !allowed.Contains(user.Id))
+                {
+                    return Unauthorized("This Discord account is not authorized to access the control panel.");
+                }
+
                 // 3. Generate a JWT for the user
                 var tokenString = GenerateJwt(user);
 

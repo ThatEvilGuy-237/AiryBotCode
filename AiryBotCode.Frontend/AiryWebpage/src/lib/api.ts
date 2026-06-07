@@ -6,10 +6,24 @@
 
 import type { CommandConfig, CommandSetting, CommandSettingUiHint } from "./types/database";
 import { mockCommandConfigs } from "./commands";
+import { getToken, logout } from "./auth";
 
-// Override with VITE_API_BASE when the API runs somewhere other than :5000.
+// Default to same-origin ("") so requests go to /api/... through the Caddy proxy.
+// Override with VITE_API_BASE for split-origin local dev (e.g. http://localhost:7215).
 const API_BASE: string =
-    (import.meta as any).env?.VITE_API_BASE ?? "http://localhost:5000";
+    (import.meta as any).env?.VITE_API_BASE ?? "";
+
+// Attach the Bearer token (when present) to every request.
+function authHeaders(extra: Record<string, string> = {}): Record<string, string> {
+    const t = getToken();
+    return t ? { ...extra, Authorization: `Bearer ${t}` } : { ...extra };
+}
+
+// A 401 means the session is gone/invalid -> clear it so the login screen returns.
+function checkAuth(res: Response): Response {
+    if (res.status === 401) logout();
+    return res;
+}
 
 interface ApiSetting {
     key: string;
@@ -32,7 +46,7 @@ export interface LoadResult {
 
 export async function loadCommands(): Promise<LoadResult> {
     try {
-        const res = await fetch(`${API_BASE}/api/commands`);
+        const res = checkAuth(await fetch(`${API_BASE}/api/commands`, { headers: authHeaders() }));
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: ApiCommand[] = await res.json();
         return { commands: mergeWithRegistry(data), live: true };
@@ -44,16 +58,31 @@ export async function loadCommands(): Promise<LoadResult> {
 
 export async function saveCommand(command: CommandConfig): Promise<boolean> {
     try {
-        const res = await fetch(`${API_BASE}/api/commands/${encodeURIComponent(command.commandName)}`, {
+        const res = checkAuth(await fetch(`${API_BASE}/api/commands/${encodeURIComponent(command.commandName)}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: authHeaders({ "Content-Type": "application/json" }),
             body: JSON.stringify({
                 settings: command.settings.map((s) => ({ key: s.key, value: s.value })),
             }),
-        });
+        }));
         return res.ok;
     } catch (e) {
         console.warn("[commands] save failed (API unavailable):", e);
+        return false;
+    }
+}
+
+// Request a full bot restart (re-reads token/id/name and re-applies every
+// setting). Returns true if the request was accepted.
+export async function reloadBot(): Promise<boolean> {
+    try {
+        const res = checkAuth(await fetch(`${API_BASE}/api/bot/reload`, {
+            method: "POST",
+            headers: authHeaders(),
+        }));
+        return res.ok;
+    } catch (e) {
+        console.warn("[bot] reload request failed:", e);
         return false;
     }
 }

@@ -1,140 +1,64 @@
 <!-- src/routes/Home.svelte -->
+<!-- Landing page. Login is handled by the app-wide gate (Login.svelte + auth.ts),
+     so this page just welcomes the (already authenticated) user and links out. -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { router } from 'tinro';
+  import { TerminalIcon, SettingsIcon, DatabaseIcon } from 'svelte-feather-icons';
 
-  // --- Configuration ---
-  const API_BASE_URL = 'http://localhost:7215';
-  const DISCORD_CLIENT_ID = '1318870826862379018';
-  const DISCORD_REDIRECT_URI = `${API_BASE_URL}/api/auth/discord/redirect`;
-  const DISCORD_SCOPE = 'identify guilds guilds.join connections';
-  const DISCORD_AUTH_URL = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(DISCORD_REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(DISCORD_SCOPE)}`;
-
-  // --- Reactive State ---
-  let token: string | null = null;
-  let apiResponse: string = '';
-
-  // --- Functions ---
-  function handleLoginLogout() {
-    if (token) {
-      // Logout
-      localStorage.removeItem('jwt');
-      token = null;
-      apiResponse = 'Logged out.';
-    } else {
-      // Login
-      window.location.href = DISCORD_AUTH_URL;
-    }
-  }
-
-  async function handlePing() {
-    if (!token) {
-      apiResponse = 'You must be logged in to ping the API.';
-      return;
-    }
-
-    apiResponse = 'Pinging...';
-    try {
-      const response = await fetch(`${API_BASE_URL}/ping`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.text();
-        apiResponse = `Success! API says: "${data}"`;
-      } else {
-        apiResponse = `Error: ${response.status} ${response.statusText}`;
-        if (response.status === 401) {
-          apiResponse += ' (Your token might be expired. Please log out and log in again.)';
-          localStorage.removeItem('jwt');
-          token = null;
-        }
-      }
-    } catch (error) {
-      console.error('Ping failed:', error);
-      apiResponse = 'Failed to connect to the API. Is it running?';
-    }
-  }
-
-  // --- Lifecycle ---
-  onMount(() => {
-    const fragment = new URLSearchParams(window.location.hash.substring(1));
-    const tokenFromRedirect = fragment.get('token');
-
-    if (tokenFromRedirect) {
-      localStorage.setItem('jwt', tokenFromRedirect);
-      // Clean the URL
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
-    
-    // Load token from storage on initial mount
-    token = localStorage.getItem('jwt');
-  });
+  const tiles = [
+    { href: '/commands', title: 'Commands', desc: 'Configure each command and reload the bot.', icon: TerminalIcon },
+    { href: '/bot-settings', title: 'Bot Settings', desc: 'Bot identity and global configuration.', icon: SettingsIcon },
+    { href: '/database', title: 'Database', desc: 'Browse stored users, messages and logs.', icon: DatabaseIcon },
+  ];
 </script>
 
-<main>
-  <h1>Airy Bot Control Panel</h1>
+<main class="home">
+  <header>
+    <h1>Airy Control Panel</h1>
+    <p>Welcome back. Pick a section to manage your bot.</p>
+  </header>
 
-  <div class="card">
-    {#if token}
-      <p>You are logged in.</p>
-      <button on:click={handleLoginLogout}>Logout</button>
-    {:else}
-      <p>You are not logged in.</p>
-      <button on:click={handleLoginLogout}>Login with Discord</button>
-    {/if}
-  </div>
-
-  <hr>
-  
-  <div class="card" style:display={token ? 'block' : 'none'}>
-    <h2>Welcome!</h2>
-    <p>Your JWT is stored in your browser's local storage.</p>
-  </div>
-
-  <hr>
-
-  <h2>API Test</h2>
-  <div class="card">
-    <button on:click={handlePing} disabled={!token}>Ping API (Requires Login)</button>
-    <p>API Response: <code>{apiResponse}</code></p>
+  <div class="tiles">
+    {#each tiles as tile}
+      <button class="tile" on:click={() => router.goto(tile.href)}>
+        <svelte:component this={tile.icon} size="26" />
+        <h2>{tile.title}</h2>
+        <p>{tile.desc}</p>
+      </button>
+    {/each}
   </div>
 </main>
 
 <style>
-  main {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 1rem;
-    text-align: center;
+  .home { padding: 2.5rem 2rem; max-width: 980px; }
+  header h1 { font-size: 1.875rem; margin: 0; }
+  header p { margin: 0.4rem 0 2rem; color: #6b7280; }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
   }
-  .card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
+  .tile {
+    text-align: left;
+    background: var(--card-background, #fff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 12px;
     padding: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--text-color, #333);
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+    font: inherit;
   }
-  button:hover {
-    filter: brightness(1.1);
+  .tile:hover {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+    transform: translateY(-2px);
+    border-color: var(--primary-color, #4a90e2);
   }
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  hr {
-    border: 0;
-    height: 1px;
-    background: #eee;
-    margin: 2rem 0;
-  }
+  .tile :global(svg) { color: var(--primary-color, #4a90e2); }
+  .tile h2 { margin: 0.25rem 0 0; font-size: 1.2rem; }
+  .tile p { margin: 0; color: #6b7280; font-size: 0.9rem; }
 </style>

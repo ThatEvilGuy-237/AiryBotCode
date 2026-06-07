@@ -20,5 +20,14 @@ namespace AiryBotCode.Application.Interfaces.Repository
         Task AddOrUpdateDeclarationsAsync(List<CommandSetting> scanned);
 
         Task<bool> UpdateValueAsync(string commandName, string key, string value);
+
+        /// <summary>Newest LastUpdated across real (non-control) settings, for hot-reload polling.</summary>
+        Task<DateTime> GetMaxLastUpdatedAsync();
+
+        /// <summary>Read a control value (e.g. the restart signal). Null if unset.</summary>
+        Task<string?> GetControlValueAsync(string key);
+
+        /// <summary>Upsert a control value (e.g. bump the restart signal).</summary>
+        Task SetControlValueAsync(string key, string value);
     }
 }
