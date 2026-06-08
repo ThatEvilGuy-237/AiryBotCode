@@ -30,6 +30,9 @@
 	handle_path /hive/api/obsidian/* {
 		reverse_proxy obsidian-mind:3000
 	}
+	handle_path /hive/api/chronos/* {
+		reverse_proxy chronos:7000
+	}
 	handle /hive* {
 		reverse_proxy spine-ui:5190 {
 			header_up Host localhost
