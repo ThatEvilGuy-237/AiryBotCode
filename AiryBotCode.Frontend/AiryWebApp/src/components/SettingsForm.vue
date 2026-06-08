@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+import { api, ApiError } from '../lib/api'
 import type { BotSetting } from '../types/botSetting'
 
 // `bot` is the parent's working draft. Inputs bind straight onto its fields with
 // v-model; the parent owns persistence and reacts to the `save` event.
-defineProps<{
+const props = defineProps<{
   bot: BotSetting
   saving: boolean
 }>()
@@ -11,12 +13,74 @@ defineProps<{
 const emit = defineEmits<{
   (e: 'save'): void
 }>()
+
+// --- Password-gated token reveal ---
+const revealOpen = ref(false)
+const revealPassword = ref('')
+const revealedToken = ref<string | null>(null)
+const revealBusy = ref(false)
+const revealError = ref('')
+const copied = ref(false)
+
+async function submitReveal(): Promise<void> {
+  if (revealBusy.value || !revealPassword.value) return
+  revealBusy.value = true
+  revealError.value = ''
+  try {
+    revealedToken.value = await api.revealBotToken(props.bot.botId, revealPassword.value)
+    revealOpen.value = false
+    revealPassword.value = ''
+  } catch (e) {
+    revealError.value = e instanceof ApiError ? e.message : 'Could not reveal token.'
+  } finally {
+    revealBusy.value = false
+  }
+}
+
+function cancelReveal(): void {
+  revealOpen.value = false
+  revealPassword.value = ''
+  revealError.value = ''
+}
+
+function hideToken(): void {
+  revealedToken.value = null
+  copied.value = false
+}
+
+async function copyToken(): Promise<void> {
+  if (revealedToken.value == null) return
+  try {
+    await navigator.clipboard.writeText(revealedToken.value)
+    copied.value = true
+    setTimeout(() => (copied.value = false), 1500)
+  } catch {
+    /* clipboard unavailable — ignore */
+  }
+}
+
+// Switching bots must never leave a previous bot's token on screen.
+watch(
+  () => props.bot.botId,
+  () => {
+    revealedToken.value = null
+    revealOpen.value = false
+    revealPassword.value = ''
+    revealError.value = ''
+    copied.value = false
+  },
+)
 </script>
 
 <template>
   <form class="settings-form" @submit.prevent="emit('save')">
     <section class="group">
       <h3>General</h3>
+      <div class="form-group">
+        <label for="botId">Bot ID</label>
+        <input id="botId" type="text" class="readonly" :value="bot.botId" readonly />
+        <small>Primary key — set by the bot itself, not editable.</small>
+      </div>
       <div class="form-group">
         <label for="botName">Bot Name</label>
         <input id="botName" type="text" v-model="bot.botName" />
@@ -71,8 +135,9 @@ const emit = defineEmits<{
 
     <section class="group">
       <h3>Token</h3>
+
       <div class="form-group">
-        <label for="token">Bot Token</label>
+        <label for="token">Set new token</label>
         <input
           id="token"
           type="password"
@@ -80,7 +145,47 @@ const emit = defineEmits<{
           v-model="bot.token"
           :placeholder="bot.hasToken ? '•••••••• (stored — leave blank to keep)' : 'No token stored'"
         />
-        <small>For security the current token is never shown. Leave blank to keep it unchanged.</small>
+        <small>Leave blank to keep the current token. Changing it needs a bot reload.</small>
+      </div>
+
+      <div class="form-group">
+        <label>Current token</label>
+
+        <!-- Revealed value -->
+        <div v-if="revealedToken !== null" class="token-row">
+          <input type="text" class="readonly" :value="revealedToken" readonly />
+          <button type="button" class="mini-btn" @click="copyToken">{{ copied ? 'Copied' : 'Copy' }}</button>
+          <button type="button" class="mini-btn" @click="hideToken">Hide</button>
+        </div>
+
+        <!-- Password prompt -->
+        <div v-else-if="revealOpen" class="token-row">
+          <input
+            type="password"
+            v-model="revealPassword"
+            placeholder="Re-enter access password"
+            autocomplete="off"
+            @keydown.enter.prevent="submitReveal"
+          />
+          <button type="button" class="mini-btn primary" :disabled="revealBusy || !revealPassword" @click="submitReveal">
+            {{ revealBusy ? '…' : 'Show' }}
+          </button>
+          <button type="button" class="mini-btn" @click="cancelReveal">Cancel</button>
+        </div>
+
+        <!-- Trigger -->
+        <button
+          v-else
+          type="button"
+          class="reveal-trigger"
+          :disabled="!bot.hasToken"
+          @click="revealOpen = true"
+        >
+          {{ bot.hasToken ? '🔒 View current token' : 'No token stored' }}
+        </button>
+
+        <p v-if="revealError" class="reveal-error">{{ revealError }}</p>
+        <small>Viewing the token requires re-entering your access password.</small>
       </div>
     </section>
 
@@ -225,6 +330,78 @@ small {
 .save-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.readonly {
+  opacity: 0.7;
+  cursor: default;
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+.token-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.token-row input {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.mini-btn {
+  border: 1px solid var(--border-color);
+  background: var(--surface-2);
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.mini-btn:hover:not(:disabled) {
+  border-color: var(--violet);
+}
+.mini-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.mini-btn.primary {
+  background: var(--foxfire);
+  border-color: var(--foxfire);
+  color: #fff;
+}
+.mini-btn.primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.reveal-trigger {
+  align-self: flex-start;
+  border: 1px dashed var(--input-border);
+  background: var(--surface-2);
+  color: var(--foxfire);
+  border-radius: 8px;
+  padding: 0.55rem 1rem;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.reveal-trigger:hover:not(:disabled) {
+  border-color: var(--foxfire);
+  background: var(--surface-hover);
+}
+.reveal-trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  color: var(--muted-color);
+}
+
+.reveal-error {
+  color: var(--danger-color);
+  font-size: 0.8rem;
+  margin: 0.3rem 0 0;
 }
 
 @media (max-width: 768px) {

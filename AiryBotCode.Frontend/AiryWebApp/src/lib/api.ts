@@ -79,6 +79,18 @@ export const api = {
     })
   },
 
+  /** Reveal the stored bot token — requires re-entering the access password. */
+  async revealBotToken(botId: string, password: string): Promise<string> {
+    const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}/token`, {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    })
+    if (res.status === 403) throw new ApiError(403, 'Wrong password.')
+    if (!res.ok) throw new ApiError(res.status, `Could not reveal token (${res.status}).`)
+    const data = (await res.json()) as { token: string }
+    return data.token
+  },
+
   // ---- Per-command settings + bot reload ----
   getCommands(): Promise<CommandConfig[]> {
     return json<CommandConfig[]>('/api/commands')
