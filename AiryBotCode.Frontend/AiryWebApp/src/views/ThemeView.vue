@@ -9,7 +9,20 @@ const { currentBot, currentBotId, applyUpsert } = useBots()
 
 const primary = ref('#e8467a')
 const accent = ref('#e06699')
+// Which slot a tapped swatch fills (works on touch — no shift key needed).
+const target = ref<'primary' | 'accent'>('primary')
 const swatches = ref<Swatch[]>([])
+
+function assign(hex: string) {
+  if (target.value === 'primary') primary.value = hex
+  else accent.value = hex
+}
+function isPrimary(hex: string) {
+  return hex.toLowerCase() === primary.value.toLowerCase()
+}
+function isAccent(hex: string) {
+  return hex.toLowerCase() === accent.value.toLowerCase()
+}
 const imgSrc = ref('')
 const extracting = ref(false)
 const saving = ref(false)
@@ -123,20 +136,33 @@ async function reset() {
             </div>
           </label>
           <p v-if="extracting" class="muted small">Extracting…</p>
-          <div v-else-if="swatches.length" class="swatches">
-            <button
-              v-for="s in swatches"
-              :key="s.hex"
-              type="button"
-              class="swatch"
-              :style="{ background: s.hex }"
-              :title="`${s.hex} — click: primary · shift-click: accent`"
-              @click="(e) => (e.shiftKey ? (accent = s.hex) : (primary = s.hex))"
-            >
-              <span class="swatch-hex">{{ s.hex }}</span>
-            </button>
+          <div v-else-if="swatches.length" class="extract">
+            <div class="target-toggle" role="group" aria-label="Fill which slot">
+              <button type="button" :class="{ active: target === 'primary' }" @click="target = 'primary'">
+                <span class="dot" :style="{ background: primary }"></span> Primary
+              </button>
+              <button type="button" :class="{ active: target === 'accent' }" @click="target = 'accent'">
+                <span class="dot" :style="{ background: accent }"></span> Accent
+              </button>
+            </div>
+            <div class="swatches">
+              <button
+                v-for="s in swatches"
+                :key="s.hex"
+                type="button"
+                class="swatch"
+                :class="{ chosen: isPrimary(s.hex) || isAccent(s.hex) }"
+                :style="{ background: s.hex }"
+                :title="s.hex"
+                @click="assign(s.hex)"
+              >
+                <span v-if="isPrimary(s.hex)" class="badge">P</span>
+                <span v-else-if="isAccent(s.hex)" class="badge">A</span>
+                <span class="swatch-hex">{{ s.hex }}</span>
+              </button>
+            </div>
+            <p class="muted small">Pick <strong>{{ target }}</strong> above, then tap a color to set it.</p>
           </div>
-          <p v-if="swatches.length" class="muted small">Click a swatch = primary · Shift-click = accent</p>
         </section>
 
         <!-- Chosen colors + preview -->
@@ -214,14 +240,56 @@ async function reset() {
 .drop-emoji { font-size: 2rem; }
 .preview-img { width: 100%; max-height: 240px; object-fit: contain; border-radius: 10px; }
 
-.swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.extract { margin-top: 1rem; }
+.target-toggle {
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--surface-2, #fff);
+  margin-bottom: 0.75rem;
+}
+.target-toggle button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--muted-color);
+  cursor: pointer;
+}
+.target-toggle button.active { background: var(--foxfire); color: #fff; }
+.target-toggle .dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+.swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .swatch {
-  position: relative; width: 64px; height: 48px; border-radius: 10px;
+  position: relative; width: 64px; height: 52px; border-radius: 10px;
   border: 1px solid rgba(0,0,0,0.1); cursor: pointer; overflow: hidden;
+}
+.swatch.chosen { outline: 3px solid var(--foxfire); outline-offset: 1px; }
+.badge {
+  position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(0,0,0,0.55); color: #fff;
+  font-size: 0.65rem; font-weight: 700;
+  display: grid; place-items: center;
 }
 .swatch-hex {
   position: absolute; inset: auto 0 0 0; font-size: 0.6rem; text-align: center;
   background: rgba(0,0,0,0.45); color: #fff; padding: 1px 0;
+}
+
+@media (max-width: 768px) {
+  .swatch { width: 56px; height: 56px; }
+  .target-toggle { width: 100%; justify-content: center; }
 }
 
 .picker { margin-bottom: 1rem; }
