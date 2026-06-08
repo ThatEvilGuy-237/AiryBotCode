@@ -54,6 +54,7 @@ builder.Services.AddDbContext<AIDbContext>(options =>
     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
 builder.Services.AddScoped<IBotCommandRepository, BotCommandRepository>();
+builder.Services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
 builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
 
 builder.Services.AddControllers();

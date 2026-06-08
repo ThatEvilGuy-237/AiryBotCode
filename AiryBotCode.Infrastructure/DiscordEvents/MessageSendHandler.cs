@@ -1,6 +1,9 @@
-﻿using AiryBotCode.Infrastructure.Activitys;
+﻿using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Application.Services;
+using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AiryBotCode.Infrastructure.DiscordEvents
 {
@@ -22,6 +25,23 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             // Skip messages from bots (including this bot itself)
             if (message.Author.IsBot)
                 return;
+
+            // Channel → webhook chat: if this channel is linked, forward the message
+            // to its webhook and relay any reply back.
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var botId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
+                var forwarder = scope.ServiceProvider.GetRequiredService<WebhookChatService>();
+                var reply = await forwarder.TryForwardAsync(
+                    botId, message.Channel.Id, message.Author.Username, message.Content);
+                if (!string.IsNullOrWhiteSpace(reply))
+                    await message.Channel.SendMessageAsync(reply);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Webhook] message forward error: {ex.Message}");
+            }
 
             foreach (var Event in _messageAction)
             {

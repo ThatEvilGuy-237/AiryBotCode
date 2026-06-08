@@ -25,6 +25,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<IGiveAwayUserRepository, GiveAwayUserRepository>();
             services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
             services.AddScoped<IBotCommandRepository, BotCommandRepository>();
+            services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
             // DbContext
             services = AIDbContext.registerDbContext(services);
             // Other
