@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Infrastructure.Activitys;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,20 +23,37 @@ namespace AiryBotCode.Bot.Bots
             Console.WriteLine($"[INFO] {actions.Count} actions loaded and assigned.");
 
         }
-        // Assing wanted actions to the bot
+        // Generic, DB-driven: resolve every available command (the reflection-based
+        // ActionCatalog), then keep only the ones enabled for THIS bot in the DB.
+        // No per-bot code or hardcoded lists.
         private List<EvilAction> GetWantedActions(IServiceProvider serviceProvider)
         {
-            List<EvilAction> actions = new List<EvilAction>
+            var botId = _configuration.GetBotId();
+
+            // Resolve each catalog action and index it by its [ConfigurableCommand] name.
+            var byCommand = new Dictionary<string, EvilAction>();
+            foreach (var type in ActionCatalog.Types)
             {
-                serviceProvider.GetRequiredService<TalkToAiryAction>(),
-                serviceProvider.GetRequiredService<GiveawayAction>(),
-                //serviceProvider.GetRequiredService<UserlogsAction>(),
-                //serviceProvider.GetRequiredService<TimeoutAction>(),
-                //serviceProvider.GetRequiredService<UntimeOutAction>(),
-                //serviceProvider.GetRequiredService<VerifyUserAgeAction>(),
-                //serviceProvider.GetRequiredService<ContactUserAction>(),
-                //serviceProvider.GetRequiredService<ReminderAction>(),
-            };
+                EvilAction? action;
+                try { action = serviceProvider.GetService(type) as EvilAction; }
+                catch { action = null; }
+                if (action == null) continue;
+
+                var name = ActionCatalog.CommandNameOf(action);
+                if (string.IsNullOrEmpty(name)) continue;
+                byCommand[name] = action;
+            }
+
+            // Ensure an enablement row exists for every available command (new ones
+            // default to disabled), then load only the enabled ones.
+            using var scope = serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<IBotCommandRepository>();
+            repo.EnsureSeededAsync(botId, byCommand.Keys, defaultEnabled: false).GetAwaiter().GetResult();
+            var enabled = repo.GetForBotAsync(botId).GetAwaiter().GetResult()
+                .Where(c => c.Enabled).Select(c => c.CommandName).ToHashSet();
+
+            var actions = byCommand.Where(kv => enabled.Contains(kv.Key)).Select(kv => kv.Value).ToList();
+            Console.WriteLine($"[INFO] {actions.Count}/{byCommand.Count} commands enabled for bot {botId}.");
             return actions;
         }
 

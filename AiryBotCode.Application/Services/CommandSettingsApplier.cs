@@ -28,9 +28,9 @@ namespace AiryBotCode.Application.Services
         }
 
         /// <param name="reloadableOnly">When true, only [ReloadableSetting] properties are applied.</param>
-        public async Task<int> ApplyAsync(bool reloadableOnly = false)
+        public async Task<int> ApplyAsync(ulong botId, bool reloadableOnly = false)
         {
-            var stored = await _repository.GetAllSettingsAsync();
+            var stored = await _repository.GetAllSettingsAsync(botId);
             var byCommand = stored.GroupBy(s => s.CommandName)
                 .ToDictionary(g => g.Key, g => g.ToDictionary(s => s.Key, s => s));
 

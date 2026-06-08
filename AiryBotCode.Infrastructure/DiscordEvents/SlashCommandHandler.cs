@@ -1,4 +1,5 @@
-﻿using AiryBotCode.Application.Interfaces.Repository;
+﻿using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Database.Seeders;
@@ -29,7 +30,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             // not stop the bot from registering its slash commands.
             try
             {
-                await CommandSettingsSeeder.Seed(_serviceProvider);
+                await CommandSettingsSeeder.Seed(_serviceProvider, GetBotId());
                 // Apply the stored values onto the live commands, then watch for
                 // changes / restart requests in the background.
                 await ApplySettingsAsync(reloadableOnly: false);
@@ -63,15 +64,23 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             Console.WriteLine("- Commands Registerd!");
             Console.WriteLine("BOT IS RUNNING CORRECTLY!");
         }
+        // This bot's id (per-bot scope for command settings/enablement).
+        private ulong GetBotId()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            return scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
+        }
+
         // Apply stored CommandSettings onto the live command instances.
         private async Task<int> ApplySettingsAsync(bool reloadableOnly)
         {
             using var scope = _serviceProvider.CreateScope();
             var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
+            var botId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
             // Resolve command instances from the ROOT provider so we mutate the same
             // long-lived instances the action handlers use.
             var applier = new CommandSettingsApplier(_serviceProvider, repo);
-            return await applier.ApplyAsync(reloadableOnly);
+            return await applier.ApplyAsync(botId, reloadableOnly);
         }
 
         // Background loop: hot-applies reloadable settings when they change, and
@@ -79,6 +88,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
         // (the bot runs under Docker `restart: always`, so exiting restarts it).
         private void StartReloadWatcher()
         {
+            var botId = GetBotId();
             _ = Task.Run(async () =>
             {
                 string? startRestartSignal;
@@ -87,7 +97,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 {
                     var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
                     startRestartSignal = await repo.GetControlValueAsync("restart");
-                    lastSeen = await repo.GetMaxLastUpdatedAsync();
+                    lastSeen = await repo.GetMaxLastUpdatedAsync(botId);
                 }
 
                 while (true)
@@ -101,7 +111,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                         {
                             var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
                             restartSignal = await repo.GetControlValueAsync("restart");
-                            maxUpdated = await repo.GetMaxLastUpdatedAsync();
+                            maxUpdated = await repo.GetMaxLastUpdatedAsync(botId);
                         }
 
                         if (restartSignal != startRestartSignal)

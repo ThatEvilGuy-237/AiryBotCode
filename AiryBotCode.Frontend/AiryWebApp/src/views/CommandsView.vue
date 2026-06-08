@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { api, ApiError, type CommandConfig } from '../lib/api'
 import CommandModal from '../components/CommandModal.vue'
+import { useBots } from '../lib/bots'
+
+const { currentBot, currentBotId, loadBots } = useBots()
 
 const commands = ref<CommandConfig[]>([])
 const search = ref('')
@@ -23,10 +26,15 @@ function autoCount(c: CommandConfig) {
 }
 
 async function load() {
+  if (!currentBotId.value) {
+    commands.value = []
+    loading.value = false
+    return
+  }
   loading.value = true
   error.value = ''
   try {
-    commands.value = await api.getCommands()
+    commands.value = await api.getCommands(currentBotId.value)
   } catch (e) {
     error.value = e instanceof ApiError ? e.message : 'Failed to load commands.'
   } finally {
@@ -34,12 +42,19 @@ async function load() {
   }
 }
 
+async function toggle(c: CommandConfig) {
+  if (!currentBotId.value) return
+  const next = !c.enabled
+  c.enabled = next // optimistic
+  const ok = await api.setCommandEnabled(currentBotId.value, c.commandName, next)
+  if (!ok) c.enabled = !next
+}
+
 async function onSave(settings: { key: string; value: string }[]) {
-  if (!selected.value) return
+  if (!selected.value || !currentBotId.value) return
   const name = selected.value.commandName
-  const ok = await api.saveCommand(name, settings)
+  const ok = await api.saveCommand(currentBotId.value, name, settings)
   if (ok) {
-    // reflect locally
     const cmd = commands.value.find((c) => c.commandName === name)
     if (cmd) for (const s of settings) {
       const target = cmd.settings.find((x) => x.key === s.key)
@@ -54,11 +69,15 @@ async function reload() {
   reloadMsg.value = ''
   const ok = await api.reloadBot()
   reloading.value = false
-  reloadMsg.value = ok ? 'Reload requested — the bot will restart shortly.' : 'Reload request failed.'
+  reloadMsg.value = ok ? 'Restart requested — the fleet will reload shortly.' : 'Restart request failed.'
   setTimeout(() => (reloadMsg.value = ''), 5000)
 }
 
-onMounted(load)
+watch(currentBotId, load)
+onMounted(async () => {
+  await loadBots()
+  await load()
+})
 </script>
 
 <template>
@@ -66,12 +85,15 @@ onMounted(load)
     <header class="page-header">
       <div>
         <h1>Commands</h1>
-        <p class="sub">Tap a command to edit its settings. Reloadable settings auto-apply; others need a bot reload.</p>
+        <p class="sub">
+          <template v-if="currentBot">Toggle which commands <strong>{{ currentBot.botName }}</strong> runs; tap a card to edit its settings. Changes apply on restart.</template>
+          <template v-else>Pick a bot from the menu to configure its commands.</template>
+        </p>
       </div>
       <div class="actions">
         <input v-model="search" type="search" placeholder="Search…" class="search" />
         <button class="reload-btn" :disabled="reloading" @click="reload">
-          {{ reloading ? 'Reloading…' : 'Reload bot' }}
+          {{ reloading ? 'Restarting…' : '⟳ Restart fleet' }}
         </button>
       </div>
     </header>
@@ -79,21 +101,29 @@ onMounted(load)
     <p v-if="reloadMsg" class="reload-msg">{{ reloadMsg }}</p>
     <p v-if="error" class="error">{{ error }}</p>
 
-    <p v-if="loading" class="muted">Loading commands…</p>
+    <p v-if="!currentBotId" class="muted">No bot selected — pick one in the bot menu (top-left).</p>
+    <p v-else-if="loading" class="muted">Loading commands…</p>
     <div v-else class="grid">
-      <button
+      <div
         v-for="c in filtered"
         :key="c.commandName"
-        type="button"
         class="card"
+        :class="{ off: !c.enabled }"
         @click="selected = c"
       >
-        <h3>{{ c.commandName }}</h3>
+        <div class="card-top">
+          <h3>{{ c.commandName }}</h3>
+          <label class="switch" @click.stop>
+            <input type="checkbox" :checked="c.enabled" @change="toggle(c)" />
+            <span class="slider"></span>
+          </label>
+        </div>
         <div class="meta">
           <span>{{ c.settings.length }} setting{{ c.settings.length === 1 ? '' : 's' }}</span>
           <span v-if="autoCount(c)" class="pill">{{ autoCount(c) }} auto</span>
+          <span class="state">{{ c.enabled ? 'enabled' : 'disabled' }}</span>
         </div>
-      </button>
+      </div>
       <p v-if="!filtered.length" class="muted">No commands found.</p>
     </div>
 
@@ -189,6 +219,17 @@ h1 {
   border-color: var(--foxfire);
   box-shadow: 0 8px 22px rgba(232, 70, 122, 0.15);
 }
+.card.off {
+  opacity: 0.62;
+  border-style: dashed;
+}
+.card.off:hover { opacity: 0.85; }
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
 .card h3 {
   margin: 0;
   font-size: 1.05rem;
@@ -197,6 +238,39 @@ h1 {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.state {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted-color);
+}
+.card:not(.off) .state { color: #1f9254; }
+
+/* toggle switch */
+.switch { position: relative; display: inline-block; width: 38px; height: 22px; flex-shrink: 0; cursor: pointer; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #d8c2cd;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+.slider::before {
+  content: '';
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+.switch input:checked + .slider { background: var(--foxfire); }
+.switch input:checked + .slider::before { transform: translateX(16px); }
 .meta { display: flex; align-items: center; gap: 0.5rem; color: var(--muted-color); font-size: 0.82rem; }
 .pill {
   background: #e7f6ec;

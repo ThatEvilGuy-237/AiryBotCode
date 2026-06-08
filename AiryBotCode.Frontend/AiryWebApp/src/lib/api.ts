@@ -13,6 +13,7 @@ export interface CommandSetting {
 
 export interface CommandConfig {
   commandName: string
+  enabled: boolean
   settings: CommandSetting[]
 }
 
@@ -108,16 +109,28 @@ export const api = {
     return data.token
   },
 
-  // ---- Per-command settings + bot reload ----
-  getCommands(): Promise<CommandConfig[]> {
-    return json<CommandConfig[]>('/api/commands')
+  // ---- Per-bot command config + bot reload ----
+  getCommands(botId: string): Promise<CommandConfig[]> {
+    return json<CommandConfig[]>(`/api/commands?botId=${encodeURIComponent(botId)}`)
   },
 
-  async saveCommand(commandName: string, settings: { key: string; value: string }[]): Promise<boolean> {
-    const res = await authFetch(`/api/commands/${encodeURIComponent(commandName)}`, {
-      method: 'PUT',
-      body: JSON.stringify({ settings }),
-    })
+  async saveCommand(
+    botId: string,
+    commandName: string,
+    settings: { key: string; value: string }[],
+  ): Promise<boolean> {
+    const res = await authFetch(
+      `/api/commands/${encodeURIComponent(commandName)}?botId=${encodeURIComponent(botId)}`,
+      { method: 'PUT', body: JSON.stringify({ settings }) },
+    )
+    return res.ok
+  },
+
+  async setCommandEnabled(botId: string, commandName: string, enabled: boolean): Promise<boolean> {
+    const res = await authFetch(
+      `/api/commands/${encodeURIComponent(commandName)}/enabled?botId=${encodeURIComponent(botId)}`,
+      { method: 'PUT', body: JSON.stringify({ enabled }) },
+    )
     return res.ok
   },
 

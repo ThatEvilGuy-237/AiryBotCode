@@ -18,6 +18,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
         public DbSet<BotSetting> BotSettings { get; set; }
         public DbSet<GiveAwayUser> GiveAwayUsers { get; set; }
         public DbSet<CommandSetting> CommandSettings { get; set; }
+        public DbSet<BotCommand> BotCommands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
             modelBuilder.ApplyConfiguration(new BotSettingConfiguration());
             modelBuilder.ApplyConfiguration(new GiveAwayUserConfiguration());
             modelBuilder.ApplyConfiguration(new CommandSettingConfiguration());
+            modelBuilder.ApplyConfiguration(new BotCommandConfiguration());
         }
 
         public static  IServiceCollection registerDbContext(IServiceCollection services)

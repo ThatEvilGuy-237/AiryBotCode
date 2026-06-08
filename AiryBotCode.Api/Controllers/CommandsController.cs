@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace AiryBotCode.Api.Controllers
 {
     /// <summary>
-    /// Serves the per-command settings (projected from the command attributes and
-    /// stored in the CommandSettings table) to the control panel, and persists
-    /// edits made there. Requires a valid JWT (issued after Discord login).
+    /// Serves the per-bot command configuration to the control panel: which
+    /// commands a bot runs (enable/disable) and each command's settings. All
+    /// endpoints are scoped to a bot via the required <c>botId</c>. Requires a JWT.
     /// </summary>
     [Authorize]
     [ApiController]
@@ -16,41 +16,63 @@ namespace AiryBotCode.Api.Controllers
     public class CommandsController : ControllerBase
     {
         private readonly ICommandSettingsRepository _repository;
+        private readonly IBotCommandRepository _botCommands;
 
-        public CommandsController(ICommandSettingsRepository repository)
+        public CommandsController(ICommandSettingsRepository repository, IBotCommandRepository botCommands)
         {
             _repository = repository;
+            _botCommands = botCommands;
         }
 
-        // GET /api/commands -> settings grouped per command
+        // GET /api/commands?botId=123 -> commands for that bot (enabled flag + settings)
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CommandConfigDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CommandConfigDto>>> GetAll([FromQuery] string botId)
         {
-            var rows = await _repository.GetAllSettingsAsync();
+            if (!ulong.TryParse(botId, out var id))
+                return BadRequest("A valid botId is required.");
 
-            var grouped = rows
-                .GroupBy(r => r.CommandName)
-                .Select(g => new CommandConfigDto
+            var commands = await _botCommands.GetForBotAsync(id);
+            var settings = await _repository.GetAllSettingsAsync(id);
+            var byCommand = settings.GroupBy(s => s.CommandName)
+                .ToDictionary(g => g.Key, g => g.Select(SettingDto.FromEntity).ToList());
+
+            var result = commands
+                .OrderBy(c => c.CommandName)
+                .Select(c => new CommandConfigDto
                 {
-                    CommandName = g.Key,
-                    Settings = g.Select(SettingDto.FromEntity).ToList()
+                    CommandName = c.CommandName,
+                    Enabled = c.Enabled,
+                    Settings = byCommand.TryGetValue(c.CommandName, out var rows) ? rows : new List<SettingDto>()
                 })
                 .ToList();
 
-            return Ok(grouped);
+            return Ok(result);
         }
 
-        // PUT /api/commands/{commandName} -> persist edited values
+        // PUT /api/commands/{commandName}?botId=123 -> persist edited values for that bot
         [HttpPut("{commandName}")]
-        public async Task<IActionResult> Update(string commandName, [FromBody] UpdateCommandDto body)
+        public async Task<IActionResult> Update(string commandName, [FromQuery] string botId, [FromBody] UpdateCommandDto body)
         {
+            if (!ulong.TryParse(botId, out var id))
+                return BadRequest("A valid botId is required.");
             if (body?.Settings == null) return BadRequest();
 
             foreach (var setting in body.Settings)
             {
-                await _repository.UpdateValueAsync(commandName, setting.Key, setting.Value ?? string.Empty);
+                await _repository.UpdateValueAsync(id, commandName, setting.Key, setting.Value ?? string.Empty);
             }
 
+            return NoContent();
+        }
+
+        // PUT /api/commands/{commandName}/enabled?botId=123 -> enable/disable for that bot
+        [HttpPut("{commandName}/enabled")]
+        public async Task<IActionResult> SetEnabled(string commandName, [FromQuery] string botId, [FromBody] EnabledDto body)
+        {
+            if (!ulong.TryParse(botId, out var id))
+                return BadRequest("A valid botId is required.");
+
+            await _botCommands.SetEnabledAsync(id, commandName, body?.Enabled ?? false);
             return NoContent();
         }
     }
@@ -58,6 +80,7 @@ namespace AiryBotCode.Api.Controllers
     public class CommandConfigDto
     {
         public string CommandName { get; set; } = string.Empty;
+        public bool Enabled { get; set; }
         public List<SettingDto> Settings { get; set; } = new();
     }
 
@@ -90,5 +113,10 @@ namespace AiryBotCode.Api.Controllers
     {
         public string Key { get; set; } = string.Empty;
         public string? Value { get; set; }
+    }
+
+    public class EnabledDto
+    {
+        public bool Enabled { get; set; }
     }
 }

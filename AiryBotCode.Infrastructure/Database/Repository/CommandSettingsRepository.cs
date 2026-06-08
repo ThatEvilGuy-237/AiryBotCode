@@ -18,28 +18,30 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             _context = context;
         }
 
-        public async Task<List<CommandSetting>> GetAllSettingsAsync()
+        public async Task<List<CommandSetting>> GetAllSettingsAsync(ulong botId)
         {
             return await _context.CommandSettings.AsNoTracking()
-                .Where(c => c.CommandName != ControlCommand)
+                .Where(c => c.BotId == botId && c.CommandName != ControlCommand)
                 .ToListAsync();
         }
 
-        public async Task<List<CommandSetting>> GetByCommandAsync(string commandName)
+        public async Task<List<CommandSetting>> GetByCommandAsync(ulong botId, string commandName)
         {
             return await _context.CommandSettings.AsNoTracking()
-                .Where(c => c.CommandName == commandName)
+                .Where(c => c.BotId == botId && c.CommandName == commandName)
                 .ToListAsync();
         }
 
         public async Task AddOrUpdateDeclarationsAsync(List<CommandSetting> scanned)
         {
+            var botIds = scanned.Select(s => s.BotId).Distinct().ToList();
             var existing = await _context.CommandSettings
-                .ToDictionaryAsync(s => (s.CommandName, s.Key));
+                .Where(s => botIds.Contains(s.BotId))
+                .ToDictionaryAsync(s => (s.BotId, s.CommandName, s.Key));
 
             foreach (var setting in scanned)
             {
-                if (existing.TryGetValue((setting.CommandName, setting.Key), out var current))
+                if (existing.TryGetValue((setting.BotId, setting.CommandName, setting.Key), out var current))
                 {
                     // Refresh declared metadata but keep the stored (possibly edited) value.
                     current.Description = setting.Description;
@@ -56,10 +58,10 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateValueAsync(string commandName, string key, string value)
+        public async Task<bool> UpdateValueAsync(ulong botId, string commandName, string key, string value)
         {
             var row = await _context.CommandSettings
-                .FirstOrDefaultAsync(c => c.CommandName == commandName && c.Key == key);
+                .FirstOrDefaultAsync(c => c.BotId == botId && c.CommandName == commandName && c.Key == key);
             if (row == null) return false;
 
             row.Value = value;
@@ -68,9 +70,9 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             return true;
         }
 
-        public async Task<DateTime> GetMaxLastUpdatedAsync()
+        public async Task<DateTime> GetMaxLastUpdatedAsync(ulong botId)
         {
-            var rows = _context.CommandSettings.Where(c => c.CommandName != ControlCommand);
+            var rows = _context.CommandSettings.Where(c => c.BotId == botId && c.CommandName != ControlCommand);
             return await rows.AnyAsync()
                 ? await rows.MaxAsync(c => c.LastUpdated)
                 : DateTime.MinValue;
@@ -79,18 +81,19 @@ namespace AiryBotCode.Infrastructure.Database.Repository
         public async Task<string?> GetControlValueAsync(string key)
         {
             var row = await _context.CommandSettings.AsNoTracking()
-                .FirstOrDefaultAsync(c => c.CommandName == ControlCommand && c.Key == key);
+                .FirstOrDefaultAsync(c => c.BotId == 0 && c.CommandName == ControlCommand && c.Key == key);
             return row?.Value;
         }
 
         public async Task SetControlValueAsync(string key, string value)
         {
             var row = await _context.CommandSettings
-                .FirstOrDefaultAsync(c => c.CommandName == ControlCommand && c.Key == key);
+                .FirstOrDefaultAsync(c => c.BotId == 0 && c.CommandName == ControlCommand && c.Key == key);
             if (row == null)
             {
                 await _context.CommandSettings.AddAsync(new CommandSetting
                 {
+                    BotId = 0,
                     CommandName = ControlCommand,
                     Key = key,
                     Value = value,

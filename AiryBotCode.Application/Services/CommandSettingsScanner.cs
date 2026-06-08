@@ -26,7 +26,7 @@ namespace AiryBotCode.Application.Services
             _serviceProvider = serviceProvider;
         }
 
-        public List<CommandSetting> Scan()
+        public List<CommandSetting> Scan(ulong botId)
         {
             var settings = new List<CommandSetting>();
 
@@ -47,6 +47,7 @@ namespace AiryBotCode.Application.Services
 
                     settings.Add(new CommandSetting
                     {
+                        BotId = botId,
                         CommandName = commandAttr.Name,
                         Key = prop.Name,
                         Value = ReadValue(instance, prop, settingAttr.UiHint),

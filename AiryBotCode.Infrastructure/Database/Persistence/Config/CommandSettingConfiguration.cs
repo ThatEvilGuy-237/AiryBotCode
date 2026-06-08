@@ -9,7 +9,8 @@ namespace AiryBotCode.Infrastructure.Database.Persistence.Config
         public void Configure(EntityTypeBuilder<CommandSetting> builder)
         {
             builder.HasKey(cs => cs.Id); // Assuming 'Id' is the primary key
-            builder.HasIndex(cs => new { cs.CommandName, cs.Key })
+            // Settings are per-bot, so a command/key pair is unique within a bot.
+            builder.HasIndex(cs => new { cs.BotId, cs.CommandName, cs.Key })
                    .IsUnique();
         }
     }

@@ -11,7 +11,7 @@ namespace AiryBotCode.Infrastructure.Database.Seeders
     /// </summary>
     public static class CommandSettingsSeeder
     {
-        public static async Task Seed(IServiceProvider serviceProvider)
+        public static async Task Seed(IServiceProvider serviceProvider, ulong botId)
         {
             using var scope = serviceProvider.CreateScope();
             var sp = scope.ServiceProvider;
@@ -19,10 +19,10 @@ namespace AiryBotCode.Infrastructure.Database.Seeders
             var repository = sp.GetRequiredService<ICommandSettingsRepository>();
             var scanner = new CommandSettingsScanner(sp);
 
-            var declarations = scanner.Scan();
+            var declarations = scanner.Scan(botId);
             await repository.AddOrUpdateDeclarationsAsync(declarations);
 
-            Console.WriteLine($"- Seeded/refreshed {declarations.Count} command settings.");
+            Console.WriteLine($"- Seeded/refreshed {declarations.Count} command settings for bot {botId}.");
         }
     }
 }

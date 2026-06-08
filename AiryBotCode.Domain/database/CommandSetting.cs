@@ -5,6 +5,9 @@ namespace AiryBotCode.Domain.database
     {
         public int Id { get; set; }
 
+        // Which bot these settings belong to. 0 = global/control rows.
+        public ulong BotId { get; set; }
+
         public string CommandName { get; set; }
 
         public string Key { get; set; }
