@@ -34,6 +34,9 @@ namespace AiryBotCode.Infrastructure.Database.Persistence.Config
             builder.Property(bs => bs.DatabaseName)
                 .IsRequired(false); // null/empty = shared default database
 
+            builder.Property(bs => bs.ThemePrimary).IsRequired(false);
+            builder.Property(bs => bs.ThemeAccent).IsRequired(false);
+
 
         }
     }

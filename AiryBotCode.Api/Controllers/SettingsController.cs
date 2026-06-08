@@ -17,6 +17,13 @@ namespace AiryBotCode.Api.Controllers
         public string Password { get; set; }
     }
 
+    // Body for setting a bot's theme palette.
+    public class ThemeRequest
+    {
+        public string Primary { get; set; }
+        public string Accent { get; set; }
+    }
+
     // Reads/writes the real BotSettings table (the row a bot seeds on first run).
     // Editing token/name/channels here takes effect after a bot reload.
     [ApiController]
@@ -102,6 +109,34 @@ namespace AiryBotCode.Api.Controllers
             await _repository.UpdateAsync(entity);
             await _repository.SaveChangesAsync();
             return Ok(ToDto(entity));
+        }
+
+        // PUT /api/settings/{botId}/theme -> set the bot's theme palette (panel skin
+        // + brand embed color). Kept separate so the general settings save can't wipe it.
+        [HttpPut("{botId}/theme")]
+        public async Task<IActionResult> SetTheme(string botId, [FromBody] ThemeRequest body)
+        {
+            if (!ulong.TryParse(botId, out var id))
+            {
+                return BadRequest("Invalid bot id.");
+            }
+            var entity = await _repository.GetBotSettingAsync(id);
+            if (entity == null) return NotFound();
+
+            entity.ThemePrimary = NormalizeHex(body?.Primary);
+            entity.ThemeAccent = NormalizeHex(body?.Accent);
+            await _repository.UpdateAsync(entity);
+            await _repository.SaveChangesAsync();
+            return Ok(ToDto(entity));
+        }
+
+        // Accept "#rrggbb" / "rrggbb" (case-insensitive); anything else -> null.
+        private static string NormalizeHex(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            var v = value.Trim().TrimStart('#');
+            if (v.Length != 6 || !v.All(Uri.IsHexDigit)) return null;
+            return "#" + v.ToLowerInvariant();
         }
 
         [HttpDelete("{botId}")]
@@ -194,6 +229,8 @@ namespace AiryBotCode.Api.Controllers
             HasToken = !string.IsNullOrEmpty(b.Token),
             Token = null,
             DatabaseName = b.DatabaseName,
+            ThemePrimary = b.ThemePrimary,
+            ThemeAccent = b.ThemeAccent,
         };
     }
 }

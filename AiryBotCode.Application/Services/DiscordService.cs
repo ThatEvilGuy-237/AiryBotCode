@@ -1,3 +1,5 @@
+using System.Globalization;
+using AiryBotCode.Application.Interfaces;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
@@ -7,10 +9,21 @@ namespace AiryBotCode.Application.Services
     public class DiscordService
     {
         private readonly DiscordSocketClient _client;
+        private readonly IConfigurationReader _config;
 
-        public DiscordService(DiscordSocketClient client)
+        public DiscordService(DiscordSocketClient client, IConfigurationReader config)
         {
             _client = client;
+            _config = config;
+        }
+
+        // This bot's brand colour from its theme (falls back to pink).
+        private Color BrandColor()
+        {
+            var hex = _config.GetThemePrimaryHex().TrimStart('#');
+            return uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var rgb)
+                ? new Color(rgb)
+                : new Color(0xE8467Au);
         }
 
         public async Task<RestTextChannel?> CreateTextChannelAsync(SocketGuild guild, string channelName, ulong? categoryId = null)
@@ -54,12 +67,12 @@ namespace AiryBotCode.Application.Services
             }
         }
 
-        public async Task SendSimpleEmbedAsync(IMessageChannel channel, string title, string description, Color color)
+        public async Task SendSimpleEmbedAsync(IMessageChannel channel, string title, string description, Color? color = null)
         {
             var embed = new EmbedBuilder()
                 .WithTitle(title)
                 .WithDescription(description)
-                .WithColor(color)
+                .WithColor(color ?? BrandColor())
                 .WithCurrentTimestamp()
                 .Build();
 

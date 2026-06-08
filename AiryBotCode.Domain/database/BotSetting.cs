@@ -16,5 +16,10 @@ namespace AiryBotCode.Domain.database
         // Which Postgres database this bot's data lives in. Null/empty = the
         // shared default database (control plane stays there regardless).
         public string? DatabaseName { get; set; }
+
+        // Theme palette (hex, e.g. "#e8467a"). Primary re-skins the panel + is the
+        // bot's brand embed color; Accent is the panel's secondary accent.
+        public string? ThemePrimary { get; set; }
+        public string? ThemeAccent { get; set; }
     }
 }

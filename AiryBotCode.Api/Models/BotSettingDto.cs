@@ -21,5 +21,9 @@ namespace AiryBotCode.Api.Models
 
         // Which database this bot's data uses. Null/empty = shared default.
         public string DatabaseName { get; set; }
+
+        // Theme palette (hex). Read-only here; set via the dedicated theme endpoint.
+        public string ThemePrimary { get; set; }
+        public string ThemeAccent { get; set; }
     }
 }

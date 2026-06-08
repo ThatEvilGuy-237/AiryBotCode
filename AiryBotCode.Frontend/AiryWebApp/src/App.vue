@@ -2,11 +2,21 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
+import { useBots } from './lib/bots'
+import { applyTheme } from './lib/theme'
 
 const navOpen = ref(false)
 const route = useRoute()
 // Close the mobile drawer whenever the route changes.
 watch(() => route.path, () => (navOpen.value = false))
+
+// Re-skin the panel to the selected bot's theme whenever it changes.
+const { currentBot } = useBots()
+watch(
+  currentBot,
+  (bot) => applyTheme(bot?.themePrimary, bot?.themeAccent),
+  { immediate: true },
+)
 </script>
 
 <template>

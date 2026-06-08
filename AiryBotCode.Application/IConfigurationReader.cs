@@ -18,6 +18,7 @@ namespace AiryBotCode.Application.Interfaces
         string GetDatabaseUser();
         string GetDatabasePassword();
         string GetBotName();
+        string GetThemePrimaryHex();
         bool IsBotEnabled();
         List<ulong> GetAdminRoleIds();
         ulong GetEvilId();

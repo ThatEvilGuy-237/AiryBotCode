@@ -118,6 +118,14 @@ namespace AiryBotCode.Application.Interfaces
             return _configuration["Bots:Name"] ?? string.Empty;
         }
 
+        // The bot's brand colour as "#rrggbb" (default pink if unset).
+        public string GetThemePrimaryHex()
+        {
+            var hex = (_configuration["Bots:ThemePrimary"] ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(hex)) return "#e8467a";
+            return hex.StartsWith("#") ? hex : "#" + hex;
+        }
+
         public bool IsBotEnabled()
         {
             var enabledStr = _configuration["Bots:Enabled"];

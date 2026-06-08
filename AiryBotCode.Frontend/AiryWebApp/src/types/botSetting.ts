@@ -21,6 +21,10 @@ export interface BotSetting {
 
   // Which database this bot's data uses. Empty = shared default.
   databaseName?: string | null
+
+  // Theme palette (hex). Empty = default.
+  themePrimary?: string | null
+  themeAccent?: string | null
 }
 
 export function emptyBotSetting(): BotSetting {
@@ -35,5 +39,7 @@ export function emptyBotSetting(): BotSetting {
     hasToken: false,
     token: '',
     databaseName: '',
+    themePrimary: '',
+    themeAccent: '',
   }
 }
