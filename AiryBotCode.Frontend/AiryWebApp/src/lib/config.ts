@@ -3,6 +3,10 @@
 // API's launchSettings (http://localhost:7215) and the existing Discord app.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:7215'
 
+// The Hive (Neural-Spine UI). Different origin → the token is handed over via
+// the `#token=` fragment. Override with VITE_HIVE_URL.
+export const HIVE_URL = import.meta.env.VITE_HIVE_URL ?? 'http://localhost:5175'
+
 const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID ?? '1318870826862379018'
 const DISCORD_SCOPE = 'identify'
 const DISCORD_REDIRECT_URI = `${API_BASE_URL}/api/auth/discord/redirect`

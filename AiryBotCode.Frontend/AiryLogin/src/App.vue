@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref, nextTick } from 'vue'
-import { API_BASE_URL, APP_URL, discordAuthUrl } from './lib/config'
-import { isAuthenticated } from './lib/auth'
+import { API_BASE_URL, APP_URL, HIVE_URL, discordAuthUrl } from './lib/config'
+import { isAuthenticated, captureTokenFromHash, getToken } from './lib/auth'
 
-type Step = 'key' | 'identity'
+type Step = 'key' | 'identity' | 'choose'
 
 const step = ref<Step>('key')
 const password = ref('')
@@ -13,13 +13,24 @@ const busy = ref(false)
 const keyInput = ref<HTMLInputElement | null>(null)
 
 onMounted(() => {
-  // Already holding a valid session? Don't show the gate — go straight in.
+  // Discord redirects back here with `#token=` — capture it, then offer the choice.
+  captureTokenFromHash()
   if (isAuthenticated()) {
-    window.location.replace(APP_URL)
+    step.value = 'choose'
     return
   }
   keyInput.value?.focus()
 })
+
+function goAiry() {
+  window.location.href = APP_URL
+}
+
+function goHive() {
+  // Different origin → hand the token over via the URL fragment.
+  const token = getToken() ?? ''
+  window.location.href = `${HIVE_URL}/#token=${encodeURIComponent(token)}`
+}
 
 async function submitKey() {
   if (busy.value || !password.value) return
@@ -95,7 +106,7 @@ function continueWithIdentity() {
         </form>
 
         <!-- Step 2 — identity -->
-        <div v-else key="identity" class="panel">
+        <div v-else-if="step === 'identity'" key="identity" class="panel">
           <h1>One more step</h1>
           <p class="hint">Confirm it's you to finish signing in.</p>
 
@@ -109,6 +120,28 @@ function continueWithIdentity() {
           </button>
 
           <button class="ghost" type="button" :disabled="busy" @click="back">Back</button>
+        </div>
+
+        <!-- Step 3 — choose destination -->
+        <div v-else key="choose" class="panel">
+          <h1>You're in</h1>
+          <p class="hint">Where would you like to go?</p>
+
+          <button class="choice" @click="goAiry">
+            <span class="choice-mark airy" aria-hidden="true"></span>
+            <span class="choice-text">
+              <span class="choice-title">Airy Dashboard</span>
+              <span class="choice-sub">bot control panel</span>
+            </span>
+          </button>
+
+          <button class="choice" @click="goHive">
+            <span class="choice-mark hive" aria-hidden="true"></span>
+            <span class="choice-text">
+              <span class="choice-title">The Hive</span>
+              <span class="choice-sub">flow orchestrator</span>
+            </span>
+          </button>
         </div>
       </transition>
     </main>
@@ -265,6 +298,38 @@ button:not(:disabled):active { transform: translateY(1px); }
   font-size: 0.85rem;
 }
 .ghost:not(:disabled):hover { color: #fff; }
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 0.6rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  text-align: left;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.12s ease;
+}
+.choice:hover { border-color: #e8467a; background: rgba(255, 255, 255, 0.09); }
+.choice:active { transform: translateY(1px); }
+.choice-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.choice-mark.airy { background: linear-gradient(135deg, #e8467a, #8a63d2); }
+.choice-mark.hive { background: linear-gradient(135deg, #f6b73c, #e8467a); }
+.choice-text { display: flex; flex-direction: column; }
+.choice-title { font-weight: 650; color: #fff; }
+.choice-sub {
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
 
 .footnote {
   position: relative;

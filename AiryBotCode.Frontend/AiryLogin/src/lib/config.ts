@@ -9,6 +9,10 @@ const DISCORD_REDIRECT_URI = `${API_BASE_URL}/api/auth/discord/redirect`
 // Where to land once a valid session exists (the main control panel, root SPA).
 export const APP_URL = '/'
 
+// The Hive (Neural-Spine UI). The token is passed via `#token=` since it's a
+// different origin. Override with VITE_HIVE_URL.
+export const HIVE_URL = import.meta.env.VITE_HIVE_URL ?? 'http://localhost:5175'
+
 /**
  * Build the Discord OAuth URL, carrying the gate token in `state` so the API
  * callback can verify the password step was completed before issuing a JWT.

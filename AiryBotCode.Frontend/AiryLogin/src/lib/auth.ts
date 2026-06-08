@@ -19,3 +19,17 @@ export function isAuthenticated(): boolean {
   const exp = decodeExp(token)
   return exp !== null && exp * 1000 > Date.now()
 }
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY)
+}
+
+/** Discord's callback returns here with `#token=<jwt>`; stash it and clean the URL. */
+export function captureTokenFromHash(): void {
+  const frag = new URLSearchParams(window.location.hash.slice(1))
+  const token = frag.get('token')
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token)
+    history.replaceState(null, '', window.location.pathname + window.location.search)
+  }
+}

@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { token, clearToken } from '../lib/auth'
-import { DISCORD_AUTH_URL } from '../lib/config'
+import { DISCORD_AUTH_URL, HIVE_URL } from '../lib/config'
 import { api } from '../lib/api'
 
 const apiResponse = ref('')
 
 function login(): void {
   window.location.href = DISCORD_AUTH_URL
+}
+
+// Jump to The Hive, carrying the shared token across origins via the fragment.
+function openHive(): void {
+  window.location.href = `${HIVE_URL}/#token=${encodeURIComponent(token.value ?? '')}`
 }
 
 function logout(): void {
@@ -36,7 +41,10 @@ async function pingApi(): Promise<void> {
     <section class="card">
       <template v-if="token">
         <p class="status logged-in">You are logged in.</p>
-        <button class="btn" @click="logout">Log out</button>
+        <div class="btn-row">
+          <button class="btn hive" @click="openHive">⬡ Open The Hive</button>
+          <button class="btn ghost" @click="logout">Log out</button>
+        </div>
       </template>
       <template v-else>
         <p class="status">You are not logged in.</p>
@@ -122,6 +130,25 @@ async function pingApi(): Promise<void> {
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.btn-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.btn.hive {
+  background: linear-gradient(90deg, #f6b73c, var(--foxfire));
+}
+.btn.ghost {
+  background: #fff;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+.btn.ghost:hover:not(:disabled) {
+  background: var(--surface-hover);
+  filter: none;
 }
 
 .response {
