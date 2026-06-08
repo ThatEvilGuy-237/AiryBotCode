@@ -21,6 +21,9 @@ export interface BotSetting {
 
   hasToken: boolean
   token?: string | null
+
+  // Which database this bot's data uses. Empty = shared default.
+  databaseName?: string | null
 }
 
 export function emptyBotSetting(): BotSetting {
@@ -36,5 +39,6 @@ export function emptyBotSetting(): BotSetting {
     evilLogChannelId: '',
     hasToken: false,
     token: '',
+    databaseName: '',
   }
 }

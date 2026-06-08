@@ -14,5 +14,9 @@ namespace AiryBotCode.Domain.database
         public ulong LogChannelId { get; set; }
         public ulong EvilLogChannelId { get; set; }
         public ulong BotId { get; set; }
+
+        // Which Postgres database this bot's data lives in. Null/empty = the
+        // shared default database (control plane stays there regardless).
+        public string? DatabaseName { get; set; }
     }
 }

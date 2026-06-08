@@ -21,5 +21,8 @@ namespace AiryBotCode.Api.Models
 
         public bool HasToken { get; set; }
         public string Token { get; set; }
+
+        // Which database this bot's data uses. Null/empty = shared default.
+        public string DatabaseName { get; set; }
     }
 }

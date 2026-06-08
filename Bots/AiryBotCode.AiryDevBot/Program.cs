@@ -93,6 +93,12 @@ namespace AiryBotCode
                 ["OpenAI:Prompt"] = row.OpenAIPrompt,
             };
 
+            // Route this bot's data to its own database when one is assigned. The
+            // control plane (roster + reload signal) stays on the shared DB, which
+            // the default bot keeps watching — so Restart still reloads the fleet.
+            if (!string.IsNullOrWhiteSpace(row.DatabaseName))
+                overrides["Database:Name"] = row.DatabaseName.Trim();
+
             // AdminRoleIds is a comma-separated string in the DB but an array in
             // config — expand it into indexed keys (Bots:AdminRoleIds:0, :1, ...).
             var roleIds = (row.AdminRoleIds ?? string.Empty)

@@ -132,6 +132,7 @@ namespace AiryBotCode.Api.Controllers
             entity.OpenAIModel = dto.OpenAIModel ?? entity.OpenAIModel ?? string.Empty;
             entity.OpenAIPrompt = dto.OpenAIPrompt;
             entity.AdminRoleIds = dto.AdminRoleIds;
+            entity.DatabaseName = string.IsNullOrWhiteSpace(dto.DatabaseName) ? null : dto.DatabaseName.Trim();
 
             entity.EvilId = ulong.TryParse(dto.EvilId, out var evilId) ? evilId : (isCreate ? 0UL : entity.EvilId);
             entity.LogChannelId = ulong.TryParse(dto.LogChannelId, out var logCh) ? logCh : (isCreate ? 0UL : entity.LogChannelId);
@@ -196,6 +197,7 @@ namespace AiryBotCode.Api.Controllers
             EvilLogChannelId = b.EvilLogChannelId.ToString(),
             HasToken = !string.IsNullOrEmpty(b.Token),
             Token = null,
+            DatabaseName = b.DatabaseName,
         };
     }
 }

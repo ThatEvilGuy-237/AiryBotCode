@@ -7,6 +7,7 @@ import BotList from '../components/BotList.vue'
 import SettingsForm from '../components/SettingsForm.vue'
 
 const bots = ref<BotSetting[]>([])
+const databases = ref<string[]>([])
 const selectedBotId = ref<string | null>(null)
 const draft = ref<BotSetting>(emptyBotSetting())
 const creating = ref(false)
@@ -15,6 +16,9 @@ const loading = ref(false)
 const saving = ref(false)
 const error = ref<string | null>(null)
 const success = ref(false)
+
+const reloading = ref(false)
+const reloadMsg = ref('')
 
 async function loadBots(): Promise<void> {
   if (!token.value) return
@@ -30,6 +34,23 @@ async function loadBots(): Promise<void> {
   } finally {
     loading.value = false
   }
+  // Databases for the per-bot picker (best-effort; non-fatal).
+  try {
+    databases.value = await api.getDatabases()
+  } catch {
+    databases.value = []
+  }
+}
+
+async function reloadFleet(): Promise<void> {
+  reloading.value = true
+  reloadMsg.value = ''
+  const ok = await api.reloadBot()
+  reloading.value = false
+  reloadMsg.value = ok
+    ? 'Restart requested — the fleet will reload shortly (added/enabled bots come online).'
+    : 'Restart request failed.'
+  setTimeout(() => (reloadMsg.value = ''), 6000)
 }
 
 function selectBot(botId: string): void {
@@ -103,9 +124,15 @@ onMounted(loadBots)
   <div class="page">
     <header class="page-header">
       <h1>Bot Settings</h1>
-      <button v-if="token" type="button" class="add-btn" @click="addBot">+ Add bot</button>
+      <div v-if="token" class="header-actions">
+        <button type="button" class="restart-btn" :disabled="reloading" @click="reloadFleet">
+          {{ reloading ? 'Restarting…' : '⟳ Restart fleet' }}
+        </button>
+        <button type="button" class="add-btn" @click="addBot">+ Add bot</button>
+      </div>
     </header>
 
+    <p v-if="reloadMsg" class="banner success">{{ reloadMsg }}</p>
     <p v-if="!token" class="notice">Please log in on the Home page to manage bot settings.</p>
 
     <template v-else>
@@ -123,7 +150,7 @@ onMounted(loadBots)
 
           <template v-if="creating">
             <h2 class="content-title">New bot</h2>
-            <SettingsForm :bot="draft" :saving="saving" creating @save="save" />
+            <SettingsForm :bot="draft" :saving="saving" :databases="databases" creating @save="save" />
           </template>
 
           <template v-else-if="selectedBotId">
@@ -131,7 +158,7 @@ onMounted(loadBots)
               <h2 class="content-title">{{ draft.botName || 'Bot' }}</h2>
               <button type="button" class="delete-btn" @click="removeBot(selectedBotId)">Delete</button>
             </div>
-            <SettingsForm :bot="draft" :saving="saving" @save="save" />
+            <SettingsForm :bot="draft" :saving="saving" :databases="databases" @save="save" />
           </template>
 
           <p v-else class="notice">Select a bot to edit its settings.</p>
@@ -163,6 +190,11 @@ onMounted(loadBots)
   color: transparent;
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
 .add-btn {
   background: linear-gradient(90deg, var(--foxfire), var(--foxfire-deep));
   color: #fff;
@@ -179,6 +211,19 @@ onMounted(loadBots)
   filter: brightness(1.05);
   transform: translateY(-1px);
 }
+.restart-btn {
+  background: #fff;
+  color: var(--foxfire-deep);
+  border: 1px solid var(--foxfire);
+  border-radius: 999px;
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.restart-btn:hover:not(:disabled) { background: var(--surface-hover); }
+.restart-btn:disabled { opacity: 0.55; cursor: default; }
 
 .content-head {
   display: flex;

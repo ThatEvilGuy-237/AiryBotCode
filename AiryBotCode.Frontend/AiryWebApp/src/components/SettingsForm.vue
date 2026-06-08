@@ -9,6 +9,7 @@ const props = defineProps<{
   bot: BotSetting
   saving: boolean
   creating?: boolean
+  databases?: string[]
 }>()
 
 const emit = defineEmits<{
@@ -132,6 +133,24 @@ watch(
       <div class="form-group">
         <label for="evilId">Evil ID</label>
         <input id="evilId" type="text" inputmode="numeric" v-model="bot.evilId" />
+      </div>
+    </section>
+
+    <section class="group">
+      <h3>Data</h3>
+      <div class="form-group">
+        <label for="databaseName">Database</label>
+        <input
+          id="databaseName"
+          list="db-options"
+          v-model="bot.databaseName"
+          placeholder="Shared (default)"
+          autocomplete="off"
+        />
+        <datalist id="db-options">
+          <option v-for="d in props.databases || []" :key="d" :value="d" />
+        </datalist>
+        <small>Which database this bot's data uses — leave blank for the shared default. Create new ones on the Database page. Applies after a restart.</small>
       </div>
     </section>
 

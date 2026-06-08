@@ -4,6 +4,9 @@ import { api, ApiError } from '../lib/api'
 import DataTable from '../components/DataTable.vue'
 import type { Column } from '../lib/mockDatabase'
 
+// The database to explore comes from the route (/database/:db).
+const props = defineProps<{ db: string }>()
+
 const schemas = ref<string[]>([])
 const tables = ref<{ name: string; rowCount: number }[]>([])
 const selectedSchema = ref('')
@@ -17,7 +20,7 @@ const error = ref('')
 async function loadSchemas() {
   error.value = ''
   try {
-    schemas.value = await api.getDbSchemas()
+    schemas.value = await api.getDbSchemas(props.db)
     if (schemas.value.length) {
       await selectSchema(schemas.value.includes('public') ? 'public' : schemas.value[0])
     }
@@ -33,7 +36,7 @@ async function selectSchema(schema: string) {
   rows.value = []
   error.value = ''
   try {
-    tables.value = await api.getDbTables(schema)
+    tables.value = await api.getDbTables(schema, props.db)
     if (tables.value.length) await selectTable(tables.value[0].name)
   } catch (e) {
     error.value = e instanceof ApiError ? e.message : 'Failed to load tables.'
@@ -45,7 +48,7 @@ async function selectTable(table: string) {
   loading.value = true
   error.value = ''
   try {
-    const data = await api.getDbData(selectedSchema.value, table)
+    const data = await api.getDbData(selectedSchema.value, table, 100, props.db)
     columns.value = data.columns.map((c) => ({ key: c, label: c }))
     rows.value = data.rows.map((r) => {
       const out: Record<string, string | number> = {}
@@ -67,7 +70,8 @@ onMounted(loadSchemas)
 
 <template>
   <div class="page">
-    <h1>Database</h1>
+    <router-link :to="{ name: 'databases' }" class="back-link">‹ Databases</router-link>
+    <h1>{{ db }}</h1>
 
     <p v-if="error" class="error">{{ error }}</p>
 
@@ -121,6 +125,15 @@ onMounted(loadSchemas)
 
 <style scoped>
 .page { padding: 2rem; }
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  color: var(--muted-color);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.back-link:hover { color: var(--foxfire); }
 .page > h1 {
   margin-bottom: 1rem;
   font-size: 1.9rem;

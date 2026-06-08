@@ -34,6 +34,9 @@ namespace AiryBotCode.Infrastructure.Database.Persistence.Config
 
             builder.Property(bs => bs.EvilLogChannelId);
 
+            builder.Property(bs => bs.DatabaseName)
+                .IsRequired(false); // null/empty = shared default database
+
 
         }
     }

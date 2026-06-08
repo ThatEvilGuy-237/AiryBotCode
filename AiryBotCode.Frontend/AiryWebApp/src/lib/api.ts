@@ -127,21 +127,39 @@ export const api = {
   },
 
   // ---- Live database explorer ----
-  getDbSchemas(): Promise<string[]> {
-    return json<string[]>('/api/db/schemas')
+  getDatabases(): Promise<string[]> {
+    return json<string[]>('/api/db/databases')
   },
 
-  getDbTables(schema: string): Promise<{ name: string; rowCount: number }[]> {
-    return json(`/api/db/tables?schema=${encodeURIComponent(schema)}`)
+  async createDatabase(name: string): Promise<boolean> {
+    const res = await authFetch('/api/db/databases', {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    })
+    if (res.status === 409) throw new ApiError(409, 'A database with that name already exists.')
+    if (res.status === 400) throw new ApiError(400, 'Invalid name — letters, digits and underscores only.')
+    if (!res.ok) throw new ApiError(res.status, `Could not create the database (${res.status}).`)
+    return true
+  },
+
+  getDbSchemas(database?: string): Promise<string[]> {
+    return json<string[]>(`/api/db/schemas${database ? `?database=${encodeURIComponent(database)}` : ''}`)
+  },
+
+  getDbTables(schema: string, database?: string): Promise<{ name: string; rowCount: number }[]> {
+    const db = database ? `&database=${encodeURIComponent(database)}` : ''
+    return json(`/api/db/tables?schema=${encodeURIComponent(schema)}${db}`)
   },
 
   getDbData(
     schema: string,
     table: string,
     limit = 100,
+    database?: string,
   ): Promise<{ columns: string[]; rows: Record<string, unknown>[] }> {
+    const db = database ? `&database=${encodeURIComponent(database)}` : ''
     return json(
-      `/api/db/data?schema=${encodeURIComponent(schema)}&table=${encodeURIComponent(table)}&limit=${limit}`,
+      `/api/db/data?schema=${encodeURIComponent(schema)}&table=${encodeURIComponent(table)}&limit=${limit}${db}`,
     )
   },
 }
