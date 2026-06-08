@@ -226,4 +226,30 @@ small {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+  .settings-form {
+    gap: 1rem;
+  }
+  .group {
+    padding: 1.1rem;
+  }
+  /* 16px keeps iOS from zooming the viewport when a field is focused. */
+  input[type='text'],
+  input[type='number'],
+  input[type='password'],
+  textarea {
+    font-size: 16px;
+  }
+  /* Keep the save button reachable above the content as it scrolls. */
+  .form-actions {
+    background: var(--surface-2);
+    padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-color);
+  }
+  .save-btn {
+    width: 100%;
+    min-height: 48px;
+  }
+}
 </style>

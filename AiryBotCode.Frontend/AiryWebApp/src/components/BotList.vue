@@ -97,4 +97,22 @@ const emit = defineEmits<{
 .status.off {
   color: var(--muted-color);
 }
+
+@media (max-width: 768px) {
+  /* Horizontal, swipeable strip of bot chips above the editor. */
+  .bot-list {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.5rem;
+  }
+  .bot-list-title {
+    display: none;
+  }
+  .bot-item {
+    flex: 0 0 auto;
+    min-width: 9rem;
+  }
+}
 </style>

@@ -143,4 +143,19 @@ onMounted(loadBots)
   border: 1px solid rgba(74, 222, 128, 0.4);
   color: var(--success-color);
 }
+
+@media (max-width: 768px) {
+  .page {
+    padding: 1rem;
+  }
+  .page > h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  /* Stack the bot list above the editor instead of side-by-side. */
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
 </style>
