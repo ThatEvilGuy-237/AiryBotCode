@@ -14,14 +14,22 @@ Internet → router :443 → Caddy (docker)
                                           └─ Discord OAuth → JWT → [Authorize]
 ```
 
-Two security layers:
-1. **Password gate** (HTTP basic-auth) — required to load the panel at all.
-2. **Discord login** — OAuth issues a JWT; the API requires it and checks an
-   allowlist (`Discord:AllowedUserIds` in `AiryBotCode.Api/appsettings.json`).
+Two security layers, both via our own login app at **`/login`** (no browser
+basic-auth popup):
+1. **Access-key gate** — `POST /api/auth/gate` checks the shared password
+   (`Panel:GatePassword` in `AiryBotCode.Api/appsettings.json`, constant-time
+   compare) and returns a short-lived **gate token** (a JWT with a distinct
+   audience `AiryBotCode-Gate`, 10-min expiry).
+2. **Discord login** — the login app sends the gate token to Discord as OAuth
+   `state`; the `/api/auth/discord/redirect` callback **rejects any login whose
+   `state` isn't a valid gate token**, so the password step is enforced
+   server-side. On success it issues the real JWT and the API checks an
+   allowlist (`Discord:AllowedUserIds`).
 
-`/api/*` is intentionally NOT behind basic-auth (it carries the JWT in the
-`Authorization` header, which would clash with basic-auth). It is protected by
-the JWT requirement + allowlist instead.
+The gate token's separate audience means it can NEVER be replayed as an access
+token against `[Authorize]` endpoints. The main SPA's router guard bounces any
+visitor without a valid JWT back to `/login`, and a 401 from `/api/*` does the
+same.
 
 ## One-time setup you must do
 
@@ -35,10 +43,10 @@ the JWT requirement + allowlist instead.
 
 ## Credentials
 
-- Panel password gate — user `airy`, password in `.env` (`PANEL_PASSWORD_HASH`
-  is the bcrypt hash; plaintext noted in the `.env` comment).
-  Change it: `docker run --rm caddy:2.8-alpine caddy hash-password --plaintext 'NEW'`
-  then update `.env` and `docker compose up -d caddy`.
+- Access-key gate — plaintext password in `AiryBotCode.Api/appsettings.json`
+  under `Panel:GatePassword`. Change it there, then `docker compose up -d --force-recreate api`.
+  (The old Caddy basic-auth `.env` vars `PANEL_USER`/`PANEL_PASSWORD_HASH` are no
+  longer used.)
 - JWT signing secret — `Jwt:Secret` (shared by API + bot configs).
 - DuckDNS token — `.env` `DUCKDNS_TOKEN`.
 

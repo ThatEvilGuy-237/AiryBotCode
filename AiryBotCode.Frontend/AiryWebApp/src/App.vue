@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
-import { captureTokenFromHash } from './lib/auth'
-
-// Grab the JWT the API hands back via the #token=… redirect fragment, if any.
-onMounted(captureTokenFromHash)
 
 const navOpen = ref(false)
 const route = useRoute()

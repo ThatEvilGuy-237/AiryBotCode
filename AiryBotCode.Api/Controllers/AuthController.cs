@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using System.Security.Cryptography;
 
 namespace AiryBotCode.Api.Controllers
 {
@@ -24,10 +25,22 @@ namespace AiryBotCode.Api.Controllers
         public string Username { get; set; }
     }
 
+    // Body for the first-factor password gate.
+    public class GateRequest
+    {
+        [JsonPropertyName("password")]
+        public string Password { get; set; }
+    }
+
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        // Gate tokens are signed with the same secret but carry a distinct
+        // audience so they can NEVER be replayed as an access token against the
+        // [Authorize] endpoints (which require the normal Jwt:Audience).
+        private const string GateAudience = "AiryBotCode-Gate";
+
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -37,12 +50,45 @@ namespace AiryBotCode.Api.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
+        // First factor: verify the shared access password. On success we hand back
+        // a short-lived gate token that the login app passes to Discord as `state`
+        // so the callback can prove the password step was actually completed.
+        [HttpPost("gate")]
+        public IActionResult Gate([FromBody] GateRequest request)
+        {
+            var expected = _configuration["Panel:GatePassword"];
+            if (string.IsNullOrEmpty(expected))
+            {
+                return StatusCode(500, "Access gate is not configured.");
+            }
+
+            var provided = request?.Password ?? string.Empty;
+            var providedBytes = Encoding.UTF8.GetBytes(provided);
+            var expectedBytes = Encoding.UTF8.GetBytes(expected);
+
+            // Constant-time comparison to avoid leaking the password via timing.
+            if (providedBytes.Length != expectedBytes.Length ||
+                !CryptographicOperations.FixedTimeEquals(providedBytes, expectedBytes))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(new { token = GenerateGateToken() });
+        }
+
         [HttpGet("discord/redirect")]
-        public async Task<IActionResult> DiscordRedirect([FromQuery] string code)
+        public async Task<IActionResult> DiscordRedirect([FromQuery] string code, [FromQuery] string state)
         {
             if (string.IsNullOrEmpty(code))
             {
                 return BadRequest("Discord authorization code is missing.");
+            }
+
+            // Second-factor guard: the `state` must be a valid, unexpired gate
+            // token, i.e. the password step was genuinely completed first.
+            if (!ValidateGateToken(state))
+            {
+                return Unauthorized("The access gate was not satisfied. Start again from the login page.");
             }
 
             try
@@ -126,6 +172,49 @@ namespace AiryBotCode.Api.Controllers
             return JsonSerializer.Deserialize<DiscordUser>(responseContent);
         }
         
+        private string GenerateGateToken()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Secret"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("purpose", "gate") }),
+                Expires = DateTime.UtcNow.AddMinutes(10),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = GateAudience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        private bool ValidateGateToken(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return false;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Secret"]);
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = GateAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ClockSkew = TimeSpan.FromSeconds(30)
+                }, out _);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private string GenerateJwt(DiscordUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

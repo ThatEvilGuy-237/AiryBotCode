@@ -1,5 +1,5 @@
 import { API_BASE_URL } from './config'
-import { token, clearToken } from './auth'
+import { token, redirectToLogin } from './auth'
 import type { BotSetting } from '../types/botSetting'
 
 export interface CommandSetting {
@@ -42,8 +42,8 @@ async function authFetch(path: string, init: RequestInit = {}): Promise<Response
   }
 
   if (response.status === 401) {
-    // Expired/invalid token — drop it so the UI falls back to the login state.
-    clearToken()
+    // Expired/invalid token — drop it and send the user back to the login app.
+    redirectToLogin()
     throw new ApiError(401, 'Your session expired. Please log in again.')
   }
 
