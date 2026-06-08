@@ -34,7 +34,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var botId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
                 var forwarder = scope.ServiceProvider.GetRequiredService<WebhookChatService>();
                 var reply = await forwarder.TryForwardAsync(
-                    botId, message.Channel.Id, message.Author.Username, message.Content);
+                    botId, message.Channel.Id, message.Author.Id, message.Author.Username, message.Content);
                 if (!string.IsNullOrWhiteSpace(reply))
                     await message.Channel.SendMessageAsync(reply);
             }

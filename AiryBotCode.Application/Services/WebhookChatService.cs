@@ -22,7 +22,7 @@ namespace AiryBotCode.Application.Services
         }
 
         /// <summary>Forward a channel message to its linked webhook. Returns reply text, or null.</summary>
-        public async Task<string?> TryForwardAsync(ulong botId, ulong channelId, string author, string content)
+        public async Task<string?> TryForwardAsync(ulong botId, ulong channelId, ulong authorId, string author, string content)
         {
             var link = await _repository.GetForChannelAsync(botId, channelId);
             if (link == null) return null;
@@ -31,6 +31,7 @@ namespace AiryBotCode.Application.Services
             {
                 body = content,
                 author,
+                userId = authorId.ToString(),   // Discord user id → per-user memory in the Hive
                 channelId = channelId.ToString(),
             });
             var bytes = Encoding.UTF8.GetBytes(payload);
