@@ -18,14 +18,22 @@
 		file_server
 	}
 
-	# The Hive (Neural-Spine), reached over the hive-core docker network.
-	# /hive-api/* → spine API (prefix stripped); /hive* → the Hive UI (served at
-	# base /hive/). Spine enforces the shared JWT itself.
-	handle_path /hive-api/* {
+	# The Hive portal (Aether-Sight), over the hive-core docker network. Each
+	# daemon is under /hive/api/<daemon> (prefix stripped); /hive* → the portal
+	# (served at base /hive/). Host is rewritten so Vite's allowedHosts accepts it.
+	handle_path /hive/api/spine/* {
 		reverse_proxy spine:7000
 	}
+	handle_path /hive/api/wraith/* {
+		reverse_proxy wraith-worker:5000
+	}
+	handle_path /hive/api/obsidian/* {
+		reverse_proxy obsidian-mind:3000
+	}
 	handle /hive* {
-		reverse_proxy spine-ui:5175
+		reverse_proxy spine-ui:5190 {
+			header_up Host localhost
+		}
 	}
 
 	# Main control panel SPA. Reachable only with a valid JWT — enforced
