@@ -10,9 +10,6 @@ export interface BotSetting {
   botName: string
   enabled: boolean
 
-  openAIModel: string
-  openAIPrompt: string
-
   adminRoleIds: string
   evilId: string
 
@@ -31,8 +28,6 @@ export function emptyBotSetting(): BotSetting {
     botId: '',
     botName: '',
     enabled: false,
-    openAIModel: '',
-    openAIPrompt: '',
     adminRoleIds: '',
     evilId: '',
     logChannelId: '',

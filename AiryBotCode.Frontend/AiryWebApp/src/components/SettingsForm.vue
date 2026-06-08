@@ -95,18 +95,6 @@ watch(
     </section>
 
     <section class="group">
-      <h3>AI</h3>
-      <div class="form-group">
-        <label for="openAIModel">Model</label>
-        <input id="openAIModel" type="text" v-model="bot.openAIModel" />
-      </div>
-      <div class="form-group">
-        <label for="openAIPrompt">System Prompt</label>
-        <textarea id="openAIPrompt" rows="4" v-model="bot.openAIPrompt"></textarea>
-      </div>
-    </section>
-
-    <section class="group">
       <h3>Channels</h3>
       <p class="hint">Discord channel IDs.</p>
       <div class="form-group">

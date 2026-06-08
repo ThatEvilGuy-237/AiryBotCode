@@ -129,8 +129,6 @@ namespace AiryBotCode.Api.Controllers
         {
             entity.BotName = dto.BotName ?? entity.BotName ?? string.Empty;
             entity.Enabled = dto.Enabled;
-            entity.OpenAIModel = dto.OpenAIModel ?? entity.OpenAIModel ?? string.Empty;
-            entity.OpenAIPrompt = dto.OpenAIPrompt;
             entity.AdminRoleIds = dto.AdminRoleIds;
             entity.DatabaseName = string.IsNullOrWhiteSpace(dto.DatabaseName) ? null : dto.DatabaseName.Trim();
 
@@ -189,8 +187,6 @@ namespace AiryBotCode.Api.Controllers
             BotId = b.BotId.ToString(),
             BotName = b.BotName,
             Enabled = b.Enabled,
-            OpenAIModel = b.OpenAIModel,
-            OpenAIPrompt = b.OpenAIPrompt,
             AdminRoleIds = b.AdminRoleIds,
             EvilId = b.EvilId.ToString(),
             LogChannelId = b.LogChannelId.ToString(),

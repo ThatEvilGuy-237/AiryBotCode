@@ -27,7 +27,6 @@ namespace AiryBotCode.Bot.Bots
         {
             List<EvilAction> actions = new List<EvilAction>
             {
-                serviceProvider.GetRequiredService<TalkToAiryAction>(),
                 serviceProvider.GetRequiredService<GiveawayAction>(),
                 //serviceProvider.GetRequiredService<UserlogsAction>(),
                 //serviceProvider.GetRequiredService<TimeoutAction>(),

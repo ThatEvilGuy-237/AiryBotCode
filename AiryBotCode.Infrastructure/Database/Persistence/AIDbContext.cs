@@ -12,9 +12,6 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
         public AIDbContext(DbContextOptions<AIDbContext> options) : base(options) {
         }
 
-        public DbSet<ChatUser> ChatUsers { get; set; }
-        public DbSet<Message> Messages { get; set; }
-        public DbSet<ChannelConversation> ChannelConversations { get; set; }
         public DbSet<BotSetting> BotSettings { get; set; }
         public DbSet<GiveAwayUser> GiveAwayUsers { get; set; }
         public DbSet<CommandSetting> CommandSettings { get; set; }
@@ -24,9 +21,6 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new ChatUserConfiguration());
-            modelBuilder.ApplyConfiguration(new MessageConfiguration());
-            modelBuilder.ApplyConfiguration(new ChannelConversationConfiguration());
             modelBuilder.ApplyConfiguration(new BotSettingConfiguration());
             modelBuilder.ApplyConfiguration(new GiveAwayUserConfiguration());
             modelBuilder.ApplyConfiguration(new CommandSettingConfiguration());

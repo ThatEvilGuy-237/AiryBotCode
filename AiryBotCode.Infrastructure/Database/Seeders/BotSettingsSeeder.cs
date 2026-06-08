@@ -24,8 +24,6 @@ namespace AiryBotCode.Infrastructure.Database.Seeders
                 // log everything
                 Console.WriteLine("BotSetting received:");
                 Console.WriteLine($" BotName: {result.BotName}");
-                Console.WriteLine($" OpenAIModel: {result.OpenAIModel}");
-                Console.WriteLine($" OpenAIPrompt: {result.OpenAIPrompt.Substring(0, 100)}...");
                 Console.WriteLine($" Enabled: {result.Enabled}");
                 Console.WriteLine($" Token: {result.Token}");
                 Console.WriteLine($" AdminRoleIds: {result.AdminRoleIds}");

@@ -34,7 +34,6 @@ namespace AiryBotCode.Bot.Bots
                 typeof(UntimeOutAction),
                 typeof(VerifyUserAgeAction),
                 typeof(ContactUserAction),
-                typeof(TalkToAiryAction),
                 //typeof(ReminderAction),
             };
 

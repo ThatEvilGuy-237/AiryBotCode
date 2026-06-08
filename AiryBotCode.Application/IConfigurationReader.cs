@@ -17,9 +17,6 @@ namespace AiryBotCode.Application.Interfaces
         string GetDatabaseName();
         string GetDatabaseUser();
         string GetDatabasePassword();
-        string GetOpenAIApiKey();
-        string GetOpenAIModel();
-        string GetOpenAIPrompt();
         string GetBotName();
         bool IsBotEnabled();
         List<ulong> GetAdminRoleIds();

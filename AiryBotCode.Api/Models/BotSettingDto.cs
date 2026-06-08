@@ -10,9 +10,6 @@ namespace AiryBotCode.Api.Models
         public string BotName { get; set; }
         public bool Enabled { get; set; }
 
-        public string OpenAIModel { get; set; }
-        public string OpenAIPrompt { get; set; }
-
         public string AdminRoleIds { get; set; }
         public string EvilId { get; set; }
 

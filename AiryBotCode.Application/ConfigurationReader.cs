@@ -21,8 +21,6 @@ namespace AiryBotCode.Application.Interfaces
                 Token = GetBotToken(),
                 BotName = GetBotName(),
                 Enabled = IsBotEnabled(),
-                OpenAIModel = GetOpenAIModel(),
-                OpenAIPrompt = GetOpenAIPrompt(),
                 AdminRoleIds = string.Join(",", GetAdminRoleIds()),
                 EvilId = GetEvilId(),
                 EvilLogChannelId = GetEvilLogChannelId(),
@@ -113,26 +111,6 @@ namespace AiryBotCode.Application.Interfaces
             var password = GetDatabasePassword();
 
             return $"Host={host};Port={port};Database={name};Username={user};Password={password}";
-        }
-
-        public string GetOpenAIApiKey()
-        {
-            var apiKey = _configuration["OpenAI:ApiKey"];
-
-            // Validate the token :TODO
-            if (string.IsNullOrWhiteSpace(apiKey))
-                throw new InvalidOperationException("OpenAI API key is missing. Ensure OpenAI:ApiKey is set in appsettings.json.");
-            return apiKey;
-        }
-        public string GetOpenAIModel()
-        {
-            // Optional: blank means the bot connects but AI replies need a model set later.
-            return _configuration["OpenAI:Model"] ?? string.Empty;
-        }
-        public string GetOpenAIPrompt()
-        {
-            // Optional: blank means no system prompt (the bot still connects).
-            return _configuration["OpenAI:Prompt"] ?? string.Empty;
         }
 
         public string GetBotName()

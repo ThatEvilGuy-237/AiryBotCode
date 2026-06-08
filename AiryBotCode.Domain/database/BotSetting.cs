@@ -5,8 +5,6 @@ namespace AiryBotCode.Domain.database
     public class BotSetting
     {
         public string BotName { get; set; }
-        public string OpenAIModel { get; set; }
-        public string OpenAIPrompt { get; set; }
         public bool Enabled { get; set; }
         public string Token { get; set; }
         public string AdminRoleIds { get; set; }

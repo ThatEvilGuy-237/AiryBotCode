@@ -16,9 +16,6 @@ namespace AiryBotCode.Infrastructure.Database.Persistence.Config
                 .IsRequired()
                 .HasMaxLength(255); // Adjust max length as needed
 
-            builder.Property(bs => bs.OpenAIPrompt)
-                .IsRequired(false); // Can be null
-
             builder.Property(bs => bs.Enabled)
                 .IsRequired();
 

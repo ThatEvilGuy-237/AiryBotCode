@@ -89,8 +89,6 @@ namespace AiryBotCode
                 ["Bots:LogChannelId"] = row.LogChannelId.ToString(),
                 ["Bots:EvilLogChannelId"] = row.EvilLogChannelId.ToString(),
                 ["Bots:EvilId"] = row.EvilId.ToString(),
-                ["OpenAI:Model"] = row.OpenAIModel,
-                ["OpenAI:Prompt"] = row.OpenAIPrompt,
             };
 
             // Route this bot's data to its own database when one is assigned. The
