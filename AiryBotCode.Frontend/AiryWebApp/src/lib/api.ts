@@ -79,6 +79,23 @@ export const api = {
     })
   },
 
+  /** Add a new bot to the roster. */
+  async createBot(setting: BotSetting): Promise<BotSetting> {
+    const res = await authFetch('/api/settings', {
+      method: 'POST',
+      body: JSON.stringify(setting),
+    })
+    if (res.status === 409) throw new ApiError(409, 'A bot with that ID already exists.')
+    if (!res.ok) throw new ApiError(res.status, `Could not add the bot (${res.status}).`)
+    return (await res.json()) as BotSetting
+  },
+
+  /** Remove a bot from the roster. */
+  async deleteBot(botId: string): Promise<void> {
+    const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}`, { method: 'DELETE' })
+    if (!res.ok) throw new ApiError(res.status, `Could not delete the bot (${res.status}).`)
+  },
+
   /** Reveal the stored bot token — requires re-entering the access password. */
   async revealBotToken(botId: string, password: string): Promise<string> {
     const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}/token`, {

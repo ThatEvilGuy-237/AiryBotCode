@@ -9,6 +9,7 @@ import SettingsForm from '../components/SettingsForm.vue'
 const bots = ref<BotSetting[]>([])
 const selectedBotId = ref<string | null>(null)
 const draft = ref<BotSetting>(emptyBotSetting())
+const creating = ref(false)
 
 const loading = ref(false)
 const saving = ref(false)
@@ -34,6 +35,7 @@ async function loadBots(): Promise<void> {
 function selectBot(botId: string): void {
   const found = bots.value.find((b) => b.botId === botId)
   if (!found) return
+  creating.value = false
   selectedBotId.value = botId
   success.value = false
   error.value = null
@@ -41,16 +43,33 @@ function selectBot(botId: string): void {
   draft.value = { ...found, token: '' }
 }
 
+// Start a blank "add bot" draft.
+function addBot(): void {
+  creating.value = true
+  selectedBotId.value = null
+  success.value = false
+  error.value = null
+  draft.value = emptyBotSetting()
+}
+
 async function save(): Promise<void> {
-  if (!selectedBotId.value) return
   saving.value = true
   error.value = null
   success.value = false
   try {
-    const updated = await api.updateBotSettings(draft.value.botId, draft.value)
-    const index = bots.value.findIndex((b) => b.botId === updated.botId)
-    if (index !== -1) bots.value[index] = updated
-    draft.value = { ...updated, token: '' }
+    if (creating.value) {
+      const created = await api.createBot(draft.value)
+      bots.value.push(created)
+      selectBot(created.botId)
+    } else {
+      if (!selectedBotId.value) return
+      // Route by the ORIGINAL id; the body may carry a new id (re-key).
+      const updated = await api.updateBotSettings(selectedBotId.value, draft.value)
+      const index = bots.value.findIndex((b) => b.botId === selectedBotId.value)
+      if (index !== -1) bots.value[index] = updated
+      selectedBotId.value = updated.botId
+      draft.value = { ...updated, token: '' }
+    }
     success.value = true
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to save settings.'
@@ -59,19 +78,40 @@ async function save(): Promise<void> {
   }
 }
 
+async function removeBot(botId: string): Promise<void> {
+  if (!window.confirm('Remove this bot from the roster? This cannot be undone.')) return
+  error.value = null
+  try {
+    await api.deleteBot(botId)
+    bots.value = bots.value.filter((b) => b.botId !== botId)
+    creating.value = false
+    if (bots.value.length > 0) {
+      selectBot(bots.value[0].botId)
+    } else {
+      selectedBotId.value = null
+      draft.value = emptyBotSetting()
+    }
+  } catch (e) {
+    error.value = e instanceof Error ? e.message : 'Failed to delete bot.'
+  }
+}
+
 onMounted(loadBots)
 </script>
 
 <template>
   <div class="page">
-    <h1>Bot Settings</h1>
+    <header class="page-header">
+      <h1>Bot Settings</h1>
+      <button v-if="token" type="button" class="add-btn" @click="addBot">+ Add bot</button>
+    </header>
 
     <p v-if="!token" class="notice">Please log in on the Home page to manage bot settings.</p>
 
     <template v-else>
       <p v-if="loading" class="notice">Loading…</p>
-      <p v-else-if="bots.length === 0" class="notice">
-        No bot settings found. A bot writes its row to the database on first run.
+      <p v-else-if="bots.length === 0 && !creating" class="notice">
+        No bots yet. Use <strong>+ Add bot</strong> to register one.
       </p>
 
       <div v-else class="layout">
@@ -79,12 +119,21 @@ onMounted(loadBots)
 
         <div class="content">
           <div v-if="error" class="banner error">{{ error }}</div>
-          <div v-if="success" class="banner success">Settings saved.</div>
+          <div v-if="success" class="banner success">{{ creating ? 'Bot added.' : 'Settings saved.' }}</div>
 
-          <template v-if="selectedBotId">
-            <h2 class="content-title">{{ draft.botName || 'Bot' }}</h2>
+          <template v-if="creating">
+            <h2 class="content-title">New bot</h2>
+            <SettingsForm :bot="draft" :saving="saving" creating @save="save" />
+          </template>
+
+          <template v-else-if="selectedBotId">
+            <div class="content-head">
+              <h2 class="content-title">{{ draft.botName || 'Bot' }}</h2>
+              <button type="button" class="delete-btn" @click="removeBot(selectedBotId)">Delete</button>
+            </div>
             <SettingsForm :bot="draft" :saving="saving" @save="save" />
           </template>
+
           <p v-else class="notice">Select a bot to edit its settings.</p>
         </div>
       </div>
@@ -97,13 +146,61 @@ onMounted(loadBots)
   padding: 2rem;
 }
 
-.page > h1 {
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0;
   font-size: 1.9rem;
   background: linear-gradient(90deg, var(--foxfire), var(--violet));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.add-btn {
+  background: linear-gradient(90deg, var(--foxfire), var(--foxfire-deep));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.add-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.content-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.delete-btn {
+  background: transparent;
+  border: 1px solid rgba(248, 113, 113, 0.5);
+  color: var(--danger-color);
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.delete-btn:hover {
+  background: rgba(248, 113, 113, 0.12);
 }
 
 .notice {
@@ -148,9 +245,11 @@ onMounted(loadBots)
   .page {
     padding: 1rem;
   }
-  .page > h1 {
-    font-size: 1.5rem;
+  .page-header {
     margin-bottom: 1rem;
+  }
+  .page-header h1 {
+    font-size: 1.5rem;
   }
   /* Stack the bot list above the editor instead of side-by-side. */
   .layout {

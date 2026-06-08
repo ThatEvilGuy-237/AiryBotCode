@@ -40,6 +40,31 @@ namespace AiryBotCode.Api.Controllers
             return Ok(settings.Select(ToDto));
         }
 
+        // Add a new bot to the roster. The token is set directly here (a new bot
+        // needs one to log in); BotId is whatever the operator types.
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] BotSettingDto dto)
+        {
+            if (!ulong.TryParse(dto.BotId, out var id))
+            {
+                return BadRequest("A valid numeric Bot ID is required.");
+            }
+            if (string.IsNullOrWhiteSpace(dto.BotName))
+            {
+                return BadRequest("Bot name is required.");
+            }
+            if (await _repository.GetBotSettingAsync(id) != null)
+            {
+                return Conflict("A bot with that ID already exists.");
+            }
+
+            var entity = new BotSetting { BotId = id };
+            ApplyDto(entity, dto, isCreate: true);
+
+            await _repository.CreateBotSettingAsync(entity);
+            return StatusCode(201, ToDto(entity));
+        }
+
         [HttpPut("{botId}")]
         public async Task<IActionResult> Update(string botId, [FromBody] BotSettingDto dto)
         {
@@ -54,26 +79,72 @@ namespace AiryBotCode.Api.Controllers
                 return NotFound();
             }
 
-            entity.BotName = dto.BotName ?? entity.BotName;
+            // BotId is the primary key. If it changed, re-key by removing the old
+            // row and inserting a new one (carrying the stored token forward unless
+            // a new one was supplied).
+            if (ulong.TryParse(dto.BotId, out var newId) && newId != id)
+            {
+                if (await _repository.GetBotSettingAsync(newId) != null)
+                {
+                    return Conflict("A bot with the new ID already exists.");
+                }
+
+                var replacement = new BotSetting { BotId = newId, Token = entity.Token };
+                ApplyDto(replacement, dto, isCreate: false);
+
+                await _repository.DeleteAsync(entity);
+                await _repository.AddAsync(replacement);
+                await _repository.SaveChangesAsync();
+                return Ok(ToDto(replacement));
+            }
+
+            ApplyDto(entity, dto, isCreate: false);
+            await _repository.UpdateAsync(entity);
+            await _repository.SaveChangesAsync();
+            return Ok(ToDto(entity));
+        }
+
+        [HttpDelete("{botId}")]
+        public async Task<IActionResult> Delete(string botId)
+        {
+            if (!ulong.TryParse(botId, out var id))
+            {
+                return BadRequest("Invalid bot id.");
+            }
+
+            var entity = await _repository.GetBotSettingAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            await _repository.DeleteAsync(entity);
+            await _repository.SaveChangesAsync();
+            return NoContent();
+        }
+
+        // Maps editable fields from the DTO onto an entity. On create the token is
+        // taken verbatim; on update a blank token means "keep the stored one".
+        private static void ApplyDto(BotSetting entity, BotSettingDto dto, bool isCreate)
+        {
+            entity.BotName = dto.BotName ?? entity.BotName ?? string.Empty;
             entity.Enabled = dto.Enabled;
-            entity.OpenAIModel = dto.OpenAIModel ?? entity.OpenAIModel;
+            entity.OpenAIModel = dto.OpenAIModel ?? entity.OpenAIModel ?? string.Empty;
             entity.OpenAIPrompt = dto.OpenAIPrompt;
             entity.AdminRoleIds = dto.AdminRoleIds;
 
-            if (ulong.TryParse(dto.EvilId, out var evilId)) entity.EvilId = evilId;
-            if (ulong.TryParse(dto.LogChannelId, out var logChannelId)) entity.LogChannelId = logChannelId;
-            if (ulong.TryParse(dto.EvilLogChannelId, out var evilLogChannelId)) entity.EvilLogChannelId = evilLogChannelId;
+            entity.EvilId = ulong.TryParse(dto.EvilId, out var evilId) ? evilId : (isCreate ? 0UL : entity.EvilId);
+            entity.LogChannelId = ulong.TryParse(dto.LogChannelId, out var logCh) ? logCh : (isCreate ? 0UL : entity.LogChannelId);
+            entity.EvilLogChannelId = ulong.TryParse(dto.EvilLogChannelId, out var evilCh) ? evilCh : (isCreate ? 0UL : entity.EvilLogChannelId);
 
-            // Only overwrite the token when a new, non-empty one is supplied.
-            if (!string.IsNullOrWhiteSpace(dto.Token))
+            if (isCreate)
+            {
+                entity.Token = dto.Token ?? string.Empty;
+            }
+            else if (!string.IsNullOrWhiteSpace(dto.Token))
             {
                 entity.Token = dto.Token;
             }
-
-            await _repository.UpdateAsync(entity);
-            await _repository.SaveChangesAsync();
-
-            return Ok(ToDto(entity));
         }
 
         // Reveal the stored token — gated behind re-entering the access password

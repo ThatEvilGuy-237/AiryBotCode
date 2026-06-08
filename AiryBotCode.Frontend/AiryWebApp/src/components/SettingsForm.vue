@@ -8,6 +8,7 @@ import type { BotSetting } from '../types/botSetting'
 const props = defineProps<{
   bot: BotSetting
   saving: boolean
+  creating?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -78,8 +79,9 @@ watch(
       <h3>General</h3>
       <div class="form-group">
         <label for="botId">Bot ID</label>
-        <input id="botId" type="text" class="readonly" :value="bot.botId" readonly />
-        <small>Primary key — set by the bot itself, not editable.</small>
+        <input id="botId" type="text" inputmode="numeric" v-model="bot.botId" />
+        <small v-if="creating">The Discord application / bot user ID.</small>
+        <small v-else>Changing this re-creates the bot under the new ID.</small>
       </div>
       <div class="form-group">
         <label for="botName">Bot Name</label>
@@ -137,18 +139,19 @@ watch(
       <h3>Token</h3>
 
       <div class="form-group">
-        <label for="token">Set new token</label>
+        <label for="token">{{ creating ? 'Bot token' : 'Set new token' }}</label>
         <input
           id="token"
           type="password"
           autocomplete="off"
           v-model="bot.token"
-          :placeholder="bot.hasToken ? '•••••••• (stored — leave blank to keep)' : 'No token stored'"
+          :placeholder="creating ? 'Paste the bot token' : (bot.hasToken ? '•••••••• (stored — leave blank to keep)' : 'No token stored')"
         />
-        <small>Leave blank to keep the current token. Changing it needs a bot reload.</small>
+        <small v-if="creating">The Discord bot token used to log in.</small>
+        <small v-else>Leave blank to keep the current token. Changing it needs a bot reload.</small>
       </div>
 
-      <div class="form-group">
+      <div v-if="!creating" class="form-group">
         <label>Current token</label>
 
         <!-- Revealed value -->
@@ -191,7 +194,7 @@ watch(
 
     <div class="form-actions">
       <button type="submit" class="save-btn" :disabled="saving">
-        {{ saving ? 'Saving…' : 'Save Settings' }}
+        {{ saving ? 'Saving…' : creating ? 'Create bot' : 'Save Settings' }}
       </button>
     </div>
   </form>
