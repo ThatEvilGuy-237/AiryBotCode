@@ -17,6 +17,17 @@ namespace AiryBotCode.Api.Controllers
     {
         private readonly string _connectionString;
 
+        // Columns whose values must never leave the DB explorer in the clear.
+        // Keyed by table name (case-insensitive); BotSettings.Token is the only
+        // secret in this database.
+        private static readonly Dictionary<string, HashSet<string>> RedactedColumns =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["BotSettings"] = new(StringComparer.OrdinalIgnoreCase) { "Token" },
+            };
+
+        private const string RedactionMask = "••••••••";
+
         public DbExplorerController(IConfiguration configuration)
         {
             _connectionString = new ConfigurationReader(configuration).GetDatabaseConnectionString();
@@ -91,12 +102,23 @@ namespace AiryBotCode.Api.Controllers
             var columns = new List<string>();
             for (var i = 0; i < reader.FieldCount; i++) columns.Add(reader.GetName(i));
 
+            // Resolve which columns of this table must be masked (e.g. tokens).
+            RedactedColumns.TryGetValue(table, out var redacted);
+
             var rows = new List<Dictionary<string, object?>>();
             while (await reader.ReadAsync())
             {
                 var row = new Dictionary<string, object?>(reader.FieldCount);
                 for (var i = 0; i < reader.FieldCount; i++)
                 {
+                    // Mask secret columns: keep null as null (so "no token" is still
+                    // visible), but never return a stored value in the clear.
+                    if (redacted != null && redacted.Contains(columns[i]))
+                    {
+                        row[columns[i]] = reader.IsDBNull(i) ? null : RedactionMask;
+                        continue;
+                    }
+
                     var value = reader.IsDBNull(i) ? null : reader.GetValue(i);
                     // Stringify non-primitive types so the JSON stays simple for the table UI.
                     row[columns[i]] = value switch
