@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using AiryBotCode.Infrastructure.Database.Repository;
+using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
 using AiryBotCode.Application.Interfaces.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddDbContext<AIDbContext>(options =>
     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
+builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();

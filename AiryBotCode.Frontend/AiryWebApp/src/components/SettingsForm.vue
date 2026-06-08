@@ -37,16 +37,6 @@ const emit = defineEmits<{
         <label for="openAIPrompt">System Prompt</label>
         <textarea id="openAIPrompt" rows="4" v-model="bot.openAIPrompt"></textarea>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="maxTokens">Max Tokens</label>
-          <input id="maxTokens" type="number" min="0" v-model.number="bot.maxTokens" />
-        </div>
-        <div class="form-group">
-          <label for="retryAttempts">Retry Attempts</label>
-          <input id="retryAttempts" type="number" min="0" v-model.number="bot.retryAttempts" />
-        </div>
-      </div>
     </section>
 
     <section class="group">
@@ -60,28 +50,6 @@ const emit = defineEmits<{
         <label for="evilLogChannelId">Evil Log Channel</label>
         <input id="evilLogChannelId" type="text" inputmode="numeric" v-model="bot.evilLogChannelId" />
       </div>
-      <div class="form-group">
-        <label for="verifyLogChannelId">Verify Log Channel</label>
-        <input id="verifyLogChannelId" type="text" inputmode="numeric" v-model="bot.verifyLogChannelId" />
-      </div>
-      <div class="form-group">
-        <label for="rulesChannelId">Rules Channel</label>
-        <input id="rulesChannelId" type="text" inputmode="numeric" v-model="bot.rulesChannelId" />
-      </div>
-      <div class="form-group">
-        <label for="giveawayScoreboardChannelId">Giveaway Scoreboard Channel</label>
-        <input
-          id="giveawayScoreboardChannelId"
-          type="text"
-          inputmode="numeric"
-          v-model="bot.giveawayScoreboardChannelId"
-        />
-      </div>
-      <div class="form-group">
-        <label for="listenChannelIds">Listen Channels</label>
-        <input id="listenChannelIds" type="text" v-model="bot.listenChannelIds" />
-        <small>Comma-separated channel IDs Airy listens in.</small>
-      </div>
     </section>
 
     <section class="group">
@@ -91,29 +59,13 @@ const emit = defineEmits<{
         <input id="adminRoleIds" type="text" v-model="bot.adminRoleIds" />
         <small>Comma-separated role IDs allowed to run admin commands.</small>
       </div>
-      <div class="form-group">
-        <label for="verifiedRoleId">Verified Role</label>
-        <input id="verifiedRoleId" type="text" inputmode="numeric" v-model="bot.verifiedRoleId" />
-      </div>
-      <div class="form-group">
-        <label for="unverifiedRoleId">Unverified Role</label>
-        <input id="unverifiedRoleId" type="text" inputmode="numeric" v-model="bot.unverifiedRoleId" />
-      </div>
     </section>
 
     <section class="group">
-      <h3>Identity &amp; Categories</h3>
-      <div class="form-group">
-        <label for="ownerId">Owner ID</label>
-        <input id="ownerId" type="text" inputmode="numeric" v-model="bot.ownerId" />
-      </div>
+      <h3>Identity</h3>
       <div class="form-group">
         <label for="evilId">Evil ID</label>
         <input id="evilId" type="text" inputmode="numeric" v-model="bot.evilId" />
-      </div>
-      <div class="form-group">
-        <label for="contactCategoryId">Contact Category</label>
-        <input id="contactCategoryId" type="text" inputmode="numeric" v-model="bot.contactCategoryId" />
       </div>
     </section>
 
