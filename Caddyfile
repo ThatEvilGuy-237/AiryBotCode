@@ -18,6 +18,16 @@
 		file_server
 	}
 
+	# The Hive (Neural-Spine), reached over the hive-core docker network.
+	# /hive-api/* → spine API (prefix stripped); /hive* → the Hive UI (served at
+	# base /hive/). Spine enforces the shared JWT itself.
+	handle_path /hive-api/* {
+		reverse_proxy spine:7000
+	}
+	handle /hive* {
+		reverse_proxy spine-ui:5175
+	}
+
 	# Main control panel SPA. Reachable only with a valid JWT — enforced
 	# client-side by a router guard (→ /login) and server-side by [Authorize].
 	handle {

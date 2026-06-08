@@ -43,6 +43,10 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+    # Default network (api/db) + the Hive's network so spine/spine-ui resolve.
+    networks:
+      - default
+      - hive
 
   # airybot:
   #   build:
@@ -103,3 +107,11 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+
+networks:
+  default:
+  # The Hive core stack's network (docker-compose.core.yml in The-Hive). Lets
+  # Caddy reach the spine / spine-ui containers by name.
+  hive:
+    name: hive-core_default
+    external: true

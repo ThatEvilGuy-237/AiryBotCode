@@ -17,6 +17,17 @@ export interface CommandConfig {
   settings: CommandSetting[]
 }
 
+export interface ChannelWebhook {
+  id: number
+  channelId: string
+  name: string
+  webhookUrl: string
+  hasSecret: boolean
+  secret?: string | null
+  mode: string
+  enabled: boolean
+}
+
 export class ApiError extends Error {
   readonly status: number
   constructor(status: number, message: string) {
@@ -89,6 +100,35 @@ export const api = {
     if (res.status === 409) throw new ApiError(409, 'A bot with that ID already exists.')
     if (!res.ok) throw new ApiError(res.status, `Could not add the bot (${res.status}).`)
     return (await res.json()) as BotSetting
+  },
+
+  // ---- Channel → webhook chat links ----
+  getChannelWebhooks(botId: string): Promise<ChannelWebhook[]> {
+    return json<ChannelWebhook[]>(`/api/channelwebhooks?botId=${encodeURIComponent(botId)}`)
+  },
+
+  async createChannelWebhook(botId: string, link: Partial<ChannelWebhook>): Promise<ChannelWebhook> {
+    const res = await authFetch(`/api/channelwebhooks?botId=${encodeURIComponent(botId)}`, {
+      method: 'POST',
+      body: JSON.stringify(link),
+    })
+    if (!res.ok) throw new ApiError(res.status, `Could not add the link (${res.status}).`)
+    return (await res.json()) as ChannelWebhook
+  },
+
+  async updateChannelWebhook(botId: string, id: number, link: Partial<ChannelWebhook>): Promise<boolean> {
+    const res = await authFetch(`/api/channelwebhooks/${id}?botId=${encodeURIComponent(botId)}`, {
+      method: 'PUT',
+      body: JSON.stringify(link),
+    })
+    return res.ok
+  },
+
+  async deleteChannelWebhook(botId: string, id: number): Promise<boolean> {
+    const res = await authFetch(`/api/channelwebhooks/${id}?botId=${encodeURIComponent(botId)}`, {
+      method: 'DELETE',
+    })
+    return res.ok
   },
 
   /** Set a bot's theme palette (primary + accent hex). Returns the updated bot. */
