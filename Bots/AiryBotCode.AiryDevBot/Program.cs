@@ -1,12 +1,15 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using AiryBotCode.Bot.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Bot.Registers;
 using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Domain.database;
+using AiryBotCode.Infrastructure.Database.Persistence;
 using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AiryBotCode.Bot.Bots;
-using Microsoft.Extensions.Configuration; // Added
+using Microsoft.Extensions.Configuration;
 
 namespace AiryBotCode
 {
@@ -17,45 +20,90 @@ namespace AiryBotCode
 
         private static async Task MainAsync(string[] args)
         {
-            // Build configuration
-            IConfiguration configuration = new ConfigurationBuilder()
+            // Shared/base configuration: the control-DB connection, the OpenAI key,
+            // and any other settings common to every bot. Per-bot identity (token,
+            // id, name, channels, roles) comes from the DB roster, NOT this file.
+            IConfiguration baseConfig = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
 
-            // Register services and build the service provider
-            var serviceProvider = ServiceRegistration.BuildServiceProvider(configuration);
+            // Read the roster (enabled rows) from the control database.
+            List<BotSetting> roster = LoadRoster(baseConfig);
+            Console.WriteLine($"[INFO] Roster: {roster.Count} enabled bot(s).");
 
-            var configReader = serviceProvider.GetRequiredService<IConfigurationReader>();
-            var botId = configReader.GetBotId();
-            var botName = configReader.GetBotName();
-
-            Console.WriteLine($"[INFO] Starting up {botName} with ID: {botId}");
-
-            //// Write a startup log entry to file
-            //File.AppendAllText("/app/logs/bot-log.txt", $"[{DateTime.Now}] App started...\n");
-
-            try
+            // Start one fully independent bot per enabled row — each with its own
+            // Discord client and its own configuration view. A single bad row can't
+            // take the whole fleet down.
+            var started = new List<AiryDevBot>();
+            foreach (var row in roster)
             {
-                // Resolve and start the bot
-                var bot = serviceProvider.GetRequiredService<AiryDevBot>();
-                await bot.StartAsync(serviceProvider);
+                try
+                {
+                    var perBotConfig = BuildPerBotConfig(baseConfig, row);
+                    var serviceProvider = ServiceRegistration.BuildServiceProvider(perBotConfig);
 
-                Console.WriteLine("[DISCORD] Connecting to Discord...");
-
-                // Keep the app alive forever (Docker will stop it externally)
-                await Task.Delay(Timeout.Infinite);
+                    Console.WriteLine($"[INFO] Starting {row.BotName} (ID {row.BotId})...");
+                    var bot = serviceProvider.GetRequiredService<AiryDevBot>();
+                    await bot.StartAsync(serviceProvider);
+                    started.Add(bot);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ERROR] Failed to start {row.BotName} ({row.BotId}): {ex.Message}");
+                }
             }
-            catch (Exception ex)
+
+            if (started.Count == 0)
+                Console.WriteLine("[WARN] No bots started. Idling — add/enable a bot in the panel, then reload.");
+            else
+                Console.WriteLine($"[INFO] {started.Count} bot(s) connecting to Discord...");
+
+            // Keep the host alive. Docker stops it externally; the reload watcher
+            // exits the process on a control-panel reload so the whole fleet is
+            // re-read from the DB on the next start.
+            await Task.Delay(Timeout.Infinite);
+        }
+
+        // Read the enabled bots from the control DB using a throwaway bootstrap
+        // provider built from the shared config.
+        private static List<BotSetting> LoadRoster(IConfiguration baseConfig)
+        {
+            var bootstrap = ServiceRegistration.BuildServiceProvider(baseConfig);
+            using var scope = bootstrap.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AIDbContext>();
+            return db.BotSettings.Where(b => b.Enabled).ToList();
+        }
+
+        // Overlay one roster row onto the shared config so the existing
+        // ConfigurationReader transparently serves this bot's identity/settings.
+        private static IConfiguration BuildPerBotConfig(IConfiguration baseConfig, BotSetting row)
+        {
+            var overrides = new Dictionary<string, string?>
             {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+                ["Bots:Token"] = row.Token,
+                ["Bots:BotId"] = row.BotId.ToString(),
+                ["Bots:Name"] = row.BotName,
+                ["Bots:Enabled"] = row.Enabled.ToString(),
+                ["Bots:LogChannelId"] = row.LogChannelId.ToString(),
+                ["Bots:EvilLogChannelId"] = row.EvilLogChannelId.ToString(),
+                ["Bots:EvilId"] = row.EvilId.ToString(),
+                ["OpenAI:Model"] = row.OpenAIModel,
+                ["OpenAI:Prompt"] = row.OpenAIPrompt,
+            };
 
-                //// Also log to file for diagnosis
-                //File.AppendAllText("/app/logs/bot-log.txt", $"[{DateTime.Now}] ERROR: {ex.Message}\n");
+            // AdminRoleIds is a comma-separated string in the DB but an array in
+            // config — expand it into indexed keys (Bots:AdminRoleIds:0, :1, ...).
+            var roleIds = (row.AdminRoleIds ?? string.Empty)
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            for (int i = 0; i < roleIds.Length; i++)
+                overrides[$"Bots:AdminRoleIds:{i}"] = roleIds[i];
 
-                Environment.Exit(-1); // Exit with error code
-            }
+            return new ConfigurationBuilder()
+                .AddConfiguration(baseConfig)
+                .AddInMemoryCollection(overrides)
+                .Build();
         }
     }
 }
