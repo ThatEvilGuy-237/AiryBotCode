@@ -48,7 +48,14 @@ async function save() {
   try {
     const d = draft.value
     if (d.id === 0) {
-      await api.createChannelWebhook(currentBotId.value, d)
+      // Adding: the Channel ID field accepts several ids (comma / space / newline
+      // separated) so one webhook can be linked to many channels at once — each
+      // becomes its own link sharing the name, URL, secret and mode.
+      const channelIds = String(d.channelId).split(/[\s,]+/).map(s => s.trim()).filter(Boolean)
+      if (!channelIds.length) { error.value = 'Enter at least one channel id.'; saving.value = false; return }
+      for (const channelId of channelIds) {
+        await api.createChannelWebhook(currentBotId.value, { ...d, channelId })
+      }
     } else {
       // Blank secret on edit → don't change it (send only if typed).
       const payload: Partial<ChannelWebhook> = { ...d }
@@ -95,7 +102,10 @@ onMounted(async () => { await loadBots(); await load() })
       <h2>{{ draft.id === 0 ? 'New link' : 'Edit link' }}</h2>
       <div class="grid2">
         <label>Name<input v-model="draft.name" placeholder="e.g. Support flow" /></label>
-        <label>Channel ID<input v-model="draft.channelId" inputmode="numeric" placeholder="Discord channel id" /></label>
+        <label>Channel ID<template v-if="draft.id === 0">(s)</template>
+          <input v-model="draft.channelId" :placeholder="draft.id === 0 ? 'Discord channel id(s) — comma or space separated' : 'Discord channel id'" />
+          <small v-if="draft.id === 0" class="muted">Link this webhook to several channels at once — separate ids with commas or spaces.</small>
+        </label>
       </div>
       <label>Webhook URL<input v-model="draft.webhookUrl" placeholder="https://…/hooks/{triggerId}" /></label>
       <div class="grid2">
