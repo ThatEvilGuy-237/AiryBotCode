@@ -1,46 +1,75 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { token } from '../lib/auth'
 import { api } from '../lib/api'
 import { type BotSetting, emptyBotSetting } from '../types/botSetting'
-import BotList from '../components/BotList.vue'
 import SettingsForm from '../components/SettingsForm.vue'
+import { useBots } from '../lib/bots'
 
-const bots = ref<BotSetting[]>([])
+// The bot being edited is the one selected in the sidebar switcher.
+const {
+  currentBot,
+  currentBotId,
+  createRequested,
+  loadBots,
+  applyUpsert,
+  applyReplace,
+  applyRemove,
+} = useBots()
+
 const databases = ref<string[]>([])
-const selectedBotId = ref<string | null>(null)
 const draft = ref<BotSetting>(emptyBotSetting())
 const creating = ref(false)
 
-const loading = ref(false)
 const saving = ref(false)
 const error = ref<string | null>(null)
 const success = ref(false)
-
 const reloading = ref(false)
 const reloadMsg = ref('')
 
-async function loadBots(): Promise<void> {
-  if (!token.value) return
-  loading.value = true
+function syncDraft(): void {
+  // Work on a copy; never carry a token back into the editable form.
+  draft.value = currentBot.value ? { ...currentBot.value, token: '' } : emptyBotSetting()
+}
+
+function startCreate(): void {
+  creating.value = true
   error.value = null
-  try {
-    bots.value = await api.getBotSettings()
-    if (bots.value.length > 0) {
-      selectBot(bots.value[0].botId)
-    }
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load settings.'
-  } finally {
-    loading.value = false
-  }
-  // Databases for the per-bot picker (best-effort; non-fatal).
+  success.value = false
+  draft.value = emptyBotSetting()
+}
+
+onMounted(async () => {
+  await loadBots()
   try {
     databases.value = await api.getDatabases()
   } catch {
     databases.value = []
   }
-}
+  if (createRequested.value) {
+    createRequested.value = false
+    startCreate()
+  } else {
+    syncDraft()
+  }
+})
+
+// "New bot" pressed in the switcher while this page is already open.
+watch(createRequested, (req) => {
+  if (req) {
+    createRequested.value = false
+    startCreate()
+  }
+})
+
+// Selecting a different bot in the switcher reloads the editor.
+watch(currentBotId, () => {
+  if (!creating.value) {
+    success.value = false
+    error.value = null
+    syncDraft()
+  }
+})
 
 async function reloadFleet(): Promise<void> {
   reloading.value = true
@@ -53,26 +82,6 @@ async function reloadFleet(): Promise<void> {
   setTimeout(() => (reloadMsg.value = ''), 6000)
 }
 
-function selectBot(botId: string): void {
-  const found = bots.value.find((b) => b.botId === botId)
-  if (!found) return
-  creating.value = false
-  selectedBotId.value = botId
-  success.value = false
-  error.value = null
-  // Work on a copy; never leak the token back from a previous selection.
-  draft.value = { ...found, token: '' }
-}
-
-// Start a blank "add bot" draft.
-function addBot(): void {
-  creating.value = true
-  selectedBotId.value = null
-  success.value = false
-  error.value = null
-  draft.value = emptyBotSetting()
-}
-
 async function save(): Promise<void> {
   saving.value = true
   error.value = null
@@ -80,17 +89,16 @@ async function save(): Promise<void> {
   try {
     if (creating.value) {
       const created = await api.createBot(draft.value)
-      bots.value.push(created)
-      selectBot(created.botId)
+      creating.value = false
+      applyUpsert(created)
     } else {
-      if (!selectedBotId.value) return
+      const oldId = currentBotId.value
+      if (!oldId) return
       // Route by the ORIGINAL id; the body may carry a new id (re-key).
-      const updated = await api.updateBotSettings(selectedBotId.value, draft.value)
-      const index = bots.value.findIndex((b) => b.botId === selectedBotId.value)
-      if (index !== -1) bots.value[index] = updated
-      selectedBotId.value = updated.botId
-      draft.value = { ...updated, token: '' }
+      const updated = await api.updateBotSettings(oldId, draft.value)
+      applyReplace(oldId, updated)
     }
+    syncDraft()
     success.value = true
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to save settings.'
@@ -99,36 +107,38 @@ async function save(): Promise<void> {
   }
 }
 
-async function removeBot(botId: string): Promise<void> {
+async function removeBot(): Promise<void> {
+  const id = currentBotId.value
+  if (!id) return
   if (!window.confirm('Remove this bot from the roster? This cannot be undone.')) return
   error.value = null
   try {
-    await api.deleteBot(botId)
-    bots.value = bots.value.filter((b) => b.botId !== botId)
+    await api.deleteBot(id)
     creating.value = false
-    if (bots.value.length > 0) {
-      selectBot(bots.value[0].botId)
-    } else {
-      selectedBotId.value = null
-      draft.value = emptyBotSetting()
-    }
+    applyRemove(id)
+    syncDraft()
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Failed to delete bot.'
   }
 }
-
-onMounted(loadBots)
 </script>
 
 <template>
   <div class="page">
     <header class="page-header">
-      <h1>Bot Settings</h1>
+      <h1>{{ creating ? 'New bot' : currentBot?.botName || 'Settings' }}</h1>
       <div v-if="token" class="header-actions">
         <button type="button" class="restart-btn" :disabled="reloading" @click="reloadFleet">
           {{ reloading ? 'Restarting…' : '⟳ Restart fleet' }}
         </button>
-        <button type="button" class="add-btn" @click="addBot">+ Add bot</button>
+        <button
+          v-if="!creating && currentBot"
+          type="button"
+          class="delete-btn"
+          @click="removeBot"
+        >
+          Delete
+        </button>
       </div>
     </header>
 
@@ -136,34 +146,20 @@ onMounted(loadBots)
     <p v-if="!token" class="notice">Please log in on the Home page to manage bot settings.</p>
 
     <template v-else>
-      <p v-if="loading" class="notice">Loading…</p>
-      <p v-else-if="bots.length === 0 && !creating" class="notice">
-        No bots yet. Use <strong>+ Add bot</strong> to register one.
+      <div v-if="error" class="banner error">{{ error }}</div>
+      <div v-if="success" class="banner success">{{ creating ? 'Bot added.' : 'Settings saved.' }}</div>
+
+      <SettingsForm
+        v-if="creating || currentBot"
+        :bot="draft"
+        :saving="saving"
+        :databases="databases"
+        :creating="creating"
+        @save="save"
+      />
+      <p v-else class="notice">
+        No bots yet — use <strong>New bot</strong> in the bot menu (top-left) to add one.
       </p>
-
-      <div v-else class="layout">
-        <BotList :bots="bots" :selected-bot-id="selectedBotId" @select="selectBot" />
-
-        <div class="content">
-          <div v-if="error" class="banner error">{{ error }}</div>
-          <div v-if="success" class="banner success">{{ creating ? 'Bot added.' : 'Settings saved.' }}</div>
-
-          <template v-if="creating">
-            <h2 class="content-title">New bot</h2>
-            <SettingsForm :bot="draft" :saving="saving" :databases="databases" creating @save="save" />
-          </template>
-
-          <template v-else-if="selectedBotId">
-            <div class="content-head">
-              <h2 class="content-title">{{ draft.botName || 'Bot' }}</h2>
-              <button type="button" class="delete-btn" @click="removeBot(selectedBotId)">Delete</button>
-            </div>
-            <SettingsForm :bot="draft" :saving="saving" :databases="databases" @save="save" />
-          </template>
-
-          <p v-else class="notice">Select a bot to edit its settings.</p>
-        </div>
-      </div>
     </template>
   </div>
 </template>

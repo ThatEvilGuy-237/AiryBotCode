@@ -1,31 +1,38 @@
 <script setup lang="ts">
-// Static, component-based navigation. Each entry is a router-link so the active
-// route is highlighted automatically via the exact-active class.
+// Navigation grouped by scope: the switcher selects a bot, the "This bot" links
+// act on it, and "Server" links are global (not per-bot).
+import BotSwitcher from './BotSwitcher.vue'
+
 interface NavItem {
   to: string
   label: string
 }
 
-const items: NavItem[] = [
-  { to: '/', label: 'Home' },
+const botItems: NavItem[] = [
   { to: '/commands', label: 'Commands' },
-  { to: '/bot-settings', label: 'Bot Settings' },
-  { to: '/database', label: 'Database' },
+  { to: '/bot-settings', label: 'Settings' },
 ]
+const serverItems: NavItem[] = [{ to: '/database', label: 'Databases' }]
 </script>
 
 <template>
   <aside class="sidebar">
-    <div class="brand">
-      <span class="emblem" aria-hidden="true"></span>
-      <div class="brand-text">
-        <h1>Airy</h1>
-        <p>kitsune control ✦</p>
-      </div>
-    </div>
+    <BotSwitcher class="bot-switcher" />
+
+    <router-link to="/" class="nav-link home-link">
+      <span class="orb" aria-hidden="true"></span>
+      <span>Home</span>
+    </router-link>
 
     <nav class="sidebar-nav">
-      <router-link v-for="item in items" :key="item.to" :to="item.to" class="nav-link">
+      <p class="nav-label">This bot</p>
+      <router-link v-for="item in botItems" :key="item.to" :to="item.to" class="nav-link">
+        <span class="orb" aria-hidden="true"></span>
+        <span>{{ item.label }}</span>
+      </router-link>
+
+      <p class="nav-label">Server</p>
+      <router-link v-for="item in serverItems" :key="item.to" :to="item.to" class="nav-link">
         <span class="orb" aria-hidden="true"></span>
         <span>{{ item.label }}</span>
       </router-link>
@@ -47,60 +54,31 @@ const items: NavItem[] = [
   overflow-y: auto;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 2.25rem;
-  padding: 0 0.25rem;
+.bot-switcher {
+  margin-bottom: 1rem;
 }
 
-/* a softly spinning pink sigil */
-.emblem {
-  position: relative;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, var(--foxfire), var(--violet), var(--foxfire));
-  animation: spin 12s linear infinite;
-  flex-shrink: 0;
-}
-.emblem::after {
-  content: '';
-  position: absolute;
-  inset: 9px;
-  border-radius: 50%;
-  background: #ffffff;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.brand-text h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
-  background: linear-gradient(90deg, var(--foxfire), var(--violet));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.brand-text p {
-  margin: 0.2rem 0 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted-color);
+.home-link {
+  margin-bottom: 0.75rem;
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.nav-label {
+  margin: 0.6rem 0 0.1rem;
+  padding: 0 0.4rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-color);
+  opacity: 0.8;
+}
+.nav-label:first-child {
+  margin-top: 0;
 }
 
 .nav-link {
