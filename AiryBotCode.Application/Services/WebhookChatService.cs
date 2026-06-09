@@ -21,11 +21,18 @@ namespace AiryBotCode.Application.Services
             _repository = repository;
         }
 
-        /// <summary>Forward a channel message to its linked webhook. Returns reply text, or null.</summary>
-        public async Task<string?> TryForwardAsync(ulong botId, ulong channelId, ulong authorId, string author, string content)
+        /// <summary>Forward a channel message to its linked webhook. Returns reply text, or null.
+        /// <paramref name="beginTyping"/> (if given) is invoked once the channel is confirmed
+        /// linked and its result disposed after the reply — used to show the "typing…" indicator
+        /// while the Hive flow runs, without flickering on unlinked channels.</summary>
+        public async Task<string?> TryForwardAsync(ulong botId, ulong channelId, ulong authorId, string author, string content,
+            Func<IDisposable>? beginTyping = null)
         {
             var link = await _repository.GetForChannelAsync(botId, channelId);
             if (link == null) return null;
+
+            // Linked → show the bot as typing until we've sent the reply back.
+            using var typing = beginTyping?.Invoke();
 
             var payload = JsonSerializer.Serialize(new
             {
