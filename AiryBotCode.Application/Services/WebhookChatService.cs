@@ -125,8 +125,12 @@ namespace AiryBotCode.Application.Services
             return "sha256=" + Convert.ToHexString(hmac.ComputeHash(body)).ToLowerInvariant();
         }
 
-        // Pull a human-facing reply from the response. The Hive returns a FlowRun
-        // (finalOutput.text once it has run); plain { text } / { message } also work.
+        // Pull a human-facing reply from the response. Canonical source is the
+        // FlowRun's finalOutput.text, but we stay tolerant of layout drift: the
+        // Hive's agent output also carries message.content (string or content-part
+        // array), and plain { text } / { message } / { reply } shapes are accepted
+        // too. Resilient on purpose — a shape change upstream shouldn't silently
+        // swallow the bot's reply.
         private static string? ExtractReply(string json)
         {
             try
@@ -135,15 +139,47 @@ namespace AiryBotCode.Application.Services
                 var root = doc.RootElement;
                 if (root.ValueKind != JsonValueKind.Object) return null;
 
-                if (root.TryGetProperty("finalOutput", out var fo) && fo.ValueKind == JsonValueKind.Object &&
-                    fo.TryGetProperty("text", out var ft) && ft.ValueKind == JsonValueKind.String)
-                    return ft.GetString();
+                // FlowRun shape: dig into finalOutput first (text, then message.content).
+                if (root.TryGetProperty("finalOutput", out var fo) && fo.ValueKind == JsonValueKind.Object)
+                {
+                    if (TextFromOutput(fo) is { } fromOutput) return fromOutput;
+                }
 
-                foreach (var key in new[] { "text", "message", "reply" })
-                    if (root.TryGetProperty(key, out var v) && v.ValueKind == JsonValueKind.String)
-                        return v.GetString();
+                // Flat shapes: { text } / { reply }, or { message: { content } } / { message: "..." }.
+                if (TextFromOutput(root) is { } fromRoot) return fromRoot;
             }
             catch { /* not JSON or no reply field */ }
+            return null;
+        }
+
+        // Best-effort text from an output object: text → reply → message.content → message (string).
+        private static string? TextFromOutput(JsonElement obj)
+        {
+            foreach (var key in new[] { "text", "reply" })
+                if (obj.TryGetProperty(key, out var v) && v.ValueKind == JsonValueKind.String &&
+                    !string.IsNullOrWhiteSpace(v.GetString()))
+                    return v.GetString();
+
+            if (obj.TryGetProperty("message", out var msg))
+            {
+                if (msg.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(msg.GetString()))
+                    return msg.GetString();
+                if (msg.ValueKind == JsonValueKind.Object && msg.TryGetProperty("content", out var content))
+                {
+                    if (content.ValueKind == JsonValueKind.String && !string.IsNullOrWhiteSpace(content.GetString()))
+                        return content.GetString();
+                    // content-part array: [{ type:"text", text:"…" }, …]
+                    if (content.ValueKind == JsonValueKind.Array)
+                    {
+                        var sb = new StringBuilder();
+                        foreach (var part in content.EnumerateArray())
+                            if (part.ValueKind == JsonValueKind.Object &&
+                                part.TryGetProperty("text", out var pt) && pt.ValueKind == JsonValueKind.String)
+                                sb.Append(pt.GetString());
+                        if (sb.Length > 0) return sb.ToString();
+                    }
+                }
+            }
             return null;
         }
     }
