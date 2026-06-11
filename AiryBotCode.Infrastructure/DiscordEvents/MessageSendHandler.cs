@@ -1,4 +1,5 @@
-﻿using AiryBotCode.Application.Interfaces;
+﻿using System.Text;
+using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
@@ -37,7 +38,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     botId, message.Channel.Id, message.Author.Id, message.Author.Username, message.Content,
                     () => message.Channel.EnterTypingState());
                 if (!string.IsNullOrWhiteSpace(reply))
-                    await message.Channel.SendMessageAsync(reply);
+                    // Discord caps a message at 2000 chars — split long replies so
+                    // they aren't rejected with "Message content is too long".
+                    foreach (var chunk in SplitForDiscord(reply))
+                        await message.Channel.SendMessageAsync(chunk);
             }
             catch (Exception ex)
             {
@@ -51,6 +55,36 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     await messageEvent.HandleMessageReceivedAsync(message);
                 }
             }
+        }
+
+        // Split text into <=max-char chunks for Discord, breaking on line then
+        // space boundaries; only hard-cutting when a single run has no break.
+        private static IEnumerable<string> SplitForDiscord(string text, int max = 2000)
+        {
+            if (text.Length <= max) { yield return text; yield break; }
+
+            var sb = new StringBuilder();
+            foreach (var rawLine in text.Split('\n'))
+            {
+                var line = rawLine;
+                // A single line longer than the cap → break it (prefer a space).
+                while (line.Length > max)
+                {
+                    if (sb.Length > 0) { yield return sb.ToString(); sb.Clear(); }
+                    var cut = line.LastIndexOf(' ', Math.Min(max - 1, line.Length - 1));
+                    if (cut <= 0) cut = max;
+                    yield return line[..cut];
+                    line = line[cut..].TrimStart();
+                }
+                // Flush the buffer if appending this line would overflow.
+                if (sb.Length > 0 && sb.Length + line.Length + 1 > max)
+                {
+                    yield return sb.ToString(); sb.Clear();
+                }
+                if (sb.Length > 0) sb.Append('\n');
+                sb.Append(line);
+            }
+            if (sb.Length > 0) yield return sb.ToString();
         }
 
     }
