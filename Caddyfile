@@ -42,38 +42,9 @@
 		}
 	}
 
-	# The Hive DEV portal (hive-dev stack — parallel env on airy_db_dev). Same
-	# shape as /hive but targets the *-dev services. Lets us test the `dev` branch
-	# at /dev without touching production at /hive.
-	handle_path /dev/api/spine/* {
-		reverse_proxy spine-dev:7000
-	}
-	handle_path /dev/api/wraith/* {
-		reverse_proxy wraith-worker-dev:5000
-	}
-	handle_path /dev/api/obsidian/* {
-		reverse_proxy obsidian-mind-dev:3000
-	}
-	handle_path /dev/api/chronos/* {
-		reverse_proxy chronos-dev:7000
-	}
-	redir /dev /dev/ 308
-	handle /dev* {
-		reverse_proxy spine-ui-dev:5190 {
-			header_up Host localhost
-		}
-	}
-
-	# Skills Studio (dev) — the standalone skills UI surface, served at /studio.
-	handle_path /studio/api/spine/* {
-		reverse_proxy spine-dev:7000
-	}
-	redir /studio /studio/ 308
-	handle /studio* {
-		reverse_proxy skills-ui-dev:5175 {
-			header_up Host localhost
-		}
-	}
+	# The Hive DEV environment lives on its own Funnel port (:8443), served by the
+	# hive-dev stack's own gateway — not through this Caddy. See
+	# The-Hive/deploy/gateway-dev.Caddyfile + Plan-Documents/ENVIRONMENTS.md.
 
 	# Main control panel SPA. Reachable only with a valid JWT — enforced
 	# client-side by a router guard (→ /login) and server-side by [Authorize].
