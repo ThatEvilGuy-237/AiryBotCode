@@ -50,9 +50,11 @@ can **keep thinking and push follow-up messages**.
   `wraith-worker-dev:5000`. **To go live (needs approval):** set `Hive:EffectsWsUrl`
   in the dev bot's appsettings + rebuild `airydevbot`, AND rebuild `obsidian-mind-dev`
   so the `say` tool is deployed.
-- ☐ **Pacing:** the listener currently waits `delaySeconds` before a send; the
-  **"from when the previous message was actually sent"** per-channel queue is still
-  to do (today's inline delay serializes but doesn't anchor to last-send).
+- ☑ **Pacing (dev):** `MessagePacer` — per-channel, order-preserving, non-blocking
+  across channels; each message waits `delaySeconds` **from when the previous
+  message to that channel was actually sent** (first message immediate). Pure
+  `ComputeWait` + chained per-channel delivery; the WS receive loop no longer
+  blocks on a send. 21/21 tests.
 - ☐ **Run lifecycle / reply contract (the fork):** with `say`, the agent emits
   user messages mid-run; decide whether the webhook HTTP reply becomes an ack
   (Airy posts only effects) or stays the first message — and avoid double-posting.

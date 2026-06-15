@@ -14,13 +14,17 @@ namespace AiryBotCode.Application.Hive
     public sealed class HiveEffectListener
     {
         private readonly string _wsUrl;
-        private readonly IEffectDelivery _delivery;
+        private readonly MessagePacer _pacer;
         private readonly Action<string>? _log;
 
         public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null)
+            : this(wsUrl, new MessagePacer(delivery), log) { }
+
+        // Test/advanced ctor: supply a pacer (e.g. with a fake clock).
+        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null)
         {
             _wsUrl = wsUrl;
-            _delivery = delivery;
+            _pacer = pacer;
             _log = log;
         }
 
@@ -66,19 +70,21 @@ namespace AiryBotCode.Application.Hive
                 }
                 while (!result.EndOfMessage);
 
-                await HandleMessageAsync(sb.ToString(), ct);
+                // Fire-and-forget: pacing must not block receiving the next frame.
+                _ = HandleMessageAsync(sb.ToString(), ct);
             }
         }
 
-        /// <summary>Parse one WS frame, route a deliverable effect, and deliver it.
-        /// Never throws — a malformed frame is logged and skipped. Public for tests.</summary>
-        public async Task HandleMessageAsync(string json, CancellationToken ct = default)
+        /// <summary>Parse one WS frame and (if deliverable) hand it to the pacer.
+        /// Returns the delivery task (tests await it); the receive loop discards it.
+        /// Never throws — a malformed frame is logged and skipped.</summary>
+        public Task HandleMessageAsync(string json, CancellationToken ct = default)
         {
             try
             {
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
-                if (!root.TryGetProperty("type", out var t) || t.GetString() != "effect") return;
+                if (!root.TryGetProperty("type", out var t) || t.GetString() != "effect") return Task.CompletedTask;
 
                 var call = root.GetProperty("call");
                 var name = call.TryGetProperty("name", out var n) ? n.GetString() : null;
@@ -92,16 +98,15 @@ namespace AiryBotCode.Application.Hive
                     && c.TryGetProperty("sessionId", out var s) ? s.GetString() : null;
 
                 var intent = EffectRouter.Route(name, message, delay, sessionId);
-                if (intent is null) return;
+                if (intent is null) return Task.CompletedTask;
 
-                if (intent.DelaySeconds > 0)
-                    await Task.Delay(TimeSpan.FromSeconds(intent.DelaySeconds), ct);
-                await _delivery.SendAsync(intent.ChannelId, intent.Text, ct);
+                // The pacer spaces follow-ups from the previous actual send.
+                return _pacer.Enqueue(intent.ChannelId, intent.Text, intent.DelaySeconds, ct);
             }
-            catch (OperationCanceledException) { throw; }
             catch (Exception ex)
             {
                 _log?.Invoke($"[HiveEffects] bad effect frame skipped: {ex.Message}");
+                return Task.CompletedTask;
             }
         }
 
