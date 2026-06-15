@@ -79,7 +79,7 @@ A raw `@124654654` in a message means nothing to the AI or memory today.
   round-trip pending a real mention; dev bot not yet rebuilt.)
 - Small, high-value, **no Hive changes** — lives in the Airy webhook forwarder.
 
-## ◐ D. First-message consent gate
+## ☑ D. First-message consent gate (dev — wired)
 The first time a user talks to Airy, prompt them to accept data collection
 **before** anything is stored.
 - Copy: data is collected **only to improve their experience with Airy**, **not
@@ -90,10 +90,14 @@ The first time a user talks to Airy, prompt them to accept data collection
   Grant) registered; pure `ConsentInteraction` (Accept-button customId build/parse
   + notice copy: "only to improve your experience with Airy" / "never used for any
   AI training" / pings `<@evilId>`). 29/29 tests.
-- ☐ **Wiring:** gate `MessageSendHandler` (no consent → send the ephemeral notice +
-  Accept button, skip forwarding; **fail-open** if the check errors so a missing
-  table never bricks the bot) + a button handler that records consent. Deploy note:
-  the `UserConsents` table needs creating on `airy_db` (EnsureCreated won't add it).
+- ☑ **Wiring (dev):** `MessageSendHandler` gates webhook-linked channels — no
+  consent → posts the notice + Accept button, skips forwarding; **fail-open** (any
+  check error lets the message through, so a missing table never bricks the bot).
+  `ButtonPressHandler` handles the Accept button (verifies the right user, records
+  consent, ephemeral ack) ahead of the normal command-button dispatch. Builds,
+  29/29 tests. **Live + deploy still pending:** real Discord click-through is
+  untested headlessly, and the `UserConsents` table must be created on `airy_db`
+  before deploying (EnsureCreated won't add it to the existing DB).
 - Chosen: Discord **ephemeral message + Accept button** (first contact is in Discord).
 
 ## ☐ E. Shared UI + per-instance theming   *(stated priority)*

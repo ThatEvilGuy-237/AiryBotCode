@@ -1,8 +1,11 @@
 ﻿using System.Text;
+using AiryBotCode.Application.Consent;
 using AiryBotCode.Application.Interfaces;
+using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
+using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -45,6 +48,30 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var content = MentionResolver.Rewrite(message.Content, id =>
                     mentioned.TryGetValue(id, out var n) ? n
                         : (guild?.GetUser(id) is { } gu ? (gu.Nickname ?? gu.Username) : null));
+
+                // First-message consent gate: only for channels linked to a Hive chat
+                // (where messages are forwarded + stored). Until the user accepts the
+                // data-use notice, post the notice + Accept button and don't forward.
+                // Fail-open: any error in the check lets the message through so a
+                // missing table / DB hiccup never bricks the bot.
+                var link = await scope.ServiceProvider.GetRequiredService<IChannelWebhookRepository>()
+                    .GetForChannelAsync(botId, message.Channel.Id);
+                if (link != null)
+                {
+                    var consented = true;
+                    try { consented = await scope.ServiceProvider.GetRequiredService<IUserConsentRepository>()
+                            .HasConsentAsync(botId, message.Author.Id); }
+                    catch (Exception cx) { Console.WriteLine($"[Consent] check failed, allowing through: {cx.Message}"); }
+                    if (!consented)
+                    {
+                        var evilId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetEvilId();
+                        var components = new ComponentBuilder()
+                            .WithButton("Accept", ConsentInteraction.BuildAcceptId(botId, message.Author.Id), ButtonStyle.Success)
+                            .Build();
+                        await message.Channel.SendMessageAsync(ConsentInteraction.PromptText(evilId), components: components);
+                        return;   // gated until they accept
+                    }
+                }
 
                 var reply = await forwarder.TryForwardAsync(
                     botId, message.Channel.Id, message.Author.Id, message.Author.Username, content,
