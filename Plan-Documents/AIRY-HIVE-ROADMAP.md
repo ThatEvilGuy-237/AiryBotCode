@@ -40,13 +40,16 @@ can **keep thinking and push follow-up messages**.
   (`FlowRunner.cs:51` `sessionId = channelId ?? …`), and the effect context already
   carries `sessionId`+`userId`. `delaySeconds` default 2, clamped 0..60. 6/6 bun
   tests; committed to Hive `dev`.
-- ☐ **Airy consumer:** subscribe to Hive effects (`subscribe_effects` on the tools
-  WS) and post each `say`/`schedule_message` effect to the channel = `context
-  .sessionId`. Pure effect→delivery router (testable) + a hosted listener +
-  reconnect.
-- ☐ **Pacing:** **2s** default before a follow-up, **measured from when the
-  previous message was actually sent** (Airy-side, per-channel queue), AI can
-  extend via `delaySeconds`.
+- ◐ **Airy consumer:** tested core done — `EffectRouter` (effect → `DeliveryIntent`,
+  channel = `context.sessionId`; only `say`/`send_message` deliverable) +
+  `HiveEffectListener` (ClientWebSocket → `subscribe_effects` → receive/route/deliver
+  + reconnect), delivery behind `IEffectDelivery`. 16/16 tests. `airydevbot` is on
+  `hive-dev_default` so it can reach `wraith-worker-dev:5000`. **Remaining:** the
+  Discord-backed `IEffectDelivery` impl, host startup + WS-url config (turning it
+  on = a dev-bot rebuild → will ask first).
+- ☐ **Pacing:** the listener currently waits `delaySeconds` before a send; the
+  **"from when the previous message was actually sent"** per-channel queue is still
+  to do (today's inline delay serializes but doesn't anchor to last-send).
 - ☐ **Run lifecycle / reply contract (the fork):** with `say`, the agent emits
   user messages mid-run; decide whether the webhook HTTP reply becomes an ack
   (Airy posts only effects) or stays the first message — and avoid double-posting.
