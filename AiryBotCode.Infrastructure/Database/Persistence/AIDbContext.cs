@@ -17,6 +17,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
         public DbSet<CommandSetting> CommandSettings { get; set; }
         public DbSet<BotCommand> BotCommands { get; set; }
         public DbSet<ChannelWebhook> ChannelWebhooks { get; set; }
+        public DbSet<UserConsent> UserConsents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +28,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
             modelBuilder.ApplyConfiguration(new CommandSettingConfiguration());
             modelBuilder.ApplyConfiguration(new BotCommandConfiguration());
             modelBuilder.ApplyConfiguration(new ChannelWebhookConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConsentConfiguration());
         }
 
         public static  IServiceCollection registerDbContext(IServiceCollection services)

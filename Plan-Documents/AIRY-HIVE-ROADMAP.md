@@ -79,14 +79,22 @@ A raw `@124654654` in a message means nothing to the AI or memory today.
   round-trip pending a real mention; dev bot not yet rebuilt.)
 - Small, high-value, **no Hive changes** — lives in the Airy webhook forwarder.
 
-## ☐ D. First-message consent gate
+## ◐ D. First-message consent gate
 The first time a user talks to Airy, prompt them to accept data collection
 **before** anything is stored.
 - Copy: data is collected **only to improve their experience with Airy**, **not
   used for any AI training**; for questions, ping `<@405431299323461634>` (evil).
 - Consent state in Airy's DB; **gate storage until accepted**.
-- **Design fork:** a Discord **ephemeral message + Accept button** (lean toward
-  this — first contact happens in Discord) vs a panel popup.
+- ☑ **Foundation (dev):** `UserConsent` entity + EF config (`UserConsents`, unique
+  index BotId+UserId) + DbSet; `IUserConsentRepository` (HasConsent / idempotent
+  Grant) registered; pure `ConsentInteraction` (Accept-button customId build/parse
+  + notice copy: "only to improve your experience with Airy" / "never used for any
+  AI training" / pings `<@evilId>`). 29/29 tests.
+- ☐ **Wiring:** gate `MessageSendHandler` (no consent → send the ephemeral notice +
+  Accept button, skip forwarding; **fail-open** if the check errors so a missing
+  table never bricks the bot) + a button handler that records consent. Deploy note:
+  the `UserConsents` table needs creating on `airy_db` (EnsureCreated won't add it).
+- Chosen: Discord **ephemeral message + Accept button** (first contact is in Discord).
 
 ## ☐ E. Shared UI + per-instance theming   *(stated priority)*
 Replace Airy's "vibe-coded" panel UI with the Hive's shared component library.
