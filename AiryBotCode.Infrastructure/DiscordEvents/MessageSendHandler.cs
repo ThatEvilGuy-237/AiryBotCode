@@ -34,8 +34,20 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 using var scope = _serviceProvider.CreateScope();
                 var botId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
                 var forwarder = scope.ServiceProvider.GetRequiredService<WebhookChatService>();
+
+                // Resolve raw mentions (<@id> / bare @id) to "DisplayName (id)" so the
+                // flow + memory see a name, not a snowflake. Prefer the users Discord
+                // already resolved on the message; fall back to a guild lookup.
+                var mentioned = message.MentionedUsers
+                    .GroupBy(u => u.Id)
+                    .ToDictionary(g => g.Key, g => (g.First() as SocketGuildUser)?.Nickname ?? g.First().Username);
+                var guild = (message.Channel as SocketGuildChannel)?.Guild;
+                var content = MentionResolver.Rewrite(message.Content, id =>
+                    mentioned.TryGetValue(id, out var n) ? n
+                        : (guild?.GetUser(id) is { } gu ? (gu.Nickname ?? gu.Username) : null));
+
                 var reply = await forwarder.TryForwardAsync(
-                    botId, message.Channel.Id, message.Author.Id, message.Author.Username, message.Content,
+                    botId, message.Channel.Id, message.Author.Id, message.Author.Username, content,
                     () => message.Channel.EnterTypingState());
                 if (!string.IsNullOrWhiteSpace(reply))
                     // Discord caps a message at 2000 chars — split long replies so

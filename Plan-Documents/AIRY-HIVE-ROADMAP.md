@@ -52,12 +52,17 @@ Chronos has the 24h image store; Obsidian has `view_image` + `recall_image`.
 - Missing: Airy forwards attachment urls/bytes on the webhook; the flow/agent
   ingests them (the existing image intake path) and can `view_image`.
 
-## ☐ C. Discord mention resolution
+## ☑ C. Discord mention resolution (dev — committed locally)
 A raw `@124654654` in a message means nothing to the AI or memory today.
-- **In:** Airy's forwarder (it has guild context) pre-parses raw ids / mentions →
-  `DisplayName (id)` before the agent + memory ever see them.
-- **Out:** the agent can emit `<@id>` so its replies actually **ping** the user
-  via Discord markdown.
+- **In:** ✅ `MentionResolver.Rewrite` (pure, Discord-free) turns `<@id>` / `<@!id>`
+  / bare `@<snowflake>` → `DisplayName (id)`; `MessageSendHandler` supplies the
+  name via `message.MentionedUsers` + a `guild.GetUser(id)` fallback, applied
+  before `WebhookChatService.TryForwardAsync`. Role mentions (`<@&id>`),
+  `@everyone`/`@here`, and short `@5` tokens are left alone.
+- **Out:** ✅ no change needed — the reply path sends plain content with default
+  AllowedMentions, so an agent reply containing `<@id>` pings naturally.
+- Validation: new `AiryBotCode.Tests` xunit project — **8/8 green**. (Live Discord
+  round-trip pending a real mention; dev bot not yet rebuilt.)
 - Small, high-value, **no Hive changes** — lives in the Airy webhook forwarder.
 
 ## ☐ D. First-message consent gate
