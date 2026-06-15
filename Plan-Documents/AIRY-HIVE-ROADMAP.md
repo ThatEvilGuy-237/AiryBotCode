@@ -40,13 +40,16 @@ can **keep thinking and push follow-up messages**.
   (`FlowRunner.cs:51` `sessionId = channelId ?? …`), and the effect context already
   carries `sessionId`+`userId`. `delaySeconds` default 2, clamped 0..60. 6/6 bun
   tests; committed to Hive `dev`.
-- ◐ **Airy consumer:** tested core done — `EffectRouter` (effect → `DeliveryIntent`,
+- ☑ **Airy consumer (dev, wired):** `EffectRouter` (effect → `DeliveryIntent`,
   channel = `context.sessionId`; only `say`/`send_message` deliverable) +
   `HiveEffectListener` (ClientWebSocket → `subscribe_effects` → receive/route/deliver
-  + reconnect), delivery behind `IEffectDelivery`. 16/16 tests. `airydevbot` is on
-  `hive-dev_default` so it can reach `wraith-worker-dev:5000`. **Remaining:** the
-  Discord-backed `IEffectDelivery` impl, host startup + WS-url config (turning it
-  on = a dev-bot rebuild → will ask first).
+  + reconnect), delivery via `DiscordEffectDelivery` (posts to the channel).
+  **Opt-in:** `IConfigurationReader.GetHiveEffectsUrl()` reads `Hive:EffectsWsUrl`
+  (null → off); `AiryDevBot.StartAsync` starts the listener when it's set. 16/16
+  tests, builds. `airydevbot` is on `hive-dev_default` → can reach
+  `wraith-worker-dev:5000`. **To go live (needs approval):** set `Hive:EffectsWsUrl`
+  in the dev bot's appsettings + rebuild `airydevbot`, AND rebuild `obsidian-mind-dev`
+  so the `say` tool is deployed.
 - ☐ **Pacing:** the listener currently waits `delaySeconds` before a send; the
   **"from when the previous message was actually sent"** per-channel queue is still
   to do (today's inline delay serializes but doesn't anchor to last-send).

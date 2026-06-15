@@ -151,5 +151,12 @@ namespace AiryBotCode.Application.Interfaces
         {
             return ulong.TryParse(_configuration["Bots:EvilLogChannelId"], out ulong evilLogChannelId) ? evilLogChannelId : 0UL;
         }
+
+        public string? GetHiveEffectsUrl()
+        {
+            // Optional + opt-in: only when set does the bot subscribe to Hive effects.
+            var url = _configuration["Hive:EffectsWsUrl"];
+            return string.IsNullOrWhiteSpace(url) ? null : url;
+        }
     }
 }

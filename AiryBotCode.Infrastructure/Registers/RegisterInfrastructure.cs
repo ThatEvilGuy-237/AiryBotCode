@@ -38,6 +38,8 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<CommandService>();
             services.AddScoped<BanHandler>();
             services.AddScoped<DiscordService>();
+            // Hive effect passthrough: deliver outbound agent messages to Discord.
+            services.AddScoped<AiryBotCode.Application.Hive.IEffectDelivery, Hive.DiscordEffectDelivery>();
 
 
 
