@@ -26,6 +26,7 @@ namespace AiryBotCode.Application.Services
         /// linked and its result disposed after the reply — used to show the "typing…" indicator
         /// while the Hive flow runs, without flickering on unlinked channels.</summary>
         public async Task<string?> TryForwardAsync(ulong botId, ulong channelId, ulong authorId, string author, string content,
+            IReadOnlyList<Hive.ForwardedImage>? images = null,
             Func<IDisposable>? beginTyping = null)
         {
             var link = await _repository.GetForChannelAsync(botId, channelId);
@@ -40,6 +41,9 @@ namespace AiryBotCode.Application.Services
                 author,
                 userId = authorId.ToString(),   // Discord user id → per-user memory in the Hive
                 channelId = channelId.ToString(),
+                // Image attachments (url/name/mime) for the agent's vision intake.
+                // Additive: Hive ignores it when empty / unsupported.
+                images = (images != null && images.Count > 0) ? images : null,
             });
             var bytes = Encoding.UTF8.GetBytes(payload);
 

@@ -59,12 +59,18 @@ can **keep thinking and push follow-up messages**.
   user messages mid-run; decide whether the webhook HTTP reply becomes an ack
   (Airy posts only effects) or stays the first message — and avoid double-posting.
 
-## ☐ B. Images over the socket (read images)
+## ◐ B. Images over the socket (read images)
 Let Airy forward Discord image attachments into the flow so the agent can read
 them. **Mostly transport, not a new tool** — the Hive side largely exists:
 Chronos has the 24h image store; Obsidian has `view_image` + `recall_image`.
-- Missing: Airy forwards attachment urls/bytes on the webhook; the flow/agent
-  ingests them (the existing image intake path) and can `view_image`.
+- ☑ **Airy forwarding (dev):** `ImageAttachments.Pick` (pure) selects image
+  attachments off a Discord message (by content-type, extension fallback);
+  `WebhookChatService` includes them as an additive `images: [{url,name,mime}]`
+  field in the forwarded payload (omitted when empty → Hive ignores it).
+  `MessageSendHandler` extracts `message.Attachments`. 33/33 tests.
+- ☐ **Hive consumption:** Spine's webhook body → agent message `image_url` parts
+  → Obsidian's existing image intake / `view_image`. (Hive `dev`; needs live to
+  confirm the agent actually reads a forwarded image.)
 
 ## ☑ C. Discord mention resolution (dev — committed locally)
 A raw `@124654654` in a message means nothing to the AI or memory today.

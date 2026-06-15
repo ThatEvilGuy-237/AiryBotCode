@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using AiryBotCode.Application.Consent;
+using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Services;
@@ -73,9 +74,13 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     }
                 }
 
+                // Forward any image attachments so the agent's vision intake can read them.
+                var images = ImageAttachments.Pick(
+                    message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)));
+
                 var reply = await forwarder.TryForwardAsync(
                     botId, message.Channel.Id, message.Author.Id, message.Author.Username, content,
-                    () => message.Channel.EnterTypingState());
+                    images, () => message.Channel.EnterTypingState());
                 if (!string.IsNullOrWhiteSpace(reply))
                     // Discord caps a message at 2000 chars — split long replies so
                     // they aren't rejected with "Message content is too long".
