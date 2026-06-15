@@ -32,18 +32,24 @@ Status: ☐ todo · ◐ in progress · ☑ done (dev) · ✅ live (prod)
 ## ◐ A. Multi-message / follow-up replies   *(extends the effect passthrough)*
 Stop the rigid one-in-one-out. Airy gives the user an answer fast, then the agent
 can **keep thinking and push follow-up messages**.
-- Agent gets a `reply` / `send_message` **dispatch tool**: send a message *now*
-  and keep looping (vs a single terminal `finish`).
-- **Airy subscribes to Hive effects** (`subscribe_effects` on the tools WS) and
-  posts each delivered `effect` to the originating Discord channel.
-- **Pacing:** a standard **2s** delay before a follow-up, **measured from the
-  moment the previous message was sent**, and the AI can ask for **more** seconds
-  (a `delaySeconds` arg on the dispatch tool).
-- **Design fork (key):** the agent run must stay alive *after* the first answer to
-  emit follow-ups (multi-message within one run). Decide: keep the run looping and
-  treat each `reply` as a dispatch + continue, ending on `finish`; how the webhook
-  HTTP reply relates to the socket-delivered messages (HTTP reply = the first
-  message, or just an ack while everything flows over effects?).
+- ☑ **Hive producer (dev):** `say(message, delaySeconds?)` dispatch tool in
+  Obsidian — emits a fire-and-forget `say` effect over the tools WS and the agent
+  loop **continues** (so: quick first answer, then follow-ups, vs one reply at
+  `finish`). Goes to the current conversation — **no channel arg needed**: for an
+  Airy webhook flow the run's `sessionId` **is** the Discord channel id
+  (`FlowRunner.cs:51` `sessionId = channelId ?? …`), and the effect context already
+  carries `sessionId`+`userId`. `delaySeconds` default 2, clamped 0..60. 6/6 bun
+  tests; committed to Hive `dev`.
+- ☐ **Airy consumer:** subscribe to Hive effects (`subscribe_effects` on the tools
+  WS) and post each `say`/`schedule_message` effect to the channel = `context
+  .sessionId`. Pure effect→delivery router (testable) + a hosted listener +
+  reconnect.
+- ☐ **Pacing:** **2s** default before a follow-up, **measured from when the
+  previous message was actually sent** (Airy-side, per-channel queue), AI can
+  extend via `delaySeconds`.
+- ☐ **Run lifecycle / reply contract (the fork):** with `say`, the agent emits
+  user messages mid-run; decide whether the webhook HTTP reply becomes an ack
+  (Airy posts only effects) or stays the first message — and avoid double-posting.
 
 ## ☐ B. Images over the socket (read images)
 Let Airy forward Discord image attachments into the flow so the agent can read
