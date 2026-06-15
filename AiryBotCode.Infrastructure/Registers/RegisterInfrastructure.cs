@@ -25,6 +25,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<IGiveAwayUserRepository, GiveAwayUserRepository>();
             services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
             services.AddScoped<IBotCommandRepository, BotCommandRepository>();
+            services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
             // DbContext
             services = AIDbContext.registerDbContext(services);
             // Other
@@ -37,6 +38,8 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<CommandService>();
             services.AddScoped<BanHandler>();
             services.AddScoped<DiscordService>();
+            // Hive effect passthrough: deliver outbound agent messages to Discord.
+            services.AddScoped<AiryBotCode.Application.Hive.IEffectDelivery, Hive.DiscordEffectDelivery>();
 
 
 

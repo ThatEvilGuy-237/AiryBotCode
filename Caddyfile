@@ -18,6 +18,34 @@
 		file_server
 	}
 
+	# The Hive portal (Aether-Sight), over the hive-core docker network. Each
+	# daemon is under /hive/api/<daemon> (prefix stripped); /hive* → the portal
+	# (served at base /hive/). Host is rewritten so Vite's allowedHosts accepts it.
+	handle_path /hive/api/spine/* {
+		reverse_proxy spine:7000
+	}
+	handle_path /hive/api/wraith/* {
+		reverse_proxy wraith-worker:5000
+	}
+	handle_path /hive/api/obsidian/* {
+		reverse_proxy obsidian-mind:3000
+	}
+	handle_path /hive/api/chronos/* {
+		reverse_proxy chronos:7000
+	}
+	# Bare /hive has no trailing slash, so Vite (base /hive/) 404s it — redirect
+	# to /hive/ so the portal loads whether or not the user types the slash.
+	redir /hive /hive/ 308
+	handle /hive* {
+		reverse_proxy spine-ui:5190 {
+			header_up Host localhost
+		}
+	}
+
+	# The Hive DEV environment lives on its own Funnel port (:8443), served by the
+	# hive-dev stack's own gateway — not through this Caddy. See
+	# The-Hive/deploy/gateway-dev.Caddyfile + Plan-Documents/ENVIRONMENTS.md.
+
 	# Main control panel SPA. Reachable only with a valid JWT — enforced
 	# client-side by a router guard (→ /login) and server-side by [Authorize].
 	handle {

@@ -32,6 +32,7 @@ namespace AiryBotCode.Application
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();
             services.AddScoped<DiscordService>();
+            services.AddScoped<WebhookChatService>();
             services.AddScoped<IGiveAwayUserService, GiveAwayUserService>();
             services.AddScoped<GiveAwayUserService>();
 

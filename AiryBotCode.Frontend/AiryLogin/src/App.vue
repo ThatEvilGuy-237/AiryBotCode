@@ -12,10 +12,38 @@ const error = ref('')
 const busy = ref(false)
 const keyInput = ref<HTMLInputElement | null>(null)
 
+// A `?return=<url>` param lets an app (e.g. the Hive portal on its own port)
+// ask the login to hand the token straight back to it instead of showing the
+// chooser. Stashed in sessionStorage so it survives the Discord round-trip, and
+// validated to our own host so we never leak the JWT to an outside URL.
+const RETURN_KEY = 'login_return'
+function safeReturn(raw: string | null): string | null {
+  if (!raw) return null
+  try {
+    const u = new URL(raw, window.location.origin)
+    return u.hostname === window.location.hostname ? u.origin + u.pathname : null
+  } catch { return null }
+}
+function consumeReturn(): string | null {
+  const dest = sessionStorage.getItem(RETURN_KEY)
+  if (dest) sessionStorage.removeItem(RETURN_KEY)
+  return dest
+}
+
 onMounted(() => {
-  // Discord redirects back here with `#token=` — capture it, then offer the choice.
+  // Stash a return target before any redirect (survives the Discord round-trip).
+  const ret = safeReturn(new URLSearchParams(window.location.search).get('return'))
+  if (ret) sessionStorage.setItem(RETURN_KEY, ret)
+
+  // Discord redirects back here with `#token=` — capture it.
   captureTokenFromHash()
   if (isAuthenticated()) {
+    // If an app asked for the token back, hand it over and skip the chooser.
+    const dest = consumeReturn()
+    if (dest) {
+      window.location.href = `${dest}#token=${encodeURIComponent(getToken() ?? '')}`
+      return
+    }
     step.value = 'choose'
     return
   }

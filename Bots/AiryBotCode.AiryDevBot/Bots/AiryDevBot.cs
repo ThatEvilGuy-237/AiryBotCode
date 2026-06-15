@@ -1,5 +1,6 @@
 ﻿using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Application.Hive;
 using AiryBotCode.Infrastructure.Activitys;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
@@ -78,6 +79,17 @@ namespace AiryBotCode.Bot.Bots
             _client.ModalSubmitted += _formHandler.HandleFormInteraction;
             _client.UserBanned += _banHandler.HandleInteractionAsync;
 
+            // Hive effect passthrough (opt-in): when a tools-WS url is configured,
+            // subscribe to the Hive's outbound agent effects (the `say` tool's
+            // multi-message replies) and post them back to the Discord channel.
+            var effectsUrl = _configuration.GetHiveEffectsUrl();
+            if (!string.IsNullOrWhiteSpace(effectsUrl))
+            {
+                var delivery = services.GetRequiredService<IEffectDelivery>();
+                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine);
+                Console.WriteLine($"[INFO] Subscribing to Hive effects at {effectsUrl}");
+                _ = listener.RunAsync(CancellationToken.None);   // background for the bot's lifetime
+            }
         }
 
         public override async Task StopAsync()

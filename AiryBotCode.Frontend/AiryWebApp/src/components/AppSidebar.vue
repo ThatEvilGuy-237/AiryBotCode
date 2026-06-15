@@ -12,6 +12,7 @@ const botItems: NavItem[] = [
   { to: '/commands', label: 'Commands' },
   { to: '/bot-settings', label: 'Settings' },
   { to: '/theme', label: 'Theme' },
+  { to: '/webhooks', label: 'Webhooks' },
 ]
 const serverItems: NavItem[] = [{ to: '/database', label: 'Databases' }]
 </script>

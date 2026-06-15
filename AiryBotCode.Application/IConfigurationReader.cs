@@ -23,6 +23,9 @@ namespace AiryBotCode.Application.Interfaces
         List<ulong> GetAdminRoleIds();
         ulong GetEvilId();
         ulong GetEvilLogChannelId();
+        // Optional: the Hive tools websocket the bot subscribes to for outbound
+        // agent effects (multi-message replies). Null/absent → the consumer is off.
+        string? GetHiveEffectsUrl();
     }
 
 }

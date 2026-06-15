@@ -11,7 +11,7 @@ export const APP_URL = '/'
 
 // The Hive (Neural-Spine UI). The token is passed via `#token=` since it's a
 // different origin. Override with VITE_HIVE_URL.
-export const HIVE_URL = import.meta.env.VITE_HIVE_URL ?? 'http://localhost:5175'
+export const HIVE_URL = import.meta.env.VITE_HIVE_URL ?? '/hive'
 
 /**
  * Build the Discord OAuth URL, carrying the gate token in `state` so the API
