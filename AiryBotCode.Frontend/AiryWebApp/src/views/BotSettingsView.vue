@@ -208,7 +208,7 @@ async function removeBot(): Promise<void> {
   transform: translateY(-1px);
 }
 .restart-btn {
-  background: #fff;
+  background: var(--surface-2);
   color: var(--foxfire-deep);
   border: 1px solid var(--foxfire);
   border-radius: 999px;

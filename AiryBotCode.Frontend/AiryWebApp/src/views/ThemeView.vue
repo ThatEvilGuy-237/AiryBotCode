@@ -306,7 +306,7 @@ async function reset() {
 .actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.5rem; }
 .save-btn { background: var(--foxfire); color: #fff; border: none; border-radius: 10px; padding: 0.6rem 1.4rem; font-weight: 600; cursor: pointer; }
 .save-btn:disabled { opacity: 0.6; cursor: default; }
-.reset-btn { background: #fff; border: 1px solid var(--border-color); border-radius: 10px; padding: 0.6rem 1rem; cursor: pointer; }
+.reset-btn { background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.6rem 1rem; cursor: pointer; }
 
 @media (max-width: 768px) {
   .page { padding: 1rem; }

@@ -149,7 +149,7 @@ textarea {
   border: 1px solid var(--input-border, #ecc0cf);
   border-radius: 8px;
   font-size: 16px;
-  background: #fff;
+  background: var(--surface-2);
 }
 textarea { resize: vertical; min-height: 70px; }
 textarea.mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; }
@@ -165,7 +165,7 @@ textarea.mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem;
   border-top: 1px solid var(--border-color);
 }
 .cancel-btn {
-  background: #fff;
+  background: var(--surface-2);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 0.6rem 1.1rem;

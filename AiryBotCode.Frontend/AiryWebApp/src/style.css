@@ -1,49 +1,44 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap');
-
 /*
- * Airy's theme — soft and pink, after her Discord look (red/pink-haired mecha
- * girl on a light dusty-pink banner). Light surfaces, rose-pink accents, and
- * only gentle shadows (no heavy glow).
+ * Panel migrated onto @hive/ui (Item E). The legacy token NAMES below are now
+ * BRIDGED to the @hive/ui design tokens (defined in @hive/ui/theme.css, imported
+ * first in main.ts) — so every not-yet-rebuilt view adopts the shared dark,
+ * single-accent, image-themeable look WITHOUT a per-view rewrite. Newly rebuilt
+ * views (HomeView, WebhooksView, …) use @hive/ui components directly. As views are
+ * fully migrated, their legacy-token references fall away on their own.
  */
 :root {
-  --sidebar-width: 260px;
+  --sidebar-width: 250px;
 
-  /* white backdrop */
-  --bg-top: #ffffff;
-  --bg-bottom: #fff8fb;
-  --background-color: #ffffff;
+  --background-color: var(--color-bg);
+  --bg-top: var(--color-bg);
+  --bg-bottom: var(--color-bg);
 
-  /* surfaces — pink menu & cards, white inner fields */
-  --surface: #fbe4ec;
-  --surface-2: #ffffff;
-  --surface-hover: #f7d6e2;
-  --card-background: var(--surface);
-  --border-color: #f0c9d8;
-  --input-border: #ecc0cf;
+  --surface: var(--color-surface);
+  --surface-2: var(--color-surface-mute);
+  --surface-hover: var(--color-surface-hi);
+  --card-background: var(--color-surface);
+  --border-color: var(--color-border);
+  --input-border: var(--color-border);
 
-  /* text */
-  --text-color: #3a2c36;
-  --muted-color: #9b8590;
+  --text-color: var(--color-fg);
+  --muted-color: var(--color-muted);
 
-  /* pink — primary (kept under the old token names so all references update) */
-  --foxfire: #e8467a;
-  --foxfire-deep: #d12f63;
-  --primary-color: var(--foxfire);
-  --primary-hover: var(--foxfire-deep);
+  /* Single accent, no rainbow — both legacy accents map to the one @hive/ui accent. */
+  --foxfire: var(--color-accent);
+  --foxfire-deep: var(--color-accent-mute);
+  --primary-color: var(--color-accent);
+  --primary-hover: var(--color-accent-mute);
+  --violet: var(--color-accent);
+  --violet-soft: var(--color-accent-soft);
 
-  /* rose — secondary accent */
-  --violet: #e06699;
-  --violet-soft: rgba(232, 70, 122, 0.1);
+  --glow: var(--color-accent-soft);
+  --violet-glow: var(--color-accent-soft);
+  --shadow: oklch(0 0 0 / 0.4);
 
-  /* shadows — soft, not glowy */
-  --glow: rgba(232, 70, 122, 0.18);
-  --violet-glow: rgba(224, 102, 153, 0.15);
-  --shadow: rgba(120, 40, 70, 0.1);
+  --success-color: var(--color-ok);
+  --danger-color: var(--color-danger);
 
-  --success-color: #16a34a;
-  --danger-color: #dc2626;
-
-  --font-brand: 'Quicksand', 'Inter', sans-serif;
+  --font-brand: var(--font-family);
 }
 
 *,
@@ -53,15 +48,11 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
-  color: var(--text-color);
+  font-family: var(--font-family);
+  color: var(--color-fg);
+  background: var(--color-bg);
   margin: 0;
   padding: 0;
-  /* white, with the faintest pink warmth */
-  background:
-    radial-gradient(1100px 560px at 85% -10%, rgba(240, 152, 188, 0.1), transparent 60%),
-    linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
-  background-attachment: fixed;
 }
 
 #app {
@@ -73,19 +64,19 @@ h1,
 h2,
 h3 {
   margin: 0;
-  font-family: var(--font-brand);
+  font-family: var(--font-family);
   letter-spacing: 0.01em;
 }
 
-/* themed scrollbars to match the twilight surfaces */
+/* Scrollbars to match the dark surfaces. */
 * {
-  scrollbar-color: var(--surface-2) transparent;
+  scrollbar-color: var(--color-surface-hi) transparent;
 }
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 *::-webkit-scrollbar-thumb {
-  background: var(--surface-2);
+  background: var(--color-surface-hi);
   border-radius: 8px;
 }

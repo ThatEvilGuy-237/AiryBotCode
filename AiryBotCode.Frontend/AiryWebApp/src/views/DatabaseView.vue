@@ -197,7 +197,7 @@ onMounted(loadSchemas)
   transition: all 0.15s ease;
 }
 .table-item:hover { border-color: var(--violet); background: var(--surface-hover); }
-.table-item.active { border-color: var(--foxfire); background: #ffffff; }
+.table-item.active { border-color: var(--foxfire); background: var(--surface-2); }
 .table-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .row-count { color: var(--muted-color); font-size: 0.75rem; flex-shrink: 0; }
 .content-title { margin-bottom: 1rem; }

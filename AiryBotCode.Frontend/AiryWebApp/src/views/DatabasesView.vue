@@ -129,7 +129,7 @@ onMounted(load)
   border: 1px solid var(--input-border, #ecc0cf);
   border-radius: 8px;
   font-size: 16px;
-  background: #fff;
+  background: var(--surface-2);
 }
 .create-btn {
   background: var(--foxfire);
@@ -142,7 +142,7 @@ onMounted(load)
 }
 .create-btn:disabled { opacity: 0.55; cursor: default; }
 .cancel-btn {
-  background: #fff;
+  background: var(--surface-2);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 0.6rem 1rem;

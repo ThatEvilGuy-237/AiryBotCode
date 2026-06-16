@@ -2,18 +2,15 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
-import { useBots } from './lib/bots'
-import { applyTheme } from './lib/theme'
 
 const navOpen = ref(false)
 const route = useRoute()
 // Close the mobile drawer whenever the route changes.
 watch(() => route.path, () => (navOpen.value = false))
 
-// Legacy per-bot accent (drives the not-yet-migrated views' --foxfire tokens).
-// The @hive/ui image theme is applied separately at startup (main.ts).
-const { currentBot } = useBots()
-watch(currentBot, (bot) => applyTheme(bot?.themePrimary, bot?.themeAccent), { immediate: true })
+// Theming is now @hive/ui-driven: the legacy --foxfire/--surface tokens are bridged
+// to the @hive/ui design tokens (style.css), and the image-derived theme is applied
+// at startup (main.ts). No more per-bot pink override.
 </script>
 
 <template>

@@ -161,7 +161,7 @@ h1 {
   border-radius: 999px;
   padding: 0.55rem 1rem;
   font-size: 16px;
-  background: #fff;
+  background: var(--surface-2);
   min-width: 160px;
 }
 .reload-btn {
@@ -265,7 +265,7 @@ h1 {
   width: 16px;
   left: 3px;
   top: 3px;
-  background: #fff;
+  background: var(--surface-2);
   border-radius: 50%;
   transition: transform 0.15s ease;
 }
