@@ -39,6 +39,9 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<CommandService>();
             services.AddScoped<BanHandler>();
             services.AddScoped<DiscordService>();
+            // Per-channel dedup shared by the effect (say) + webhook-reply paths so an
+            // answer the agent both says and finishes with is posted only once.
+            services.AddSingleton<AiryBotCode.Application.Hive.RecentMessageDedup>();
             // Hive effect passthrough: deliver outbound agent messages to Discord.
             services.AddScoped<AiryBotCode.Application.Hive.IEffectDelivery, Hive.DiscordEffectDelivery>();
             // await-mode ask_user: deliver a question with option buttons.

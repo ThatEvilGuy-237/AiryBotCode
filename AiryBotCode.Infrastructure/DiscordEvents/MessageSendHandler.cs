@@ -82,10 +82,22 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     botId, message.Channel.Id, message.Author.Id, message.Author.Username, content,
                     images, () => message.Channel.EnterTypingState());
                 if (!string.IsNullOrWhiteSpace(reply))
+                {
                     // Discord caps a message at 2000 chars — split long replies so
                     // they aren't rejected with "Message content is too long".
+                    var dedup = scope.ServiceProvider.GetRequiredService<RecentMessageDedup>();
                     foreach (var chunk in SplitForDiscord(reply))
+                    {
+                        // Skip a chunk the agent already delivered live via the `say`
+                        // effect this run — avoids the say-then-finish-same-text double post.
+                        if (!dedup.TryReserve(message.Channel.Id, chunk))
+                        {
+                            Console.WriteLine($"[Webhook] reply chunk to {message.Channel.Id} suppressed — already said via effect.");
+                            continue;
+                        }
                         await message.Channel.SendMessageAsync(chunk);
+                    }
+                }
             }
             catch (Exception ex)
             {

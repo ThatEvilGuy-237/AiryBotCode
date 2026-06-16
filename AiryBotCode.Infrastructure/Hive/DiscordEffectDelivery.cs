@@ -12,11 +12,24 @@ namespace AiryBotCode.Infrastructure.Hive
     public sealed class DiscordEffectDelivery : IEffectDelivery
     {
         private readonly DiscordSocketClient _client;
+        private readonly RecentMessageDedup _dedup;
 
-        public DiscordEffectDelivery(DiscordSocketClient client) => _client = client;
+        public DiscordEffectDelivery(DiscordSocketClient client, RecentMessageDedup dedup)
+        {
+            _client = client;
+            _dedup = dedup;
+        }
 
         public async Task SendAsync(ulong channelId, string text, CancellationToken ct = default)
         {
+            // Skip if the webhook-reply path already posted this exact text to the channel
+            // (or post it and let the reply path skip) — see RecentMessageDedup.
+            if (!_dedup.TryReserve(channelId, text))
+            {
+                Console.WriteLine($"[HiveEffects] say to {channelId} suppressed — duplicate of a just-posted message.");
+                return;
+            }
+
             if (_client.GetChannel(channelId) is IMessageChannel channel)
                 await channel.SendMessageAsync(text);
             else
