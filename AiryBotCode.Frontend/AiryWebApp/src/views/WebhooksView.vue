@@ -1,5 +1,7 @@
 <script setup lang="ts">
+// Migrated to @hive/ui (Item E — full panel on the shared design system). Logic unchanged.
 import { ref, watch, onMounted } from 'vue'
+import { PageHeader, Card, Button, Badge, TextField, Toggle, ToolRow } from '@hive/ui'
 import { api, ApiError, type ChannelWebhook } from '../lib/api'
 import { useBots } from '../lib/bots'
 
@@ -84,107 +86,87 @@ onMounted(async () => { await loadBots(); await load() })
 
 <template>
   <div class="page">
-    <header class="page-header">
-      <div>
-        <h1>Webhooks</h1>
-        <p class="sub">
-          <template v-if="currentBot">Link <strong>{{ currentBot.botName }}</strong>'s channels to webhooks (e.g. a Hive trigger). Messages in a linked channel are forwarded there.</template>
-          <template v-else>Pick a bot from the menu to manage its channel links.</template>
-        </p>
-      </div>
-      <button v-if="currentBotId" type="button" class="add-btn" @click="add">+ Add link</button>
-    </header>
+    <PageHeader
+      title="Webhooks"
+      :subtitle="currentBot
+        ? `Link ${currentBot.botName}'s channels to webhooks (e.g. a Hive trigger). Messages in a linked channel are forwarded there.`
+        : 'Pick a bot from the menu to manage its channel links.'"
+    >
+      <template #actions>
+        <Button v-if="currentBotId" @click="add">+ Add link</Button>
+      </template>
+    </PageHeader>
 
-    <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="error" class="err">{{ error }}</p>
 
     <!-- Editor -->
-    <section v-if="draft" class="card editor">
-      <h2>{{ draft.id === 0 ? 'New link' : 'Edit link' }}</h2>
+    <Card v-if="draft">
+      <template #head><h3>{{ draft.id === 0 ? 'New link' : 'Edit link' }}</h3></template>
+
       <div class="grid2">
-        <label>Name<input v-model="draft.name" placeholder="e.g. Support flow" /></label>
-        <label>Channel ID<template v-if="draft.id === 0">(s)</template>
-          <input v-model="draft.channelId" :placeholder="draft.id === 0 ? 'Discord channel id(s) — comma or space separated' : 'Discord channel id'" />
-          <small v-if="draft.id === 0" class="muted">Link this webhook to several channels at once — separate ids with commas or spaces.</small>
-        </label>
+        <TextField v-model="draft.name" label="Name" placeholder="e.g. Support flow" />
+        <TextField
+          v-model="draft.channelId"
+          :label="draft.id === 0 ? 'Channel ID(s)' : 'Channel ID'"
+          :placeholder="draft.id === 0 ? 'Discord channel id(s) — comma or space separated' : 'Discord channel id'"
+        />
       </div>
-      <label>Webhook URL<input v-model="draft.webhookUrl" placeholder="https://…/hooks/{triggerId}" /></label>
+      <TextField v-model="draft.webhookUrl" label="Webhook URL" placeholder="https://…/hooks/{triggerId}" />
+
       <div class="grid2">
-        <label>Secret <small>(HMAC; {{ draft.id !== 0 && draft.hasSecret ? 'leave blank to keep' : 'optional' }})</small>
-          <input v-model="draft.secret" type="password" autocomplete="off" placeholder="whsec_…" />
+        <label class="fld">
+          <span class="lbl">Secret <span class="hint">(HMAC; {{ draft.id !== 0 && draft.hasSecret ? 'leave blank to keep' : 'optional' }})</span></span>
+          <input class="in" v-model="draft.secret" type="password" autocomplete="off" placeholder="whsec_…" />
         </label>
-        <label>Mode
-          <select v-model="draft.mode"><option value="sync">sync</option><option value="async">async</option></select>
+        <label class="fld">
+          <span class="lbl">Mode</span>
+          <select class="in" v-model="draft.mode"><option value="sync">sync</option><option value="async">async</option></select>
         </label>
       </div>
-      <label class="check"><input type="checkbox" v-model="draft.enabled" /> <span>Enabled</span></label>
-      <div class="actions">
-        <button class="save-btn" :disabled="saving || !draft.channelId || !draft.webhookUrl" @click="save">{{ saving ? 'Saving…' : 'Save' }}</button>
-        <button class="cancel-btn" @click="cancel">Cancel</button>
-      </div>
-    </section>
+
+      <label class="check"><Toggle v-model="draft.enabled" /> <span>Enabled</span></label>
+
+      <template #foot>
+        <Button :disabled="saving || !draft.channelId || !draft.webhookUrl" @click="save">{{ saving ? 'Saving…' : 'Save' }}</Button>
+        <Button variant="ghost" @click="cancel">Cancel</Button>
+      </template>
+    </Card>
 
     <p v-if="!currentBotId" class="muted">No bot selected.</p>
     <p v-else-if="loading" class="muted">Loading…</p>
     <p v-else-if="!links.length && !draft" class="muted">No links yet — use <strong>+ Add link</strong>.</p>
 
-    <div v-else class="list">
-      <div v-for="l in links" :key="l.id" class="card link" :class="{ off: !l.enabled }">
-        <div class="link-main">
-          <h3>{{ l.name }}</h3>
-          <code class="url">{{ l.webhookUrl }}</code>
-          <div class="meta">
-            <span>#{{ l.channelId }}</span>
-            <span class="tag">{{ l.mode }}</span>
-            <span v-if="l.hasSecret" class="tag">signed</span>
-            <span class="tag" :class="l.enabled ? 'on' : 'offtag'">{{ l.enabled ? 'enabled' : 'disabled' }}</span>
-          </div>
-        </div>
-        <div class="link-actions">
-          <button class="mini" @click="edit(l)">Edit</button>
-          <button class="mini danger" @click="remove(l)">Delete</button>
-        </div>
-      </div>
-    </div>
+    <Card v-else-if="links.length">
+      <template #head>
+        <h3>Links</h3>
+        <div style="flex: 1" />
+        <Badge variant="inactive">{{ links.length }}</Badge>
+      </template>
+      <ToolRow v-for="l in links" :key="l.id" :name="l.name" :description="l.webhookUrl" :dim="!l.enabled">
+        <template #actions>
+          <Badge variant="inactive">#{{ l.channelId }}</Badge>
+          <Badge variant="inactive">{{ l.mode }}</Badge>
+          <Badge v-if="l.hasSecret" variant="inactive">signed</Badge>
+          <Badge :variant="l.enabled ? 'active' : 'inactive'">{{ l.enabled ? 'enabled' : 'disabled' }}</Badge>
+          <Button variant="ghost" @click="edit(l)">Edit</Button>
+          <Button variant="ghost" @click="remove(l)">Delete</Button>
+        </template>
+      </ToolRow>
+    </Card>
   </div>
 </template>
 
 <style scoped>
-.page { padding: 2rem; }
-.page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
-h1 { margin: 0; font-size: 1.9rem; background: linear-gradient(90deg, var(--foxfire), var(--violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.sub { margin: 0.35rem 0 0; color: var(--muted-color); max-width: 560px; }
-.muted { color: var(--muted-color); }
-.error { background: #fde8ef; border: 1px solid var(--border-color); color: var(--foxfire-deep); padding: 0.7rem 1rem; border-radius: 10px; margin-bottom: 1rem; }
-.add-btn { background: linear-gradient(90deg, var(--foxfire), var(--foxfire-deep)); color: #fff; border: none; border-radius: 999px; padding: 0.55rem 1.2rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
-
-.card { background: var(--surface); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
-.editor h2 { margin: 0 0 1rem; font-size: 1.1rem; }
-.editor label { display: flex; flex-direction: column; gap: 0.35rem; font-weight: 600; margin-bottom: 0.9rem; }
-.editor small { font-weight: 400; color: var(--muted-color); }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
-.editor input, .editor select { padding: 0.55rem 0.7rem; border: 1px solid var(--input-border, #ecc0cf); border-radius: 8px; font: inherit; font-size: 16px; background: #fff; }
-.check { flex-direction: row !important; align-items: center; gap: 0.5rem; }
-.check input { width: 18px; height: 18px; }
-.actions { display: flex; gap: 0.6rem; }
-.save-btn { background: var(--foxfire); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.3rem; font-weight: 600; cursor: pointer; }
-.save-btn:disabled { opacity: 0.55; cursor: default; }
-.cancel-btn { background: #fff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.6rem 1rem; cursor: pointer; }
-
-.link { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.link.off { opacity: 0.6; }
-.link h3 { margin: 0 0 0.2rem; font-size: 1.05rem; }
-.url { font-size: 0.78rem; color: var(--muted-color); word-break: break-all; }
-.meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; color: var(--muted-color); font-size: 0.8rem; align-items: center; }
-.tag { background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 999px; padding: 0.05rem 0.5rem; font-size: 0.7rem; font-weight: 600; }
-.tag.on { color: #1f9254; } .tag.offtag { color: var(--muted-color); }
-.link-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
-.mini { background: var(--surface-2); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.4rem 0.8rem; cursor: pointer; font: inherit; }
-.mini.danger { color: var(--danger-color); border-color: rgba(248,113,113,0.5); }
-
-@media (max-width: 768px) {
-  .page { padding: 1rem; }
-  h1 { font-size: 1.5rem; }
-  .grid2 { grid-template-columns: 1fr; }
-  .link { flex-direction: column; align-items: stretch; }
-}
+.page { padding: 2rem; display: flex; flex-direction: column; gap: 1rem; max-width: 900px; }
+.muted { color: var(--color-muted); }
+.err { color: var(--color-danger); background: var(--color-surface-mute); border: var(--border); border-radius: var(--radius); padding: .7rem 1rem; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3) var(--space-4); margin-bottom: var(--space-3); }
+.fld { display: flex; flex-direction: column; gap: var(--space-2); }
+.lbl { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text-dim); }
+.hint { font-weight: 400; color: var(--color-muted); }
+.in { padding: var(--space-2) var(--space-3); border: var(--border); border-radius: var(--r-2); font: inherit; font-size: 16px;
+  background: var(--color-surface-mute); color: var(--color-fg); }
+.in:focus { outline: none; border-color: var(--color-accent-edge); }
+.check { display: flex; flex-direction: row; align-items: center; gap: var(--space-2); color: var(--color-fg); }
+@media (max-width: 768px) { .page { padding: 1rem; } .grid2 { grid-template-columns: 1fr; } }
 </style>
