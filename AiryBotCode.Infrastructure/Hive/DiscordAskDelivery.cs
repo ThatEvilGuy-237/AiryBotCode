@@ -1,3 +1,4 @@
+using AiryBotCode.Application.Frontend;
 using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Services;
 using Discord;
@@ -43,7 +44,7 @@ namespace AiryBotCode.Infrastructure.Hive
                 builder.WithButton(label: Truncate(options[i], 80), customId: ctx.Encript(), style: ButtonStyle.Primary);
             }
 
-            await channel.SendMessageAsync(text: question, components: builder.Build());
+            await channel.SendMessageAsync(embed: AskFrontend.AskEmbed(question, askerUserId), components: builder.Build());
         }
 
         private static string Truncate(string s, int max) => s.Length <= max ? s : s[..max];
