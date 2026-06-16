@@ -37,11 +37,13 @@ namespace AiryBotCode.Api.Controllers
     {
         private readonly IBotSettingRepository _repository;
         private readonly IConfiguration _configuration;
+        private readonly ICommandSettingsRepository _control;
 
-        public SettingsController(IBotSettingRepository repository, IConfiguration configuration)
+        public SettingsController(IBotSettingRepository repository, IConfiguration configuration, ICommandSettingsRepository control)
         {
             _repository = repository;
             _configuration = configuration;
+            _control = control;
         }
 
         [HttpGet]
@@ -155,6 +157,23 @@ namespace AiryBotCode.Api.Controllers
                 image = entity.ThemeImage,
                 data = entity.ThemeData,
             });
+        }
+
+        // POST /api/settings/{botId}/avatar -> ask the bot to set its Discord avatar
+        // from the saved theme image. Signals the bot via a control row (it reads
+        // BotSettings.ThemeImage and calls Discord ModifyAsync). Discord rate-limits
+        // avatar changes to ~2/hour, so this is a deliberate, user-triggered action.
+        [HttpPost("{botId}/avatar")]
+        public async Task<IActionResult> SetBotAvatar(string botId)
+        {
+            if (!ulong.TryParse(botId, out var id)) return BadRequest("Invalid bot id.");
+            var entity = await _repository.GetBotSettingAsync(id);
+            if (entity == null) return NotFound();
+            if (string.IsNullOrWhiteSpace(entity.ThemeImage))
+                return BadRequest("No theme image saved for this bot — upload + Save an image on the Theme page first.");
+            // Bump a per-bot control row; the bot's watcher picks it up within ~5s.
+            await _control.SetControlValueAsync("avatar:" + id, DateTime.UtcNow.ToString("O"));
+            return Accepted(new { requested = true });
         }
 
         // Accept a data: image URL up to ~512KB; anything else (oversized / not a

@@ -150,6 +150,18 @@ export const api = {
     return await res.json()
   },
 
+  /** Ask the bot to set its Discord avatar from the saved theme image. The bot
+   * applies it within ~5s; Discord rate-limits avatar changes to ~2/hour. */
+  async setBotAvatar(botId: string): Promise<void> {
+    const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}/avatar`, { method: 'POST' })
+    if (!res.ok) {
+      const msg = res.status === 400
+        ? 'Save an image on the Theme page first.'
+        : `Could not request the avatar update (${res.status}).`
+      throw new ApiError(res.status, msg)
+    }
+  },
+
   /** Remove a bot from the roster. */
   async deleteBot(botId: string): Promise<void> {
     const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}`, { method: 'DELETE' })

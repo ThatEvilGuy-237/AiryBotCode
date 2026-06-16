@@ -102,6 +102,22 @@ function reset() {
   theme.value = null; imgSrc.value = null; primaryHex.value = ''; accentHex.value = ''
   if (currentBotId.value) api.setTheme(currentBotId.value, '', '').then(applyUpsert).catch(() => {})
 }
+
+const avatarBusy = ref(false)
+const avatarMsg = ref('')
+async function setAvatar() {
+  if (!currentBotId.value || avatarBusy.value) return
+  avatarBusy.value = true; avatarMsg.value = ''; error.value = ''
+  try {
+    await api.setBotAvatar(currentBotId.value)
+    avatarMsg.value = 'Avatar update requested — the bot applies it within a few seconds (Discord limits avatar changes to ~2/hour).'
+    setTimeout(() => (avatarMsg.value = ''), 6000)
+  } catch (e) {
+    error.value = e instanceof ApiError ? e.message : 'Could not request the avatar update.'
+  } finally {
+    avatarBusy.value = false
+  }
+}
 </script>
 
 <template>
@@ -110,6 +126,7 @@ function reset() {
 
     <p v-if="error" class="banner err">{{ error }}</p>
     <p v-if="success" class="banner ok">Theme saved.</p>
+    <p v-if="avatarMsg" class="banner ok">{{ avatarMsg }}</p>
 
     <Card>
       <template #head>
@@ -120,6 +137,7 @@ function reset() {
         <div style="flex: 1" />
         <Button @click="pick">{{ imgSrc ? 'Change image' : 'Upload image' }}</Button>
         <Button v-if="theme" variant="outline" :disabled="saving || !currentBotId" @click="save">{{ saving ? 'Saving…' : 'Save' }}</Button>
+        <Button v-if="theme && currentBotId" variant="ghost" :disabled="avatarBusy" @click="setAvatar">{{ avatarBusy ? 'Requesting…' : 'Set as bot avatar' }}</Button>
         <Button v-if="theme" variant="ghost" @click="reset">Reset</Button>
         <input ref="fileInput" type="file" accept="image/*" hidden @change="handleImage(($event.target as HTMLInputElement).files?.[0])" />
       </template>

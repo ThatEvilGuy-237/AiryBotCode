@@ -92,11 +92,13 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             _ = Task.Run(async () =>
             {
                 string? startRestartSignal;
+                string? startAvatarSignal;
                 DateTime lastSeen;
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
                     startRestartSignal = await repo.GetControlValueAsync("restart");
+                    startAvatarSignal = await repo.GetControlValueAsync("avatar:" + botId);
                     lastSeen = await repo.GetMaxLastUpdatedAsync(botId);
                 }
 
@@ -106,11 +108,13 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     try
                     {
                         string? restartSignal;
+                        string? avatarSignal;
                         DateTime maxUpdated;
                         using (var scope = _serviceProvider.CreateScope())
                         {
                             var repo = scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>();
                             restartSignal = await repo.GetControlValueAsync("restart");
+                            avatarSignal = await repo.GetControlValueAsync("avatar:" + botId);
                             maxUpdated = await repo.GetMaxLastUpdatedAsync(botId);
                         }
 
@@ -118,6 +122,16 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                         {
                             Console.WriteLine("[Reload] Restart requested from control panel — exiting for restart.");
                             Environment.Exit(0);
+                        }
+
+                        // Panel asked this bot to set its Discord avatar from the saved
+                        // theme image. Fire once per request (update the baseline even on
+                        // failure) so a Discord 429 (avatars are rate-limited ~2/hr) can't
+                        // turn into a retry storm.
+                        if (avatarSignal != startAvatarSignal)
+                        {
+                            startAvatarSignal = avatarSignal;
+                            await TryUpdateAvatarAsync(botId);
                         }
 
                         if (maxUpdated > lastSeen)
@@ -133,6 +147,40 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     }
                 }
             });
+        }
+
+        // Set this bot's Discord avatar from the per-bot theme image saved in the
+        // panel (BotSettings.ThemeImage, a base64 data URL). Best-effort: Discord
+        // rate-limits avatar changes (~2/hour) so a 429 is logged, not retried.
+        private async Task TryUpdateAvatarAsync(ulong botId)
+        {
+            try
+            {
+                string? image;
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var bots = scope.ServiceProvider.GetRequiredService<IBotSettingRepository>();
+                    var bot = await bots.GetBotSettingAsync(botId);
+                    image = bot?.ThemeImage;
+                }
+                if (string.IsNullOrWhiteSpace(image))
+                {
+                    Console.WriteLine("[Avatar] No theme image saved for this bot — nothing to set.");
+                    return;
+                }
+                // Strip the "data:image/...;base64," prefix, decode to bytes.
+                var comma = image.IndexOf(',');
+                var b64 = comma >= 0 ? image.Substring(comma + 1) : image;
+                var bytes = Convert.FromBase64String(b64);
+                using var ms = new System.IO.MemoryStream(bytes);
+                await _client.CurrentUser.ModifyAsync(p => p.Avatar = new Discord.Image(ms));
+                Console.WriteLine("[Avatar] Bot avatar updated from the panel theme image.");
+            }
+            catch (Exception ex)
+            {
+                // Most common: Discord 429 (avatars are rate-limited to ~2/hour).
+                Console.WriteLine($"[Avatar] Could not update avatar (Discord rate-limits avatars to ~2/hr): {ex.Message}");
+            }
         }
 
         public async Task ClearServerCommands(SocketGuild guild)
