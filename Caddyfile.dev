@@ -1,0 +1,46 @@
+# DEV gateway — fronts the airybotcode-dev stack on LOCAL port 10000 only
+# (127.0.0.1:10000, NOT on the Tailscale Funnel — dev is local-only; production
+# is the online one). Routes the dev panel + the dev API (api-dev) + the login
+# SPA. No bot in the dev stack.
+:10000 {
+	# Dev API — JWT-protected at the application layer.
+	handle /api/* {
+		reverse_proxy api-dev:8080
+	}
+
+	# Standalone login SPA (gate-password → JWT). Built with base "/login/".
+	redir /login /login/
+	handle_path /login/* {
+		root * /srv-login
+		try_files {path} /index.html
+		file_server
+	}
+
+	# The Hive portal embed points at PRODUCTION hive-core (dev panel just needs a
+	# working /hive target; the Hive has its own dev env on :8443).
+	handle_path /hive/api/spine/* {
+		reverse_proxy spine:7000
+	}
+	handle_path /hive/api/wraith/* {
+		reverse_proxy wraith-worker:5000
+	}
+	handle_path /hive/api/obsidian/* {
+		reverse_proxy obsidian-mind:3000
+	}
+	handle_path /hive/api/chronos/* {
+		reverse_proxy chronos:7000
+	}
+	redir /hive /hive/ 308
+	handle /hive* {
+		reverse_proxy spine-ui:5190 {
+			header_up Host localhost
+		}
+	}
+
+	# Dev control panel SPA.
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

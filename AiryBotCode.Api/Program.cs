@@ -67,6 +67,30 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// In Development the API owns schema creation. Production normally has the bot
+// (which calls AIDbContext.registerDbContext → EnsureCreated) build the schema,
+// but the airybotcode-dev stack runs panel+API only (no bot), so its airy_db_dev
+// would stay empty. EnsureCreated builds the full model schema on the empty dev
+// DB; it's a no-op once the tables exist. Guarded to Development so prod is
+// unaffected (prod runs ASPNETCORE_ENVIRONMENT=Production).
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AiryBotCode.Infrastructure.Database.Persistence.AIDbContext>();
+    try
+    {
+        if (db.Database.CanConnect())
+        {
+            db.Database.EnsureCreated();
+            Console.WriteLine("[DATABASE] Development: ensured schema (EnsureCreated).");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[DATABASE] Development schema ensure failed (non-fatal): {ex.Message}");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

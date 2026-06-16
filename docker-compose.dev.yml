@@ -1,0 +1,97 @@
+# AiryBotCode — DEV stack. A LOCAL-ONLY parallel panel + API for working on the
+# feature branch (channel-webhooks) without touching production (project
+# `airybotcode` at /). NOT exposed publicly — reachable only on 127.0.0.1:10000
+# (no Tailscale Funnel). Production (online) tracks main; local dev is where you
+# build + test, then promote to main.
+#
+#   docker compose -f docker-compose.dev.yml -p airybotcode-dev up -d --build
+#   # then open http://127.0.0.1:10000 (local only)
+#
+# Isolation from prod:
+#   - Own Postgres container (db-dev) + volume, fully separate from prod's
+#     airy-postgres-db. Starts empty so the API's EnsureCreated builds the full
+#     Airy schema on boot (it only does so on an empty DB — sharing the Hive's
+#     airy_db_dev would skip it, since that DB already has tables).
+#   - Distinct service names (api-dev / caddy-dev / db-dev) so nothing clashes.
+#   - Bound to 127.0.0.1:10000 only (local-only, not on the Funnel).
+#   - NO bot: a dev bot needs its own Discord token, so the dev stack is panel+API
+#     only. Test bot behaviour against prod's airydevbot.
+name: airybotcode-dev
+
+services:
+  # Dev Postgres — isolated from prod, internal only (no published port, so it
+  # never clashes with prod's airy-postgres-db on 5432).
+  db-dev:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: airy_db_dev
+      POSTGRES_USER: airy_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data/pgdata
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airy_user -d airy_db_dev"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  # Dev API. Reuses the prod appsettings (so the gate password + JWT secret match
+  # prod and you can log in), but overrides the DB to the isolated db-dev and the
+  # CORS origin to the local dev URL via environment variables.
+  api-dev:
+    build:
+      context: .
+      dockerfile: Api.dockerfile
+    depends_on:
+      db-dev:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db-dev;Port=5432;Database=airy_db_dev;Username=airy_user;Password=${POSTGRES_PASSWORD}
+      - Database__Host=db-dev
+      - Database__Name=airy_db_dev
+      - Cors__AllowedOrigins__0=http://127.0.0.1:10000
+      - Cors__AllowedOrigins__1=http://localhost:10000
+    volumes:
+      - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json:ro
+
+  # Reverse proxy serving the dev panel + login SPA on 127.0.0.1:10000 (local
+  # only). The image bakes the local dev URL as the API base so the panel's API
+  # calls target :10000. The dev Caddyfile (listens on :10000) is mounted over the
+  # one baked into the image.
+  caddy-dev:
+    build:
+      context: .
+      dockerfile: Caddy.dockerfile
+      args:
+        API_BASE: http://127.0.0.1:10000
+    depends_on:
+      - api-dev
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:10000:10000"
+    volumes:
+      - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
+      - caddy_dev_data:/data
+      - caddy_dev_config:/config
+    # Default network (api-dev) + the Hive's prod network so the /hive embed
+    # resolves spine / spine-ui by name.
+    networks:
+      - default
+      - hive
+
+volumes:
+  postgres_dev_data:
+  caddy_dev_data:
+  caddy_dev_config:
+
+networks:
+  default:
+  hive:
+    name: hive-core_default
+    external: true
