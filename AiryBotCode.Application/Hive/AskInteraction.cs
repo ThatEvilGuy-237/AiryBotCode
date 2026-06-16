@@ -14,10 +14,13 @@ namespace AiryBotCode.Application.Hive
     public static class AskRouter
     {
         public const int MaxOptions = 5;
+        // The tool/effect name + the button-customId routing command (shared by
+        // DiscordAskDelivery's encoder and ButtonPressHandler's decoder).
+        public const string Command = "ask_user";
 
         public static AskIntent? Route(string? name, string? effectId, string? question, IReadOnlyList<string>? options, string? sessionId)
         {
-            if (name != "ask_user") return null;
+            if (name != Command) return null;
             if (string.IsNullOrWhiteSpace(effectId)) return null;
             if (string.IsNullOrWhiteSpace(question)) return null;
             if (!ulong.TryParse(sessionId, out var channelId)) return null;
@@ -33,34 +36,10 @@ namespace AiryBotCode.Application.Hive
             return new AskIntent(channelId, effectId!, question!.Trim(), opts);
         }
     }
-
-    /// <summary>
-    /// Builds/parses the Discord button customId for an <c>ask_user</c> answer.
-    /// Shape: <c>effect:ask:&lt;effectId&gt;:&lt;answer&gt;</c>. The effectId carries no
-    /// colon (Hive tool-call ids don't); the answer may, so parsing keeps everything
-    /// after the third colon. Whole id is capped at Discord's 100-char customId limit
-    /// by trimming the answer (the effectId is preserved — it's the routing key).
-    /// </summary>
-    public static class AskInteraction
-    {
-        public const string Prefix = "effect:ask";
-        private const int MaxCustomId = 100;
-
-        public static string BuildAnswerId(string effectId, string answer)
-        {
-            var head = $"{Prefix}:{effectId}:";
-            var budget = Math.Max(0, MaxCustomId - head.Length);
-            var trimmed = answer.Length > budget ? answer[..budget] : answer;
-            return head + trimmed;
-        }
-
-        public static (string EffectId, string Answer)? TryParseAnswerId(string? customId)
-        {
-            if (string.IsNullOrEmpty(customId)) return null;
-            var parts = customId.Split(':', 4);
-            if (parts.Length != 4 || $"{parts[0]}:{parts[1]}" != Prefix) return null;
-            if (string.IsNullOrEmpty(parts[2])) return null;
-            return (parts[2], parts[3]);
-        }
-    }
 }
+
+// NB: the Discord button customId for an ask_user answer is built with the project's
+// canonical ButtonEncriptionService (c:ask_user | a:<effectId>.<idx> | u:<askerId>) in
+// DiscordAskDelivery, and decoded the same way in ButtonPressHandler — so button context
+// (routing, correlation key, allowed user) is consistent with every other button. The
+// chosen answer is the button's label, not the customId.

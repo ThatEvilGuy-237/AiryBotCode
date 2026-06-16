@@ -8,6 +8,9 @@ namespace AiryBotCode.Application.Hive
     /// </summary>
     public interface IAskDelivery
     {
-        Task SendAskAsync(ulong channelId, string effectId, string question, IReadOnlyList<string> options, CancellationToken ct = default);
+        // askerUserId = the Discord user the agent is asking (the run's userId); the
+        // delivery restricts the buttons to them so a bystander can't answer. "0"/blank
+        // → no restriction (anyone may answer).
+        Task SendAskAsync(ulong channelId, string effectId, string question, IReadOnlyList<string> options, string? askerUserId, CancellationToken ct = default);
     }
 }

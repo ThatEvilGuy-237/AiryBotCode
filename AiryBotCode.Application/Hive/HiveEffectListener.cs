@@ -122,10 +122,12 @@ namespace AiryBotCode.Application.Hive
                         foreach (var o in opts.EnumerateArray())
                             if (o.ValueKind == JsonValueKind.String) options.Add(o.GetString()!);
 
+                    var userId = root.TryGetProperty("context", out var cc) && cc.ValueKind == JsonValueKind.Object
+                        && cc.TryGetProperty("userId", out var u) ? u.GetString() : null;
                     var ask = AskRouter.Route(name, effectId, question, options, sessionId);
                     if (ask is null) return Task.CompletedTask;
                     if (_askDelivery is null) { _log?.Invoke("[HiveEffects] ask_user effect but no ask delivery configured"); return Task.CompletedTask; }
-                    return _askDelivery.SendAskAsync(ask.ChannelId, ask.EffectId, ask.Question, ask.Options, ct);
+                    return _askDelivery.SendAskAsync(ask.ChannelId, ask.EffectId, ask.Question, ask.Options, userId, ct);
                 }
 
                 var intent = EffectRouter.Route(name, message, delay, sessionId);

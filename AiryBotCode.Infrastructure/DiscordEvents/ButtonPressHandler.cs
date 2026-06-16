@@ -30,20 +30,37 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             var buttonValue = component.Data.CustomId;
 
             // Await-mode ask_user answer: the user tapped an option button raised by the
-            // Hive's ask_user tool. Send their choice back up the WS as the effect_response
-            // (correlated by effect id) so the suspended agent loop resumes — then edit the
-            // message to reflect the choice. Handled first; it isn't a command button.
-            var ask = AskInteraction.TryParseAnswerId(buttonValue);
-            if (ask != null)
+            // Hive's ask_user tool. Context rides in the customId via the canonical
+            // ButtonEncriptionService — c:ask_user | a:<effectId>.<idx> | u:<askerId>.
+            // Restrict to the asker, read the chosen answer from the pressed button's
+            // LABEL, then send it back up the WS as the effect_response (correlated by
+            // effect id) so the suspended agent loop resumes.
+            if (buttonValue.StartsWith($"c:{AskRouter.Command}|"))
             {
+                var data = new ButtonEncriptionService().Decrypt(buttonValue);
+                var effectId = (data.Action ?? "").Split('.')[0];   // strip the .<idx> uniqueness suffix
+
+                // Only the user the agent asked may answer (when a restriction was set).
+                if (data.UsersId.Count > 0 && !data.UsersId.Contains(component.User.Id))
+                {
+                    await component.RespondAsync("This question isn't for you.", ephemeral: true);
+                    return;
+                }
+
+                // The answer is the pressed button's label (matched by customId in the
+                // message's components); fall back to the option index if not found.
+                var answer = component.Message?.Components
+                    .SelectMany(row => row.Components)
+                    .OfType<Discord.ButtonComponent>()
+                    .FirstOrDefault(b => b.CustomId == buttonValue)?.Label
+                    ?? (data.Action ?? "");
+
                 using var scope = _serviceProvider.CreateScope();
                 var sender = scope.ServiceProvider.GetService<IHiveResponseSender>();
-                var sent = sender != null && await sender.SendAnswerAsync(
-                    ask.Value.EffectId, ask.Value.Answer,
-                    component.Channel.Id.ToString(), component.User.Id.ToString());
+                var sent = sender != null && !string.IsNullOrEmpty(effectId)
+                    && await sender.SendAnswerAsync(effectId, answer, component.Channel.Id.ToString(), component.User.Id.ToString());
 
-                // Edit the original message: show the picked answer, drop the buttons.
-                var note = sent ? $"\n\n*You chose: **{ask.Value.Answer}***"
+                var note = sent ? $"\n\n*You chose: **{answer}***"
                                 : "\n\n*(Couldn't reach Airy — the question may have timed out.)*";
                 await component.UpdateAsync(m =>
                 {

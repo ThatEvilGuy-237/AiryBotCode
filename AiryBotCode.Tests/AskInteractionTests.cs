@@ -1,4 +1,5 @@
 using AiryBotCode.Application.Hive;
+using AiryBotCode.Application.Services;
 using Xunit;
 
 namespace AiryBotCode.Tests
@@ -39,40 +40,37 @@ namespace AiryBotCode.Tests
         }
     }
 
-    public class AskInteractionCustomIdTests
+    public class AskButtonCustomIdTests
     {
+        // The ask button customId is built with the canonical ButtonEncriptionService and
+        // decoded the same way; this guards that contract (routing prefix, effectId in the
+        // Action with a .<idx> uniqueness suffix, asker in UsersId, short + under 100 chars).
         [Fact]
-        public void Build_and_parse_roundtrip()
+        public void Encodes_and_decodes_ask_context_via_button_codec()
         {
-            var id = AskInteraction.BuildAnswerId("eff-123", "Blue");
-            var parsed = AskInteraction.TryParseAnswerId(id);
-            Assert.NotNull(parsed);
-            Assert.Equal("eff-123", parsed!.Value.EffectId);
-            Assert.Equal("Blue", parsed.Value.Answer);
+            var effectId = "call_7KaQ731GANaRi1Xdaka19byZ";
+            var asker = 405431299323461634UL;
+            var enc = new ButtonEncriptionService { CommandName = "ask_user", Action = $"{effectId}.2" };
+            enc.UsersId.Add(asker);
+            var customId = enc.Encript();
+
+            Assert.StartsWith("c:ask_user|", customId);
+            Assert.True(customId.Length <= 100, $"customId must fit Discord's 100-char limit (was {customId.Length})");
+
+            var dec = new ButtonEncriptionService().Decrypt(customId);
+            Assert.Equal("ask_user", dec.CommandName);
+            Assert.Equal(effectId, dec.Action!.Split('.')[0]);   // strip the .<idx> suffix
+            Assert.Contains(asker, dec.UsersId);
         }
 
         [Fact]
-        public void Answer_may_contain_colons()
+        public void Customid_stays_short_even_with_a_long_answer()
         {
-            var id = AskInteraction.BuildAnswerId("eff-1", "12:30 PM");
-            var parsed = AskInteraction.TryParseAnswerId(id);
-            Assert.Equal("12:30 PM", parsed!.Value.Answer);
-        }
-
-        [Fact]
-        public void Caps_custom_id_at_100_chars_preserving_effect_id()
-        {
-            var id = AskInteraction.BuildAnswerId("eff-keep", new string('x', 200));
-            Assert.True(id.Length <= 100);
-            Assert.Equal("eff-keep", AskInteraction.TryParseAnswerId(id)!.Value.EffectId);
-        }
-
-        [Fact]
-        public void Rejects_foreign_custom_ids()
-        {
-            Assert.Null(AskInteraction.TryParseAnswerId("consent:accept:1:2"));
-            Assert.Null(AskInteraction.TryParseAnswerId(null));
-            Assert.Null(AskInteraction.TryParseAnswerId("effect:ask:"));
+            // The answer lives in the button LABEL, never the customId — so a long option
+            // can't overflow the 100-char limit (the old bug).
+            var enc = new ButtonEncriptionService { CommandName = "ask_user", Action = "call_abc.0" };
+            enc.UsersId.Add(123UL);
+            Assert.True(enc.Encript().Length <= 100);
         }
     }
 
@@ -85,31 +83,32 @@ namespace AiryBotCode.Tests
 
         private sealed class FakeAskDelivery : IAskDelivery
         {
-            public readonly List<(ulong ChannelId, string EffectId, string Question, IReadOnlyList<string> Options)> Asked = new();
-            public Task SendAskAsync(ulong channelId, string effectId, string question, IReadOnlyList<string> options, CancellationToken ct = default)
-            { Asked.Add((channelId, effectId, question, options)); return Task.CompletedTask; }
+            public readonly List<(ulong ChannelId, string EffectId, string Question, IReadOnlyList<string> Options, string? AskerUserId)> Asked = new();
+            public Task SendAskAsync(ulong channelId, string effectId, string question, IReadOnlyList<string> options, string? askerUserId, CancellationToken ct = default)
+            { Asked.Add((channelId, effectId, question, options, askerUserId)); return Task.CompletedTask; }
         }
 
-        private static string AskFrame(string effectId, string question, string[] options, string sessionId) =>
+        private static string AskFrame(string effectId, string question, string[] options, string sessionId, string userId = "u") =>
             System.Text.Json.JsonSerializer.Serialize(new
             {
                 type = "effect",
                 call = new { id = effectId, name = "ask_user", arguments = new { question, options } },
-                context = new { userId = "u", sessionId },
+                context = new { userId, sessionId },
                 at = "now",
             });
 
         [Fact]
-        public async Task Listener_routes_ask_user_to_ask_delivery()
+        public async Task Listener_routes_ask_user_to_ask_delivery_with_asker()
         {
             var ask = new FakeAskDelivery();
             var l = new HiveEffectListener("ws://unused", new FakeEffectDelivery(), null, ask);
-            await l.HandleMessageAsync(AskFrame("eff-9", "Proceed?", new[] { "Yes", "No" }, "124654654000000000"));
+            await l.HandleMessageAsync(AskFrame("eff-9", "Proceed?", new[] { "Yes", "No" }, "124654654000000000", "405431299323461634"));
             Assert.Single(ask.Asked);
             Assert.Equal(124654654000000000UL, ask.Asked[0].ChannelId);
             Assert.Equal("eff-9", ask.Asked[0].EffectId);
             Assert.Equal("Proceed?", ask.Asked[0].Question);
             Assert.Equal(new[] { "Yes", "No" }, ask.Asked[0].Options);
+            Assert.Equal("405431299323461634", ask.Asked[0].AskerUserId);   // asker threaded through for the button restriction
         }
 
         [Fact]
