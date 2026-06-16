@@ -77,6 +77,11 @@ services:
       - Database__Host=db
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
+    # Default network (db) + the Hive's network so the bot can subscribe to the
+    # Wraith tools WS for outbound agent effects (say / ask_user → Hive:EffectsWsUrl).
+    networks:
+      - default
+      - hive
   # airydevbot-arm:
   #   build:
   #     context: .
