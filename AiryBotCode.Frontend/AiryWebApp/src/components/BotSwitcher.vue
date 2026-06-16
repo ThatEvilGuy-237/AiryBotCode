@@ -31,7 +31,7 @@ function initial(name?: string | null) {
       <span class="avatar">{{ initial(currentBot?.botName) }}</span>
       <span class="meta">
         <span class="name">{{ currentBot?.botName || 'No bot selected' }}</span>
-        <span class="sub">switch bot ✦</span>
+        <span class="sub">switch bot</span>
       </span>
       <span class="chev" :class="{ up: open }">▾</span>
     </button>
@@ -64,144 +64,37 @@ function initial(name?: string | null) {
 </template>
 
 <style scoped>
-.switcher {
-  position: relative;
-}
+.switcher { position: relative; }
 
-.trigger {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  width: 100%;
-  padding: 0.6rem 0.7rem;
-  background: #fff;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  cursor: pointer;
-  text-align: left;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.trigger:hover {
-  border-color: var(--foxfire);
-  box-shadow: 0 4px 14px rgba(232, 70, 122, 0.12);
-}
+.trigger { display: flex; align-items: center; gap: var(--space-3); width: 100%; padding: var(--space-2) var(--space-3);
+  background: var(--color-surface); border: var(--border); border-radius: var(--r-3); cursor: pointer; text-align: left;
+  color: var(--color-fg); transition: border-color .15s, background .15s; }
+.trigger:hover { border-color: var(--color-border-hi); background: var(--color-surface-hi); }
 
-.avatar {
-  flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, var(--foxfire), var(--violet));
-  box-shadow: 0 2px 8px rgba(232, 70, 122, 0.35);
-}
-.avatar.sm {
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  font-size: 0.85rem;
-}
-.avatar.plus {
-  background: var(--surface-hover);
-  color: var(--foxfire);
-  box-shadow: none;
-  border: 1px dashed var(--foxfire);
-}
+.avatar { flex-shrink: 0; width: 38px; height: 38px; border-radius: var(--r-2); display: grid; place-items: center;
+  font-weight: 700; color: var(--color-bg); background: var(--color-accent); }
+.avatar.sm { width: 30px; height: 30px; border-radius: var(--r-1); font-size: var(--font-size-sm); }
+.avatar.plus { background: var(--color-surface-mute); color: var(--color-accent); border: 1px dashed var(--color-accent-edge); }
 
-.meta {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1;
-}
-.name {
-  font-weight: 700;
-  color: var(--text-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.sub {
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted-color);
-}
-.chev {
-  color: var(--muted-color);
-  transition: transform 0.18s ease;
-}
-.chev.up {
-  transform: rotate(180deg);
-}
+.meta { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.name { font-weight: 700; color: var(--color-fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sub { font-family: var(--font-mono); font-size: var(--font-size-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--color-muted); }
+.chev { color: var(--color-muted); transition: transform .18s ease; }
+.chev.up { transform: rotate(180deg); }
 
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-}
-.menu {
-  position: absolute;
-  top: calc(100% + 0.4rem);
-  left: 0;
-  right: 0;
-  z-index: 61;
-  background: #fff;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 18px 44px rgba(58, 44, 54, 0.22);
-  padding: 0.4rem;
-  max-height: 60vh;
-  overflow-y: auto;
-}
+.backdrop { position: fixed; inset: 0; z-index: 60; }
+.menu { position: absolute; top: calc(100% + var(--space-1)); left: 0; right: 0; z-index: 61;
+  background: var(--color-surface); border: var(--border); border-radius: var(--r-3); box-shadow: var(--shadow-2);
+  padding: var(--space-1); max-height: 60vh; overflow-y: auto; }
 
-.item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.5rem 0.55rem;
-  border: none;
-  background: transparent;
-  border-radius: 9px;
-  cursor: pointer;
-  text-align: left;
-  font: inherit;
-  color: var(--text-color);
-}
-.item:hover {
-  background: var(--surface-hover);
-}
-.item.active {
-  background: rgba(232, 70, 122, 0.08);
-}
-.item-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-}
-.check {
-  color: var(--foxfire);
-  font-weight: 700;
-}
-.item.new .item-name {
-  color: var(--foxfire-deep);
-  font-weight: 600;
-}
-.empty {
-  margin: 0.3rem 0.55rem;
-  color: var(--muted-color);
-  font-size: 0.85rem;
-}
-.divider {
-  height: 1px;
-  background: var(--border-color);
-  margin: 0.4rem 0.2rem;
-}
+.item { display: flex; align-items: center; gap: var(--space-2); width: 100%; padding: var(--space-2);
+  border: 1px solid transparent; background: transparent; border-radius: var(--r-2); cursor: pointer; text-align: left;
+  font: inherit; color: var(--color-text-dim); }
+.item:hover { background: var(--color-surface-hi); color: var(--color-fg); }
+.item.active { background: var(--color-accent-soft); border-color: var(--color-accent-edge); color: var(--color-fg); }
+.item-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.check { color: var(--color-accent); font-weight: 700; }
+.item.new .item-name { color: var(--color-accent); font-weight: 600; }
+.empty { margin: var(--space-1) var(--space-2); color: var(--color-muted); font-size: var(--font-size-sm); }
+.divider { height: 1px; background: var(--color-border-soft); margin: var(--space-1) var(--space-1); }
 </style>

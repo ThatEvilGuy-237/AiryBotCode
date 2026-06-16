@@ -1,132 +1,57 @@
 <script setup lang="ts">
-// Navigation grouped by scope: the switcher selects a bot, the "This bot" links
-// act on it, and "Server" links are global (not per-bot).
+// Migrated to @hive/ui tokens (Item E — full panel on the shared design system).
+// Grouped nav like the Hive portal's PortalSidebar: RouterLinks (SPA-safe) styled
+// with the design tokens + accent active state, so it themes with the image theme.
+import { useRoute } from 'vue-router'
 import BotSwitcher from './BotSwitcher.vue'
 
-interface NavItem {
-  to: string
-  label: string
-}
+const route = useRoute()
 
-const botItems: NavItem[] = [
+const botItems = [
   { to: '/commands', label: 'Commands' },
   { to: '/bot-settings', label: 'Settings' },
   { to: '/theme', label: 'Theme' },
   { to: '/webhooks', label: 'Webhooks' },
 ]
-const serverItems: NavItem[] = [{ to: '/database', label: 'Databases' }]
+const serverItems = [{ to: '/database', label: 'Databases' }]
+
+const isActive = (to: string) => to === '/' ? route.path === '/' : route.path.startsWith(to)
 </script>
 
 <template>
   <aside class="sidebar">
+    <div class="brand"><span class="orb" aria-hidden="true" />Airy</div>
+
     <BotSwitcher class="bot-switcher" />
 
-    <router-link to="/" class="nav-link home-link">
-      <span class="orb" aria-hidden="true"></span>
-      <span>Home</span>
-    </router-link>
+    <nav class="nav">
+      <RouterLink to="/" class="link" :class="{ active: route.path === '/' }">Home</RouterLink>
 
-    <nav class="sidebar-nav">
-      <p class="nav-label">This bot</p>
-      <router-link v-for="item in botItems" :key="item.to" :to="item.to" class="nav-link">
-        <span class="orb" aria-hidden="true"></span>
-        <span>{{ item.label }}</span>
-      </router-link>
+      <p class="label">This bot</p>
+      <RouterLink v-for="i in botItems" :key="i.to" :to="i.to" class="link" :class="{ active: isActive(i.to) }">{{ i.label }}</RouterLink>
 
-      <p class="nav-label">Server</p>
-      <router-link v-for="item in serverItems" :key="item.to" :to="item.to" class="nav-link">
-        <span class="orb" aria-hidden="true"></span>
-        <span>{{ item.label }}</span>
-      </router-link>
+      <p class="label">Server</p>
+      <RouterLink v-for="i in serverItems" :key="i.to" :to="i.to" class="link" :class="{ active: isActive(i.to) }">{{ i.label }}</RouterLink>
     </nav>
 
-    <p class="footer-note">a mystical spirit of the digital realm</p>
+    <p class="footer">// a mystical spirit of the digital realm</p>
   </aside>
 </template>
 
 <style scoped>
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, var(--surface), var(--surface-hover));
-  border-right: 1px solid var(--border-color);
-  color: var(--text-color);
-  height: 100%;
-  padding: 1.5rem 1rem;
-  overflow-y: auto;
-}
-
-.bot-switcher {
-  margin-bottom: 1rem;
-}
-
-.home-link {
-  margin-bottom: 0.75rem;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.nav-label {
-  margin: 0.6rem 0 0.1rem;
-  padding: 0 0.4rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted-color);
-  opacity: 0.8;
-}
-.nav-label:first-child {
-  margin-top: 0;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--text-color);
-  text-decoration: none;
-  padding: 0.7rem 0.9rem;
-  border-radius: 10px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.55);
-}
-
-.nav-link.router-link-exact-active {
-  background: #ffffff;
-  color: var(--foxfire-deep);
-  box-shadow: inset 0 0 0 1px rgba(232, 70, 122, 0.3);
-}
-
-.orb {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--muted-color);
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover .orb {
-  background: var(--violet);
-}
-
-.nav-link.router-link-exact-active .orb {
-  background: var(--foxfire);
-}
-
-.footer-note {
-  margin-top: auto;
-  padding: 0 0.5rem;
-  font-size: 0.72rem;
-  font-style: italic;
-  color: var(--muted-color);
-  opacity: 0.7;
-}
+.sidebar { display: flex; flex-direction: column; gap: var(--space-2); height: 100%; padding: var(--space-4) var(--space-3);
+  background: var(--color-bg-2); border-right: var(--border); color: var(--color-fg); overflow-y: auto; }
+.brand { display: flex; align-items: center; gap: var(--space-2); font-weight: 700; font-size: var(--font-size-lg); margin-bottom: var(--space-2); }
+.brand .orb { width: 10px; height: 10px; border-radius: 50%; background: var(--color-accent); }
+.bot-switcher { margin-bottom: var(--space-3); }
+.nav { display: flex; flex-direction: column; gap: 2px; }
+.label { margin: var(--space-3) 0 var(--space-1); padding: 0 var(--space-2); font-family: var(--font-mono);
+  font-size: var(--font-size-xs); letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-ghost); }
+.link { display: flex; align-items: center; height: 36px; padding: 0 var(--space-3); color: var(--color-text-dim);
+  text-decoration: none; font-size: var(--font-size-base); font-weight: 500; border: 1px solid transparent;
+  border-radius: var(--radius); transition: color .12s, background .12s, border-color .12s; }
+.link:hover { color: var(--color-fg); background: var(--color-surface-mute); }
+.link.active { color: var(--color-fg); background: var(--color-accent-soft); border-color: var(--color-accent-edge);
+  box-shadow: inset 2px 0 0 0 var(--color-accent); }
+.footer { margin-top: auto; padding: 0 var(--space-2); font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--color-text-ghost); }
 </style>
