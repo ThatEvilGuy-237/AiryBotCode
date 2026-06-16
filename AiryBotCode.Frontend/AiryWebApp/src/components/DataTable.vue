@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// Migrated to @hive/ui design tokens (Item E). No @hive/ui table primitive exists,
+// so this stays a custom table but themes via the shared tokens (mono for data,
+// borders-not-shadows, single accent) so it re-themes with the image theme.
 import type { Column } from '../lib/mockDatabase'
 
 defineProps<{
@@ -29,10 +32,9 @@ defineProps<{
 
 <style scoped>
 .table-wrap {
-  background-color: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px var(--shadow);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -45,12 +47,14 @@ table {
 th,
 td {
   text-align: left;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border-color);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
 }
 
 td {
-  color: var(--text-color);
+  color: var(--color-fg);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
   max-width: 360px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -58,15 +62,16 @@ td {
 }
 
 th {
-  background-color: var(--surface-2);
-  font-size: 0.8rem;
+  background-color: var(--color-bg);
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--violet);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
 }
 
 tbody tr:hover td {
-  background-color: var(--surface-hover);
+  background-color: var(--color-bg);
 }
 
 tbody tr:last-child td {
@@ -74,7 +79,9 @@ tbody tr:last-child td {
 }
 
 .empty {
-  color: var(--muted-color);
+  color: var(--color-muted);
   text-align: center;
+  font-family: inherit;
+  font-style: italic;
 }
 </style>

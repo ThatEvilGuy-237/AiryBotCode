@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+// Migrated to @hive/ui (Item E) — schema/table selectors are FilterPills; re-themes
+// with the image-derived theme. Functionality unchanged.
+import { ref, computed, onMounted } from 'vue'
+import { PageHeader, FilterPills, Card } from '@hive/ui'
 import { api, ApiError } from '../lib/api'
 import DataTable from '../components/DataTable.vue'
 import type { Column } from '../lib/mockDatabase'
@@ -16,6 +19,10 @@ const rows = ref<Record<string, string | number>[]>([])
 
 const loading = ref(false)
 const error = ref('')
+
+const schemaItems = computed(() => schemas.value.map((s) => ({ value: s, label: s })))
+const tableItems = computed(() =>
+  tables.value.map((t) => ({ value: t.name, label: t.name, count: t.rowCount })))
 
 async function loadSchemas() {
   error.value = ''
@@ -71,147 +78,67 @@ onMounted(loadSchemas)
 <template>
   <div class="page">
     <router-link :to="{ name: 'databases' }" class="back-link">‹ Databases</router-link>
-    <h1>{{ db }}</h1>
+    <PageHeader :title="db" subtitle="Live read-only explorer — schemas, tables and the first 100 rows." />
 
     <p v-if="error" class="error">{{ error }}</p>
 
-    <!-- Schemas -->
-    <div class="section-label">Schemas</div>
-    <div class="chips">
-      <button
-        v-for="s in schemas"
-        :key="s"
-        type="button"
-        class="chip"
-        :class="{ active: s === selectedSchema }"
-        @click="selectSchema(s)"
-      >
-        {{ s }}
-      </button>
-      <span v-if="!schemas.length && !error" class="muted">Loading…</span>
-    </div>
+    <div class="selectors">
+      <div class="sel">
+        <span class="label">Schemas</span>
+        <FilterPills v-if="schemaItems.length" :model-value="selectedSchema" :items="schemaItems"
+          @update:model-value="selectSchema" />
+        <span v-else-if="!error" class="muted">Loading…</span>
+      </div>
 
-    <div class="layout">
-      <!-- Tables in the selected schema -->
-      <aside class="table-list">
-        <div class="section-label">Tables</div>
-        <button
-          v-for="t in tables"
-          :key="t.name"
-          type="button"
-          class="table-item"
-          :class="{ active: t.name === selectedTable }"
-          @click="selectTable(t.name)"
-        >
-          <span class="table-name">{{ t.name }}</span>
-          <span class="row-count">{{ t.rowCount }}</span>
-        </button>
-        <p v-if="selectedSchema && !tables.length" class="muted">No tables in this schema.</p>
-      </aside>
-
-      <!-- Rows -->
-      <div class="content">
-        <template v-if="selectedTable">
-          <h2 class="content-title">{{ selectedSchema }}.{{ selectedTable }}</h2>
-          <p v-if="loading" class="muted">Loading rows…</p>
-          <DataTable v-else :columns="columns" :rows="rows" />
-          <p v-if="!loading && rows.length >= 100" class="muted note">Showing first 100 rows.</p>
-        </template>
-        <p v-else class="muted">Select a table.</p>
+      <div v-if="selectedSchema" class="sel">
+        <span class="label">Tables</span>
+        <FilterPills v-if="tableItems.length" :model-value="selectedTable" :items="tableItems"
+          @update:model-value="selectTable" />
+        <span v-else class="muted">No tables in this schema.</span>
       </div>
     </div>
+
+    <Card class="content">
+      <template v-if="selectedTable">
+        <h2 class="content-title">{{ selectedSchema }}.{{ selectedTable }}</h2>
+        <p v-if="loading" class="muted">Loading rows…</p>
+        <DataTable v-else :columns="columns" :rows="rows" />
+        <p v-if="!loading && rows.length >= 100" class="muted note">Showing first 100 rows.</p>
+      </template>
+      <p v-else class="muted">Select a table.</p>
+    </Card>
   </div>
 </template>
 
 <style scoped>
-.page { padding: 2rem; }
+.page { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
 .back-link {
   display: inline-block;
-  margin-bottom: 0.6rem;
-  color: var(--muted-color);
+  color: var(--color-muted);
   text-decoration: none;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: var(--font-size-sm);
 }
-.back-link:hover { color: var(--foxfire); }
-.page > h1 {
-  margin-bottom: 1rem;
-  font-size: 1.9rem;
-  background: linear-gradient(90deg, var(--foxfire), var(--violet));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.section-label {
-  font-size: 0.75rem;
+.back-link:hover { color: var(--color-accent); }
+
+.error { color: var(--color-danger); font-size: var(--font-size-sm); margin: 0; }
+.muted { color: var(--color-muted); }
+.note { font-size: var(--font-size-xs); margin-top: var(--space-2); }
+
+.selectors { display: flex; flex-direction: column; gap: var(--space-3); }
+.sel { display: flex; flex-direction: column; gap: var(--space-2); }
+.label {
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--muted-color);
-  margin-bottom: 0.5rem;
+  color: var(--color-muted);
+  font-family: var(--font-mono);
 }
-.error {
-  background: #fde8ef;
-  border: 1px solid var(--border-color);
-  color: var(--foxfire-deep);
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-}
-.muted { color: var(--muted-color); }
-.note { font-size: 0.8rem; margin-top: 0.5rem; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-.chip {
-  border: 1px solid var(--border-color);
-  background: var(--surface);
-  color: var(--text-color);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.15s ease;
-}
-.chip:hover { border-color: var(--violet); background: var(--surface-hover); }
-.chip.active { border-color: var(--foxfire); background: var(--foxfire); color: #fff; }
-
-.layout {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 1.5rem;
-  align-items: start;
-}
-.table-list { display: flex; flex-direction: column; gap: 0.5rem; }
-.table-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  text-align: left;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  background: var(--surface);
-  border-radius: 10px;
-  padding: 0.7rem 0.9rem;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.15s ease;
-}
-.table-item:hover { border-color: var(--violet); background: var(--surface-hover); }
-.table-item.active { border-color: var(--foxfire); background: var(--surface-2); }
-.table-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.row-count { color: var(--muted-color); font-size: 0.75rem; flex-shrink: 0; }
-.content-title { margin-bottom: 1rem; }
 .content { min-width: 0; }
+.content-title { margin: 0 0 var(--space-3); font-family: var(--font-mono); font-size: var(--font-size-md); }
 
 @media (max-width: 768px) {
-  .page { padding: 1rem; }
-  .layout { grid-template-columns: 1fr; gap: 1rem; }
-  .table-list {
-    flex-direction: row;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.25rem;
-  }
-  .table-item { flex-shrink: 0; }
+  .page { padding: var(--space-3); }
 }
 </style>
