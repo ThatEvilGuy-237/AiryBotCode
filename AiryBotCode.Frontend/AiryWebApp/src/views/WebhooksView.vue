@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Migrated to @hive/ui (Item E — full panel on the shared design system). Logic unchanged.
 import { ref, watch, onMounted } from 'vue'
-import { PageHeader, Card, Button, Badge, TextField, Toggle, ToolRow } from '@hive/ui'
+import { PageHeader, Card, Button, Badge, TextField, Toggle } from '@hive/ui'
 import { api, ApiError, type ChannelWebhook } from '../lib/api'
 import { useBots } from '../lib/bots'
 
@@ -142,16 +142,26 @@ onMounted(async () => { await loadBots(); await load() })
         <div style="flex: 1" />
         <Badge variant="inactive">{{ links.length }}</Badge>
       </template>
-      <ToolRow v-for="l in links" :key="l.id" :name="l.name" :description="l.webhookUrl" :dim="!l.enabled">
-        <template #actions>
-          <Badge variant="inactive">#{{ l.channelId }}</Badge>
-          <Badge variant="inactive">{{ l.mode }}</Badge>
-          <Badge v-if="l.hasSecret" variant="inactive">signed</Badge>
-          <Badge :variant="l.enabled ? 'active' : 'inactive'">{{ l.enabled ? 'enabled' : 'disabled' }}</Badge>
-          <Button variant="ghost" @click="edit(l)">Edit</Button>
-          <Button variant="ghost" @click="remove(l)">Delete</Button>
-        </template>
-      </ToolRow>
+      <div class="links">
+        <div v-for="l in links" :key="l.id" class="link" :class="{ off: !l.enabled }">
+          <div class="link-info">
+            <div class="link-top">
+              <span class="link-name">{{ l.name || 'Unnamed' }}</span>
+              <Badge :variant="l.enabled ? 'active' : 'inactive'">{{ l.enabled ? 'enabled' : 'disabled' }}</Badge>
+            </div>
+            <code class="link-url">{{ l.webhookUrl }}</code>
+            <div class="link-meta">
+              <span class="mono">#{{ l.channelId }}</span>
+              <Badge variant="inactive">{{ l.mode }}</Badge>
+              <Badge v-if="l.hasSecret" variant="inactive">signed</Badge>
+            </div>
+          </div>
+          <div class="link-actions">
+            <Button variant="outline" @click="edit(l)">Edit</Button>
+            <Button variant="ghost" @click="remove(l)">Delete</Button>
+          </div>
+        </div>
+      </div>
     </Card>
   </div>
 </template>
@@ -168,5 +178,19 @@ onMounted(async () => { await loadBots(); await load() })
   background: var(--color-surface-mute); color: var(--color-fg); }
 .in:focus { outline: none; border-color: var(--color-accent-edge); }
 .check { display: flex; flex-direction: row; align-items: center; gap: var(--space-2); color: var(--color-fg); }
-@media (max-width: 768px) { .page { padding: 1rem; } .grid2 { grid-template-columns: 1fr; } }
+.mono { font-family: var(--font-mono); color: var(--color-muted); font-size: var(--font-size-sm); }
+
+.links { display: flex; flex-direction: column; }
+.link { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; border-top: 1px solid var(--color-border-soft); }
+.link:first-child { border-top: none; }
+.link.off { opacity: .55; }
+.link-info { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: var(--space-1); }
+.link-top { display: flex; align-items: center; gap: var(--space-2); }
+.link-name { font-weight: 600; color: var(--color-fg); }
+.link-url { font-family: var(--font-mono); font-size: var(--font-size-xs); color: var(--color-muted); word-break: break-all; }
+.link-meta { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-1); }
+.link-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
+
+@media (max-width: 768px) { .page { padding: 1rem; } .grid2 { grid-template-columns: 1fr; }
+  .link { flex-direction: column; align-items: stretch; } .link-actions { justify-content: flex-end; } }
 </style>
