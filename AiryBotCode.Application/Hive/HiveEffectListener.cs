@@ -11,22 +11,31 @@ namespace AiryBotCode.Application.Hive
     /// from wherever the bot is started; it connects, sends <c>subscribe_effects</c>,
     /// relays each <c>effect</c> frame, and reconnects with backoff on drop.
     /// </summary>
-    public sealed class HiveEffectListener
+    public sealed class HiveEffectListener : IHiveResponseSender
     {
         private readonly string _wsUrl;
         private readonly MessagePacer _pacer;
+        private readonly IAskDelivery? _askDelivery;
         private readonly Action<string>? _log;
 
-        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null)
-            : this(wsUrl, new MessagePacer(delivery), log) { }
+        // The currently-connected socket, set on each (re)connect and cleared on drop.
+        // Used to send await-mode answers (effect_response) back up the same WS.
+        private ClientWebSocket? _activeSocket;
+        private readonly SemaphoreSlim _sendLock = new(1, 1);
+
+        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null)
+            : this(wsUrl, new MessagePacer(delivery), log, askDelivery) { }
 
         // Test/advanced ctor: supply a pacer (e.g. with a fake clock).
-        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null)
+        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null)
         {
             _wsUrl = wsUrl;
             _pacer = pacer;
+            _askDelivery = askDelivery;
             _log = log;
         }
+
+        public bool IsConnected => _activeSocket?.State == WebSocketState.Open;
 
         public async Task RunAsync(CancellationToken ct)
         {
@@ -41,7 +50,9 @@ namespace AiryBotCode.Application.Hive
                     _log?.Invoke($"[HiveEffects] subscribed at {_wsUrl}");
                     backoff = 2;
 
-                    await ReceiveLoopAsync(ws, ct);
+                    _activeSocket = ws;
+                    try { await ReceiveLoopAsync(ws, ct); }
+                    finally { _activeSocket = null; }
                 }
                 catch (OperationCanceledException) { break; }
                 catch (Exception ex)
@@ -88,6 +99,7 @@ namespace AiryBotCode.Application.Hive
 
                 var call = root.GetProperty("call");
                 var name = call.TryGetProperty("name", out var n) ? n.GetString() : null;
+                var effectId = call.TryGetProperty("id", out var idEl) ? idEl.GetString() : null;
                 var args = call.TryGetProperty("arguments", out var a) ? a : default;
                 var message = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("message", out var m)
                     ? m.GetString() : null;
@@ -96,6 +108,25 @@ namespace AiryBotCode.Application.Hive
                     ? d.GetDouble() : null;
                 var sessionId = root.TryGetProperty("context", out var c) && c.ValueKind == JsonValueKind.Object
                     && c.TryGetProperty("sessionId", out var s) ? s.GetString() : null;
+
+                // ── await-mode ask_user: post the question with option buttons ──────
+                // The user's tap is routed back as an effect_response by the button
+                // handler (see ButtonPressHandler → IHiveResponseSender).
+                if (name == "ask_user")
+                {
+                    var question = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("question", out var q)
+                        ? q.GetString() : null;
+                    var options = new List<string>();
+                    if (args.ValueKind == JsonValueKind.Object && args.TryGetProperty("options", out var opts)
+                        && opts.ValueKind == JsonValueKind.Array)
+                        foreach (var o in opts.EnumerateArray())
+                            if (o.ValueKind == JsonValueKind.String) options.Add(o.GetString()!);
+
+                    var ask = AskRouter.Route(name, effectId, question, options, sessionId);
+                    if (ask is null) return Task.CompletedTask;
+                    if (_askDelivery is null) { _log?.Invoke("[HiveEffects] ask_user effect but no ask delivery configured"); return Task.CompletedTask; }
+                    return _askDelivery.SendAskAsync(ask.ChannelId, ask.EffectId, ask.Question, ask.Options, ct);
+                }
 
                 var intent = EffectRouter.Route(name, message, delay, sessionId);
                 if (intent is null) return Task.CompletedTask;
@@ -108,6 +139,38 @@ namespace AiryBotCode.Application.Hive
                 _log?.Invoke($"[HiveEffects] bad effect frame skipped: {ex.Message}");
                 return Task.CompletedTask;
             }
+        }
+
+        /// <summary>Send a user's answer back as an <c>effect_response</c>, correlated
+        /// by effect id, over the live socket. Returns false if no connection is open.
+        /// Serialized through a lock so concurrent button taps can't interleave frames.</summary>
+        public async Task<bool> SendAnswerAsync(string effectId, string answer, string? sessionId, string? userId, CancellationToken ct = default)
+        {
+            var ws = _activeSocket;
+            if (ws is null || ws.State != WebSocketState.Open) return false;
+
+            var frame = JsonSerializer.Serialize(new
+            {
+                type = "effect_response",
+                id = effectId,
+                response = new { answer },
+                context = new { sessionId, userId },
+            });
+
+            await _sendLock.WaitAsync(ct);
+            try
+            {
+                if (ws.State != WebSocketState.Open) return false;
+                await SendAsync(ws, frame, ct);
+                _log?.Invoke($"[HiveEffects] effect_response sent for {effectId}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _log?.Invoke($"[HiveEffects] effect_response send failed: {ex.Message}");
+                return false;
+            }
+            finally { _sendLock.Release(); }
         }
 
         private static Task SendAsync(ClientWebSocket ws, string json, CancellationToken ct) =>

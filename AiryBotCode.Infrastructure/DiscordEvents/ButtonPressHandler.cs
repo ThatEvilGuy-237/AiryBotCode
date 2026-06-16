@@ -1,4 +1,5 @@
 ﻿using AiryBotCode.Application.Consent;
+using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Services;
 using AiryBotCode.Infrastructure.Activitys;
@@ -27,6 +28,30 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
         {
             //var guild = _client.GetGuild(component.GuildId.Value);
             var buttonValue = component.Data.CustomId;
+
+            // Await-mode ask_user answer: the user tapped an option button raised by the
+            // Hive's ask_user tool. Send their choice back up the WS as the effect_response
+            // (correlated by effect id) so the suspended agent loop resumes — then edit the
+            // message to reflect the choice. Handled first; it isn't a command button.
+            var ask = AskInteraction.TryParseAnswerId(buttonValue);
+            if (ask != null)
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var sender = scope.ServiceProvider.GetService<IHiveResponseSender>();
+                var sent = sender != null && await sender.SendAnswerAsync(
+                    ask.Value.EffectId, ask.Value.Answer,
+                    component.Channel.Id.ToString(), component.User.Id.ToString());
+
+                // Edit the original message: show the picked answer, drop the buttons.
+                var note = sent ? $"\n\n*You chose: **{ask.Value.Answer}***"
+                                : "\n\n*(Couldn't reach Airy — the question may have timed out.)*";
+                await component.UpdateAsync(m =>
+                {
+                    m.Content = (component.Message?.Content ?? "") + note;
+                    m.Components = new Discord.ComponentBuilder().Build();
+                });
+                return;
+            }
 
             // First-message consent gate's Accept button (handled before the normal
             // command-button dispatch — it isn't an encrypted command button).

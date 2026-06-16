@@ -86,7 +86,11 @@ namespace AiryBotCode.Bot.Bots
             if (!string.IsNullOrWhiteSpace(effectsUrl))
             {
                 var delivery = services.GetRequiredService<IEffectDelivery>();
-                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine);
+                var askDelivery = services.GetRequiredService<IAskDelivery>();
+                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine, askDelivery);
+                // Bind into the singleton gateway so the button handler can send answers
+                // (ask_user) back up this same socket via IHiveResponseSender.
+                services.GetRequiredService<HiveEffectGateway>().Bind(listener);
                 Console.WriteLine($"[INFO] Subscribing to Hive effects at {effectsUrl}");
                 _ = listener.RunAsync(CancellationToken.None);   // background for the bot's lifetime
             }

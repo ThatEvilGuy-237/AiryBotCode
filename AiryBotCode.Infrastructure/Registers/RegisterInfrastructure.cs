@@ -41,6 +41,13 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<DiscordService>();
             // Hive effect passthrough: deliver outbound agent messages to Discord.
             services.AddScoped<AiryBotCode.Application.Hive.IEffectDelivery, Hive.DiscordEffectDelivery>();
+            // await-mode ask_user: deliver a question with option buttons.
+            services.AddScoped<AiryBotCode.Application.Hive.IAskDelivery, Hive.DiscordAskDelivery>();
+            // Singleton bridge: the long-lived WS listener binds itself here so the
+            // request-scoped button handler can send the user's answer back up the WS.
+            services.AddSingleton<AiryBotCode.Application.Hive.HiveEffectGateway>();
+            services.AddSingleton<AiryBotCode.Application.Hive.IHiveResponseSender>(
+                sp => sp.GetRequiredService<AiryBotCode.Application.Hive.HiveEffectGateway>());
 
 
 
