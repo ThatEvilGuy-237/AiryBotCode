@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using AiryBotCode.Application.Consent;
+using AiryBotCode.Application.Frontend;
 using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Repository;
@@ -66,10 +67,21 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     if (!consented)
                     {
                         var evilId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetEvilId();
+                        var embed = ConsentFrontend.ConsentEmbed(evilId);
                         var components = new ComponentBuilder()
                             .WithButton("Accept", ConsentInteraction.BuildAcceptId(botId, message.Author.Id), ButtonStyle.Success)
                             .Build();
-                        await message.Channel.SendMessageAsync(ConsentInteraction.PromptText(evilId), components: components);
+                        // DM the consent card so ONLY this user sees it (a channel message can't be
+                        // ephemeral). Fall back to the channel if their DMs are closed.
+                        try
+                        {
+                            var dm = await message.Author.CreateDMChannelAsync();
+                            await dm.SendMessageAsync(embed: embed, components: components);
+                        }
+                        catch
+                        {
+                            await message.Channel.SendMessageAsync(embed: embed, components: components);
+                        }
                         return;   // gated until they accept
                     }
                 }
