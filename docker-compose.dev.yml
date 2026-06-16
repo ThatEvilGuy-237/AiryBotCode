@@ -14,8 +14,9 @@
 #     airy_db_dev would skip it, since that DB already has tables).
 #   - Distinct service names (api-dev / caddy-dev / db-dev) so nothing clashes.
 #   - Bound to 127.0.0.1:10000 only (local-only, not on the Funnel).
-#   - NO bot: a dev bot needs its own Discord token, so the dev stack is panel+API
-#     only. Test bot behaviour against prod's airydevbot.
+#   - Panel+API by default. An OPTIONAL dev bot (airydevbot-dev, profile "bot")
+#     can be enabled with its OWN Discord token to test bot behaviour on dev —
+#     see that service below. Otherwise test bot behaviour against prod's airydevbot.
 name: airybotcode-dev
 
 services:
@@ -84,6 +85,47 @@ services:
     networks:
       - default
       - hive
+
+  # OPTIONAL dev bot — runs a real Discord bot against the dev DB so you can test
+  # bot behaviour on dev (the rest of the dev stack is panel+API only). Gated two
+  # ways so it never clashes with prod's airydevbot:
+  #   1. Compose profile "bot" → off by default; start it explicitly:
+  #        docker compose -f docker-compose.dev.yml -p airybotcode-dev --profile bot up -d --build airydevbot-dev
+  #      (or: ./scripts/airy-deploy.sh dev-bot)
+  #   2. It needs its OWN Discord bot token — set these in .env first (a SEPARATE
+  #      bot application, NOT prod's devairybot):
+  #        AIRY_DEVBOT_DEV_TOKEN=...      # the dev bot's token (required)
+  #        AIRY_DEVBOT_DEV_BOTID=...      # the dev bot's application/user id
+  #      If AIRY_DEVBOT_DEV_TOKEN is unset, Bots__Token is overridden to empty so the
+  #      bot simply fails to log in (it can NEVER fall back to the prod token in the
+  #      mounted appsettings). Enable the privileged gateway intents (MessageContent
+  #      + GuildMembers) on the dev bot in the Discord Developer Portal.
+  airydevbot-dev:
+    profiles: ["bot"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_PATH: "Bots/AiryBotCode.AiryDevBot/AiryBotCode.AiryDevBot.csproj"
+        DLL_NAME: "AiryBotCode.AiryDevBot.dll"
+        SLN_PATH: "AiryBotCode.sln"
+    depends_on:
+      db-dev:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      - Database__Host=db-dev
+      - Database__Name=airy_db_dev
+      # Override the mounted appsettings so the dev bot uses its OWN identity (empty
+      # token if unset → never logs in as prod's devairybot).
+      - Bots__Token=${AIRY_DEVBOT_DEV_TOKEN:-}
+      - Bots__BotId=${AIRY_DEVBOT_DEV_BOTID:-0}
+      - Bots__Name=${AIRY_DEVBOT_DEV_NAME:-airydevbot-dev}
+      # Hive effects (say / ask_user) off by default in dev; set to a Wraith tools
+      # WS url to wire them (e.g. the hive-dev Wraith) if you test that flow.
+      - Hive__EffectsWsUrl=${AIRY_DEVBOT_DEV_HIVE_WS:-}
+    volumes:
+      - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json:ro
 
 volumes:
   postgres_dev_data:

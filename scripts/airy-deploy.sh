@@ -2,6 +2,7 @@
 # AiryBotCode — deploy + promote helper. Mirrors The Hive's scripts/hive-deploy.sh.
 #
 #   ./scripts/airy-deploy.sh dev      # build+run the feature branch → airybotcode-dev (LOCAL :10000)
+#   ./scripts/airy-deploy.sh dev-bot  # dev stack + the OPTIONAL dev bot (needs AIRY_DEVBOT_DEV_TOKEN)
 #   ./scripts/airy-deploy.sh prod     # build+run `main` → airybotcode stack (/)  [production, online]
 #   ./scripts/airy-deploy.sh promote  # merge feature branch → main (ff), push, then deploy prod
 #
@@ -27,6 +28,17 @@ deploy_dev() {
   echo "✓ dev running (local only) → http://127.0.0.1:10000"
 }
 
+# Bring up the OPTIONAL dev bot too (profile "bot"). Needs AIRY_DEVBOT_DEV_TOKEN
+# (+ AIRY_DEVBOT_DEV_BOTID) in .env — a SEPARATE Discord bot, not prod's.
+deploy_dev_bot() {
+  if ! grep -q '^AIRY_DEVBOT_DEV_TOKEN=.\+' .env 2>/dev/null; then
+    echo "⚠ AIRY_DEVBOT_DEV_TOKEN is not set in .env — set a SEPARATE dev bot token first."
+    echo "  (the bot will start but won't log in to Discord without it)"
+  fi
+  docker compose -f docker-compose.dev.yml -p airybotcode-dev --profile bot up -d --build
+  echo "✓ dev + dev bot running (local only) → http://127.0.0.1:10000"
+}
+
 deploy_prod() {
   git checkout main
   git pull --ff-only origin main || true
@@ -35,8 +47,9 @@ deploy_prod() {
 }
 
 case "${1:-}" in
-  dev)  deploy_dev ;;
-  prod) deploy_prod ;;
+  dev)      deploy_dev ;;
+  dev-bot)  deploy_dev_bot ;;
+  prod)     deploy_prod ;;
   promote)
     echo "Promoting $FEATURE_BRANCH → main…"
     git checkout main && git pull --ff-only origin main || true
@@ -45,5 +58,5 @@ case "${1:-}" in
     deploy_prod
     ;;
   *)
-    echo "usage: $0 {dev|prod|promote}"; exit 1 ;;
+    echo "usage: $0 {dev|dev-bot|prod|promote}"; exit 1 ;;
 esac
