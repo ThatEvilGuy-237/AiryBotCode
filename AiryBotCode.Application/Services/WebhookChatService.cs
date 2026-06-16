@@ -81,8 +81,11 @@ namespace AiryBotCode.Application.Services
             if (string.IsNullOrEmpty(runId)) return null;
 
             // Poll the signed result endpoint until the run reaches a terminal state.
+            // Window is generous so an interactive run that BLOCKS on an ask_user button
+            // (the agent suspends until the user taps) is still being polled when the
+            // answer comes back — the old 3 min raced the button press.
             var resultUrl = $"{baseUrl}/result";
-            var deadline = DateTime.UtcNow + TimeSpan.FromMinutes(3);
+            var deadline = DateTime.UtcNow + TimeSpan.FromMinutes(10);
             while (DateTime.UtcNow < deadline)
             {
                 await Task.Delay(2000);
