@@ -2,15 +2,19 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
+import { useBots } from './lib/bots'
+import { applyThemeForBot } from './lib/imageTheme'
 
 const navOpen = ref(false)
 const route = useRoute()
 // Close the mobile drawer whenever the route changes.
 watch(() => route.path, () => (navOpen.value = false))
 
-// Theming is now @hive/ui-driven: the legacy --foxfire/--surface tokens are bridged
-// to the @hive/ui design tokens (style.css), and the image-derived theme is applied
-// at startup (main.ts). No more per-bot pink override.
+// Theming is @hive/ui-driven (legacy tokens bridged in style.css). The image-derived
+// theme is PER BOT: applied at startup for the last-active bot (main.ts), and
+// re-applied here whenever the selected bot changes so the whole panel re-themes.
+const { currentBotId } = useBots()
+watch(currentBotId, (id) => applyThemeForBot(id))
 </script>
 
 <template>

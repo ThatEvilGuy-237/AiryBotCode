@@ -2,12 +2,18 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBots } from '../lib/bots'
+import { loadImageTheme } from '../lib/imageTheme'
 
 const router = useRouter()
 const { bots, currentBot, currentBotId, selectBot, loadBots, requestCreate } = useBots()
 const open = ref(false)
 
 onMounted(() => loadBots())
+
+// A bot's theme image doubles as its profile picture (null → letter avatar).
+function avatar(botId?: string | null): string | null {
+  return botId ? (loadImageTheme(botId)?.image ?? null) : null
+}
 
 function pick(id: string) {
   selectBot(id)
@@ -28,7 +34,10 @@ function initial(name?: string | null) {
 <template>
   <div class="switcher">
     <button class="trigger" type="button" @click="open = !open">
-      <span class="avatar">{{ initial(currentBot?.botName) }}</span>
+      <span class="avatar">
+        <img v-if="avatar(currentBotId)" :src="avatar(currentBotId)!" alt="" />
+        <template v-else>{{ initial(currentBot?.botName) }}</template>
+      </span>
       <span class="meta">
         <span class="name">{{ currentBot?.botName || 'No bot selected' }}</span>
         <span class="sub">switch bot</span>
@@ -47,7 +56,10 @@ function initial(name?: string | null) {
           :class="{ active: b.botId === currentBotId }"
           @click="pick(b.botId)"
         >
-          <span class="avatar sm">{{ initial(b.botName) }}</span>
+          <span class="avatar sm">
+            <img v-if="avatar(b.botId)" :src="avatar(b.botId)!" alt="" />
+            <template v-else>{{ initial(b.botName) }}</template>
+          </span>
           <span class="item-name">{{ b.botName || 'Unnamed' }}</span>
           <span v-if="b.botId === currentBotId" class="check">✓</span>
         </button>
@@ -72,7 +84,8 @@ function initial(name?: string | null) {
 .trigger:hover { border-color: var(--color-border-hi); background: var(--color-surface-hi); }
 
 .avatar { flex-shrink: 0; width: 38px; height: 38px; border-radius: var(--r-2); display: grid; place-items: center;
-  font-weight: 700; color: var(--color-bg); background: var(--color-accent); }
+  font-weight: 700; color: var(--color-bg); background: var(--color-accent); overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .avatar.sm { width: 30px; height: 30px; border-radius: var(--r-1); font-size: var(--font-size-sm); }
 .avatar.plus { background: var(--color-surface-mute); color: var(--color-accent); border: 1px dashed var(--color-accent-edge); }
 

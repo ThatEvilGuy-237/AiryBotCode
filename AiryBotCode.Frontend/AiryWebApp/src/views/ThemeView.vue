@@ -3,7 +3,7 @@
 // the @hive/ui image-theme engine, it PERSISTS (survives reload), and the image is the
 // panel profile picture. Still saves the derived accent as the bot's Discord-embed
 // brand colour. Replaces the old per-bot 2-colour picker, which no longer drove anything.
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { PageHeader, Card, Button, Badge, deriveThemeFromImage, applyTheme, type DerivedTheme } from '@hive/ui'
 import { saveImageTheme, clearImageTheme, loadImageTheme } from '../lib/imageTheme'
 import { extractPalette, pickPrimaryAccent } from '../lib/palette'
@@ -12,11 +12,20 @@ import { useBots } from '../lib/bots'
 
 const { currentBot, currentBotId, applyUpsert } = useBots()
 
-const stored = loadImageTheme()
-const imgSrc = ref<string | null>(stored?.image ?? null)
-const theme = ref<DerivedTheme | null>(stored?.theme ?? null)
+const imgSrc = ref<string | null>(null)
+const theme = ref<DerivedTheme | null>(null)
 const primaryHex = ref('')
 const accentHex = ref('')
+
+// Reflect the selected bot's saved theme — on first load and whenever the bot
+// changes (the panel itself is already re-themed by App.vue's watcher).
+watch(currentBotId, (id) => {
+  const stored = loadImageTheme(id)
+  imgSrc.value = stored?.image ?? null
+  theme.value = stored?.theme ?? null
+  primaryHex.value = ''
+  accentHex.value = ''
+}, { immediate: true })
 
 const busy = ref(false)
 const saving = ref(false)
@@ -56,12 +65,12 @@ function pick() { fileInput.value?.click() }
 function onDrop(e: DragEvent) { handleImage(e.dataTransfer?.files?.[0]) }
 
 async function save() {
-  if (!imgSrc.value || !theme.value) return
+  if (!imgSrc.value || !theme.value || !currentBotId.value) return
   saving.value = true; error.value = ''; success.value = false
-  // Persist the panel theme (survives reload) — image doubles as the profile pic.
-  saveImageTheme(imgSrc.value, theme.value)
-  // Also save the bot's embed brand colour, if a bot is selected.
-  if (currentBotId.value && primaryHex.value) {
+  // Persist THIS bot's theme (survives reload) — image doubles as its profile pic.
+  saveImageTheme(currentBotId.value, imgSrc.value, theme.value)
+  // Also save the bot's embed brand colour.
+  if (primaryHex.value) {
     try {
       const updated = await api.setTheme(currentBotId.value, primaryHex.value, accentHex.value || primaryHex.value)
       applyUpsert(updated)
@@ -74,7 +83,7 @@ async function save() {
 }
 
 function reset() {
-  clearImageTheme()
+  clearImageTheme(currentBotId.value)
   theme.value = null; imgSrc.value = null; primaryHex.value = ''; accentHex.value = ''
   if (currentBotId.value) api.setTheme(currentBotId.value, '', '').then(applyUpsert).catch(() => {})
 }
@@ -82,7 +91,7 @@ function reset() {
 
 <template>
   <div class="page">
-    <PageHeader title="Theme" :subtitle="currentBot ? `Theme the panel from an image — for ${currentBot.botName}` : 'Theme the panel from an image.'" />
+    <PageHeader title="Theme" :subtitle="currentBot ? `Theme the panel from an image — saved for ${currentBot.botName} (switching bots re-themes)` : 'Select a bot to theme.'" />
 
     <p v-if="error" class="banner err">{{ error }}</p>
     <p v-if="success" class="banner ok">Theme saved.</p>
@@ -95,7 +104,7 @@ function reset() {
         <span class="hd-sub">// the image sets the accent + surface tint, and is the profile picture</span>
         <div style="flex: 1" />
         <Button @click="pick">{{ imgSrc ? 'Change image' : 'Upload image' }}</Button>
-        <Button v-if="theme" variant="outline" :disabled="saving" @click="save">{{ saving ? 'Saving…' : 'Save' }}</Button>
+        <Button v-if="theme" variant="outline" :disabled="saving || !currentBotId" @click="save">{{ saving ? 'Saving…' : 'Save' }}</Button>
         <Button v-if="theme" variant="ghost" @click="reset">Reset</Button>
         <input ref="fileInput" type="file" accept="image/*" hidden @change="handleImage(($event.target as HTMLInputElement).files?.[0])" />
       </template>

@@ -9,11 +9,12 @@ import './style.css'
 import App from './App.vue'
 import { router } from './router'
 import { captureTokenFromHash, isAuthenticated, LOGIN_URL } from './lib/auth'
-import { applyStoredTheme } from './lib/imageTheme'
+import { applyStartupTheme } from './lib/imageTheme'
 
-// Re-apply the saved image-derived theme before mount so the panel renders themed
-// (no flash of the default look).
-applyStoredTheme()
+// Re-apply the last-active bot's saved image-derived theme before mount so the
+// panel renders themed (no flash of the default look). The per-bot theme is then
+// re-applied on every bot switch (App.vue watches currentBotId).
+applyStartupTheme()
 
 // Grab the JWT the API hands back via the #token=… redirect fragment BEFORE the
 // router guard runs, so the freshly-issued token is already in place.
