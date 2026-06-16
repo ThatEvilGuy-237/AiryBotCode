@@ -2,5 +2,9 @@
 **/obj
 **/node_modules
 **/dist
+# …but the vendored @hive/ui build is a committed dependency, not build output —
+# it must reach the build context so the panel's file: dep resolves at npm ci.
+!**/vendor/hive-ui/dist
+!**/vendor/hive-ui/dist/**
 .git
 .env
