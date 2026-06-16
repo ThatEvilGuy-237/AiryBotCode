@@ -36,6 +36,8 @@ namespace AiryBotCode.Infrastructure.Database.Persistence.Config
 
             builder.Property(bs => bs.ThemePrimary).IsRequired(false);
             builder.Property(bs => bs.ThemeAccent).IsRequired(false);
+            builder.Property(bs => bs.ThemeImage).IsRequired(false);
+            builder.Property(bs => bs.ThemeData).IsRequired(false);
 
 
         }

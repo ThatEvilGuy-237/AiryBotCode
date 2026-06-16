@@ -17,11 +17,15 @@ namespace AiryBotCode.Api.Controllers
         public string Password { get; set; }
     }
 
-    // Body for setting a bot's theme palette.
+    // Body for setting a bot's theme palette + (optional) server-side image theme.
     public class ThemeRequest
     {
         public string Primary { get; set; }
         public string Accent { get; set; }
+        // Downscaled data-URL of the chosen image (also the bot profile pic).
+        public string Image { get; set; }
+        // The derived @hive/ui theme as JSON (accent L/C/hue + base hue/chroma).
+        public string Data { get; set; }
     }
 
     // Reads/writes the real BotSettings table (the row a bot seeds on first run).
@@ -125,9 +129,42 @@ namespace AiryBotCode.Api.Controllers
 
             entity.ThemePrimary = NormalizeHex(body?.Primary);
             entity.ThemeAccent = NormalizeHex(body?.Accent);
+            // Server-side image theme (so it follows across devices). The frontend
+            // downscales the image before sending; cap defensively so a bot row
+            // can't be bloated. Empty image clears the stored theme.
+            entity.ThemeImage = NormalizeImage(body?.Image);
+            entity.ThemeData = string.IsNullOrWhiteSpace(body?.Data) ? null : body.Data;
             await _repository.UpdateAsync(entity);
             await _repository.SaveChangesAsync();
             return Ok(ToDto(entity));
+        }
+
+        // GET /api/settings/{botId}/theme -> the bot's full theme (palette + the
+        // server-stored image + derived theme JSON). Kept off the bot-list DTO so
+        // listing bots stays lean; fetched per-bot on demand.
+        [HttpGet("{botId}/theme")]
+        public async Task<IActionResult> GetTheme(string botId)
+        {
+            if (!ulong.TryParse(botId, out var id)) return BadRequest("Invalid bot id.");
+            var entity = await _repository.GetBotSettingAsync(id);
+            if (entity == null) return NotFound();
+            return Ok(new
+            {
+                primary = entity.ThemePrimary,
+                accent = entity.ThemeAccent,
+                image = entity.ThemeImage,
+                data = entity.ThemeData,
+            });
+        }
+
+        // Accept a data: image URL up to ~512KB; anything else (oversized / not a
+        // data URL) -> null so a malformed/huge payload can't bloat the row.
+        private static string NormalizeImage(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return null;
+            var v = value.Trim();
+            if (!v.StartsWith("data:image/", StringComparison.OrdinalIgnoreCase)) return null;
+            return v.Length > 512 * 1024 ? null : v;
         }
 
         // Accept "#rrggbb" / "rrggbb" (case-insensitive); anything else -> null.

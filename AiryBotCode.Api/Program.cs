@@ -82,7 +82,11 @@ if (app.Environment.IsDevelopment())
         if (db.Database.CanConnect())
         {
             db.Database.EnsureCreated();
-            Console.WriteLine("[DATABASE] Development: ensured schema (EnsureCreated).");
+            // Also apply the idempotent column/table patches the bot normally runs
+            // (the dev stack has no bot) so an existing dev DB gains new columns
+            // like BotSettings.ThemeImage/ThemeData.
+            AiryBotCode.Infrastructure.Database.Persistence.AIDbContext.EnsureNewerTables(db);
+            Console.WriteLine("[DATABASE] Development: ensured schema (EnsureCreated + patches).");
         }
     }
     catch (Exception ex)

@@ -5,7 +5,7 @@
 // brand colour. Replaces the old per-bot 2-colour picker, which no longer drove anything.
 import { ref, watch } from 'vue'
 import { PageHeader, Card, Button, Badge, deriveThemeFromImage, applyTheme, type DerivedTheme } from '@hive/ui'
-import { saveImageTheme, clearImageTheme, loadImageTheme } from '../lib/imageTheme'
+import { saveImageTheme, clearImageTheme, loadImageTheme, downscaleDataUrl } from '../lib/imageTheme'
 import { extractPalette, pickPrimaryAccent } from '../lib/palette'
 import { api, ApiError } from '../lib/api'
 import { useBots } from '../lib/bots'
@@ -18,13 +18,22 @@ const primaryHex = ref('')
 const accentHex = ref('')
 
 // Reflect the selected bot's saved theme — on first load and whenever the bot
-// changes (the panel itself is already re-themed by App.vue's watcher).
-watch(currentBotId, (id) => {
+// changes (the panel itself is already re-themed by App.vue's watcher). Show the
+// local cache instantly, then pull the server copy (cross-device) if present.
+watch(currentBotId, async (id) => {
   const stored = loadImageTheme(id)
   imgSrc.value = stored?.image ?? null
   theme.value = stored?.theme ?? null
   primaryHex.value = ''
   accentHex.value = ''
+  if (!id) return
+  try {
+    const t = await api.getTheme(id)
+    if (id === currentBotId.value && t.image && t.data) {
+      imgSrc.value = t.image
+      theme.value = JSON.parse(t.data) as DerivedTheme
+    }
+  } catch { /* offline / no server theme */ }
 }, { immediate: true })
 
 const busy = ref(false)
@@ -67,16 +76,22 @@ function onDrop(e: DragEvent) { handleImage(e.dataTransfer?.files?.[0]) }
 async function save() {
   if (!imgSrc.value || !theme.value || !currentBotId.value) return
   saving.value = true; error.value = ''; success.value = false
-  // Persist THIS bot's theme (survives reload) — image doubles as its profile pic.
+  // Local cache (instant, survives reload) — image doubles as its profile pic.
   saveImageTheme(currentBotId.value, imgSrc.value, theme.value)
-  // Also save the bot's embed brand colour.
-  if (primaryHex.value) {
-    try {
-      const updated = await api.setTheme(currentBotId.value, primaryHex.value, accentHex.value || primaryHex.value)
-      applyUpsert(updated)
-    } catch (e) {
-      error.value = e instanceof ApiError ? e.message : 'Theme applied, but saving the embed colour failed.'
-    }
+  // Server-side: a downscaled image + the derived theme JSON (so it follows
+  // across devices) plus the bot's embed brand colour.
+  try {
+    const small = await downscaleDataUrl(imgSrc.value, 256)
+    const updated = await api.setTheme(
+      currentBotId.value,
+      primaryHex.value || '',
+      accentHex.value || primaryHex.value || '',
+      small,
+      JSON.stringify(theme.value),
+    )
+    applyUpsert(updated)
+  } catch (e) {
+    error.value = e instanceof ApiError ? e.message : 'Theme applied locally, but saving to the server failed.'
   }
   saving.value = false
   if (!error.value) { success.value = true; setTimeout(() => (success.value = false), 3000) }

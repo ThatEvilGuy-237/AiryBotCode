@@ -3,7 +3,8 @@ import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
 import { useBots } from './lib/bots'
-import { applyThemeForBot } from './lib/imageTheme'
+import { applyThemeForBot, applyServerTheme } from './lib/imageTheme'
+import { api } from './lib/api'
 
 const navOpen = ref(false)
 const route = useRoute()
@@ -12,9 +13,20 @@ watch(() => route.path, () => (navOpen.value = false))
 
 // Theming is @hive/ui-driven (legacy tokens bridged in style.css). The image-derived
 // theme is PER BOT: applied at startup for the last-active bot (main.ts), and
-// re-applied here whenever the selected bot changes so the whole panel re-themes.
+// re-applied here whenever the selected bot changes. We apply the local cache first
+// (instant, no flash), then sync from the server so a theme set on another device
+// lands here too.
 const { currentBotId } = useBots()
-watch(currentBotId, (id) => applyThemeForBot(id))
+watch(currentBotId, async (id) => {
+  applyThemeForBot(id)
+  if (!id) return
+  try {
+    const t = await api.getTheme(id)
+    applyServerTheme(id, t.image, t.data)
+  } catch {
+    /* offline / no server theme — the local cache stands */
+  }
+})
 </script>
 
 <template>

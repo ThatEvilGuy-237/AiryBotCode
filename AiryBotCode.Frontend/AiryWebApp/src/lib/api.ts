@@ -131,14 +131,23 @@ export const api = {
     return res.ok
   },
 
-  /** Set a bot's theme palette (primary + accent hex). Returns the updated bot. */
-  async setTheme(botId: string, primary: string, accent: string): Promise<BotSetting> {
+  /** Set a bot's theme palette (primary + accent hex) and optionally the
+   * server-side image theme (downscaled data URL + derived-theme JSON, so it
+   * follows across devices). Returns the updated bot. */
+  async setTheme(botId: string, primary: string, accent: string, image?: string, data?: string): Promise<BotSetting> {
     const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}/theme`, {
       method: 'PUT',
-      body: JSON.stringify({ primary, accent }),
+      body: JSON.stringify({ primary, accent, image: image ?? null, data: data ?? null }),
     })
     if (!res.ok) throw new ApiError(res.status, `Could not save the theme (${res.status}).`)
     return (await res.json()) as BotSetting
+  },
+
+  /** Fetch a bot's full theme (palette + server-stored image + derived theme). */
+  async getTheme(botId: string): Promise<{ primary: string | null; accent: string | null; image: string | null; data: string | null }> {
+    const res = await authFetch(`/api/settings/${encodeURIComponent(botId)}/theme`)
+    if (!res.ok) throw new ApiError(res.status, `Could not load the theme (${res.status}).`)
+    return await res.json()
   },
 
   /** Remove a bot from the roster. */

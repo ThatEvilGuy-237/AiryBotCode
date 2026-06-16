@@ -63,7 +63,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
         // IF NOT EXISTS — so it's a safe no-op once the table is present. Column types
         // match EF/Npgsql exactly: ulong → numeric(20,0), DateTime(UtcNow) → timestamptz,
         // int Id → identity; unique index name matches the entity configuration.
-        private static void EnsureNewerTables(AIDbContext db)
+        public static void EnsureNewerTables(AIDbContext db)
         {
             const string sql = @"
                 CREATE TABLE IF NOT EXISTS ""UserConsents"" (
@@ -73,11 +73,16 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
                     ""AcceptedAt"" timestamp with time zone NOT NULL
                 );
                 CREATE UNIQUE INDEX IF NOT EXISTS ""IX_UserConsents_BotId_UserId""
-                    ON ""UserConsents"" (""BotId"", ""UserId"");";
+                    ON ""UserConsents"" (""BotId"", ""UserId"");
+
+                -- Per-bot server-side image theme (columns added after the table
+                -- already existed; EnsureCreated won't add them). Idempotent.
+                ALTER TABLE ""BotSettings"" ADD COLUMN IF NOT EXISTS ""ThemeImage"" text;
+                ALTER TABLE ""BotSettings"" ADD COLUMN IF NOT EXISTS ""ThemeData"" text;";
             try
             {
                 db.Database.ExecuteSqlRaw(sql);
-                Console.WriteLine("- Ensured UserConsents table.");
+                Console.WriteLine("- Ensured UserConsents table + BotSettings theme columns.");
             }
             catch (Exception ex)
             {
