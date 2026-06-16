@@ -9,6 +9,9 @@ node_modules
 dist
 dist-ssr
 *.local
+# …but the vendored @hive/ui build IS a committed dependency, not build output.
+!vendor/hive-ui/dist
+!vendor/hive-ui/dist/**
 
 # Editor directories and files
 .vscode/*

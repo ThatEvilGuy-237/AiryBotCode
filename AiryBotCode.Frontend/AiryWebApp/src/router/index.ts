@@ -6,6 +6,7 @@ import ThemeView from '../views/ThemeView.vue'
 import WebhooksView from '../views/WebhooksView.vue'
 import DatabasesView from '../views/DatabasesView.vue'
 import DatabaseView from '../views/DatabaseView.vue'
+import HiveUiView from '../views/HiveUiView.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -17,5 +18,6 @@ export const router = createRouter({
     { path: '/webhooks', name: 'webhooks', component: WebhooksView },
     { path: '/database', name: 'databases', component: DatabasesView },
     { path: '/database/:db', name: 'database', component: DatabaseView, props: true },
+    { path: '/hive-ui', name: 'hive-ui', component: HiveUiView },
   ],
 })

@@ -1,0 +1,106 @@
+/* Fonts ship with the tokens so every consumer app AND the showcase load them
+   identically — no per-app <link> needed. Space Grotesk = the fun sans,
+   Fira Code = mono. Swap the families here to retypeface the whole system. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+
+/* Aether-Sight theme — dark, purple-leaning, single user-pickable accent.
+   All colors are oklch() so swapping a hue is one var update.
+
+   Two hue knobs (override either on :root to retheme — the mechanism is
+   unchanged, only the default values lean purple now):
+     --accent-hue : the "live / selected / primary" color. Default 287 (the
+                    periwinkle purple ≈ #7c6af7).
+     --base-hue   : the tint of the dark surfaces / borders / text. Default 285.
+   Accent presets (hue): purple 287, cobalt 220, sky 240, mint 158, amber 82,
+   magenta 330, red 28.
+
+   Variable NAMES are stable — every component references these and inherits the
+   new look without edits (--color-bg/-2, --color-surface/-hi/-mute,
+   --color-border/-soft/-hi, --color-fg, --color-text-dim, --color-muted,
+   --color-text-ghost, --color-accent*, --color-ok/-warn/-danger/-plan,
+   --font-*, --space-*, --border, --radius, --r-1..4, --shadow-1/2). */
+
+:root {
+  /* ── Hue knobs (user-pickable; change to retheme) ───────────────────── */
+  --accent-hue: 287;   /* purple. cobalt 220, sky 240, mint 158, amber 82, magenta 330, red 28 */
+  --base-hue:   285;   /* tint of the dark surfaces (kept independent of the accent) */
+
+  /* ── Accent — one accent, no rainbows. Vivid periwinkle ≈ #7c6af7 ───── */
+  --color-accent:      oklch(0.66 0.17 var(--accent-hue));
+  --color-accent-mute: oklch(0.52 0.13 var(--accent-hue));        /* hover-darken / dim accent */
+  --color-accent-soft: oklch(0.66 0.17 var(--accent-hue) / 0.16); /* tinted fill (the test-ui "glow") */
+  --color-accent-edge: oklch(0.66 0.17 var(--accent-hue) / 0.45); /* accent border */
+
+  /* ── Base palette · dark, purple-tinted (≈ #0d0d14 → #1a1a28) ───────── */
+  --color-bg:           oklch(0.145 0.018 var(--base-hue));  /* page background, darkest */
+  --color-bg-2:         oklch(0.175 0.020 var(--base-hue));  /* topbar, sidebar, panels */
+  --color-surface:      oklch(0.215 0.024 var(--base-hue));  /* cards, rows */
+  --color-surface-hi:   oklch(0.255 0.028 var(--base-hue));  /* hover */
+  --color-surface-mute: oklch(0.190 0.022 var(--base-hue));  /* chips, inputs */
+
+  /* ── Borders (3 levels) ─────────────────────────────────────────────── */
+  --color-border:       oklch(0.305 0.025 var(--base-hue));
+  --color-border-soft:  oklch(0.245 0.020 var(--base-hue));
+  --color-border-hi:    oklch(0.400 0.030 var(--base-hue));
+
+  /* ── Text (4 contrast steps; lifted so secondary text isn't washed-out gray,
+       with a touch of lavender chroma so it reads intentional, not dull) ──── */
+  --color-fg:           oklch(0.925 0.012 var(--base-hue));  /* primary headings, values */
+  --color-text-dim:     oklch(0.800 0.022 var(--base-hue));  /* body, descriptions */
+  --color-muted:        oklch(0.660 0.055 var(--base-hue));  /* metadata, units */
+  --color-text-ghost:   oklch(0.500 0.045 var(--base-hue));  /* section eyebrows */
+
+  /* ── Semantic (match the source: success / amber / red) ─────────────── */
+  --color-ok:           oklch(0.76 0.13 158);
+  --color-warn:         oklch(0.80 0.12  75);
+  --color-danger:       oklch(0.63 0.18  22);
+  --color-plan:         oklch(0.60 0.05 var(--base-hue));
+
+  /* ── Namespace dots (shared map: Tools groups, Agents add-picker, Sessions
+       ops). web=blue, chronos=accent purple, file=ok green, memory=pink,
+       browser=warn amber. Keep this map identical everywhere a tool/op shows. */
+  --color-web:          oklch(0.72 0.12 225);
+  --color-mem:          oklch(0.72 0.13 330);
+
+  /* ── Typography — Space Grotesk (fun sans) + Fira Code (mono). Loaded via the
+       @import at the top of this file, so all apps render identically. System
+       fonts are the fallback chain if the webfont hasn't loaded yet. ───────── */
+  --font-family: "Space Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-ui:     var(--font-family);
+  --font-mono:   "Fira Code", "Cascadia Code", "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --font-size-xs:    12px;
+  --font-size-sm:    13px;
+  --font-size-base:  15px;
+  --font-size-lg:    19px;
+  --font-size-xl:    24px;
+
+  /* ── Spacing ────────────────────────────────────────────────────────── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+
+  /* ── Borders & radii (softer/rounder, leaning to the test-ui look) ──── */
+  --border: 1px solid var(--color-border);
+  --r-1: 4px;     /* tiny chips */
+  --r-2: 6px;     /* buttons / inputs */
+  --r-3: 10px;    /* cards */
+  --r-4: 14px;    /* hero containers */
+  --radius: 6px;  /* default (was 2px) — broad softening toward the rounded source look */
+
+  /* ── Shadows (structural only — no decorative glow) ─────────────────── */
+  --shadow-1: 0 1px 0 oklch(1 0 0 / 0.04) inset, 0 1px 2px oklch(0 0 0 / 0.4);
+  --shadow-2: 0 1px 0 oklch(1 0 0 / 0.05) inset, 0 8px 24px oklch(0 0 0 / 0.5);
+
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
