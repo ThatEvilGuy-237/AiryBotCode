@@ -11,7 +11,10 @@ FROM node:22-alpine AS frontend
 ARG API_BASE
 WORKDIR /app
 ENV VITE_API_BASE_URL=$API_BASE
+# vendor/ holds the vendored @hive/ui (a file: dependency) — it must be present
+# BEFORE npm ci so the local dependency resolves.
 COPY AiryBotCode.Frontend/AiryWebApp/package*.json ./
+COPY AiryBotCode.Frontend/AiryWebApp/vendor/ ./vendor/
 RUN npm ci
 COPY AiryBotCode.Frontend/AiryWebApp/ ./
 RUN npm run build
