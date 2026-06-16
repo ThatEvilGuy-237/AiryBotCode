@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -41,9 +42,14 @@ namespace AiryBotCode.Application.Services
                 author,
                 userId = authorId.ToString(),   // Discord user id → per-user memory in the Hive
                 channelId = channelId.ToString(),
-                // Image attachments (url/name/mime) for the agent's vision intake.
-                // Additive: Hive ignores it when empty / unsupported.
-                images = (images != null && images.Count > 0) ? images : null,
+                // Image attachments for the agent's vision intake. MUST use lowercase
+                // keys (url/name/mime): the Hive's FlowRunner.ReadImages reads them
+                // case-sensitively, but the ForwardedImage record serializes PascalCase
+                // (Url/Name/Mime) and would be silently dropped. Additive: Hive ignores
+                // it when empty.
+                images = (images != null && images.Count > 0)
+                    ? images.Select(i => new { url = i.Url, name = i.Name, mime = i.Mime }).ToList()
+                    : null,
             });
             var bytes = Encoding.UTF8.GetBytes(payload);
 
