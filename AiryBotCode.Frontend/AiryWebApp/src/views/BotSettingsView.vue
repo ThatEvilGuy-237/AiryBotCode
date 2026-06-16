@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
+import { PageHeader, Button } from '@hive/ui'
 import { token } from '../lib/auth'
 import { api } from '../lib/api'
 import { type BotSetting, emptyBotSetting } from '../types/botSetting'
@@ -125,29 +126,21 @@ async function removeBot(): Promise<void> {
 
 <template>
   <div class="page">
-    <header class="page-header">
-      <h1>{{ creating ? 'New bot' : currentBot?.botName || 'Settings' }}</h1>
-      <div v-if="token" class="header-actions">
-        <button type="button" class="restart-btn" :disabled="reloading" @click="reloadFleet">
-          {{ reloading ? 'Restarting…' : '⟳ Restart fleet' }}
-        </button>
-        <button
-          v-if="!creating && currentBot"
-          type="button"
-          class="delete-btn"
-          @click="removeBot"
-        >
-          Delete
-        </button>
-      </div>
-    </header>
+    <PageHeader :title="creating ? 'New bot' : currentBot?.botName || 'Settings'">
+      <template #actions>
+        <template v-if="token">
+          <Button variant="outline" :disabled="reloading" @click="reloadFleet">{{ reloading ? 'Restarting…' : '⟳ Restart fleet' }}</Button>
+          <Button v-if="!creating && currentBot" variant="ghost" @click="removeBot">Delete</Button>
+        </template>
+      </template>
+    </PageHeader>
 
-    <p v-if="reloadMsg" class="banner success">{{ reloadMsg }}</p>
+    <p v-if="reloadMsg" class="banner ok">{{ reloadMsg }}</p>
     <p v-if="!token" class="notice">Please log in on the Home page to manage bot settings.</p>
 
     <template v-else>
-      <div v-if="error" class="banner error">{{ error }}</div>
-      <div v-if="success" class="banner success">{{ creating ? 'Bot added.' : 'Settings saved.' }}</div>
+      <p v-if="error" class="banner err">{{ error }}</p>
+      <p v-if="success" class="banner ok">{{ creating ? 'Bot added.' : 'Settings saved.' }}</p>
 
       <SettingsForm
         v-if="creating || currentBot"
@@ -157,145 +150,16 @@ async function removeBot(): Promise<void> {
         :creating="creating"
         @save="save"
       />
-      <p v-else class="notice">
-        No bots yet — use <strong>New bot</strong> in the bot menu (top-left) to add one.
-      </p>
+      <p v-else class="notice">No bots yet — use <strong>New bot</strong> in the bot menu (top-left) to add one.</p>
     </template>
   </div>
 </template>
 
 <style scoped>
-.page {
-  padding: 2rem;
-}
-
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: 1.9rem;
-  background: linear-gradient(90deg, var(--foxfire), var(--violet));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.header-actions {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-}
-.add-btn {
-  background: linear-gradient(90deg, var(--foxfire), var(--foxfire-deep));
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 0.55rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px var(--shadow);
-  transition: filter 0.15s ease, transform 0.15s ease;
-}
-.add-btn:hover {
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-}
-.restart-btn {
-  background: var(--surface-2);
-  color: var(--foxfire-deep);
-  border: 1px solid var(--foxfire);
-  border-radius: 999px;
-  padding: 0.55rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-}
-.restart-btn:hover:not(:disabled) { background: var(--surface-hover); }
-.restart-btn:disabled { opacity: 0.55; cursor: default; }
-
-.content-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.delete-btn {
-  background: transparent;
-  border: 1px solid rgba(248, 113, 113, 0.5);
-  color: var(--danger-color);
-  border-radius: 8px;
-  padding: 0.45rem 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
-}
-.delete-btn:hover {
-  background: rgba(248, 113, 113, 0.12);
-}
-
-.notice {
-  color: var(--muted-color);
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 1.5rem;
-  align-items: start;
-}
-
-.content {
-  min-width: 0;
-}
-
-.content-title {
-  margin-bottom: 1rem;
-}
-
-.banner {
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-}
-
-.banner.error {
-  background-color: rgba(248, 113, 113, 0.12);
-  border: 1px solid rgba(248, 113, 113, 0.4);
-  color: var(--danger-color);
-}
-
-.banner.success {
-  background-color: rgba(74, 222, 128, 0.12);
-  border: 1px solid rgba(74, 222, 128, 0.4);
-  color: var(--success-color);
-}
-
-@media (max-width: 768px) {
-  .page {
-    padding: 1rem;
-  }
-  .page-header {
-    margin-bottom: 1rem;
-  }
-  .page-header h1 {
-    font-size: 1.5rem;
-  }
-  /* Stack the bot list above the editor instead of side-by-side. */
-  .layout {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
+.page { padding: 2rem; display: flex; flex-direction: column; gap: 1rem; max-width: 760px; }
+.notice { color: var(--color-muted); }
+.banner { border-radius: var(--radius); padding: .7rem 1rem; font-weight: 500; border: var(--border); }
+.banner.ok { color: var(--color-ok); background: var(--color-surface-mute); border-color: var(--color-accent-edge); }
+.banner.err { color: var(--color-danger); background: var(--color-surface-mute); }
+@media (max-width: 768px) { .page { padding: 1rem; } }
 </style>
