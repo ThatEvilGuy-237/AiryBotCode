@@ -11,13 +11,15 @@ bordered: boolean;
 padded: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_10: DefineComponent<__VLS_Props_23, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_23> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+declare const __VLS_component_10: DefineComponent<__VLS_Props_21, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_21> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_11: DefineComponent<__VLS_Props_29, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_29> & Readonly<{}>, {
+declare const __VLS_component_11: DefineComponent<__VLS_Props_23, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_23> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+declare const __VLS_component_12: DefineComponent<__VLS_Props_29, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_29> & Readonly<{}>, {
 variant: "new" | "draft" | "beta" | "todo";
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
 
-declare const __VLS_component_12: DefineComponent<__VLS_Props_31, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+declare const __VLS_component_13: DefineComponent<__VLS_Props_31, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 close: () => any;
 }, string, PublicProps, Readonly<__VLS_Props_31> & Readonly<{
 onClose?: (() => any) | undefined;
@@ -27,7 +29,7 @@ closeOnBackdrop: boolean;
 closeOnEsc: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
-declare const __VLS_component_13: DefineComponent<__VLS_Props_32, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+declare const __VLS_component_14: DefineComponent<__VLS_Props_32, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 cancel: () => any;
 confirm: () => any;
 }, string, PublicProps, Readonly<__VLS_Props_32> & Readonly<{
@@ -40,7 +42,7 @@ confirmText: string;
 cancelText: string;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
-declare const __VLS_component_14: DefineComponent<__VLS_Props_33, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+declare const __VLS_component_15: DefineComponent<__VLS_Props_33, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 close: () => any;
 }, string, PublicProps, Readonly<__VLS_Props_33> & Readonly<{
 onClose?: (() => any) | undefined;
@@ -49,21 +51,21 @@ width: number;
 side: "right" | "left";
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
-declare const __VLS_component_15: DefineComponent<__VLS_Props_42, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_42> & Readonly<{}>, {
+declare const __VLS_component_16: DefineComponent<__VLS_Props_42, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_42> & Readonly<{}>, {
 items: KeyValueItem[];
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDListElement>;
 
-declare const __VLS_component_16: DefineComponent<__VLS_Props_45, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+declare const __VLS_component_17: DefineComponent<__VLS_Props_45, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:modelValue": (v: string) => any;
 }, string, PublicProps, Readonly<__VLS_Props_45> & Readonly<{
 "onUpdate:modelValue"?: ((v: string) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_17: DefineComponent<__VLS_Props_46, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_46> & Readonly<{}>, {
+declare const __VLS_component_18: DefineComponent<__VLS_Props_46, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_46> & Readonly<{}>, {
 placement: "top" | "bottom";
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
 
-declare const __VLS_component_18: DefineComponent<__VLS_Props_47, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+declare const __VLS_component_19: DefineComponent<__VLS_Props_47, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:open": (v: boolean) => any;
 }, string, PublicProps, Readonly<__VLS_Props_47> & Readonly<{
 "onUpdate:open"?: ((v: boolean) => any) | undefined;
@@ -71,7 +73,18 @@ declare const __VLS_component_18: DefineComponent<__VLS_Props_47, {}, {}, {}, {}
 defaultOpen: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_19: DefineComponent<__VLS_Props_48, {
+declare const __VLS_component_2: DefineComponent<__VLS_Props_2, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+click: () => any;
+}, string, PublicProps, Readonly<__VLS_Props_2> & Readonly<{
+onClick?: (() => any) | undefined;
+}>, {
+type: "button" | "submit";
+variant: "solid" | "outline" | "ghost";
+size: "sm" | "md";
+disabled: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLButtonElement>;
+
+declare const __VLS_component_20: DefineComponent<__VLS_Props_48, {
 startPaletteDrag: typeof startPaletteDrag;
 }, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 select: (node: FlowNodeData) => any;
@@ -86,40 +99,29 @@ droppable: boolean;
 slotsEl: HTMLDivElement;
 }, HTMLDivElement>;
 
-declare const __VLS_component_2: DefineComponent<__VLS_Props_2, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
-click: () => any;
-}, string, PublicProps, Readonly<__VLS_Props_2> & Readonly<{
-onClick?: (() => any) | undefined;
-}>, {
-type: "button" | "submit";
-variant: "solid" | "outline" | "ghost";
-size: "sm" | "md";
-disabled: boolean;
-}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLButtonElement>;
-
 declare const __VLS_component_3: DefineComponent<__VLS_Props_3, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_3> & Readonly<{}>, {
 variant: "active" | "inactive" | "warning" | "danger";
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
 
-declare const __VLS_component_4: DefineComponent<__VLS_Props_12, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_12> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+declare const __VLS_component_4: DefineComponent<__VLS_Props_11, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_11> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLElement>;
 
-declare const __VLS_component_5: DefineComponent<__VLS_Props_13, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_13> & Readonly<{}>, {
+declare const __VLS_component_5: DefineComponent<__VLS_Props_12, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_12> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+declare const __VLS_component_6: DefineComponent<__VLS_Props_13, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_13> & Readonly<{}>, {
 dim: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_6: DefineComponent<__VLS_Props_14, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_14> & Readonly<{}>, {
+declare const __VLS_component_7: DefineComponent<__VLS_Props_14, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_14> & Readonly<{}>, {
 bordered: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_7: DefineComponent<__VLS_Props_17, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_17> & Readonly<{}>, {
+declare const __VLS_component_8: DefineComponent<__VLS_Props_17, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_17> & Readonly<{}>, {
 min: number;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-declare const __VLS_component_8: DefineComponent<__VLS_Props_19, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_19> & Readonly<{}>, {
+declare const __VLS_component_9: DefineComponent<__VLS_Props_19, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_19> & Readonly<{}>, {
 min: number;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
-
-declare const __VLS_component_9: DefineComponent<__VLS_Props_21, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_21> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
 /**
  * Box
@@ -149,6 +151,8 @@ declare type __VLS_Props_10 = {
  *
  * @prop serviceName - displayed on the left
  * @prop status      - "online" | "offline"
+ * @slot lead        - optional leading content before the name (e.g. a mobile
+ *                     menu toggle); omit it and the bar looks exactly as before
  *
  * Status: stable | Consumers: Wraith-Worker/frontend App.vue
  */
@@ -676,6 +680,7 @@ declare function __VLS_template(): {
 declare function __VLS_template_10(): {
     attrs: Partial<{}>;
     slots: {
+        glyph?(_: {}): any;
         default?(_: {}): any;
     };
     refs: {};
@@ -688,24 +693,24 @@ declare function __VLS_template_11(): {
         default?(_: {}): any;
     };
     refs: {};
-    rootEl: HTMLSpanElement;
+    rootEl: HTMLDivElement;
 };
 
 declare function __VLS_template_12(): {
     attrs: Partial<{}>;
     slots: {
-        header?(_: {}): any;
         default?(_: {}): any;
-        footer?(_: {}): any;
     };
     refs: {};
-    rootEl: any;
+    rootEl: HTMLSpanElement;
 };
 
 declare function __VLS_template_13(): {
     attrs: Partial<{}>;
     slots: {
+        header?(_: {}): any;
         default?(_: {}): any;
+        footer?(_: {}): any;
     };
     refs: {};
     rootEl: any;
@@ -714,9 +719,7 @@ declare function __VLS_template_13(): {
 declare function __VLS_template_14(): {
     attrs: Partial<{}>;
     slots: {
-        header?(_: {}): any;
         default?(_: {}): any;
-        footer?(_: {}): any;
     };
     refs: {};
     rootEl: any;
@@ -725,13 +728,24 @@ declare function __VLS_template_14(): {
 declare function __VLS_template_15(): {
     attrs: Partial<{}>;
     slots: {
+        header?(_: {}): any;
+        default?(_: {}): any;
+        footer?(_: {}): any;
+    };
+    refs: {};
+    rootEl: any;
+};
+
+declare function __VLS_template_16(): {
+    attrs: Partial<{}>;
+    slots: {
         default?(_: {}): any;
     };
     refs: {};
     rootEl: HTMLDListElement;
 };
 
-declare function __VLS_template_16(): {
+declare function __VLS_template_17(): {
     attrs: Partial<{}>;
     slots: {
         default?(_: {
@@ -742,7 +756,7 @@ declare function __VLS_template_16(): {
     rootEl: HTMLDivElement;
 };
 
-declare function __VLS_template_17(): {
+declare function __VLS_template_18(): {
     attrs: Partial<{}>;
     slots: {
         default?(_: {}): any;
@@ -751,24 +765,13 @@ declare function __VLS_template_17(): {
     rootEl: HTMLSpanElement;
 };
 
-declare function __VLS_template_18(): {
+declare function __VLS_template_19(): {
     attrs: Partial<{}>;
     slots: {
         header?(_: {}): any;
         default?(_: {}): any;
     };
     refs: {};
-    rootEl: HTMLDivElement;
-};
-
-declare function __VLS_template_19(): {
-    attrs: Partial<{}>;
-    slots: {
-        lead?(_: {}): any;
-    };
-    refs: {
-        slotsEl: HTMLDivElement;
-    };
     rootEl: HTMLDivElement;
 };
 
@@ -779,6 +782,17 @@ declare function __VLS_template_2(): {
     };
     refs: {};
     rootEl: HTMLButtonElement;
+};
+
+declare function __VLS_template_20(): {
+    attrs: Partial<{}>;
+    slots: {
+        lead?(_: {}): any;
+    };
+    refs: {
+        slotsEl: HTMLDivElement;
+    };
+    rootEl: HTMLDivElement;
 };
 
 declare function __VLS_template_3(): {
@@ -793,10 +807,10 @@ declare function __VLS_template_3(): {
 declare function __VLS_template_4(): {
     attrs: Partial<{}>;
     slots: {
-        actions?(_: {}): any;
+        lead?(_: {}): any;
     };
     refs: {};
-    rootEl: HTMLDivElement;
+    rootEl: HTMLElement;
 };
 
 declare function __VLS_template_5(): {
@@ -811,9 +825,7 @@ declare function __VLS_template_5(): {
 declare function __VLS_template_6(): {
     attrs: Partial<{}>;
     slots: {
-        head?(_: {}): any;
-        default?(_: {}): any;
-        foot?(_: {}): any;
+        actions?(_: {}): any;
     };
     refs: {};
     rootEl: HTMLDivElement;
@@ -822,7 +834,9 @@ declare function __VLS_template_6(): {
 declare function __VLS_template_7(): {
     attrs: Partial<{}>;
     slots: {
+        head?(_: {}): any;
         default?(_: {}): any;
+        foot?(_: {}): any;
     };
     refs: {};
     rootEl: HTMLDivElement;
@@ -840,7 +854,6 @@ declare function __VLS_template_8(): {
 declare function __VLS_template_9(): {
     attrs: Partial<{}>;
     slots: {
-        glyph?(_: {}): any;
         default?(_: {}): any;
     };
     refs: {};
@@ -870,6 +883,8 @@ declare type __VLS_TemplateResult_18 = ReturnType<typeof __VLS_template_18>;
 declare type __VLS_TemplateResult_19 = ReturnType<typeof __VLS_template_19>;
 
 declare type __VLS_TemplateResult_2 = ReturnType<typeof __VLS_template_2>;
+
+declare type __VLS_TemplateResult_20 = ReturnType<typeof __VLS_template_20>;
 
 declare type __VLS_TemplateResult_3 = ReturnType<typeof __VLS_template_3>;
 
@@ -957,6 +972,12 @@ declare type __VLS_WithTemplateSlots_2<T, S> = T & {
     };
 };
 
+declare type __VLS_WithTemplateSlots_20<T, S> = T & {
+    new (): {
+        $slots: S;
+    };
+};
+
 declare type __VLS_WithTemplateSlots_3<T, S> = T & {
     new (): {
         $slots: S;
@@ -1024,6 +1045,12 @@ export declare type AgentServerMessage = ToolCallMessage | ThoughtMessage | Fini
 
 /** The `request` payload of a `start` message — same shape as POST /agent's body.request. */
 export declare type AgentStartRequest = NonNullable<PostAgentData['body']>['request'];
+
+/** Apply a derived theme by setting the CSS custom properties. */
+export declare function applyTheme(theme: DerivedTheme, el?: HTMLElement): void;
+
+/** Convenience: load an image URL / data-URL, derive its theme, apply it, and return it. */
+export declare function applyThemeFromImageSrc(src: string, el?: HTMLElement): Promise<DerivedTheme>;
 
 declare type ArrayStyle = 'form' | 'spaceDelimited' | 'pipeDelimited';
 
@@ -1158,7 +1185,7 @@ declare type BuildUrlFn_3 = <TData extends {
 
 export declare const Button: __VLS_WithTemplateSlots_2<typeof __VLS_component_2, __VLS_TemplateResult_2["slots"]>;
 
-export declare const Card: __VLS_WithTemplateSlots_6<typeof __VLS_component_6, __VLS_TemplateResult_6["slots"]>;
+export declare const Card: __VLS_WithTemplateSlots_7<typeof __VLS_component_7, __VLS_TemplateResult_7["slots"]>;
 
 /** A memory bank (Chronos "catcher"): a named, versioned extract→store→recall pipeline. */
 export declare interface CatcherDto {
@@ -1197,6 +1224,13 @@ export declare interface CatcherDto {
     bm25Enabled: boolean;
     /** How dense + sparse hits are fused: simple concat or reciprocal rank fusion. */
     fusionStrategy: FusionStrategy;
+    /** Minimum vector similarity [0..1] a fact must score to be recalled. 0 = recall
+     *  anything; raise it so a bank with nothing relevant injects nothing. */
+    minRecallScore: number;
+    /** Reorder the retrieved candidate pool before injecting TopK. None = off. */
+    rerankStrategy: RerankStrategy;
+    /** When reranking, how many candidates to over-fetch before reranking to TopK. */
+    rerankCandidateCount: number;
     extractModel: string | null;
     dedupModel: string | null;
     consolidateModel: string | null;
@@ -1320,6 +1354,9 @@ export declare interface CatcherWriteRequest {
     vectorEnabled?: boolean;
     bm25Enabled?: boolean;
     fusionStrategy?: FusionStrategy;
+    minRecallScore?: number;
+    rerankStrategy?: RerankStrategy;
+    rerankCandidateCount?: number;
     extractModel?: string | null;
     dedupModel?: string | null;
     consolidateModel?: string | null;
@@ -1574,6 +1611,10 @@ export declare class ChronosService {
     listConsolidationRuns(catcherId: string, page?: number, pageSize?: number): Promise<ConsolidationRunDto[]>;
     /** Queue a re-embed: re-projects BM25 facts whose vectors are missing from Qdrant. Returns immediately (202). */
     reembed(id: string): Promise<void>;
+    /** Queue a full rebuild: drop + recreate the collection at the model's dims and re-embed EVERY fact. Returns immediately (202). */
+    rebuildVectors(id: string): Promise<void>;
+    /** Vector-store health for a bank: fact/vector counts + dims-match. Polled to show rebuild progress. */
+    vectorStatus(id: string): Promise<VectorStatus>;
     listFacts(catcherId: string, opts?: {
         access?: string;
         search?: string;
@@ -1599,6 +1640,12 @@ export declare class ChronosService {
         errorOnly?: boolean;
         limit?: number;
     }): Promise<ChronosTrace[]>;
+    /** Ordered user/assistant turns for a session id (the chat history to replay
+     *  when re-opening a past conversation). Empty when the session has none. */
+    getSessionHistory(sessionId: string, limit?: number): Promise<{
+        role: string;
+        content: string;
+    }[]>;
     listConversations(opts?: {
         limit?: number;
         offset?: number;
@@ -1647,7 +1694,13 @@ export declare interface ChronosTrace {
     durationMs: number;
     error: string | null;
     createdAt: string;
+    /** The facts actually recalled on a read (newline-joined), so the UI can show
+     *  what was recalled. Null when nothing matched or for write traces. */
+    recalledContent: string | null;
 }
+
+/** Clear an applied theme (revert to the stylesheet defaults). */
+export declare function clearTheme(el?: HTMLElement): void;
 
 declare type Client = Client_2<RequestFn, Config, MethodFn, BuildUrlFn, SseFn> & {
     interceptors: Middleware<Request, Response, unknown, ResolvedRequestOptions>;
@@ -1754,7 +1807,7 @@ copy: boolean;
 readonly: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-export declare const Collapsible: __VLS_WithTemplateSlots_18<typeof __VLS_component_18, __VLS_TemplateResult_18["slots"]>;
+export declare const Collapsible: __VLS_WithTemplateSlots_19<typeof __VLS_component_19, __VLS_TemplateResult_19["slots"]>;
 
 declare interface Config<T extends ClientOptions = ClientOptions> extends Omit<RequestInit, 'body' | 'headers' | 'method'>, Config_2 {
     /**
@@ -2046,7 +2099,7 @@ declare interface Config_6 {
 
 export declare type ConfigUpdate = PostConfigData['body'];
 
-export declare const ConfirmDialog: __VLS_WithTemplateSlots_13<typeof __VLS_component_13, __VLS_TemplateResult_13["slots"]>;
+export declare const ConfirmDialog: __VLS_WithTemplateSlots_14<typeof __VLS_component_14, __VLS_TemplateResult_14["slots"]>;
 
 declare interface ConsolidationOpDto {
     id: string;
@@ -2163,6 +2216,8 @@ declare interface DataSelection {
 export declare type DedupStrategy = 'Off' | 'Cosine' | 'Llm';
 
 declare type DedupStrategy_2 = 'Off' | 'Cosine' | 'Llm';
+
+export declare const DEFAULT_THEME: DerivedTheme;
 
 declare const deleteCatchersById: <ThrowOnError extends boolean = false>(options: Options_5<DeleteCatchersByIdData, ThrowOnError>) => RequestResult_3<DeleteCatchersByIdResponses, unknown, ThrowOnError>;
 
@@ -2284,6 +2339,17 @@ declare type DeleteToolboxesByIdResponses = {
     };
 };
 
+export declare interface DerivedTheme {
+    accentHue: number;
+    accentL: number;
+    accentC: number;
+    baseHue: number;
+    baseChroma: number;
+}
+
+/** Derive a theme from a *loaded* image element (downsamples it to read pixels). */
+export declare function deriveThemeFromImage(img: HTMLImageElement, sample?: number): DerivedTheme;
+
 declare function dismiss(id: number): void;
 
 export declare const Divider: DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<{}> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLHRElement>;
@@ -2313,7 +2379,7 @@ export declare type DragSource = {
     nodeId: string;
 };
 
-export declare const Drawer: __VLS_WithTemplateSlots_14<typeof __VLS_component_14, __VLS_TemplateResult_14["slots"]>;
+export declare const Drawer: __VLS_WithTemplateSlots_15<typeof __VLS_component_15, __VLS_TemplateResult_15["slots"]>;
 
 export declare interface DropEvent {
     source: DragSource;
@@ -2329,7 +2395,7 @@ export declare type DropTarget = {
     beforeNodeId: string | null;
 };
 
-export declare const EmptyState: __VLS_WithTemplateSlots_9<typeof __VLS_component_9, __VLS_TemplateResult_9["slots"]>;
+export declare const EmptyState: __VLS_WithTemplateSlots_10<typeof __VLS_component_10, __VLS_TemplateResult_10["slots"]>;
 
 declare type ErrInterceptor<Err, Res, Req, Options> = (error: Err, 
 /** response may be undefined due to a network error where no response object is produced */
@@ -2442,7 +2508,7 @@ export declare interface FinishedMessage {
     metadata?: Record<string, unknown>;
 }
 
-export declare const FlowCanvas: __VLS_WithTemplateSlots_19<typeof __VLS_component_19, __VLS_TemplateResult_19["slots"]>;
+export declare const FlowCanvas: __VLS_WithTemplateSlots_20<typeof __VLS_component_20, __VLS_TemplateResult_20["slots"]>;
 
 export declare const FlowConnector: DefineComponent<__VLS_Props_50, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_50> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
@@ -3142,7 +3208,7 @@ export declare interface KeyValueItem {
     value?: string | number | null;
 }
 
-export declare const KeyValueList: __VLS_WithTemplateSlots_15<typeof __VLS_component_15, __VLS_TemplateResult_15["slots"]>;
+export declare const KeyValueList: __VLS_WithTemplateSlots_16<typeof __VLS_component_16, __VLS_TemplateResult_16["slots"]>;
 
 /**
  * Walks the flow's control graph and produces an interleaved
@@ -3256,7 +3322,24 @@ declare interface Middleware_3<Req, Res, Err, Options> {
     response: Interceptors_3<ResInterceptor_3<Res, Req, Options>>;
 }
 
-export declare const Modal: __VLS_WithTemplateSlots_12<typeof __VLS_component_12, __VLS_TemplateResult_12["slots"]>;
+export declare const Modal: __VLS_WithTemplateSlots_13<typeof __VLS_component_13, __VLS_TemplateResult_13["slots"]>;
+
+/** A model advertised by a provider plus any stats the provider exposes. Stats
+ *  are non-null for providers with a rich model API (LM Studio); plain OpenAI
+ *  returns only `id`. */
+export declare interface ModelInfo {
+    id: string;
+    type: string | null;
+    contextLength: number | null;
+    loadedContextLength: number | null;
+    quantization: string | null;
+    state: string | null;
+    arch: string | null;
+    maxOutput: number | null;
+    /** USD per 1M tokens (input / output), when known. Null = unknown / local/free. */
+    inputPrice: number | null;
+    outputPrice: number | null;
+}
 
 export declare const ModelSelect: DefineComponent<__VLS_Props_35, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:modelValue": (v: string) => any;
@@ -3268,7 +3351,7 @@ disabled: boolean;
 placeholder: string;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-export declare const NewBadge: __VLS_WithTemplateSlots_11<typeof __VLS_component_11, __VLS_TemplateResult_11["slots"]>;
+export declare const NewBadge: __VLS_WithTemplateSlots_12<typeof __VLS_component_12, __VLS_TemplateResult_12["slots"]>;
 
 export declare const NodePalette: DefineComponent<__VLS_Props_51, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 close: () => any;
@@ -3395,7 +3478,7 @@ declare type Options_5<TData extends TDataShape_3 = TDataShape_3, ThrowOnError e
 
 declare type Options_6<TData extends TDataShape_3 = TDataShape_3, ThrowOnError extends boolean = boolean, TResponse = unknown, TResponseStyle extends ResponseStyle_3 = 'fields'> = OmitKeys_3<RequestOptions_3<TResponse, TResponseStyle, ThrowOnError>, 'body' | 'path' | 'query' | 'url'> & ([TData] extends [never] ? unknown : Omit<TData, 'url'>);
 
-export declare const PageHeader: __VLS_WithTemplateSlots_4<typeof __VLS_component_4, __VLS_TemplateResult_4["slots"]>;
+export declare const PageHeader: __VLS_WithTemplateSlots_5<typeof __VLS_component_5, __VLS_TemplateResult_5["slots"]>;
 
 export declare interface PaletteItem {
     /** Stable id. Same item dragged twice still has the same id. */
@@ -4254,6 +4337,10 @@ declare type RequestResult_3<TData = unknown, TError = unknown, ThrowOnError ext
     response?: Response;
 }>;
 
+/** How a bank reorders its retrieved candidate pool before injecting TopK.
+ *  None = fusion order is final; Llm = an LLM reranks by relevance. */
+export declare type RerankStrategy = 'None' | 'Llm';
+
 declare type ResInterceptor<Res, Req, Options> = (response: Res, request: Req, options: Options) => Res | Promise<Res>;
 
 declare type ResInterceptor_2<Res, Req, Options> = (response: Res, request: Req, options: Options) => Res | Promise<Res>;
@@ -4280,6 +4367,13 @@ declare type ResponseStyle = 'data' | 'fields';
 declare type ResponseStyle_2 = 'data' | 'fields';
 
 declare type ResponseStyle_3 = 'data' | 'fields';
+
+/** sRGB (0..255) → OKLCH { L: 0..1, C: ~0..0.4, H: 0..360 }. */
+export declare function rgbToOklch(r: number, g: number, b: number): {
+    L: number;
+    C: number;
+    H: number;
+};
 
 export declare interface SaveAgentRequest {
     name: string;
@@ -4633,7 +4727,7 @@ declare type SetEnabledRequest = {
     enabled?: boolean;
 };
 
-export declare const SettingRow: __VLS_WithTemplateSlots_10<typeof __VLS_component_10, __VLS_TemplateResult_10["slots"]>;
+export declare const SettingRow: __VLS_WithTemplateSlots_11<typeof __VLS_component_11, __VLS_TemplateResult_11["slots"]>;
 
 export declare const SidebarNav: DefineComponent<__VLS_Props_10, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_10> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLElement>;
 
@@ -4767,6 +4861,9 @@ export declare class SpineService {
     deleteProvider(id: string): Promise<void>;
     /** Live model ids advertised by a saved connection's provider. */
     listProviderModels(id: string): Promise<string[]>;
+    /** Like listProviderModels, but each model carries any stats the provider
+     *  exposes (context length, type, quantization, load state). */
+    listProviderModelInfo(id: string): Promise<ModelInfo[]>;
     /** Probes an embed model's vector dimension on a connection (one /embeddings call). */
     probeEmbedDims(connectionId: string, model: string): Promise<{
         dims: number;
@@ -4833,7 +4930,7 @@ export declare const Stat: DefineComponent<__VLS_Props_18, {}, {}, {}, {}, Compo
 accent: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-export declare const StatStrip: __VLS_WithTemplateSlots_8<typeof __VLS_component_8, __VLS_TemplateResult_8["slots"]>;
+export declare const StatStrip: __VLS_WithTemplateSlots_9<typeof __VLS_component_9, __VLS_TemplateResult_9["slots"]>;
 
 export declare const StatusBadge: DefineComponent<__VLS_Props_38, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_38> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
 
@@ -4879,7 +4976,7 @@ export declare interface TabItem {
     badge?: string | number;
 }
 
-export declare const Tabs: __VLS_WithTemplateSlots_16<typeof __VLS_component_16, __VLS_TemplateResult_16["slots"]>;
+export declare const Tabs: __VLS_WithTemplateSlots_17<typeof __VLS_component_17, __VLS_TemplateResult_17["slots"]>;
 
 export declare const Tag: DefineComponent<__VLS_Props_40, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 remove: () => any;
@@ -5049,7 +5146,7 @@ variant: "default" | "ok" | "warn" | "err";
 trend: "up" | "down" | "none";
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-export declare const TileGrid: __VLS_WithTemplateSlots_7<typeof __VLS_component_7, __VLS_TemplateResult_7["slots"]>;
+export declare const TileGrid: __VLS_WithTemplateSlots_8<typeof __VLS_component_8, __VLS_TemplateResult_8["slots"]>;
 
 export declare interface Toast {
     id: number;
@@ -5113,13 +5210,13 @@ export declare interface ToolResultMessage {
     results: ToolResult[];
 }
 
-export declare const ToolRow: __VLS_WithTemplateSlots_5<typeof __VLS_component_5, __VLS_TemplateResult_5["slots"]>;
+export declare const ToolRow: __VLS_WithTemplateSlots_6<typeof __VLS_component_6, __VLS_TemplateResult_6["slots"]>;
 
 export declare type ToolSchema = GetToolsResponse[number];
 
-export declare const Tooltip: __VLS_WithTemplateSlots_17<typeof __VLS_component_17, __VLS_TemplateResult_17["slots"]>;
+export declare const Tooltip: __VLS_WithTemplateSlots_18<typeof __VLS_component_18, __VLS_TemplateResult_18["slots"]>;
 
-export declare const TopBar: DefineComponent<__VLS_Props_11, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_11> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLElement>;
+export declare const TopBar: __VLS_WithTemplateSlots_4<typeof __VLS_component_4, __VLS_TemplateResult_4["slots"]>;
 
 export declare interface Trigger {
     id: string;
@@ -5256,6 +5353,111 @@ export declare interface VarItem {
     label: string;
     /** Optional tooltip explaining the variable. */
     desc?: string;
+}
+
+declare interface VectorStatus {
+    vectorEnabled: boolean;
+    totalFacts: number;
+    vectored: number;
+    missing: number;
+    embedModel: string;
+    embedDims: number;
+    collectionDims: number | null;
+    dimsMatch: boolean;
+}
+
+export declare class Webchannel {
+    private socket;
+    private readonly opts;
+    private readonly handlers;
+    private reconnectAttempts;
+    private closedByUser;
+    private reconnectTimer;
+    private readonly queue;
+    private _state;
+    constructor(opts: WebchannelOptions);
+    get state(): WebchannelState;
+    get connected(): boolean;
+    open(): void;
+    /** Send one chat turn. Queues if the channel isn't open yet. */
+    send(text: string, ctx?: {
+        sessionId?: string;
+        userId?: string;
+    }): void;
+    close(): void;
+    private setState;
+    private connect;
+    private scheduleReconnect;
+}
+
+export declare interface WebchannelHandlers {
+    onState?: (state: WebchannelState) => void;
+    onReady?: (info: {
+        agentId?: string;
+    }) => void;
+    onStatus?: (state: string) => void;
+    onReply?: (reply: WebchannelReply) => void;
+    onError?: (message: string) => void;
+}
+
+export declare interface WebchannelOptions {
+    /** Absolute (http/https/ws/wss) or relative ("/api/spine/...") endpoint path. */
+    url: string;
+    /** JWT — appended as ?token= on the upgrade (browsers can't set WS headers). */
+    token?: string | null;
+    handlers?: WebchannelHandlers;
+    /** Reconnect on unexpected close (default true). */
+    autoReconnect?: boolean;
+}
+
+export declare interface WebchannelReply {
+    text: string | null;
+    hadErrors: boolean;
+    error: string | null;
+    /** Per-run trace of what the agent assembled (skills/tools/memory), if the server sent one. */
+    trace: WebchannelTrace | null;
+}
+
+/**
+ * Webchannel — a friendly, message-shaped client over a raw WebSocket.
+ *
+ * The point: devs (and the UI) talk to a *channel* — `open()`, `send(text)`,
+ * `onReply(...)` — and never touch the socket, reconnection, framing, or the
+ * `?token=` auth dance. The raw WebSocket is hidden inside; this is the "hidden
+ * socket" the chat surfaces as a webchannel.
+ *
+ * Server protocol it speaks (Neural-Spine `/agents/{id}/webchannel`):
+ *   server → client: {type:"ready"} · {type:"status",state} · {type:"reply",text,hadErrors,error,trace} · {type:"error",message}
+ *   client → server: {text, sessionId?, userId?}
+ */
+export declare type WebchannelState = 'connecting' | 'open' | 'closed' | 'error';
+
+/** One tool the agent invoked this turn (from the run trace). */
+export declare interface WebchannelToolCall {
+    name: string;
+    arguments: string | null;
+    ok: boolean;
+    error: string | null;
+}
+
+/** What the run actually assembled — surfaced so the chat can show "what happened". */
+export declare interface WebchannelTrace {
+    skillsInjected: {
+        id: string;
+        name: string;
+    }[];
+    toolsMerged: string[];
+    memoryRecalled: boolean;
+    historyTurns: number;
+    provider: string | null;
+    model: string | null;
+    connection: string;
+    reinforcedSkillIds: string[];
+    finishReason: string | null;
+    toolCalls: WebchannelToolCall[] | null;
+    recalledPreview: string | null;
+    /** Merged tools Wraith doesn't advertise — the model can't actually use these. */
+    unknownTools: string[] | null;
 }
 
 /** Status: pending | running | completed | completedwitherrors | failed | cancelled. */

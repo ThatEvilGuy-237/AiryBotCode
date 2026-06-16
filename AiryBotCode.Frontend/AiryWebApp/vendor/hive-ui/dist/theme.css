@@ -21,40 +21,48 @@
    --font-*, --space-*, --border, --radius, --r-1..4, --shadow-1/2). */
 
 :root {
-  /* ── Hue knobs (user-pickable; change to retheme) ───────────────────── */
-  --accent-hue: 287;   /* purple. cobalt 220, sky 240, mint 158, amber 82, magenta 330, red 28 */
-  --base-hue:   285;   /* tint of the dark surfaces (kept independent of the accent) */
+  /* ── Theme knobs — set these (e.g. derived from an image via deriveThemeFromImage)
+       to retheme the WHOLE page, not just one hue. Defaults reproduce the original
+       purple look. The accent exposes L+C+H (not only hue) so a derived theme matches
+       an image's exact standout colour at its real vividness; --base-chroma scales how
+       strongly every dark surface/border/text tints toward --base-hue. Every component
+       reads the derived --color-* tokens below, so they ALL retheme with zero edits. ── */
+  --accent-hue: 287;     /* cobalt 220, sky 240, mint 158, amber 82, magenta 330, red 28 */
+  --accent-l:   0.66;    /* accent lightness */
+  --accent-c:   0.17;    /* accent chroma (vividness) */
+  --base-hue:   285;     /* tint of the dark surfaces (independent of the accent) */
+  --base-chroma: 1;      /* multiplier on surface/border/text tint strength (0 = neutral grey) */
 
-  /* ── Accent — one accent, no rainbows. Vivid periwinkle ≈ #7c6af7 ───── */
-  --color-accent:      oklch(0.66 0.17 var(--accent-hue));
-  --color-accent-mute: oklch(0.52 0.13 var(--accent-hue));        /* hover-darken / dim accent */
-  --color-accent-soft: oklch(0.66 0.17 var(--accent-hue) / 0.16); /* tinted fill (the test-ui "glow") */
-  --color-accent-edge: oklch(0.66 0.17 var(--accent-hue) / 0.45); /* accent border */
+  /* ── Accent — one accent, no rainbows. Derived from --accent-l / -c / -hue ── */
+  --color-accent:      oklch(var(--accent-l) var(--accent-c) var(--accent-hue));
+  --color-accent-mute: oklch(calc(var(--accent-l) - 0.14) calc(var(--accent-c) - 0.04) var(--accent-hue)); /* hover-darken */
+  --color-accent-soft: oklch(var(--accent-l) var(--accent-c) var(--accent-hue) / 0.16);                    /* tinted fill */
+  --color-accent-edge: oklch(var(--accent-l) var(--accent-c) var(--accent-hue) / 0.45);                    /* accent border */
 
-  /* ── Base palette · dark, purple-tinted (≈ #0d0d14 → #1a1a28) ───────── */
-  --color-bg:           oklch(0.145 0.018 var(--base-hue));  /* page background, darkest */
-  --color-bg-2:         oklch(0.175 0.020 var(--base-hue));  /* topbar, sidebar, panels */
-  --color-surface:      oklch(0.215 0.024 var(--base-hue));  /* cards, rows */
-  --color-surface-hi:   oklch(0.255 0.028 var(--base-hue));  /* hover */
-  --color-surface-mute: oklch(0.190 0.022 var(--base-hue));  /* chips, inputs */
+  /* ── Base palette · dark, tinted toward --base-hue at --base-chroma strength ── */
+  --color-bg:           oklch(0.145 calc(0.018 * var(--base-chroma)) var(--base-hue));  /* page bg, darkest */
+  --color-bg-2:         oklch(0.175 calc(0.020 * var(--base-chroma)) var(--base-hue));  /* topbar, sidebar, panels */
+  --color-surface:      oklch(0.215 calc(0.024 * var(--base-chroma)) var(--base-hue));  /* cards, rows */
+  --color-surface-hi:   oklch(0.255 calc(0.028 * var(--base-chroma)) var(--base-hue));  /* hover */
+  --color-surface-mute: oklch(0.190 calc(0.022 * var(--base-chroma)) var(--base-hue));  /* chips, inputs */
 
   /* ── Borders (3 levels) ─────────────────────────────────────────────── */
-  --color-border:       oklch(0.305 0.025 var(--base-hue));
-  --color-border-soft:  oklch(0.245 0.020 var(--base-hue));
-  --color-border-hi:    oklch(0.400 0.030 var(--base-hue));
+  --color-border:       oklch(0.305 calc(0.025 * var(--base-chroma)) var(--base-hue));
+  --color-border-soft:  oklch(0.245 calc(0.020 * var(--base-chroma)) var(--base-hue));
+  --color-border-hi:    oklch(0.400 calc(0.030 * var(--base-chroma)) var(--base-hue));
 
-  /* ── Text (4 contrast steps; lifted so secondary text isn't washed-out gray,
-       with a touch of lavender chroma so it reads intentional, not dull) ──── */
-  --color-fg:           oklch(0.925 0.012 var(--base-hue));  /* primary headings, values */
-  --color-text-dim:     oklch(0.800 0.022 var(--base-hue));  /* body, descriptions */
-  --color-muted:        oklch(0.660 0.055 var(--base-hue));  /* metadata, units */
-  --color-text-ghost:   oklch(0.500 0.045 var(--base-hue));  /* section eyebrows */
+  /* ── Text (4 contrast steps; secondary text keeps a touch of tint so it reads
+       intentional, not dull — scales with --base-chroma) ──────────────────── */
+  --color-fg:           oklch(0.925 calc(0.012 * var(--base-chroma)) var(--base-hue));  /* headings, values */
+  --color-text-dim:     oklch(0.800 calc(0.022 * var(--base-chroma)) var(--base-hue));  /* body, descriptions */
+  --color-muted:        oklch(0.660 calc(0.055 * var(--base-chroma)) var(--base-hue));  /* metadata, units */
+  --color-text-ghost:   oklch(0.500 calc(0.045 * var(--base-chroma)) var(--base-hue));  /* section eyebrows */
 
-  /* ── Semantic (match the source: success / amber / red) ─────────────── */
+  /* ── Semantic — fixed MEANING (success / amber / red), NOT themed by the image ── */
   --color-ok:           oklch(0.76 0.13 158);
   --color-warn:         oklch(0.80 0.12  75);
   --color-danger:       oklch(0.63 0.18  22);
-  --color-plan:         oklch(0.60 0.05 var(--base-hue));
+  --color-plan:         oklch(0.60 calc(0.05 * var(--base-chroma)) var(--base-hue));
 
   /* ── Namespace dots (shared map: Tools groups, Agents add-picker, Sessions
        ops). web=blue, chronos=accent purple, file=ok green, memory=pink,
