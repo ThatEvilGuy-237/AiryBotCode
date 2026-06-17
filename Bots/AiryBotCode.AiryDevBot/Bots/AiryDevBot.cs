@@ -73,11 +73,16 @@ namespace AiryBotCode.Bot.Bots
             // Assign Event liseners
             Console.WriteLine("[INFO] Hooking up Discord events...");
             _client.Ready += _slashCommandHandler.RegisterCommandsAsync;
-            _client.MessageReceived += _messageSendHandler.HandelMessageSend;
-            _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
-            _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
-            _client.ModalSubmitted += _formHandler.HandleFormInteraction;
-            _client.UserBanned += _banHandler.HandleInteractionAsync;
+            // Offload handlers to the thread pool so NONE of them block the single gateway
+            // task. MessageReceived forwards to the Hive and waits on the run; if it ran inline
+            // it would stall the gateway, so a button press couldn't be dispatched within
+            // Discord's 3s ack window → "This interaction failed". Returning immediately keeps
+            // the gateway free; the interaction handlers then DeferAsync promptly.
+            _client.MessageReceived      += m => { _ = Task.Run(() => _messageSendHandler.HandelMessageSend(m)); return Task.CompletedTask; };
+            _client.SlashCommandExecuted += c => { _ = Task.Run(() => _slashCommandHandler.HandleInteractionAsync(c)); return Task.CompletedTask; };
+            _client.ButtonExecuted       += c => { _ = Task.Run(() => _buttonPressHandler.HandleButtonInteraction(c)); return Task.CompletedTask; };
+            _client.ModalSubmitted       += m => { _ = Task.Run(() => _formHandler.HandleFormInteraction(m)); return Task.CompletedTask; };
+            _client.UserBanned           += (u, g) => { _ = Task.Run(() => _banHandler.HandleInteractionAsync(u, g)); return Task.CompletedTask; };
 
             // Hive effect passthrough (opt-in): when a tools-WS url is configured,
             // subscribe to the Hive's outbound agent effects (the `say` tool's
