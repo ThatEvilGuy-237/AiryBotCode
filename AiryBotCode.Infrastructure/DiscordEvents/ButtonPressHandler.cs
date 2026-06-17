@@ -55,6 +55,14 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     .FirstOrDefault(b => b.CustomId == buttonValue)?.Label
                     ?? (data.Action ?? "");
 
+                // ACK the click FIRST (within Discord's 3s window) as a deferred message
+                // update. Sending the answer back over the Hive WS can take longer than 3s
+                // (and stalls during a WS reconnect); without this, Discord shows
+                // "This interaction failed" AND re-delivers the click, firing this handler
+                // twice (a duplicate effect_response). After deferring we have ~15 min to
+                // edit the original message via ModifyOriginalResponseAsync.
+                await component.DeferAsync();
+
                 using var scope = _serviceProvider.CreateScope();
                 var sender = scope.ServiceProvider.GetService<IHiveResponseSender>();
                 var sent = sender != null && !string.IsNullOrEmpty(effectId)
@@ -62,7 +70,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 
                 var note = sent ? $"\n\n*You chose: **{answer}***"
                                 : "\n\n*(Couldn't reach Airy — the question may have timed out.)*";
-                await component.UpdateAsync(m =>
+                await component.ModifyOriginalResponseAsync(m =>
                 {
                     m.Content = (component.Message?.Content ?? "") + note;
                     m.Components = new Discord.ComponentBuilder().Build();
