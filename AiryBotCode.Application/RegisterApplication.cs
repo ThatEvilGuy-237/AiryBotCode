@@ -31,6 +31,9 @@ namespace AiryBotCode.Application
             services.AddScoped<Features.SpamCatcher.SpamCatcherCommand>();
             // Per-user spam sliding-window state — shared across message handlers.
             services.AddSingleton<Features.SpamCatcher.SpamTracker>();
+            services.AddScoped<Features.Leveling.LevelingCommand>();
+            // Per-user XP cooldown gate — shared across message handlers.
+            services.AddSingleton<Features.Leveling.XpCooldown>();
             // SERVICES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();

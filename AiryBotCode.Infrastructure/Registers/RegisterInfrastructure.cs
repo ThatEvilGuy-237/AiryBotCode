@@ -27,6 +27,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<IBotCommandRepository, BotCommandRepository>();
             services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
             services.AddScoped<IUserConsentRepository, UserConsentRepository>();
+            services.AddScoped<ILevelUserRepository, LevelUserRepository>();
             // DbContext
             services = AIDbContext.registerDbContext(services);
             // Other
@@ -70,6 +71,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<ContactUserAction>();
             services.AddScoped<GiveawayAction>();
             services.AddScoped<SpamCatcherAction>();
+            services.AddScoped<LevelingAction>();
             return services;
         }
     }
