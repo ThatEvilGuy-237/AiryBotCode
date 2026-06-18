@@ -69,6 +69,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<VerifyUserAgeAction>();
             services.AddScoped<ContactUserAction>();
             services.AddScoped<GiveawayAction>();
+            services.AddScoped<SpamCatcherAction>();
             return services;
         }
     }

@@ -28,6 +28,9 @@ namespace AiryBotCode.Application
             services.AddScoped<VerifyUserAgeCommand>();
             services.AddScoped<ContactUserCommand>();
             services.AddScoped<GiveawayCommand>();
+            services.AddScoped<Features.SpamCatcher.SpamCatcherCommand>();
+            // Per-user spam sliding-window state — shared across message handlers.
+            services.AddSingleton<Features.SpamCatcher.SpamTracker>();
             // SERVICES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();

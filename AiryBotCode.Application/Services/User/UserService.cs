@@ -74,6 +74,14 @@ namespace AiryBotCode.Application.Services.User
             var timeoutDuration = TimeSpan.FromMinutes(durationMinutes);
             await target.SetTimeOutAsync(timeoutDuration);
         }
+        // Overload for non-interaction callers (e.g. the spam catcher reacting to a
+        // message rather than a slash command).
+        public async Task TimeOutUser(SocketGuildUser target, int durationMinutes)
+        {
+            if (target == null) return;
+            await target.SetTimeOutAsync(TimeSpan.FromMinutes(durationMinutes));
+        }
+
         public async Task UntimeOut(SocketInteraction command, SocketGuildUser target)
         {
             if (target == null)
