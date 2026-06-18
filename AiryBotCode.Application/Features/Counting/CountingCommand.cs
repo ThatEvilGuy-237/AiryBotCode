@@ -84,9 +84,7 @@ namespace AiryBotCode.Application.Features.Counting
         {
             if (CountingChannelId == 0) return;
             if (message.Channel.Id != CountingChannelId) return;
-            if (message.Author.IsBot) return;
-            if (message is not SocketUserMessage) return;
-            if (message.Author is not SocketGuildUser member) return;
+            if (!MessageGuard.TryGuildMessage(message, out var member, out _)) return;
 
             var content = message.Content?.Trim() ?? "";
             if (content.Length == 0) return;

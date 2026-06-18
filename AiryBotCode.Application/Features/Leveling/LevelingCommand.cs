@@ -99,10 +99,7 @@ namespace AiryBotCode.Application.Features.Leveling
 
         public async Task HandleMessageAsync(SocketMessage message)
         {
-            if (message.Author.IsBot) return;
-            if (message is not SocketUserMessage) return;
-            if (message.Channel is not SocketGuildChannel) return;
-            if (message.Author is not SocketGuildUser member) return;
+            if (!MessageGuard.TryGuildMessage(message, out var member, out _)) return;
 
             // No-XP zones.
             if (NoXpChannelIds.Contains(message.Channel.Id)) return;

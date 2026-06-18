@@ -65,10 +65,7 @@ namespace AiryBotCode.Application.Features.SpamCatcher
 
             // Guild text messages from real members only (bots are already filtered
             // upstream, but guard anyway).
-            if (message.Author.IsBot) return;
-            if (message is not SocketUserMessage) return;
-            if (message.Channel is not SocketGuildChannel guildChannel) return;
-            if (message.Author is not SocketGuildUser member) return;
+            if (!MessageGuard.TryGuildMessage(message, out var member, out var guildChannel)) return;
 
             // Only members who hold the monitored role are watched.
             if (!member.Roles.Any(r => r.Id == MonitoredRoleId)) return;
