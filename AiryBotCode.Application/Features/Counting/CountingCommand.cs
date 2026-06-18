@@ -121,10 +121,26 @@ namespace AiryBotCode.Application.Features.Counting
                 state.LastMessageId = message.Id;
                 if (TrackHighScore && expected > state.HighScore) state.HighScore = expected;
 
-                if (BossesEnabled && IsMilestone(expected))
-                    await TrySpawnBossAsync(message, expected, state);
+                // No Hive connection → no boss; counting just continues.
+                var spawningBoss = BossesEnabled && IsMilestone(expected) && _hive.IsConnected;
+                if (spawningBoss)
+                {
+                    state.BossActive = true;
+                    state.BossAnswer = null;            // pending until the Hive sends it
+                    state.BossSpawnedAt = DateTime.UtcNow;
+                }
 
+                // Persist BEFORE notifying the Hive: the counting_boss_answer comes
+                // straight back, and the sink (a separate scope) must find BossActive
+                // already committed or it would drop the answer and soft-lock the boss.
                 await repo.SaveAsync(state);
+
+                if (spawningBoss)
+                    await _hive.SendEventAsync(
+                        "counting_boss",
+                        new { channelId = message.Channel.Id.ToString(), milestone = expected },
+                        message.Channel.Id.ToString());
+
                 if (ReactOnSuccess) await TryReactAsync(message);
             }
             else
@@ -160,22 +176,6 @@ namespace AiryBotCode.Application.Features.Counting
         }
 
         // ---------------------------------------------------------------- bosses
-
-        private async Task TrySpawnBossAsync(SocketMessage message, long milestone, CountingState state)
-        {
-            // No Hive → no boss; counting just continues normally.
-            if (!_hive.IsConnected) return;
-
-            var ok = await _hive.SendEventAsync(
-                "counting_boss",
-                new { channelId = message.Channel.Id.ToString(), milestone },
-                message.Channel.Id.ToString());
-            if (!ok) return;
-
-            state.BossActive = true;
-            state.BossAnswer = null;            // pending until Airy sends the answer
-            state.BossSpawnedAt = DateTime.UtcNow;
-        }
 
         private async Task HandleBossAttemptAsync(
             SocketMessage message, SocketGuildUser member, double value, CountingState state, ICountingStateRepository repo)
