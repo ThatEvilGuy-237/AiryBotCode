@@ -133,10 +133,23 @@ migrations in this project).
 
 ## 7. Build order & status
 
-1. **Math MCP container** + Wraith wiring (The-Hive) — *in progress*.
+1. **Math MCP container** + Wraith wiring (The-Hive) — ✅ done.
 2. **Bot side**: `CountingMath`, counting engine, boss state machine, the
-   `SendEventAsync` gateway addition, fallback (AiryBotCode).
-3. **Hive glue**: `counting_*` trigger handling + Airy boss prompt (depends on 1 & 2).
+   `SendEventAsync` gateway addition, fallback (AiryBotCode) — ✅ done.
+3. **Hive glue**: `counting_*` handling in Wraith's `ToolWsServer` via
+   `CountingBridge` — ✅ done. On `counting_boss` it generates the puzzle with the
+   `math_problem` MCP tool (difficulty scales with the milestone) and broadcasts a
+   `say` effect + a `counting_boss_answer`; `counting_fail` / `counting_boss_defeated`
+   broadcast a `say`. End-to-end functional.
+
+### Remaining polish — true "Airy voice"
+
+Part 3 currently uses varied **templated** lines generated in Wraith (the boss math
+is real, via the MCP). To have the fail/boss text actually written *by Airy* (her
+persona), route the `counting_*` events through **Neural-Spine** as a short agent
+run (Airy uses `math_problem`/`math_eval` herself, `say`s the result, and reports
+the boss answer via a small effect tool). Deferred because it needs the Spine
+flow/agent contract; the current bridge is the drop-in seam to swap.
 
 Opt-in everywhere: disabled per-bot by default; prod `AiryBot`'s hardcoded action
 list is unchanged.
