@@ -16,6 +16,7 @@ namespace AiryBotCode.Application.Hive
         private readonly string _wsUrl;
         private readonly MessagePacer _pacer;
         private readonly IAskDelivery? _askDelivery;
+        private readonly ICountingBossSink? _bossSink;
         private readonly Action<string>? _log;
 
         // The currently-connected socket, set on each (re)connect and cleared on drop.
@@ -23,15 +24,16 @@ namespace AiryBotCode.Application.Hive
         private ClientWebSocket? _activeSocket;
         private readonly SemaphoreSlim _sendLock = new(1, 1);
 
-        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null)
-            : this(wsUrl, new MessagePacer(delivery), log, askDelivery) { }
+        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null)
+            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink) { }
 
         // Test/advanced ctor: supply a pacer (e.g. with a fake clock).
-        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null)
+        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null)
         {
             _wsUrl = wsUrl;
             _pacer = pacer;
             _askDelivery = askDelivery;
+            _bossSink = bossSink;
             _log = log;
         }
 
@@ -95,7 +97,14 @@ namespace AiryBotCode.Application.Hive
             {
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
-                if (!root.TryGetProperty("type", out var t) || t.GetString() != "effect") return Task.CompletedTask;
+                var frameType = root.TryGetProperty("type", out var t) ? t.GetString() : null;
+
+                // Inbound mini-boss answer: Airy generated a puzzle and sends back the
+                // expected answer for the bot to judge against. Frame:
+                //   { type:"counting_boss_answer", context:{ sessionId:<channelId> }, payload:{ answer:<number> } }
+                if (frameType == "counting_boss_answer") return HandleBossAnswer(root, ct);
+
+                if (frameType != "effect") return Task.CompletedTask;
 
                 var call = root.GetProperty("call");
                 var name = call.TryGetProperty("name", out var n) ? n.GetString() : null;
@@ -170,6 +179,43 @@ namespace AiryBotCode.Application.Hive
             catch (Exception ex)
             {
                 _log?.Invoke($"[HiveEffects] effect_response send failed: {ex.Message}");
+                return false;
+            }
+            finally { _sendLock.Release(); }
+        }
+
+        // Parse a counting_boss_answer frame and hand the answer to the sink.
+        private Task HandleBossAnswer(JsonElement root, CancellationToken ct)
+        {
+            if (_bossSink is null) return Task.CompletedTask;
+            var sessionId = root.TryGetProperty("context", out var c) && c.ValueKind == JsonValueKind.Object
+                && c.TryGetProperty("sessionId", out var s) ? s.GetString() : null;
+            double? answer = root.TryGetProperty("payload", out var p) && p.ValueKind == JsonValueKind.Object
+                && p.TryGetProperty("answer", out var a) && a.ValueKind == JsonValueKind.Number ? a.GetDouble() : null;
+            if (sessionId is null || answer is null || !ulong.TryParse(sessionId, out var channelId))
+                return Task.CompletedTask;
+            return _bossSink.SetBossAnswerAsync(channelId, answer.Value, ct);
+        }
+
+        /// <summary>Send an arbitrary event frame upstream over the live socket.</summary>
+        public async Task<bool> SendEventAsync(string type, object payload, string? sessionId, CancellationToken ct = default)
+        {
+            var ws = _activeSocket;
+            if (ws is null || ws.State != WebSocketState.Open) return false;
+
+            var frame = JsonSerializer.Serialize(new { type, payload, context = new { sessionId } });
+
+            await _sendLock.WaitAsync(ct);
+            try
+            {
+                if (ws.State != WebSocketState.Open) return false;
+                await SendAsync(ws, frame, ct);
+                _log?.Invoke($"[HiveEffects] event '{type}' sent");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _log?.Invoke($"[HiveEffects] event '{type}' send failed: {ex.Message}");
                 return false;
             }
             finally { _sendLock.Release(); }

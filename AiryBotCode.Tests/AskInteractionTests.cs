@@ -131,6 +131,8 @@ namespace AiryBotCode.Tests
             public bool IsConnected => true;
             public Task<bool> SendAnswerAsync(string effectId, string answer, string? sessionId, string? userId, CancellationToken ct = default)
             { Last = (effectId, answer); return Task.FromResult(true); }
+            public Task<bool> SendEventAsync(string type, object payload, string? sessionId, CancellationToken ct = default)
+                => Task.FromResult(true);
         }
     }
 }

@@ -18,5 +18,8 @@ namespace AiryBotCode.Application.Hive
 
         public Task<bool> SendAnswerAsync(string effectId, string answer, string? sessionId, string? userId, CancellationToken ct = default)
             => _inner?.SendAnswerAsync(effectId, answer, sessionId, userId, ct) ?? Task.FromResult(false);
+
+        public Task<bool> SendEventAsync(string type, object payload, string? sessionId, CancellationToken ct = default)
+            => _inner?.SendEventAsync(type, payload, sessionId, ct) ?? Task.FromResult(false);
     }
 }

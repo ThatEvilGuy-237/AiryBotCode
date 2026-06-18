@@ -34,6 +34,7 @@ namespace AiryBotCode.Application
             services.AddScoped<Features.Leveling.LevelingCommand>();
             // Per-user XP cooldown gate — shared across message handlers.
             services.AddSingleton<Features.Leveling.XpCooldown>();
+            services.AddScoped<Features.Counting.CountingCommand>();
             // SERVICES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();

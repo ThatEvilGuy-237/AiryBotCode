@@ -28,6 +28,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
             services.AddScoped<IUserConsentRepository, UserConsentRepository>();
             services.AddScoped<ILevelUserRepository, LevelUserRepository>();
+            services.AddScoped<ICountingStateRepository, CountingStateRepository>();
             // DbContext
             services = AIDbContext.registerDbContext(services);
             // Other
@@ -52,6 +53,8 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddSingleton<AiryBotCode.Application.Hive.HiveEffectGateway>();
             services.AddSingleton<AiryBotCode.Application.Hive.IHiveResponseSender>(
                 sp => sp.GetRequiredService<AiryBotCode.Application.Hive.HiveEffectGateway>());
+            // Counting mini-boss answers pushed from the Hive land here (→ DB).
+            services.AddScoped<AiryBotCode.Application.Hive.ICountingBossSink, Hive.CountingBossSink>();
 
 
 
@@ -72,6 +75,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<GiveawayAction>();
             services.AddScoped<SpamCatcherAction>();
             services.AddScoped<LevelingAction>();
+            services.AddScoped<CountingAction>();
             return services;
         }
     }

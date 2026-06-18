@@ -92,7 +92,9 @@ namespace AiryBotCode.Bot.Bots
             {
                 var delivery = services.GetRequiredService<IEffectDelivery>();
                 var askDelivery = services.GetRequiredService<IAskDelivery>();
-                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine, askDelivery);
+                // Counting mini-boss answers pushed from the Hive land in the DB via this sink.
+                var bossSink = services.GetRequiredService<ICountingBossSink>();
+                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine, askDelivery, bossSink);
                 // Bind into the singleton gateway so the button handler can send answers
                 // (ask_user) back up this same socket via IHiveResponseSender.
                 services.GetRequiredService<HiveEffectGateway>().Bind(listener);

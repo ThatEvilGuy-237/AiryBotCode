@@ -11,5 +11,12 @@ namespace AiryBotCode.Application.Hive
         bool IsConnected { get; }
 
         Task<bool> SendAnswerAsync(string effectId, string answer, string? sessionId, string? userId, CancellationToken ct = default);
+
+        /// <summary>
+        /// Send an arbitrary event frame upstream — <c>{ type, payload, context:{ sessionId } }</c>.
+        /// Used by the counting game to notify the Hive of fails / boss spawns.
+        /// Returns false when no Hive connection is open.
+        /// </summary>
+        Task<bool> SendEventAsync(string type, object payload, string? sessionId, CancellationToken ct = default);
     }
 }
