@@ -150,7 +150,7 @@ namespace AiryBotCode.Tool.Frontend
             var modal = new ModalBuilder()
                 .WithCustomId(customId)
                 .WithTitle("Edit User Log Details")
-                .AddTextInput("Reason", "reason_input", placeholder: "Enter the reason...", required: true, value: logData.Reason)
+                .AddTextInput("Reason", "reason_input", TextInputStyle.Paragraph, placeholder: "Enter the reason...", required: true, value: logData.Reason)
                 .AddTextInput("Action", "action_input", placeholder: "Enter the action taken...", required: true, value: logData.Action)
                 .AddTextInput("Consequences", "consequences_input", TextInputStyle.Paragraph, placeholder: "Describe the consequences...", required: false, value: logData.Consequences);
 
