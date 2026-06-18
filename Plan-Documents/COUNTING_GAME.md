@@ -142,14 +142,16 @@ migrations in this project).
    `say` effect + a `counting_boss_answer`; `counting_fail` / `counting_boss_defeated`
    broadcast a `say`. End-to-end functional.
 
-### Remaining polish — true "Airy voice"
+### Voice
 
-Part 3 currently uses varied **templated** lines generated in Wraith (the boss math
-is real, via the MCP). To have the fail/boss text actually written *by Airy* (her
-persona), route the `counting_*` events through **Neural-Spine** as a short agent
-run (Airy uses `math_problem`/`math_eval` herself, `say`s the result, and reports
-the boss answer via a small effect tool). Deferred because it needs the Spine
-flow/agent contract; the current bridge is the drop-in seam to swap.
+`CountingBridge` writes fail/boss lines via **Airy (Obsidian `/chat`)** when
+`COUNTING_VOICE_MODEL` is set on Wraith — dynamic, persona-flavoured text. With no
+model set it uses varied **templates**. Either way it's fully fallback-guarded (any
+`/chat` error → template), so the game never breaks. Boss *math* is always real,
+via the `math_problem` MCP tool.
+
+A fuller option (Airy's exact Spine-configured persona, with her calling the math
+tool herself in an agent run) remains possible later; the bridge is the seam.
 
 Opt-in everywhere: disabled per-bot by default; prod `AiryBot`'s hardcoded action
 list is unchanged.
