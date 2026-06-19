@@ -38,12 +38,14 @@ namespace AiryBotCode.Api.Controllers
         private readonly IBotSettingRepository _repository;
         private readonly IConfiguration _configuration;
         private readonly ICommandSettingsRepository _control;
+        private readonly AiryBotCode.Api.Services.DiscordGuildLookup _discord;
 
-        public SettingsController(IBotSettingRepository repository, IConfiguration configuration, ICommandSettingsRepository control)
+        public SettingsController(IBotSettingRepository repository, IConfiguration configuration, ICommandSettingsRepository control, AiryBotCode.Api.Services.DiscordGuildLookup discord)
         {
             _repository = repository;
             _configuration = configuration;
             _control = control;
+            _discord = discord;
         }
 
         [HttpGet]
@@ -51,6 +53,36 @@ namespace AiryBotCode.Api.Controllers
         {
             var settings = await _repository.GetAllAsync();
             return Ok(settings.Select(ToDto));
+        }
+
+        // GET /api/settings/{botId}/discord/channels -> postable channels for the
+        // panel's channel picker. Empty list on any failure (UI falls back to a raw
+        // id field), so a missing/invalid token never breaks the settings page.
+        [HttpGet("{botId}/discord/channels")]
+        public async Task<IActionResult> GetDiscordChannels(string botId)
+        {
+            if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
+            var entity = await _repository.GetBotSettingAsync(id);
+            return Ok(await _discord.GetChannelsAsync(id, entity?.Token));
+        }
+
+        // GET /api/settings/{botId}/discord/categories -> channel categories (for the
+        // category picker, e.g. where contact channels are created).
+        [HttpGet("{botId}/discord/categories")]
+        public async Task<IActionResult> GetDiscordCategories(string botId)
+        {
+            if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
+            var entity = await _repository.GetBotSettingAsync(id);
+            return Ok(await _discord.GetCategoriesAsync(id, entity?.Token));
+        }
+
+        // GET /api/settings/{botId}/discord/roles -> assignable roles for the role picker.
+        [HttpGet("{botId}/discord/roles")]
+        public async Task<IActionResult> GetDiscordRoles(string botId)
+        {
+            if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
+            var entity = await _repository.GetBotSettingAsync(id);
+            return Ok(await _discord.GetRolesAsync(id, entity?.Token));
         }
 
         // Add a new bot to the roster. The token is set directly here (a new bot

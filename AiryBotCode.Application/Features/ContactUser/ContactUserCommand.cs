@@ -15,7 +15,7 @@ namespace AiryBotCode.Application.Features.ContactUser
         [ReloadableSetting("The primary description for the command.")]
         public string Description { get; set; } = "Create channel to contact user";
 
-        [ReloadableSetting("Category under which private contact channels are created.", Category = "Channels")]
+        [ReloadableSetting("Category under which private contact channels are created.", Category = "Channels", UiHint = "category")]
         public ulong ContactCategoryId { get; set; } = 1234577123541258280;
         // --- End of Settings Declaration ---
 

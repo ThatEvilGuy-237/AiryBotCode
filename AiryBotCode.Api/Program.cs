@@ -59,6 +59,9 @@ builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+// Powers the panel's channel/role pickers (reads guild data from Discord with the
+// stored bot token). Singleton so its short-lived per-bot cache is shared.
+builder.Services.AddSingleton<AiryBotCode.Api.Services.DiscordGuildLookup>();
 builder.Services.AddAuthorization();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

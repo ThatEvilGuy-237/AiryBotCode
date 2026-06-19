@@ -120,6 +120,7 @@ onMounted(async () => {
     <CommandModal
       v-if="selected"
       :command="selected"
+      :bot-id="currentBotId"
       @save="onSave"
       @close="selected = null"
     />

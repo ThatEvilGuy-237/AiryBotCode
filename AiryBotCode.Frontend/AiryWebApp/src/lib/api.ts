@@ -17,6 +17,13 @@ export interface CommandConfig {
   settings: CommandSetting[]
 }
 
+// A pickable Discord channel or role for the settings pickers.
+export interface DiscordEntity {
+  id: string
+  name: string
+  guild: string
+}
+
 export interface ChannelWebhook {
   id: number
   channelId: string
@@ -208,6 +215,31 @@ export const api = {
   async reloadBot(): Promise<boolean> {
     const res = await authFetch('/api/bot/reload', { method: 'POST' })
     return res.ok
+  },
+
+  // ---- Discord lookups for channel/role pickers (empty on any failure) ----
+  async getBotChannels(botId: string): Promise<DiscordEntity[]> {
+    try {
+      return await json<DiscordEntity[]>(`/api/settings/${encodeURIComponent(botId)}/discord/channels`)
+    } catch {
+      return []
+    }
+  },
+
+  async getBotRoles(botId: string): Promise<DiscordEntity[]> {
+    try {
+      return await json<DiscordEntity[]>(`/api/settings/${encodeURIComponent(botId)}/discord/roles`)
+    } catch {
+      return []
+    }
+  },
+
+  async getBotCategories(botId: string): Promise<DiscordEntity[]> {
+    try {
+      return await json<DiscordEntity[]>(`/api/settings/${encodeURIComponent(botId)}/discord/categories`)
+    } catch {
+      return []
+    }
   },
 
   // ---- Live database explorer ----

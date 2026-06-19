@@ -45,21 +45,21 @@ namespace AiryBotCode.Application.Features.Leveling
         [ReloadableSetting("Level-up message. Placeholders: {user} {level} {xp}.", Category = "Leveling")]
         public string LevelUpMessage { get; set; } = "GG {user}, you reached level {level}! 🎉";
 
-        [ReloadableSetting("Force level-up announcements to this channel id. 0 = announce where they leveled up.", Category = "Leveling")]
+        [ReloadableSetting("Force level-up announcements to this channel. None = announce where they leveled up.", Category = "Leveling", UiHint = "channel")]
         public ulong LevelUpChannelId { get; set; } = 0;
 
         // --- Role rewards ---
-        [ReloadableSetting("Level → role-id rewards, e.g. {\"5\":123,\"10\":456}.", Category = "Leveling", UiHint = "json")]
+        [ReloadableSetting("Roles granted when a member reaches a level.", Category = "Leveling", UiHint = "roleRewards")]
         public Dictionary<int, ulong> RoleRewards { get; set; } = new();
 
         [ReloadableSetting("Keep all earned reward roles (true) or replace the lower tier (false).", Category = "Leveling")]
         public bool StackRewardRoles { get; set; } = false;
 
         // --- Exclusions ---
-        [ReloadableSetting("Channel ids that grant no XP.", Category = "Leveling", UiHint = "json")]
+        [ReloadableSetting("Channels that grant no XP.", Category = "Leveling", UiHint = "channels")]
         public ulong[] NoXpChannelIds { get; set; } = Array.Empty<ulong>();
 
-        [ReloadableSetting("Role ids that earn no XP.", Category = "Leveling", UiHint = "json")]
+        [ReloadableSetting("Roles that earn no XP.", Category = "Leveling", UiHint = "roles")]
         public ulong[] NoXpRoleIds { get; set; } = Array.Empty<ulong>();
 
         // --- Leaderboard ---

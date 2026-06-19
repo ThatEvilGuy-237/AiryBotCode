@@ -23,7 +23,7 @@ namespace AiryBotCode.Application.Features.SpamCatcher
     public class SpamCatcherCommand : EvilCommand
     {
         // --- Settings Declaration for Seeder ---
-        [ReloadableSetting("Role that is watched for cross-channel spam. Empty (0) = catcher OFF. Only members WITH this role are monitored, each one independently.", Category = "SpamCatcher")]
+        [ReloadableSetting("Role that is watched for cross-channel spam. None = catcher OFF. Only members WITH this role are monitored, each one independently.", Category = "SpamCatcher", UiHint = "role")]
         public ulong MonitoredRoleId { get; set; } = 0;            // base: empty (off)
 
         [ReloadableSetting("How many messages within the window count as spam.", Category = "SpamCatcher", UiHint = "number")]

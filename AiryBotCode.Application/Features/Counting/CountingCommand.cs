@@ -20,7 +20,7 @@ namespace AiryBotCode.Application.Features.Counting
     public class CountingCommand : EvilCommand
     {
         // --- Channel / rules ---
-        [ReloadableSetting("Counting channel id. 0 = game OFF.", Category = "Counting")]
+        [ReloadableSetting("Counting channel. None = game OFF.", Category = "Counting", UiHint = "channel")]
         public ulong CountingChannelId { get; set; } = 0;
 
         [ReloadableSetting("Allow math expressions as answers (6*2, sqrt(144)).", Category = "Counting")]
