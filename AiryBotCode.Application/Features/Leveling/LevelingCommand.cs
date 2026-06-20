@@ -25,7 +25,7 @@ namespace AiryBotCode.Application.Features.Leveling
         [ReloadableSetting("Maximum XP granted per eligible message.", Category = "Leveling", UiHint = "number")]
         public int XpMax { get; set; } = 25;
 
-        [ReloadableSetting("Seconds a user must wait between XP grants.", Category = "Leveling", UiHint = "number")]
+        [ReloadableSetting("Seconds a user must wait between XP grants.", Category = "Leveling", UiHint = "duration:seconds")]
         public int XpCooldownSeconds { get; set; } = 60;
 
         [ReloadableSetting("Global XP multiplier (events / boosts).", Category = "Leveling", UiHint = "number")]

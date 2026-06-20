@@ -32,10 +32,10 @@ namespace AiryBotCode.Application.Features.SpamCatcher
         [ReloadableSetting("How many DISTINCT channels the burst must span.", Category = "SpamCatcher", UiHint = "number")]
         public int DistinctChannels { get; set; } = 2;             // base: 2
 
-        [ReloadableSetting("Sliding time window, in seconds.", Category = "SpamCatcher", UiHint = "number")]
+        [ReloadableSetting("Sliding time window, in seconds.", Category = "SpamCatcher", UiHint = "duration:seconds")]
         public int WindowSeconds { get; set; } = 6;                // base: 6
 
-        [ReloadableSetting("Timeout applied to a caught spammer, in minutes.", Category = "SpamCatcher", UiHint = "number")]
+        [ReloadableSetting("Timeout applied to a caught spammer, in minutes.", Category = "SpamCatcher", UiHint = "duration:minutes")]
         public int TimeoutMinutes { get; set; } = 1440;            // base: 24h
 
         [ReloadableSetting("Delete the offending messages when spam is caught.", Category = "SpamCatcher", UiHint = "boolean")]

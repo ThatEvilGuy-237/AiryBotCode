@@ -60,7 +60,7 @@ namespace AiryBotCode.Application.Features.Counting
         [ReloadableSetting("A wrong boss answer resets the count (otherwise it's ignored).", Category = "Counting", UiHint = "boolean")]
         public bool BossWrongResets { get; set; } = false;
 
-        [ReloadableSetting("Abandon an unsolved/pending boss after this many seconds (anti-softlock).", Category = "Counting", UiHint = "number")]
+        [ReloadableSetting("Abandon an unsolved/pending boss after this many seconds (anti-softlock).", Category = "Counting", UiHint = "duration:seconds")]
         public int BossTimeoutSeconds { get; set; } = 300;
 
         private readonly IServiceProvider _services;

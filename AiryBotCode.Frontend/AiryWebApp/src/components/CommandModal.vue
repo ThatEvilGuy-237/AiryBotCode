@@ -136,6 +136,32 @@ function optionsFor(setting: CommandSetting): { value: string; label: string }[]
   return [{ value: '0', label: '— None —' }, ...opts]
 }
 
+// --- duration: a number in a fixed unit + a humanized read-out ---
+// Hint "duration:seconds" / "duration:minutes" (also hours/days). The STORED
+// value stays the raw number in that unit — we only add a unit label and a
+// friendly breakdown. Degrades to a plain number when the unit is unknown.
+const UNIT_SECONDS: Record<string, number> = { seconds: 1, minutes: 60, hours: 3600, days: 86400 }
+
+function isDuration(setting: CommandSetting): boolean {
+  return !!setting.uiHint?.startsWith('duration:') && durationUnit(setting) in UNIT_SECONDS
+}
+
+function durationUnit(setting: CommandSetting): string {
+  return setting.uiHint.slice('duration:'.length).trim()
+}
+
+// "1440" minutes -> "= 1d", "300" seconds -> "= 5m", "90" seconds -> "= 1m 30s".
+function humanizeDuration(setting: CommandSetting): string {
+  const n = Number(setting.value)
+  if (!Number.isFinite(n) || n <= 0) return ''
+  let secs = Math.round(n * (UNIT_SECONDS[durationUnit(setting)] ?? 1))
+  const parts: string[] = []
+  for (const [label, size] of [['d', 86400], ['h', 3600], ['m', 60], ['s', 1]] as const) {
+    if (secs >= size) { parts.push(`${Math.floor(secs / size)}${label}`); secs %= size }
+  }
+  return parts.length ? `= ${parts.slice(0, 2).join(' ')}` : ''
+}
+
 // --- message-template editor (textarea + clickable placeholder chips) ---
 // Encoded in the hint as "template:user,level,xp" so it needs no extra metadata
 // column. Clicking a chip inserts {placeholder} at the caret. Degrades to a plain
@@ -270,6 +296,11 @@ function save() {
               rows="4"
               :class="{ mono: setting.uiHint === 'json' }"
             ></textarea>
+            <div v-else-if="isDuration(setting)" class="duration">
+              <input :id="`f-${setting.key}`" v-model="setting.value" type="number" min="0" />
+              <span class="unit">{{ durationUnit(setting) }}</span>
+              <span v-if="humanizeDuration(setting)" class="human mono">{{ humanizeDuration(setting) }}</span>
+            </div>
             <input
               v-else-if="setting.uiHint === 'number'"
               :id="`f-${setting.key}`"
@@ -429,6 +460,10 @@ textarea,
 }
 .reward-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 textarea { resize: vertical; min-height: 70px; }
+.duration { display: flex; align-items: center; gap: 0.5rem; }
+.duration input { flex: 1; min-width: 0; }
+.duration .unit { color: var(--color-muted); font-size: 0.85rem; }
+.duration .human { color: var(--color-accent); font-size: 0.8rem; white-space: nowrap; }
 .template { display: flex; flex-direction: column; gap: 0.4rem; }
 .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .chip {
