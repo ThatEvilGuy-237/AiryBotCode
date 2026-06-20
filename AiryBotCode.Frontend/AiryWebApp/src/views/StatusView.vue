@@ -9,10 +9,13 @@ import { useBots } from '../lib/bots'
 
 const { currentBot, currentBotId, loadBots } = useBots()
 
+const PAGE = 25 // leaderboard rows fetched per request
+
 const counting = ref<CountingChannelStatus[]>([])
 const board = ref<LeaderboardEntry[]>([])
 const boardTotal = ref(0)
 const loading = ref(true)
+const loadingMore = ref(false)
 const error = ref('')
 
 const nf = new Intl.NumberFormat()
@@ -31,7 +34,7 @@ async function load() {
     // Independent reads — surface whichever succeeds even if the other is empty.
     const [c, b] = await Promise.all([
       api.getCountingStatus(currentBotId.value),
-      api.getLevelingBoard(currentBotId.value, 0, 25),
+      api.getLevelingBoard(currentBotId.value, 0, PAGE),
     ])
     counting.value = c
     board.value = b.users
@@ -40,6 +43,21 @@ async function load() {
     error.value = e instanceof ApiError ? e.message : 'Failed to load feature status.'
   } finally {
     loading.value = false
+  }
+}
+
+// Fetch the next page of leaderboard rows and append (the API pages by skip/take).
+async function loadMore() {
+  if (!currentBotId.value || loadingMore.value) return
+  loadingMore.value = true
+  try {
+    const b = await api.getLevelingBoard(currentBotId.value, board.value.length, PAGE)
+    board.value.push(...b.users)
+    boardTotal.value = b.total // keep the count fresh in case it grew
+  } catch (e) {
+    error.value = e instanceof ApiError ? e.message : 'Failed to load more of the leaderboard.'
+  } finally {
+    loadingMore.value = false
   }
 }
 
@@ -119,9 +137,12 @@ onMounted(async () => {
               <span class="xp mono">{{ nf.format(u.xp) }} XP</span>
             </li>
           </ol>
-          <p v-if="boardTotal > board.length" class="more muted mono">
-            showing top {{ board.length }} of {{ nf.format(boardTotal) }}
-          </p>
+          <div v-if="boardTotal > board.length" class="more">
+            <span class="muted mono">showing top {{ board.length }} of {{ nf.format(boardTotal) }}</span>
+            <Button variant="outline" :disabled="loadingMore" @click="loadMore">
+              {{ loadingMore ? 'Loading…' : 'Load more' }}
+            </Button>
+          </div>
         </Card>
       </section>
     </template>
@@ -155,6 +176,7 @@ onMounted(async () => {
 .rank.top { color: var(--color-accent); font-weight: 700; }
 .uname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .xp { color: var(--color-muted); font-size: var(--font-size-sm); }
-.more { padding: var(--space-2) var(--space-4); border-top: var(--border); }
+.more { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4); border-top: var(--border); }
 @media (max-width: 768px) { .page { padding: 1rem; } .grid { grid-template-columns: 1fr; } }
 </style>
