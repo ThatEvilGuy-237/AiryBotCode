@@ -17,7 +17,7 @@ namespace AiryBotCode.Application.Features.Logging
         [ReloadableSetting("The primary description for the command.")]
         public string Description { get; set; } = "Manage user logs";
 
-        [LiveSetting("Selectable log types for the 'type' option.", Category = "Logging", UiHint = "json")]
+        [LiveSetting("Selectable log types for the 'type' option.", Category = "Logging", UiHint = "list:text")]
         public string[] LogTypes { get; set; } = new[] { "Warning", "Ban", "Kick", "Mute" };
 
         [LiveSetting("Message shown for invalid inputs.", UiHint = "textarea")]
