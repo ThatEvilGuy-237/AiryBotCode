@@ -38,7 +38,7 @@ namespace AiryBotCode.Application.Features.SpamCatcher
         [ReloadableSetting("Timeout applied to a caught spammer, in minutes.", Category = "SpamCatcher", UiHint = "number")]
         public int TimeoutMinutes { get; set; } = 1440;            // base: 24h
 
-        [ReloadableSetting("Delete the offending messages when spam is caught.", Category = "SpamCatcher")]
+        [ReloadableSetting("Delete the offending messages when spam is caught.", Category = "SpamCatcher", UiHint = "boolean")]
         public bool DeleteMessages { get; set; } = true;           // base: true
         // --- End of Settings Declaration ---
 

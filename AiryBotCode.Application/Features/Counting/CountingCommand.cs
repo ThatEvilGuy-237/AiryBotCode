@@ -23,41 +23,41 @@ namespace AiryBotCode.Application.Features.Counting
         [ReloadableSetting("Counting channel. None = game OFF.", Category = "Counting", UiHint = "channel")]
         public ulong CountingChannelId { get; set; } = 0;
 
-        [ReloadableSetting("Allow math expressions as answers (6*2, sqrt(144)).", Category = "Counting")]
+        [ReloadableSetting("Allow math expressions as answers (6*2, sqrt(144)).", Category = "Counting", UiHint = "boolean")]
         public bool AllowMath { get; set; } = true;
 
-        [ReloadableSetting("Require a formula — a bare number doesn't count.", Category = "Counting")]
+        [ReloadableSetting("Require a formula — a bare number doesn't count.", Category = "Counting", UiHint = "boolean")]
         public bool MathOnly { get; set; } = false;
 
-        [ReloadableSetting("Allow the same user to count twice in a row.", Category = "Counting")]
+        [ReloadableSetting("Allow the same user to count twice in a row.", Category = "Counting", UiHint = "boolean")]
         public bool AllowSameUserTwice { get; set; } = false;
 
         [ReloadableSetting("The first number of a run.", Category = "Counting", UiHint = "number")]
         public int StartNumber { get; set; } = 1;
 
-        [ReloadableSetting("Reset to the start on a wrong count.", Category = "Counting")]
+        [ReloadableSetting("Reset to the start on a wrong count.", Category = "Counting", UiHint = "boolean")]
         public bool ResetOnWrong { get; set; } = true;
 
-        [ReloadableSetting("React ✅ on a correct count.", Category = "Counting")]
+        [ReloadableSetting("React ✅ on a correct count.", Category = "Counting", UiHint = "boolean")]
         public bool ReactOnSuccess { get; set; } = true;
 
         [ReloadableSetting("How close a (decimal) answer must be to count.", Category = "Counting", UiHint = "number")]
         public double DecimalTolerance { get; set; } = 0.01;
 
-        [ReloadableSetting("Track the all-time high score.", Category = "Counting")]
+        [ReloadableSetting("Track the all-time high score.", Category = "Counting", UiHint = "boolean")]
         public bool TrackHighScore { get; set; } = true;
 
         [ReloadableSetting("Fallback fail message when the Hive is unreachable. {user} {count} {next} {start}.", Category = "Counting", UiHint = "template:user,count,next,start")]
         public string FailMessage { get; set; } = "💥 {user} broke the chain at **{count}**! The next number was **{next}**. Starting over from {start}.";
 
         // --- Mini-bosses ---
-        [ReloadableSetting("Enable Airy-generated mini-boss puzzles at milestones.", Category = "Counting")]
+        [ReloadableSetting("Enable Airy-generated mini-boss puzzles at milestones.", Category = "Counting", UiHint = "boolean")]
         public bool BossesEnabled { get; set; } = true;
 
         [ReloadableSetting("Milestone counts that spawn a boss; past the last, the last gap repeats.", Category = "Counting", UiHint = "json")]
         public int[] BossMilestones { get; set; } = new[] { 10, 20, 50, 100, 200, 300, 400 };
 
-        [ReloadableSetting("A wrong boss answer resets the count (otherwise it's ignored).", Category = "Counting")]
+        [ReloadableSetting("A wrong boss answer resets the count (otherwise it's ignored).", Category = "Counting", UiHint = "boolean")]
         public bool BossWrongResets { get; set; } = false;
 
         [ReloadableSetting("Abandon an unsolved/pending boss after this many seconds (anti-softlock).", Category = "Counting", UiHint = "number")]

@@ -52,7 +52,7 @@ namespace AiryBotCode.Application.Features.Leveling
         [ReloadableSetting("Roles granted when a member reaches a level.", Category = "Leveling", UiHint = "roleRewards")]
         public Dictionary<int, ulong> RoleRewards { get; set; } = new();
 
-        [ReloadableSetting("Keep all earned reward roles (true) or replace the lower tier (false).", Category = "Leveling")]
+        [ReloadableSetting("Keep all earned reward roles (true) or replace the lower tier (false).", Category = "Leveling", UiHint = "boolean")]
         public bool StackRewardRoles { get; set; } = false;
 
         // --- Exclusions ---
