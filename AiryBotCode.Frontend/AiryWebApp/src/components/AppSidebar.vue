@@ -9,6 +9,7 @@ const route = useRoute()
 
 const botItems = [
   { to: '/commands', label: 'Commands' },
+  { to: '/status', label: 'Status' },
   { to: '/bot-settings', label: 'Settings' },
   { to: '/theme', label: 'Theme' },
   { to: '/webhooks', label: 'Webhooks' },

@@ -35,6 +35,35 @@ export interface ChannelWebhook {
   enabled: boolean
 }
 
+// ---- Read-only feature status (counting game + leveling leaderboard) ----
+// Snowflake ids arrive as STRINGS (precision-safe — never JSON.parse/Number them).
+export interface CountingChannelStatus {
+  channelId: string
+  channelName: string | null
+  currentCount: number
+  highScore: number
+  bossActive: boolean
+  bossSpawnedAt: string | null
+  lastUserId: string | null
+  updatedAt: string
+}
+
+export interface LeaderboardEntry {
+  rank: number
+  userId: string
+  userName: string
+  xp: number
+  level: number
+  lastXpAt: string
+}
+
+export interface LevelingBoard {
+  total: number
+  skip: number
+  take: number
+  users: LeaderboardEntry[]
+}
+
 export class ApiError extends Error {
   readonly status: number
   constructor(status: number, message: string) {
@@ -240,6 +269,19 @@ export const api = {
     } catch {
       return []
     }
+  },
+
+  // ---- Read-only feature status ----
+  /** Counting-game state per channel for a bot (current count, high score, boss). */
+  getCountingStatus(botId: string): Promise<CountingChannelStatus[]> {
+    return json<CountingChannelStatus[]>(`/api/featurestatus/${encodeURIComponent(botId)}/counting`)
+  },
+
+  /** XP leaderboard for a bot (highest XP first) plus the total ranked-user count. */
+  getLevelingBoard(botId: string, skip = 0, take = 25): Promise<LevelingBoard> {
+    return json<LevelingBoard>(
+      `/api/featurestatus/${encodeURIComponent(botId)}/leveling?skip=${skip}&take=${take}`,
+    )
   },
 
   // ---- Live database explorer ----

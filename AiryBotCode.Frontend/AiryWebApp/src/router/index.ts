@@ -4,6 +4,7 @@ import CommandsView from '../views/CommandsView.vue'
 import BotSettingsView from '../views/BotSettingsView.vue'
 import ThemeView from '../views/ThemeView.vue'
 import WebhooksView from '../views/WebhooksView.vue'
+import StatusView from '../views/StatusView.vue'
 import DatabasesView from '../views/DatabasesView.vue'
 import DatabaseView from '../views/DatabaseView.vue'
 import HiveUiView from '../views/HiveUiView.vue'
@@ -16,6 +17,7 @@ export const router = createRouter({
     { path: '/bot-settings', name: 'bot-settings', component: BotSettingsView },
     { path: '/theme', name: 'theme', component: ThemeView },
     { path: '/webhooks', name: 'webhooks', component: WebhooksView },
+    { path: '/status', name: 'status', component: StatusView },
     { path: '/database', name: 'databases', component: DatabasesView },
     { path: '/database/:db', name: 'database', component: DatabaseView, props: true },
     { path: '/hive-ui', name: 'hive-ui', component: HiveUiView },
