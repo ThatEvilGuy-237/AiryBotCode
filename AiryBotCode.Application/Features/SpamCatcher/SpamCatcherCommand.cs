@@ -40,11 +40,15 @@ namespace AiryBotCode.Application.Features.SpamCatcher
 
         [ReloadableSetting("Delete the offending messages when spam is caught.", Category = "SpamCatcher", UiHint = "boolean")]
         public bool DeleteMessages { get; set; } = true;           // base: true
+
+        [ReloadableSetting("Role pinged in the log channel when spam is caught, so a moderator can review. None = no ping.", Category = "SpamCatcher", UiHint = "role")]
+        public ulong AlertRoleId { get; set; } = 0;                // base: empty (no ping)
         // --- End of Settings Declaration ---
 
         private readonly UserService _userService;
         private readonly UserlogsCommand _userlogs;
         private readonly SpamTracker _tracker;
+        private readonly AiryBotCode.Application.Services.Loging.LogService _logService;
 
         public SpamCatcherCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -52,6 +56,7 @@ namespace AiryBotCode.Application.Features.SpamCatcher
             _userService = serviceProvider.GetRequiredService<UserService>();
             _userlogs = serviceProvider.GetRequiredService<UserlogsCommand>();
             _tracker = serviceProvider.GetRequiredService<SpamTracker>();
+            _logService = serviceProvider.GetRequiredService<AiryBotCode.Application.Services.Loging.LogService>();
         }
 
         // Message-driven only: never registered as a slash command.
@@ -116,6 +121,24 @@ namespace AiryBotCode.Application.Features.SpamCatcher
                 await _userlogs.SendUserLog(_client.CurrentUser, info);
             }
             catch (Exception ex) { Console.WriteLine($"[SpamCatcher] log failed: {ex.Message}"); }
+
+            // 4) Ping a moderator role in the log channel so a human can review.
+            //    Mentions only notify from message CONTENT (not embeds), and the role
+            //    is allow-listed explicitly so it pings even if it isn't "mentionable".
+            if (AlertRoleId != 0)
+            {
+                try
+                {
+                    var logChannelId = await _logService.GetLogChannelId();
+                    if (await _client.GetChannelAsync(logChannelId) is IMessageChannel logChannel)
+                    {
+                        await logChannel.SendMessageAsync(
+                            $"<@&{AlertRoleId}> ⚠️ Spam caught — **{member.Username}** was timed out across {distinct} channel(s). Please review.",
+                            allowedMentions: new AllowedMentions { RoleIds = new List<ulong> { AlertRoleId } });
+                    }
+                }
+                catch (Exception ex) { Console.WriteLine($"[SpamCatcher] alert ping failed: {ex.Message}"); }
+            }
         }
     }
 }
