@@ -56,6 +56,7 @@ builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository
 builder.Services.AddScoped<IBotCommandRepository, BotCommandRepository>();
 builder.Services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
 builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
+builder.Services.AddScoped<ISuggestionRepository, SuggestionRepository>();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
@@ -76,7 +77,6 @@ var app = builder.Build();
 // would stay empty. EnsureCreated builds the full model schema on the empty dev
 // DB; it's a no-op once the tables exist. Guarded to Development so prod is
 // unaffected (prod runs ASPNETCORE_ENVIRONMENT=Production).
-if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AiryBotCode.Infrastructure.Database.Persistence.AIDbContext>();
@@ -84,17 +84,18 @@ if (app.Environment.IsDevelopment())
     {
         if (db.Database.CanConnect())
         {
-            db.Database.EnsureCreated();
-            // Also apply the idempotent column/table patches the bot normally runs
-            // (the dev stack has no bot) so an existing dev DB gains new columns
-            // like BotSettings.ThemeImage/ThemeData.
+            // Dev has no bot, so the API owns full schema creation there.
+            if (app.Environment.IsDevelopment()) db.Database.EnsureCreated();
+            // Idempotent CREATE TABLE/ALTER patches (IF NOT EXISTS). Safe to run in
+            // BOTH environments — in prod it guarantees panel-only tables (e.g.
+            // Suggestions) exist regardless of whether the bot has booted yet.
             AiryBotCode.Infrastructure.Database.Persistence.AIDbContext.EnsureNewerTables(db);
-            Console.WriteLine("[DATABASE] Development: ensured schema (EnsureCreated + patches).");
+            Console.WriteLine("[DATABASE] Ensured schema patches (EnsureNewerTables).");
         }
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"[DATABASE] Development schema ensure failed (non-fatal): {ex.Message}");
+        Console.WriteLine($"[DATABASE] Schema ensure failed (non-fatal): {ex.Message}");
     }
 }
 

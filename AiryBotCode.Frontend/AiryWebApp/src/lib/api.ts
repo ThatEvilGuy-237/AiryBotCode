@@ -65,6 +65,21 @@ export interface LevelingBoard {
   users: LeaderboardEntry[]
 }
 
+// ---- Feature suggestions / ideas board ----
+export interface Suggestion {
+  id: number
+  title: string
+  body: string
+  submittedBy: string
+  createdAt: string
+  status: string // new | reviewed | approved | rejected
+  responseWhy: string | null
+  responseEstimate: string | null
+  respondedAt: string | null
+  approved: boolean
+  approvedAt: string | null
+}
+
 export class ApiError extends Error {
   readonly status: number
   constructor(status: number, message: string) {
@@ -283,6 +298,47 @@ export const api = {
     return json<LevelingBoard>(
       `/api/featurestatus/${encodeURIComponent(botId)}/leveling?skip=${skip}&take=${take}`,
     )
+  },
+
+  // ---- Feature suggestions / ideas board ----
+  getSuggestions(): Promise<Suggestion[]> {
+    return json<Suggestion[]>('/api/suggestions')
+  },
+
+  async createSuggestion(title: string, body: string, submittedBy?: string): Promise<Suggestion> {
+    const res = await authFetch('/api/suggestions', {
+      method: 'POST',
+      body: JSON.stringify({ title, body, submittedBy: submittedBy ?? null }),
+    })
+    if (!res.ok) throw new ApiError(res.status, `Could not submit the suggestion (${res.status}).`)
+    return (await res.json()) as Suggestion
+  },
+
+  /** Maintainer review: why it's a good idea + a rough time estimate. */
+  async respondSuggestion(id: number, why: string, estimate: string): Promise<Suggestion> {
+    const res = await authFetch(`/api/suggestions/${id}/respond`, {
+      method: 'PUT',
+      body: JSON.stringify({ why, estimate }),
+    })
+    if (!res.ok) throw new ApiError(res.status, `Could not save the response (${res.status}).`)
+    return (await res.json()) as Suggestion
+  },
+
+  async approveSuggestion(id: number): Promise<Suggestion> {
+    const res = await authFetch(`/api/suggestions/${id}/approve`, { method: 'POST' })
+    if (!res.ok) throw new ApiError(res.status, `Could not approve (${res.status}).`)
+    return (await res.json()) as Suggestion
+  },
+
+  async rejectSuggestion(id: number): Promise<Suggestion> {
+    const res = await authFetch(`/api/suggestions/${id}/reject`, { method: 'POST' })
+    if (!res.ok) throw new ApiError(res.status, `Could not reject (${res.status}).`)
+    return (await res.json()) as Suggestion
+  },
+
+  async deleteSuggestion(id: number): Promise<void> {
+    const res = await authFetch(`/api/suggestions/${id}`, { method: 'DELETE' })
+    if (!res.ok) throw new ApiError(res.status, `Could not delete (${res.status}).`)
   },
 
   // ---- Live database explorer ----

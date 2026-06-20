@@ -27,6 +27,7 @@ const isActive = (to: string) => to === '/' ? route.path === '/' : route.path.st
 
     <nav class="nav">
       <RouterLink to="/" class="link" :class="{ active: route.path === '/' }">Home</RouterLink>
+      <RouterLink to="/suggestions" class="link" :class="{ active: isActive('/suggestions') }">Suggestions</RouterLink>
 
       <p class="label">This bot</p>
       <RouterLink v-for="i in botItems" :key="i.to" :to="i.to" class="link" :class="{ active: isActive(i.to) }">{{ i.label }}</RouterLink>
