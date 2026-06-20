@@ -37,10 +37,13 @@ const needsRoles = computed(() => draft.value.settings.some((s) => roleHints.inc
 // Reward rows are edited as structured state per setting key, then serialized back
 // into the setting's value string on every change (precision-safe via the helpers).
 const rewardRows = ref<Record<string, RewardRow[]>>({})
+// Key→value rows for the keyvalue editor, same structured-state approach.
+const kvRows = ref<Record<string, hints.KvRow[]>>({})
 
 onMounted(async () => {
   for (const s of draft.value.settings) {
     if (s.uiHint === 'roleRewards') rewardRows.value[s.key] = parseRoleRewards(s.value)
+    if (hints.keyvalueKind(s.uiHint)) kvRows.value[s.key] = hints.parseKeyValue(s.value) ?? []
   }
   if (!props.botId) return
   const jobs: Promise<void>[] = []
@@ -162,6 +165,21 @@ function removeListItem(setting: CommandSetting, i: number) {
   const items = listItems(setting)
   items.splice(i, 1)
   writeList(setting, items)
+}
+
+// keyvalue: a JSON object edited as key→value rows (structured local state).
+const keyvalueKind = (s: CommandSetting) => hints.keyvalueKind(s.uiHint)
+const isKeyValue = (s: CommandSetting) => hints.isKeyValue(s.uiHint, s.value)
+const kvRowsFor = (s: CommandSetting) => (kvRows.value[s.key] ??= [])
+function syncKeyValue(setting: CommandSetting) {
+  setting.value = hints.serializeKeyValue(kvRowsFor(setting), keyvalueKind(setting))
+}
+function addKeyValue(setting: CommandSetting) {
+  kvRowsFor(setting).push({ key: '', val: '' })
+}
+function removeKeyValue(setting: CommandSetting, i: number) {
+  kvRowsFor(setting).splice(i, 1)
+  syncKeyValue(setting)
 }
 
 // slider: a bounded number, dragged or typed.
@@ -310,6 +328,21 @@ function save() {
               rows="4"
               :class="{ mono: setting.uiHint === 'json' }"
             ></textarea>
+            <div v-else-if="isKeyValue(setting)" class="kv">
+              <div v-for="(row, i) in kvRowsFor(setting)" :key="i" class="kv-row">
+                <input v-model="row.key" type="text" class="kv-key" placeholder="label" @input="syncKeyValue(setting)" />
+                <span class="kv-arrow">→</span>
+                <input
+                  v-model="row.val"
+                  :type="keyvalueKind(setting) === 'number' ? 'number' : 'text'"
+                  class="kv-val"
+                  placeholder="value"
+                  @input="syncKeyValue(setting)"
+                />
+                <button type="button" class="kv-del" title="Remove" @click="removeKeyValue(setting, i)">✕</button>
+              </div>
+              <button type="button" class="kv-add" @click="addKeyValue(setting)">+ Add row</button>
+            </div>
             <div v-else-if="isList(setting)" class="list">
               <div v-if="listItems(setting).length" class="list-chips">
                 <span v-for="(item, i) in listItems(setting)" :key="i" class="list-chip">
@@ -527,6 +560,21 @@ textarea,
 }
 .reward-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 textarea { resize: vertical; min-height: 70px; }
+.kv { display: flex; flex-direction: column; gap: 0.5rem; }
+.kv-row { display: flex; align-items: center; gap: 0.5rem; }
+.kv-key { flex: 2; min-width: 0; }
+.kv-arrow { color: var(--color-muted); flex: none; }
+.kv-val { flex: 1; min-width: 0; }
+.kv-del {
+  flex: none; background: transparent; border: 1px solid var(--color-border);
+  border-radius: 8px; width: 2.2rem; height: 2.2rem; cursor: pointer; color: var(--color-muted);
+}
+.kv-del:hover { color: var(--color-accent); border-color: var(--color-accent); }
+.kv-add {
+  align-self: flex-start; background: var(--color-surface); border: 1px dashed var(--color-border);
+  border-radius: 8px; padding: 0.45rem 0.9rem; cursor: pointer; color: var(--color-fg); font-weight: 500;
+}
+.kv-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .list { display: flex; flex-direction: column; gap: 0.5rem; }
 .list-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .list-chip {

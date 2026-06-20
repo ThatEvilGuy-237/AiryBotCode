@@ -107,6 +107,42 @@ describe('list', () => {
   })
 })
 
+describe('keyvalue', () => {
+  it('reads the kind', () => {
+    expect(h.keyvalueKind('keyvalue:number')).toBe('number')
+    expect(h.keyvalueKind('keyvalue:text')).toBe('text')
+    expect(h.keyvalueKind('json')).toBeNull()
+  })
+
+  it('parses a JSON object into rows; rejects non-objects', () => {
+    expect(h.parseKeyValue('{"1 hour":60,"5 hours":300}')).toEqual([
+      { key: '1 hour', val: '60' },
+      { key: '5 hours', val: '300' },
+    ])
+    expect(h.parseKeyValue('')).toEqual([])
+    expect(h.parseKeyValue('[1,2]')).toBeNull()
+    expect(h.parseKeyValue('42')).toBeNull()
+    expect(h.parseKeyValue('nope')).toBeNull()
+  })
+
+  it('isKeyValue requires the kind AND a parseable object', () => {
+    expect(h.isKeyValue('keyvalue:number', '{"a":1}')).toBe(true)
+    expect(h.isKeyValue('keyvalue:number', '[1]')).toBe(false) // degrades to json
+    expect(h.isKeyValue('json', '{"a":1}')).toBe(false)
+  })
+
+  it('serializes rows back, coercing numbers and dropping blank keys', () => {
+    expect(h.serializeKeyValue([{ key: 'a', val: '1' }, { key: 'b', val: '2' }], 'number')).toBe('{"a":1,"b":2}')
+    expect(h.serializeKeyValue([{ key: 'x', val: 'hi' }], 'text')).toBe('{"x":"hi"}')
+    expect(h.serializeKeyValue([{ key: '  ', val: '9' }, { key: 'k', val: '3' }], 'number')).toBe('{"k":3}')
+  })
+
+  it('round-trips a label→minutes map', () => {
+    const rows = h.parseKeyValue('{"1 hour ago":60,"24 hours":1440}')!
+    expect(h.serializeKeyValue(rows, 'number')).toBe('{"1 hour ago":60,"24 hours":1440}')
+  })
+})
+
 describe('emoji', () => {
   it('detects the hint and exposes quick-picks', () => {
     expect(h.isEmoji('emoji')).toBe(true)

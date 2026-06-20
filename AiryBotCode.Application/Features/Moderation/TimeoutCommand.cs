@@ -22,7 +22,7 @@ namespace AiryBotCode.Application.Features.Moderation
         [LiveSetting("Success message format. {0}=User, {1}=Minutes, {2}=End Time", UiHint = "template:0=User,1=Minutes,2=End Time")]
         public string SuccessMessageFormat { get; set; } = "🔇 **{0}** has been timed out for **{1} minutes**.\n⏰ They will be able to chat again at `{2}`.\n🛠️ Logs are being processed...";
 
-        [LiveSetting("Choices for the 'clear' option.", Category = "Moderation", UiHint = "json")]
+        [LiveSetting("Choices for the 'clear' option (label → minutes).", Category = "Moderation", UiHint = "keyvalue:number")]
         public Dictionary<string, int> ClearMessageChoices { get; set; } = new()
         {
             { "1 hour ago", 60 }, { "5 hours", 300 }, { "10 hours", 600 }, { "24 hours", 1440 }

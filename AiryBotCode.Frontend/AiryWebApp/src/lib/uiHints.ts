@@ -100,6 +100,43 @@ export function serializeList(items: string[], kind: ListKind | null): string {
   return JSON.stringify(kind === 'number' ? items.map((x) => Number(x)) : items)
 }
 
+// ---- keyvalue: a JSON object edited as key→value rows ----
+export type KeyValueKind = 'number' | 'text'
+export interface KvRow { key: string; val: string }
+
+export function keyvalueKind(uiHint: string | undefined): KeyValueKind | null {
+  if (uiHint === 'keyvalue:number') return 'number'
+  if (uiHint === 'keyvalue:text') return 'text'
+  return null
+}
+
+// Parses the stored value as a JSON object → rows. Returns null for non-objects
+// (arrays/scalars/garbage) so the caller can fall back to the json textarea.
+export function parseKeyValue(value: string | undefined): KvRow[] | null {
+  const v = (value ?? '').trim()
+  if (v === '') return []
+  try {
+    const o = JSON.parse(v)
+    if (o === null || typeof o !== 'object' || Array.isArray(o)) return null
+    return Object.entries(o).map(([key, val]) => ({ key, val: String(val) }))
+  } catch { return null }
+}
+
+export function isKeyValue(uiHint: string | undefined, value: string | undefined): boolean {
+  return keyvalueKind(uiHint) !== null && parseKeyValue(value) !== null
+}
+
+// Rows → JSON object string; number kind coerces values, blank keys are dropped.
+export function serializeKeyValue(rows: KvRow[], kind: KeyValueKind | null): string {
+  const o: Record<string, string | number> = {}
+  for (const r of rows) {
+    const k = r.key.trim()
+    if (!k) continue
+    o[k] = kind === 'number' ? Number(r.val) : r.val
+  }
+  return JSON.stringify(o)
+}
+
 // ---- emoji ----
 export const COMMON_EMOJI = ['✅', '☑️', '✔️', '🎉', '⭐', '🔥', '💯', '👍', '🆗', '🍪']
 
