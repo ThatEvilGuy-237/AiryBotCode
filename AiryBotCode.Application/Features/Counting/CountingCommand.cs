@@ -57,7 +57,7 @@ namespace AiryBotCode.Application.Features.Counting
         [ReloadableSetting("Enable Airy-generated mini-boss puzzles at milestones.", Category = "Counting", UiHint = "boolean")]
         public bool BossesEnabled { get; set; } = true;
 
-        [ReloadableSetting("Milestone counts that spawn a boss; past the last, the last gap repeats.", Category = "Counting", UiHint = "json")]
+        [ReloadableSetting("Milestone counts that spawn a boss; past the last, the last gap repeats.", Category = "Counting", UiHint = "list:number")]
         public int[] BossMilestones { get; set; } = new[] { 10, 20, 50, 100, 200, 300, 400 };
 
         [ReloadableSetting("A wrong boss answer resets the count (otherwise it's ignored).", Category = "Counting", UiHint = "boolean")]

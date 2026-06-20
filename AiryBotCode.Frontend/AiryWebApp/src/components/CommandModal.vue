@@ -136,6 +136,54 @@ function optionsFor(setting: CommandSetting): { value: string; label: string }[]
   return [{ value: '0', label: '— None —' }, ...opts]
 }
 
+// --- list: a JSON array edited as add/remove chips ---
+// Hint "list:number" / "list:text". The value stays a JSON array string (what the
+// bot already reads), so it round-trips. Degrades to the json textarea when the
+// value isn't empty and isn't a parseable array.
+const listDraft = ref<Record<string, string>>({})
+
+function listKind(setting: CommandSetting): 'number' | 'text' | null {
+  if (setting.uiHint === 'list:number') return 'number'
+  if (setting.uiHint === 'list:text') return 'text'
+  return null
+}
+
+function parseList(setting: CommandSetting): unknown[] | null {
+  const v = (setting.value ?? '').trim()
+  if (v === '') return []
+  try {
+    const parsed = JSON.parse(v)
+    return Array.isArray(parsed) ? parsed : null
+  } catch { return null }
+}
+
+function isList(setting: CommandSetting): boolean {
+  return listKind(setting) !== null && parseList(setting) !== null
+}
+
+function listItems(setting: CommandSetting): string[] {
+  return (parseList(setting) ?? []).map((x) => String(x))
+}
+
+function writeList(setting: CommandSetting, items: string[]) {
+  const out = listKind(setting) === 'number' ? items.map((x) => Number(x)) : items
+  setting.value = JSON.stringify(out)
+}
+
+function addListItem(setting: CommandSetting) {
+  const raw = (listDraft.value[setting.key] ?? '').trim()
+  if (!raw) return
+  if (listKind(setting) === 'number' && !Number.isFinite(Number(raw))) return
+  writeList(setting, [...listItems(setting), raw])
+  listDraft.value[setting.key] = ''
+}
+
+function removeListItem(setting: CommandSetting, i: number) {
+  const items = listItems(setting)
+  items.splice(i, 1)
+  writeList(setting, items)
+}
+
 // --- slider: a bounded number, dragged or typed ---
 // Hint "slider:min,max" or "slider:min,max,step". Degrades to a plain number
 // when the bounds can't be parsed. Both the range and the number box bind to the
@@ -323,6 +371,24 @@ function save() {
               rows="4"
               :class="{ mono: setting.uiHint === 'json' }"
             ></textarea>
+            <div v-else-if="isList(setting)" class="list">
+              <div v-if="listItems(setting).length" class="list-chips">
+                <span v-for="(item, i) in listItems(setting)" :key="i" class="list-chip">
+                  {{ item }}
+                  <button type="button" class="list-del" title="Remove" @click="removeListItem(setting, i)">✕</button>
+                </span>
+              </div>
+              <div class="list-add">
+                <input
+                  :id="`f-${setting.key}`"
+                  v-model="listDraft[setting.key]"
+                  :type="listKind(setting) === 'number' ? 'number' : 'text'"
+                  :placeholder="listKind(setting) === 'number' ? 'Add a number…' : 'Add an item…'"
+                  @keydown.enter.prevent="addListItem(setting)"
+                />
+                <button type="button" class="list-addbtn" @click="addListItem(setting)">+ Add</button>
+              </div>
+            </div>
             <div v-else-if="isSlider(setting)" class="slider">
               <input
                 type="range"
@@ -522,6 +588,26 @@ textarea,
 }
 .reward-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 textarea { resize: vertical; min-height: 70px; }
+.list { display: flex; flex-direction: column; gap: 0.5rem; }
+.list-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.list-chip {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 0.82rem;
+  padding: 0.2rem 0.3rem 0.2rem 0.55rem; border: 1px solid var(--color-border);
+  border-radius: 999px; background: var(--color-surface-mute);
+}
+.list-del {
+  background: transparent; border: none; cursor: pointer; color: var(--color-muted);
+  font-size: 0.75rem; line-height: 1; padding: 0 0.2rem; border-radius: 999px;
+}
+.list-del:hover { color: var(--color-accent); }
+.list-add { display: flex; gap: 0.5rem; }
+.list-add input { flex: 1; min-width: 0; }
+.list-addbtn {
+  flex: none; background: var(--color-surface); border: 1px dashed var(--color-border);
+  border-radius: 8px; padding: 0.45rem 0.9rem; cursor: pointer; color: var(--color-fg); font-weight: 500;
+}
+.list-addbtn:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .slider { display: flex; align-items: center; gap: 0.75rem; }
 .slider-range { flex: 1; min-width: 0; accent-color: var(--color-accent); cursor: pointer; padding: 0; }
 .slider-num { width: 5rem; flex: none; }
