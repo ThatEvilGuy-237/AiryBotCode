@@ -136,6 +136,17 @@ function optionsFor(setting: CommandSetting): { value: string; label: string }[]
   return [{ value: '0', label: '— None —' }, ...opts]
 }
 
+// --- emoji: a short input + live preview + common quick-picks ---
+const COMMON_EMOJI = ['✅', '☑️', '✔️', '🎉', '⭐', '🔥', '💯', '👍', '🆗', '🍪']
+
+function isEmoji(setting: CommandSetting): boolean {
+  return setting.uiHint === 'emoji'
+}
+
+function setEmoji(setting: CommandSetting, e: string) {
+  setting.value = e
+}
+
 // --- duration: a number in a fixed unit + a humanized read-out ---
 // Hint "duration:seconds" / "duration:minutes" (also hours/days). The STORED
 // value stays the raw number in that unit — we only add a unit label and a
@@ -296,6 +307,22 @@ function save() {
               rows="4"
               :class="{ mono: setting.uiHint === 'json' }"
             ></textarea>
+            <div v-else-if="isEmoji(setting)" class="emoji">
+              <div class="emoji-row">
+                <span class="emoji-preview">{{ setting.value || '—' }}</span>
+                <input :id="`f-${setting.key}`" v-model="setting.value" type="text" placeholder="✅ or <:name:id>" />
+              </div>
+              <div class="chips">
+                <button
+                  v-for="e in COMMON_EMOJI"
+                  :key="e"
+                  type="button"
+                  class="emoji-pick"
+                  :class="{ on: setting.value === e }"
+                  @click="setEmoji(setting, e)"
+                >{{ e }}</button>
+              </div>
+            </div>
             <div v-else-if="isDuration(setting)" class="duration">
               <input :id="`f-${setting.key}`" v-model="setting.value" type="number" min="0" />
               <span class="unit">{{ durationUnit(setting) }}</span>
@@ -460,6 +487,20 @@ textarea,
 }
 .reward-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 textarea { resize: vertical; min-height: 70px; }
+.emoji { display: flex; flex-direction: column; gap: 0.5rem; }
+.emoji-row { display: flex; align-items: center; gap: 0.6rem; }
+.emoji-preview {
+  font-size: 1.6rem; line-height: 1; width: 2.4rem; height: 2.4rem; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-surface-mute);
+}
+.emoji-row input { flex: 1; min-width: 0; }
+.emoji-pick {
+  font-size: 1.1rem; line-height: 1; padding: 0.3rem 0.45rem; cursor: pointer;
+  border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-surface-mute);
+}
+.emoji-pick:hover { border-color: var(--color-accent); }
+.emoji-pick.on { border-color: var(--color-accent); background: var(--color-surface-hi); }
 .duration { display: flex; align-items: center; gap: 0.5rem; }
 .duration input { flex: 1; min-width: 0; }
 .duration .unit { color: var(--color-muted); font-size: 0.85rem; }

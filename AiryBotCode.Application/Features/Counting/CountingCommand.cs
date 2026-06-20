@@ -41,6 +41,9 @@ namespace AiryBotCode.Application.Features.Counting
         [ReloadableSetting("React ✅ on a correct count.", Category = "Counting", UiHint = "boolean")]
         public bool ReactOnSuccess { get; set; } = true;
 
+        [ReloadableSetting("Emoji reacted on a correct count (unicode or a custom :emote:).", Category = "Counting", UiHint = "emoji")]
+        public string SuccessEmoji { get; set; } = "✅";
+
         [ReloadableSetting("How close a (decimal) answer must be to count.", Category = "Counting", UiHint = "number")]
         public double DecimalTolerance { get; set; } = 0.01;
 
@@ -139,7 +142,7 @@ namespace AiryBotCode.Application.Features.Counting
                         new { channelId = message.Channel.Id.ToString(), milestone = expected },
                         message.Channel.Id.ToString());
 
-                if (ReactOnSuccess) await TryReactAsync(message);
+                if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
             }
             else
             {
@@ -197,7 +200,7 @@ namespace AiryBotCode.Application.Features.Counting
                 state.BossAnswer = null;
                 state.BossSpawnedAt = null;
                 await repo.SaveAsync(state);
-                if (ReactOnSuccess) await TryReactAsync(message);
+                if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
 
                 _ = _hive.SendEventAsync(
                     "counting_boss_defeated",
@@ -257,10 +260,18 @@ namespace AiryBotCode.Application.Features.Counting
             }
         }
 
-        private static async Task TryReactAsync(SocketMessage message)
+        private static async Task TryReactAsync(SocketMessage message, string emoji)
         {
-            try { if (message is IUserMessage um) await um.AddReactionAsync(new Emoji("✅")); }
-            catch { /* missing perms / deleted message — ignore */ }
+            if (message is not IUserMessage um) return;
+            try
+            {
+                // Custom Discord emote (<:name:id>) vs a plain unicode emoji; fall
+                // back to ✅ when the configured value is blank or unparseable.
+                var raw = string.IsNullOrWhiteSpace(emoji) ? "✅" : emoji.Trim();
+                IEmote reaction = Emote.TryParse(raw, out var custom) ? custom : new Emoji(raw);
+                await um.AddReactionAsync(reaction);
+            }
+            catch { /* missing perms / deleted message / bad emoji — ignore */ }
         }
 
         // ---------------------------------------------------------------- /counting
