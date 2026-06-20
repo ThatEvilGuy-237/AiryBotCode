@@ -9,6 +9,7 @@ import {
   serializeRoleRewards,
   type RewardRow,
 } from '../lib/discordIds'
+import * as hints from '../lib/uiHints'
 
 const props = defineProps<{ command: CommandConfig; botId?: string | null }>()
 const emit = defineEmits<{
@@ -136,38 +137,17 @@ function optionsFor(setting: CommandSetting): { value: string; label: string }[]
   return [{ value: '0', label: '— None —' }, ...opts]
 }
 
-// --- list: a JSON array edited as add/remove chips ---
-// Hint "list:number" / "list:text". The value stays a JSON array string (what the
-// bot already reads), so it round-trips. Degrades to the json textarea when the
-// value isn't empty and isn't a parseable array.
+// --- rich-control adapters: parsing lives in lib/uiHints; these bind it to a
+// setting and keep the mutating/DOM bits (add/remove/insert) local. ---
+
+// list: a JSON array edited as chips (the value stays a JSON array string).
 const listDraft = ref<Record<string, string>>({})
-
-function listKind(setting: CommandSetting): 'number' | 'text' | null {
-  if (setting.uiHint === 'list:number') return 'number'
-  if (setting.uiHint === 'list:text') return 'text'
-  return null
-}
-
-function parseList(setting: CommandSetting): unknown[] | null {
-  const v = (setting.value ?? '').trim()
-  if (v === '') return []
-  try {
-    const parsed = JSON.parse(v)
-    return Array.isArray(parsed) ? parsed : null
-  } catch { return null }
-}
-
-function isList(setting: CommandSetting): boolean {
-  return listKind(setting) !== null && parseList(setting) !== null
-}
-
-function listItems(setting: CommandSetting): string[] {
-  return (parseList(setting) ?? []).map((x) => String(x))
-}
+const listKind = (s: CommandSetting) => hints.listKind(s.uiHint)
+const isList = (s: CommandSetting) => hints.isList(s.uiHint, s.value)
+const listItems = (s: CommandSetting) => hints.listItems(s.value)
 
 function writeList(setting: CommandSetting, items: string[]) {
-  const out = listKind(setting) === 'number' ? items.map((x) => Number(x)) : items
-  setting.value = JSON.stringify(out)
+  setting.value = hints.serializeList(items, listKind(setting))
 }
 
 function addListItem(setting: CommandSetting) {
@@ -184,80 +164,28 @@ function removeListItem(setting: CommandSetting, i: number) {
   writeList(setting, items)
 }
 
-// --- slider: a bounded number, dragged or typed ---
-// Hint "slider:min,max" or "slider:min,max,step". Degrades to a plain number
-// when the bounds can't be parsed. Both the range and the number box bind to the
-// same string value.
-function sliderRange(setting: CommandSetting): { min: number; max: number; step: number } | null {
-  if (!setting.uiHint?.startsWith('slider:')) return null
-  const parts = setting.uiHint.slice('slider:'.length).split(',').map((n) => Number(n.trim()))
-  const [min, max, step] = parts
-  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return null
-  return { min, max, step: Number.isFinite(step) && step > 0 ? step : 1 }
-}
+// slider: a bounded number, dragged or typed.
+const sliderRange = (s: CommandSetting) => hints.sliderRange(s.uiHint)
+const isSlider = (s: CommandSetting) => hints.isSlider(s.uiHint)
 
-function isSlider(setting: CommandSetting): boolean {
-  return sliderRange(setting) !== null
-}
-
-// --- emoji: a short input + live preview + common quick-picks ---
-const COMMON_EMOJI = ['✅', '☑️', '✔️', '🎉', '⭐', '🔥', '💯', '👍', '🆗', '🍪']
-
-function isEmoji(setting: CommandSetting): boolean {
-  return setting.uiHint === 'emoji'
-}
-
+// emoji: a short input + live preview + common quick-picks.
+const COMMON_EMOJI = hints.COMMON_EMOJI
+const isEmoji = (s: CommandSetting) => hints.isEmoji(s.uiHint)
 function setEmoji(setting: CommandSetting, e: string) {
   setting.value = e
 }
 
-// --- duration: a number in a fixed unit + a humanized read-out ---
-// Hint "duration:seconds" / "duration:minutes" (also hours/days). The STORED
-// value stays the raw number in that unit — we only add a unit label and a
-// friendly breakdown. Degrades to a plain number when the unit is unknown.
-const UNIT_SECONDS: Record<string, number> = { seconds: 1, minutes: 60, hours: 3600, days: 86400 }
-
-function isDuration(setting: CommandSetting): boolean {
-  return !!setting.uiHint?.startsWith('duration:') && durationUnit(setting) in UNIT_SECONDS
-}
-
-function durationUnit(setting: CommandSetting): string {
-  return setting.uiHint.slice('duration:'.length).trim()
-}
-
-// "1440" minutes -> "= 1d", "300" seconds -> "= 5m", "90" seconds -> "= 1m 30s".
-function humanizeDuration(setting: CommandSetting): string {
-  const n = Number(setting.value)
-  if (!Number.isFinite(n) || n <= 0) return ''
-  let secs = Math.round(n * (UNIT_SECONDS[durationUnit(setting)] ?? 1))
-  const parts: string[] = []
-  for (const [label, size] of [['d', 86400], ['h', 3600], ['m', 60], ['s', 1]] as const) {
-    if (secs >= size) { parts.push(`${Math.floor(secs / size)}${label}`); secs %= size }
-  }
-  return parts.length ? `= ${parts.slice(0, 2).join(' ')}` : ''
-}
+// duration: a number in a fixed unit + a humanized read-out.
+const isDuration = (s: CommandSetting) => hints.isDuration(s.uiHint)
+const durationUnit = (s: CommandSetting) => hints.durationUnit(s.uiHint)
+const humanizeDuration = (s: CommandSetting) => hints.humanizeDuration(s.value, s.uiHint)
 
 // --- message-template editor (textarea + clickable placeholder chips) ---
 // Encoded in the hint as "template:user,level,xp" so it needs no extra metadata
 // column. Clicking a chip inserts {placeholder} at the caret. Degrades to a plain
 // textarea when no placeholders are declared.
-function isTemplate(setting: CommandSetting): boolean {
-  return setting.uiHint?.startsWith('template:') ?? false
-}
-
-// Each chip is {token, label}. "user" -> insert {user}, show {user}. A labeled
-// pair "0=User" -> insert {0}, show "User" (for positional formats like {0}{1}).
-function placeholders(setting: CommandSetting): { token: string; label: string }[] {
-  if (!isTemplate(setting)) return []
-  return setting.uiHint.slice('template:'.length)
-    .split(',').map((p) => p.trim()).filter(Boolean)
-    .map((p) => {
-      const eq = p.indexOf('=')
-      return eq > 0
-        ? { token: p.slice(0, eq).trim(), label: p.slice(eq + 1).trim() }
-        : { token: p, label: p }
-    })
-}
+const isTemplate = (s: CommandSetting) => hints.isTemplate(s.uiHint)
+const placeholders = (s: CommandSetting) => hints.parsePlaceholders(s.uiHint)
 
 // Insert {name} at the textarea's caret (or append if it isn't focused).
 function insertPlaceholder(setting: CommandSetting, name: string, ev: MouseEvent) {
