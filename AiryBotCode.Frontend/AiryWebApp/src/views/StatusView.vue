@@ -2,9 +2,10 @@
 // Read-only feature status for the selected bot: counting-game progress per
 // channel + the XP leaderboard. Purely surfaces what the running bot has written
 // to the DB (CountingState / LevelUser) — nothing here mutates anything.
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { PageHeader, Card, Badge, Button, StatStrip, Stat } from '@hive/ui'
 import { api, ApiError, type CountingChannelStatus, type LeaderboardEntry } from '../lib/api'
+import { relativeTime } from '../lib/relativeTime'
 import { useBots } from '../lib/bots'
 
 const { currentBot, currentBotId, loadBots } = useBots()
@@ -19,6 +20,10 @@ const loadingMore = ref(false)
 const error = ref('')
 
 const nf = new Intl.NumberFormat()
+
+// Ticks so relative "active … ago" labels stay fresh without a reload.
+const now = ref(Date.now())
+let clock: ReturnType<typeof setInterval> | undefined
 
 async function load() {
   if (!currentBotId.value) {
@@ -78,9 +83,11 @@ const hasSummary = computed(() => counting.value.length > 0 || boardTotal.value 
 
 watch(currentBotId, load)
 onMounted(async () => {
+  clock = setInterval(() => (now.value = Date.now()), 30_000)
   await loadBots()
   await load()
 })
+onUnmounted(() => clock && clearInterval(clock))
 </script>
 
 <template>
@@ -146,6 +153,9 @@ onMounted(async () => {
                 <span class="stat-lbl">high score</span>
               </div>
             </div>
+            <p v-if="relativeTime(c.updatedAt, now)" class="last mono muted">
+              active {{ relativeTime(c.updatedAt, now) }}
+            </p>
           </Card>
         </div>
       </section>
@@ -196,6 +206,7 @@ onMounted(async () => {
 .stat { display: flex; flex-direction: column; }
 .stat-num { font-family: var(--font-mono); font-size: var(--font-size-xl); font-weight: 700; color: var(--color-fg); }
 .stat-lbl { font-size: var(--font-size-xs); letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-ghost); }
+.last { margin: var(--space-2) 0 0; font-size: var(--font-size-xs); }
 
 .board { padding: 0; }
 .rows { list-style: none; margin: 0; padding: 0; }
