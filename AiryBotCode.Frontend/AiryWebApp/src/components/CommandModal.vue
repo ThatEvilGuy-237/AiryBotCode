@@ -245,10 +245,18 @@ function isTemplate(setting: CommandSetting): boolean {
   return setting.uiHint?.startsWith('template:') ?? false
 }
 
-function placeholders(setting: CommandSetting): string[] {
+// Each chip is {token, label}. "user" -> insert {user}, show {user}. A labeled
+// pair "0=User" -> insert {0}, show "User" (for positional formats like {0}{1}).
+function placeholders(setting: CommandSetting): { token: string; label: string }[] {
   if (!isTemplate(setting)) return []
   return setting.uiHint.slice('template:'.length)
     .split(',').map((p) => p.trim()).filter(Boolean)
+    .map((p) => {
+      const eq = p.indexOf('=')
+      return eq > 0
+        ? { token: p.slice(0, eq).trim(), label: p.slice(eq + 1).trim() }
+        : { token: p, label: p }
+    })
 }
 
 // Insert {name} at the textarea's caret (or append if it isn't focused).
@@ -356,12 +364,15 @@ function save() {
               <div class="chips">
                 <button
                   v-for="p in placeholders(setting)"
-                  :key="p"
+                  :key="p.token"
                   type="button"
                   class="chip"
-                  title="Insert at cursor"
-                  @click="insertPlaceholder(setting, p, $event)"
-                >{{ '{' + p + '}' }}</button>
+                  :title="`Insert {${p.token}} at cursor`"
+                  @click="insertPlaceholder(setting, p.token, $event)"
+                >
+                  <span v-if="p.label !== p.token" class="chip-label">{{ p.label }}</span>
+                  <span class="chip-token">{{ '{' + p.token + '}' }}</span>
+                </button>
               </div>
             </div>
             <textarea
@@ -642,6 +653,9 @@ textarea { resize: vertical; min-height: 70px; }
   cursor: pointer;
 }
 .chip:hover { border-color: var(--color-accent); background: var(--color-surface-hi); }
+.chip { display: inline-flex; align-items: center; gap: 0.3rem; }
+.chip-label { font-family: inherit; color: var(--color-fg); }
+.chip-token { font-family: ui-monospace, Menlo, monospace; color: var(--color-accent); }
 textarea.mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; }
 .switch { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; }
 .help { margin: 0; color: var(--color-muted); font-size: 0.8rem; }

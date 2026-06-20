@@ -19,7 +19,7 @@ namespace AiryBotCode.Application.Features.Moderation
         [LiveSetting("Message sent for invalid parameters.")]
         public string InvalidParamsMessage { get; set; } = "Invalid parameters provided.";
 
-        [LiveSetting("Success message format. {0}=User, {1}=Minutes, {2}=End Time")]
+        [LiveSetting("Success message format. {0}=User, {1}=Minutes, {2}=End Time", UiHint = "template:0=User,1=Minutes,2=End Time")]
         public string SuccessMessageFormat { get; set; } = "🔇 **{0}** has been timed out for **{1} minutes**.\n⏰ They will be able to chat again at `{2}`.\n🛠️ Logs are being processed...";
 
         [LiveSetting("Choices for the 'clear' option.", Category = "Moderation", UiHint = "json")]
