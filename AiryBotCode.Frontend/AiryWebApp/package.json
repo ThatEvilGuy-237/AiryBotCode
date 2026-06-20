@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hive/ui": "file:./vendor/hive-ui",
@@ -17,6 +18,7 @@
     "@vitejs/plugin-vue": "^6.0.0",
     "typescript": "~5.6.3",
     "vite": "^8.0.0",
+    "vitest": "^4.1.9",
     "vue-tsc": "^2.2.0"
   }
 }
