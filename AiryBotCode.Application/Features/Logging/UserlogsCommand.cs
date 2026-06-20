@@ -20,7 +20,7 @@ namespace AiryBotCode.Application.Features.Logging
         [LiveSetting("Selectable log types for the 'type' option.", Category = "Logging", UiHint = "json")]
         public string[] LogTypes { get; set; } = new[] { "Warning", "Ban", "Kick", "Mute" };
 
-        [LiveSetting("Message shown for invalid inputs.")]
+        [LiveSetting("Message shown for invalid inputs.", UiHint = "textarea")]
         public string InvalidInputsMessage { get; set; } = "Invalid inputs.";
         // --- End of Settings Declaration ---
 

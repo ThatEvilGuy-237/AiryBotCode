@@ -16,7 +16,7 @@ namespace AiryBotCode.Application.Features.Moderation
         [ReloadableSetting("The primary description for the command.")]
         public string Description { get; set; } = "Timeout a user and log the action for admins";
 
-        [LiveSetting("Message sent for invalid parameters.")]
+        [LiveSetting("Message sent for invalid parameters.", UiHint = "textarea")]
         public string InvalidParamsMessage { get; set; } = "Invalid parameters provided.";
 
         [LiveSetting("Success message format. {0}=User, {1}=Minutes, {2}=End Time", UiHint = "template:0=User,1=Minutes,2=End Time")]

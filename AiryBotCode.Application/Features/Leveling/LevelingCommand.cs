@@ -63,7 +63,7 @@ namespace AiryBotCode.Application.Features.Leveling
         public ulong[] NoXpRoleIds { get; set; } = Array.Empty<ulong>();
 
         // --- Leaderboard ---
-        [ReloadableSetting("Entries shown per /level leaderboard page.", Category = "Leveling", UiHint = "number")]
+        [ReloadableSetting("Entries shown per /level leaderboard page.", Category = "Leveling", UiHint = "slider:1,25")]
         public int LeaderboardPageSize { get; set; } = 10;
 
         private readonly IServiceProvider _services;
