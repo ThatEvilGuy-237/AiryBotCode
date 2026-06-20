@@ -2,8 +2,8 @@
 // Read-only feature status for the selected bot: counting-game progress per
 // channel + the XP leaderboard. Purely surfaces what the running bot has written
 // to the DB (CountingState / LevelUser) — nothing here mutates anything.
-import { ref, watch, onMounted } from 'vue'
-import { PageHeader, Card, Badge, Button } from '@hive/ui'
+import { ref, computed, watch, onMounted } from 'vue'
+import { PageHeader, Card, Badge, Button, StatStrip, Stat } from '@hive/ui'
 import { api, ApiError, type CountingChannelStatus, type LeaderboardEntry } from '../lib/api'
 import { useBots } from '../lib/bots'
 
@@ -65,6 +65,17 @@ function channelLabel(c: CountingChannelStatus): string {
   return c.channelName ? `#${c.channelName}` : `channel ${c.channelId}`
 }
 
+// At-a-glance summary derived from the loaded data (no extra fetch). Shown only
+// when the bot has some activity to report.
+const topCounter = computed(() =>
+  counting.value.reduce<CountingChannelStatus | null>(
+    (best, c) => (best && best.highScore >= c.highScore ? best : c),
+    null,
+  ),
+)
+const leader = computed(() => board.value[0] ?? null)
+const hasSummary = computed(() => counting.value.length > 0 || boardTotal.value > 0)
+
 watch(currentBotId, load)
 onMounted(async () => {
   await loadBots()
@@ -93,6 +104,24 @@ onMounted(async () => {
     <p v-else-if="loading" class="muted">Loading feature status…</p>
 
     <template v-else>
+      <!-- At-a-glance summary -->
+      <StatStrip v-if="hasSummary">
+        <Stat label="Counting channels" :value="counting.length" />
+        <Stat
+          label="Best high score"
+          :value="topCounter ? nf.format(topCounter.highScore) : '—'"
+          :sub="topCounter ? channelLabel(topCounter) : undefined"
+          accent
+        />
+        <Stat label="Ranked members" :value="nf.format(boardTotal)" />
+        <Stat
+          label="Top XP"
+          :value="leader ? nf.format(leader.xp) : '—'"
+          :sub="leader ? (leader.userName || leader.userId) : undefined"
+          accent
+        />
+      </StatStrip>
+
       <!-- Counting game -->
       <section class="section">
         <div class="section-head">
