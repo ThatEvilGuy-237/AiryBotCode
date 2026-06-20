@@ -28,8 +28,12 @@ namespace AiryBotCode.Api.Services
         private static readonly HashSet<int> PostableChannelTypes = new() { 0, 5, 15 };
         private const int CategoryChannelType = 4;
 
+        // Usernames change rarely → a longer TTL than the guild cache.
+        private static readonly TimeSpan UserCacheTtl = TimeSpan.FromMinutes(5);
+
         private readonly IHttpClientFactory _httpFactory;
         private readonly ConcurrentDictionary<ulong, CacheEntry> _cache = new();
+        private readonly ConcurrentDictionary<ulong, (DateTime At, string Name)> _userCache = new();
 
         public DiscordGuildLookup(IHttpClientFactory httpFactory) => _httpFactory = httpFactory;
 
@@ -49,6 +53,62 @@ namespace AiryBotCode.Api.Services
 
         public async Task<IReadOnlyList<DiscordEntity>> GetRolesAsync(ulong botId, string? token)
             => (await GetAsync(botId, token)).Roles;
+
+        /// <summary>
+        /// Resolve Discord user ids to display names (prefers global display name,
+        /// falls back to the username), keyed by id-as-string. Best-effort and never
+        /// throws: ids that can't be resolved are simply omitted, so a missing token
+        /// or a deleted user just leaves the panel showing the raw id. Results are
+        /// cached per id; only uncached ids hit Discord.
+        /// </summary>
+        public async Task<IReadOnlyDictionary<string, string>> GetUserNamesAsync(
+            ulong botId, string? token, IEnumerable<ulong> userIds)
+        {
+            var result = new Dictionary<string, string>();
+            var now = DateTime.UtcNow;
+
+            var misses = new List<ulong>();
+            foreach (var id in userIds.Where(i => i != 0).Distinct())
+            {
+                if (_userCache.TryGetValue(id, out var hit) && now - hit.At < UserCacheTtl)
+                    result[id.ToString()] = hit.Name;
+                else
+                    misses.Add(id);
+            }
+
+            if (misses.Count == 0 || string.IsNullOrWhiteSpace(token))
+                return result;
+
+            try
+            {
+                var http = _httpFactory.CreateClient();
+                http.Timeout = TimeSpan.FromSeconds(8);
+                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", token);
+                http.DefaultRequestHeaders.UserAgent.ParseAdd("AiryBotCode-Panel/1.0");
+
+                foreach (var id in misses)
+                {
+                    try
+                    {
+                        using var resp = await http.GetAsync($"{ApiBase}/users/{id}");
+                        if (!resp.IsSuccessStatusCode) continue;
+                        await using var stream = await resp.Content.ReadAsStreamAsync();
+                        using var doc = await JsonDocument.ParseAsync(stream);
+                        var root = doc.RootElement;
+                        var name =
+                            (root.TryGetProperty("global_name", out var gn) ? gn.GetString() : null)
+                            ?? (root.TryGetProperty("username", out var un) ? un.GetString() : null);
+                        if (string.IsNullOrWhiteSpace(name)) continue;
+                        _userCache[id] = (now, name);
+                        result[id.ToString()] = name;
+                    }
+                    catch { /* skip this id — best-effort */ }
+                }
+            }
+            catch { /* swallow — partial/empty map just shows raw ids */ }
+
+            return result;
+        }
 
         private async Task<CacheEntry> GetAsync(ulong botId, string? token)
         {

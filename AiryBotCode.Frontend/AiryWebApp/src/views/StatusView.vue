@@ -153,8 +153,10 @@ onUnmounted(() => clock && clearInterval(clock))
                 <span class="stat-lbl">high score</span>
               </div>
             </div>
-            <p v-if="relativeTime(c.updatedAt, now)" class="last mono muted">
-              active {{ relativeTime(c.updatedAt, now) }}
+            <p v-if="c.lastUserName || relativeTime(c.updatedAt, now)" class="last mono muted">
+              <span v-if="c.lastUserName">last by {{ c.lastUserName }}</span>
+              <span v-if="c.lastUserName && relativeTime(c.updatedAt, now)"> · </span>
+              <span v-if="relativeTime(c.updatedAt, now)">active {{ relativeTime(c.updatedAt, now) }}</span>
             </p>
           </Card>
         </div>

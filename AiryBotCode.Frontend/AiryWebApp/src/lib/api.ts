@@ -45,6 +45,7 @@ export interface CountingChannelStatus {
   bossActive: boolean
   bossSpawnedAt: string | null
   lastUserId: string | null
+  lastUserName: string | null
   updatedAt: string
 }
 

@@ -51,6 +51,9 @@ namespace AiryBotCode.Api.Controllers
             var channels = await _discord.GetChannelsAsync(id, entity?.Token);
             var nameById = channels.ToDictionary(c => c.Id, c => c.Name);
 
+            // Resolve the "last counter" of each channel to a display name (best-effort).
+            var userNames = await _discord.GetUserNamesAsync(id, entity?.Token, states.Select(s => s.LastUserId));
+
             var dto = states.Select(s => new
             {
                 channelId = s.ChannelId.ToString(),
@@ -60,6 +63,7 @@ namespace AiryBotCode.Api.Controllers
                 bossActive = s.BossActive,
                 bossSpawnedAt = s.BossSpawnedAt,
                 lastUserId = s.LastUserId == 0 ? null : s.LastUserId.ToString(),
+                lastUserName = s.LastUserId != 0 && userNames.TryGetValue(s.LastUserId.ToString(), out var un) ? un : null,
                 updatedAt = s.UpdatedAt,
             });
 
