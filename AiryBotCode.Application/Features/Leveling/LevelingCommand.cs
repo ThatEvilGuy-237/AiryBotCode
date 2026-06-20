@@ -42,7 +42,7 @@ namespace AiryBotCode.Application.Features.Leveling
         public int QuadraticFactor { get; set; } = 5;
 
         // --- Level-up announcement (always on; 0 channel = announce in-channel) ---
-        [ReloadableSetting("Level-up message. Placeholders: {user} {level} {xp}.", Category = "Leveling")]
+        [ReloadableSetting("Level-up message. Placeholders: {user} {level} {xp}.", Category = "Leveling", UiHint = "template:user,level,xp")]
         public string LevelUpMessage { get; set; } = "GG {user}, you reached level {level}! 🎉";
 
         [ReloadableSetting("Force level-up announcements to this channel. None = announce where they leveled up.", Category = "Leveling", UiHint = "channel")]

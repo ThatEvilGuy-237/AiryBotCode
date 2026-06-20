@@ -47,7 +47,7 @@ namespace AiryBotCode.Application.Features.Counting
         [ReloadableSetting("Track the all-time high score.", Category = "Counting")]
         public bool TrackHighScore { get; set; } = true;
 
-        [ReloadableSetting("Fallback fail message when the Hive is unreachable. {user} {count} {next} {start}.", Category = "Counting")]
+        [ReloadableSetting("Fallback fail message when the Hive is unreachable. {user} {count} {next} {start}.", Category = "Counting", UiHint = "template:user,count,next,start")]
         public string FailMessage { get; set; } = "💥 {user} broke the chain at **{count}**! The next number was **{next}**. Starting over from {start}.";
 
         // --- Mini-bosses ---

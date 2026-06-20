@@ -136,6 +136,37 @@ function optionsFor(setting: CommandSetting): { value: string; label: string }[]
   return [{ value: '0', label: '— None —' }, ...opts]
 }
 
+// --- message-template editor (textarea + clickable placeholder chips) ---
+// Encoded in the hint as "template:user,level,xp" so it needs no extra metadata
+// column. Clicking a chip inserts {placeholder} at the caret. Degrades to a plain
+// textarea when no placeholders are declared.
+function isTemplate(setting: CommandSetting): boolean {
+  return setting.uiHint?.startsWith('template:') ?? false
+}
+
+function placeholders(setting: CommandSetting): string[] {
+  if (!isTemplate(setting)) return []
+  return setting.uiHint.slice('template:'.length)
+    .split(',').map((p) => p.trim()).filter(Boolean)
+}
+
+// Insert {name} at the textarea's caret (or append if it isn't focused).
+function insertPlaceholder(setting: CommandSetting, name: string, ev: MouseEvent) {
+  const token = `{${name}}`
+  const wrap = (ev.currentTarget as HTMLElement)?.closest('.template')
+  const ta = wrap?.querySelector('textarea') as HTMLTextAreaElement | null
+  const cur = setting.value ?? ''
+  if (ta && ta.selectionStart != null) {
+    const start = ta.selectionStart, end = ta.selectionEnd ?? ta.selectionStart
+    setting.value = cur.slice(0, start) + token + cur.slice(end)
+    // Restore focus + caret just after the inserted token.
+    const caret = start + token.length
+    requestAnimationFrame(() => { ta.focus(); ta.setSelectionRange(caret, caret) })
+  } else {
+    setting.value = cur + token
+  }
+}
+
 // Group settings by their declared Category so long commands (e.g. Counting's
 // 14 settings) read as labelled sections instead of one flat wall of fields.
 // Order is preserved (first-seen category wins); empty category → "General".
@@ -218,6 +249,19 @@ function save() {
                 <button type="button" class="reward-del" title="Remove" @click="removeReward(setting, i)">✕</button>
               </div>
               <button type="button" class="reward-add" @click="addReward(setting)">+ Add reward</button>
+            </div>
+            <div v-else-if="isTemplate(setting)" class="template">
+              <textarea :id="`f-${setting.key}`" v-model="setting.value" rows="3"></textarea>
+              <div class="chips">
+                <button
+                  v-for="p in placeholders(setting)"
+                  :key="p"
+                  type="button"
+                  class="chip"
+                  title="Insert at cursor"
+                  @click="insertPlaceholder(setting, p, $event)"
+                >{{ '{' + p + '}' }}</button>
+              </div>
             </div>
             <textarea
               v-else-if="setting.uiHint === 'textarea' || setting.uiHint === 'json'"
@@ -385,6 +429,19 @@ textarea,
 }
 .reward-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 textarea { resize: vertical; min-height: 70px; }
+.template { display: flex; flex-direction: column; gap: 0.4rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.chip {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 0.78rem;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-mute);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--color-accent); background: var(--color-surface-hi); }
 textarea.mono { font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; }
 .switch { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; }
 .help { margin: 0; color: var(--color-muted); font-size: 0.8rem; }
