@@ -136,6 +136,22 @@ function optionsFor(setting: CommandSetting): { value: string; label: string }[]
   return [{ value: '0', label: '— None —' }, ...opts]
 }
 
+// --- slider: a bounded number, dragged or typed ---
+// Hint "slider:min,max" or "slider:min,max,step". Degrades to a plain number
+// when the bounds can't be parsed. Both the range and the number box bind to the
+// same string value.
+function sliderRange(setting: CommandSetting): { min: number; max: number; step: number } | null {
+  if (!setting.uiHint?.startsWith('slider:')) return null
+  const parts = setting.uiHint.slice('slider:'.length).split(',').map((n) => Number(n.trim()))
+  const [min, max, step] = parts
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return null
+  return { min, max, step: Number.isFinite(step) && step > 0 ? step : 1 }
+}
+
+function isSlider(setting: CommandSetting): boolean {
+  return sliderRange(setting) !== null
+}
+
 // --- emoji: a short input + live preview + common quick-picks ---
 const COMMON_EMOJI = ['✅', '☑️', '✔️', '🎉', '⭐', '🔥', '💯', '👍', '🆗', '🍪']
 
@@ -307,6 +323,25 @@ function save() {
               rows="4"
               :class="{ mono: setting.uiHint === 'json' }"
             ></textarea>
+            <div v-else-if="isSlider(setting)" class="slider">
+              <input
+                type="range"
+                :min="sliderRange(setting)!.min"
+                :max="sliderRange(setting)!.max"
+                :step="sliderRange(setting)!.step"
+                v-model="setting.value"
+                class="slider-range"
+              />
+              <input
+                :id="`f-${setting.key}`"
+                type="number"
+                :min="sliderRange(setting)!.min"
+                :max="sliderRange(setting)!.max"
+                :step="sliderRange(setting)!.step"
+                v-model="setting.value"
+                class="slider-num"
+              />
+            </div>
             <div v-else-if="isEmoji(setting)" class="emoji">
               <div class="emoji-row">
                 <span class="emoji-preview">{{ setting.value || '—' }}</span>
@@ -487,6 +522,9 @@ textarea,
 }
 .reward-add:hover { border-color: var(--color-accent); color: var(--color-accent); }
 textarea { resize: vertical; min-height: 70px; }
+.slider { display: flex; align-items: center; gap: 0.75rem; }
+.slider-range { flex: 1; min-width: 0; accent-color: var(--color-accent); cursor: pointer; padding: 0; }
+.slider-num { width: 5rem; flex: none; }
 .emoji { display: flex; flex-direction: column; gap: 0.5rem; }
 .emoji-row { display: flex; align-items: center; gap: 0.6rem; }
 .emoji-preview {

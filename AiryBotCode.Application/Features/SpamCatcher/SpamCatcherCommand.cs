@@ -26,10 +26,10 @@ namespace AiryBotCode.Application.Features.SpamCatcher
         [ReloadableSetting("Role that is watched for cross-channel spam. None = catcher OFF. Only members WITH this role are monitored, each one independently.", Category = "SpamCatcher", UiHint = "role")]
         public ulong MonitoredRoleId { get; set; } = 0;            // base: empty (off)
 
-        [ReloadableSetting("How many messages within the window count as spam.", Category = "SpamCatcher", UiHint = "number")]
+        [ReloadableSetting("How many messages within the window count as spam.", Category = "SpamCatcher", UiHint = "slider:2,15")]
         public int MessageThreshold { get; set; } = 3;             // base: 3
 
-        [ReloadableSetting("How many DISTINCT channels the burst must span.", Category = "SpamCatcher", UiHint = "number")]
+        [ReloadableSetting("How many DISTINCT channels the burst must span.", Category = "SpamCatcher", UiHint = "slider:1,10")]
         public int DistinctChannels { get; set; } = 2;             // base: 2
 
         [ReloadableSetting("Sliding time window, in seconds.", Category = "SpamCatcher", UiHint = "duration:seconds")]
