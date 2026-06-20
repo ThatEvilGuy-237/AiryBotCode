@@ -18,6 +18,12 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             _context.CountingStates.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.BotId == botId && x.ChannelId == channelId);
 
+        public async Task<IReadOnlyList<CountingState>> ListByBotAsync(ulong botId) =>
+            await _context.CountingStates.AsNoTracking()
+                .Where(x => x.BotId == botId)
+                .OrderByDescending(x => x.UpdatedAt)
+                .ToListAsync();
+
         public async Task SaveAsync(CountingState state)
         {
             var existing = await _context.CountingStates
