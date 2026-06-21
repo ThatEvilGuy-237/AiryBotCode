@@ -60,6 +60,30 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     .GetForChannelAsync(botId, message.Channel.Id);
                 if (link != null)
                 {
+                    // RequireMention gate: when this bot's HiveChat setting is on, only engage
+                    // when the message targets THIS bot — i.e. it @mentions the bot, or it's a
+                    // reply to one of the bot's own messages (a reply counts as a ping). botId is
+                    // the bot's Discord user id. Read per-bot from the settings repo (this handler
+                    // runs in a fresh scope, so a resolved command instance isn't hydrated).
+                    var requireMention = false;
+                    try
+                    {
+                        var hiveSettings = await scope.ServiceProvider.GetRequiredService<ICommandSettingsRepository>()
+                            .GetByCommandAsync(botId, "HiveChatCommand");
+                        var row = hiveSettings.FirstOrDefault(s => s.Key == "RequireMention");
+                        requireMention = row != null && bool.TryParse(row.Value, out var rm) && rm;
+                    }
+                    catch (Exception sx) { Console.WriteLine($"[HiveChat] setting read failed, allowing through: {sx.Message}"); }
+
+                    if (requireMention)
+                    {
+                        var mentionsBot = message.MentionedUsers.Any(u => u.Id == botId);
+                        var repliesToBot = message.Reference != null
+                            && (message as SocketUserMessage)?.ReferencedMessage?.Author?.Id == botId;
+                        if (!mentionsBot && !repliesToBot)
+                            return;   // not targeted at this bot → stay silent
+                    }
+
                     var consented = true;
                     try { consented = await scope.ServiceProvider.GetRequiredService<IUserConsentRepository>()
                             .HasConsentAsync(botId, message.Author.Id); }

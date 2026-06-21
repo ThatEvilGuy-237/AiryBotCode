@@ -35,6 +35,8 @@ namespace AiryBotCode.Application
             // Per-user XP cooldown gate — shared across message handlers.
             services.AddSingleton<Features.Leveling.XpCooldown>();
             services.AddScoped<Features.Counting.CountingCommand>();
+            // Hive AI chat — per-bot settings (e.g. require @mention/reply to engage).
+            services.AddScoped<Features.HiveChat.HiveChatCommand>();
             // SERVICES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();
