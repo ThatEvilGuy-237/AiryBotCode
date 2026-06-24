@@ -202,6 +202,13 @@ namespace AiryBotCode.Application.Features.Counting
                 state.BossActive = false;
                 state.BossAnswer = null;
                 state.BossSpawnedAt = null;
+                // The solver is now the most recent actor, exactly like a normal count.
+                // Without this LastUserId stays whoever HIT the milestone — so when they
+                // post the (correct) next number, the "no counting twice in a row" guard
+                // wrongly fails them, even though the boss interrupted their turn. This
+                // was the post-boss "you bungled the count" reset bug.
+                state.LastUserId = member.Id;
+                state.LastMessageId = message.Id;
                 await repo.SaveAsync(state);
                 if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
 
