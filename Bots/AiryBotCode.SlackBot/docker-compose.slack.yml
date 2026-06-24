@@ -1,0 +1,21 @@
+# Vinnie Slack bot — joins the Hive's network so it can reach spine:7000.
+# Deploy:  SLACK_BOT_TOKEN=… SLACK_APP_TOKEN=… AIRY_JWT_SECRET=… \
+#          docker compose -f docker-compose.slack.yml -p vinnie up -d --build
+services:
+  vinnie-slack:
+    build: .
+    container_name: vinnie-slack
+    environment:
+      - Slack__BotToken=${SLACK_BOT_TOKEN}
+      - Slack__AppToken=${SLACK_APP_TOKEN}
+      - Spine__Url=http://spine:7000
+      - Vinnie__AgentId=a869d850-2f85-4d57-8fbb-fd20774d90dd
+      - Jwt__Secret=${AIRY_JWT_SECRET}
+    networks:
+      - hive
+    restart: unless-stopped
+
+networks:
+  hive:
+    external: true
+    name: hive-core_default
