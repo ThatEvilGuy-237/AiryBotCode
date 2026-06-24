@@ -137,10 +137,13 @@ namespace AiryBotCode.Application.Features.Counting
                 await repo.SaveAsync(state);
 
                 if (spawningBoss)
+                {
+                    ShowTypingWhileVoicing(message);   // Airy is voicing the boss puzzle
                     await _hive.SendEventAsync(
                         "counting_boss",
                         new { channelId = message.Channel.Id.ToString(), milestone = expected },
                         message.Channel.Id.ToString());
+                }
 
                 if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
             }
@@ -202,6 +205,7 @@ namespace AiryBotCode.Application.Features.Counting
                 await repo.SaveAsync(state);
                 if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
 
+                if (_hive.IsConnected) ShowTypingWhileVoicing(message);   // Airy is voicing the victory line
                 _ = _hive.SendEventAsync(
                     "counting_boss_defeated",
                     new { channelId = message.Channel.Id.ToString(), userId = member.Id.ToString() },
@@ -235,6 +239,7 @@ namespace AiryBotCode.Application.Features.Counting
             await repo.SaveAsync(state);
 
             // Voice it through Airy; fall back to a static message if the Hive is down.
+            if (_hive.IsConnected) ShowTypingWhileVoicing(message);   // Airy is voicing the fail line
             var sent = await _hive.SendEventAsync(
                 "counting_fail",
                 new
@@ -272,6 +277,24 @@ namespace AiryBotCode.Application.Features.Counting
                 await um.AddReactionAsync(reaction);
             }
             catch { /* missing perms / deleted message / bad emoji — ignore */ }
+        }
+
+        // Airy's voiced lines (boss/fail/victory) arrive async over the effects socket
+        // ~1–3s after we notify the Hive. Show Discord's "typing…" indicator in the
+        // meantime, mirroring the conversation path. Fire-and-forget; Discord clears it
+        // when the say-effect message posts (the Delay is just a safety cap).
+        private static void ShowTypingWhileVoicing(SocketMessage message)
+        {
+            var channel = message.Channel;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    using var typing = channel.EnterTypingState();
+                    await Task.Delay(TimeSpan.FromSeconds(8));
+                }
+                catch { /* missing perms / deleted channel — ignore */ }
+            });
         }
 
         // ---------------------------------------------------------------- /counting
