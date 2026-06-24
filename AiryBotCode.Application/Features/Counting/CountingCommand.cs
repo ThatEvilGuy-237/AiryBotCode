@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Globalization;
 using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces;
@@ -61,14 +62,27 @@ namespace AiryBotCode.Application.Features.Counting
         public int[] BossMilestones { get; set; } = new[] { 10, 20, 50, 100, 200, 300, 400 };
 
         [ReloadableSetting("A wrong boss answer resets the count (otherwise it's ignored).", Category = "Counting", UiHint = "boolean")]
-        public bool BossWrongResets { get; set; } = false;
+        public bool BossWrongResets { get; set; } = true;
 
         [ReloadableSetting("Abandon an unsolved/pending boss after this many seconds (anti-softlock).", Category = "Counting", UiHint = "duration:seconds")]
         public int BossTimeoutSeconds { get; set; } = 300;
 
+        [ReloadableSetting("Standing message when a boss is approaching (Markdown). While it's up, counting is locked and new messages are deleted until the puzzle lands.", Category = "Counting", UiHint = "textarea")]
+        public string BossArrivingMessage { get; set; } = "⚔️ **A boss is approaching!**\n> Stop counting and wait for the challenge — any messages now will be cleared. 🛡️";
+
+        [ReloadableSetting("Resume message after a boss is solved (Markdown). {next} = the number to count next.", Category = "Counting", UiHint = "template:next")]
+        public string BossNextMessage { get; set; } = "✅ **Boss cleared!** Counting resumes — the next number is **{next}**.";
+
         private readonly IServiceProvider _services;
         private readonly IConfigurationReader _config;
         private readonly IHiveResponseSender _hive;
+
+        // Channels currently in the boss "arrival window" — from the milestone hit
+        // until Airy's puzzle lands. While a channel is here we delete EVERY new
+        // message (people rush to count ahead). In-memory so the common, unlocked path
+        // never touches the DB; the DB state (BossActive && BossAnswer == null) is the
+        // source of truth, so a restart mid-arrival self-heals via HandleBossAttempt.
+        private static readonly ConcurrentDictionary<ulong, byte> _arrivalLocks = new();
 
         public CountingCommand(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -88,6 +102,19 @@ namespace AiryBotCode.Application.Features.Counting
             if (CountingChannelId == 0) return;
             if (message.Channel.Id != CountingChannelId) return;
             if (!MessageGuard.TryGuildMessage(message, out var member, out _)) return;
+
+            // Boss arrival window: between the milestone hit and Airy posting the puzzle,
+            // delete EVERY message so nobody counts ahead. Fast path — only hit the DB
+            // when this channel is flagged as arriving.
+            if (_arrivalLocks.ContainsKey(message.Channel.Id))
+            {
+                if (await IsArrivingAsync(message.Channel.Id))
+                {
+                    await TryDeleteAsync(message);
+                    return;
+                }
+                _arrivalLocks.TryRemove(message.Channel.Id, out _);   // puzzle landed / timed out
+            }
 
             var content = message.Content?.Trim() ?? "";
             if (content.Length == 0) return;
@@ -129,6 +156,7 @@ namespace AiryBotCode.Application.Features.Counting
                     state.BossActive = true;
                     state.BossAnswer = null;            // pending until the Hive sends it
                     state.BossSpawnedAt = DateTime.UtcNow;
+                    _arrivalLocks[message.Channel.Id] = 0;   // lock & start clearing rushers now
                 }
 
                 // Persist BEFORE notifying the Hive: the counting_boss_answer comes
@@ -136,16 +164,18 @@ namespace AiryBotCode.Application.Features.Counting
                 // already committed or it would drop the answer and soft-lock the boss.
                 await repo.SaveAsync(state);
 
+                // ✅ the milestone count itself before the boss banner goes up.
+                if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
+
                 if (spawningBoss)
                 {
-                    ShowTypingWhileVoicing(message);   // Airy is voicing the boss puzzle
+                    await TrySendAsync(message.Channel, BossArrivingMessage);   // non-AI banner (Markdown)
+                    ShowTypingWhileVoicing(message);                            // Airy is voicing the puzzle
                     await _hive.SendEventAsync(
                         "counting_boss",
                         new { channelId = message.Channel.Id.ToString(), milestone = expected },
                         message.Channel.Id.ToString());
                 }
-
-                if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
             }
             else
             {
@@ -184,7 +214,8 @@ namespace AiryBotCode.Application.Features.Counting
         private async Task HandleBossAttemptAsync(
             SocketMessage message, SocketGuildUser member, double value, CountingState state, ICountingStateRepository repo)
         {
-            // Pending: waiting on Airy. Abandon if it's been too long (anti-softlock).
+            // Pending: the arrival window (waiting on Airy's puzzle). Delete the message
+            // so nobody counts ahead, and abandon if it's been too long (anti-softlock).
             if (state.BossAnswer is null)
             {
                 if (state.BossSpawnedAt is { } at &&
@@ -193,7 +224,10 @@ namespace AiryBotCode.Application.Features.Counting
                     state.BossActive = false;
                     state.BossSpawnedAt = null;
                     await repo.SaveAsync(state);
+                    _arrivalLocks.TryRemove(message.Channel.Id, out _);
+                    return;
                 }
+                await TryDeleteAsync(message);   // still arriving — clear the rush
                 return;
             }
 
@@ -210,7 +244,13 @@ namespace AiryBotCode.Application.Features.Counting
                 state.LastUserId = member.Id;
                 state.LastMessageId = message.Id;
                 await repo.SaveAsync(state);
+                _arrivalLocks.TryRemove(message.Channel.Id, out _);   // defensive — already clear
                 if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
+
+                // Non-AI resume line (Markdown): always tells players the next number, even
+                // if Airy's voiced victory line is delayed or the Hive is mid-hiccup.
+                var next = state.CurrentCount + 1;
+                await TrySendAsync(message.Channel, BossNextMessage.Replace("{next}", next.ToString(CultureInfo.InvariantCulture)));
 
                 if (_hive.IsConnected) ShowTypingWhileVoicing(message);   // Airy is voicing the victory line
                 _ = _hive.SendEventAsync(
@@ -244,6 +284,7 @@ namespace AiryBotCode.Application.Features.Counting
             state.BossAnswer = null;
             state.BossSpawnedAt = null;
             await repo.SaveAsync(state);
+            _arrivalLocks.TryRemove(message.Channel.Id, out _);   // lift any arrival lock on reset
 
             // Voice it through Airy; fall back to a static message if the Hive is down.
             if (_hive.IsConnected) ShowTypingWhileVoicing(message);   // Airy is voicing the fail line
@@ -270,6 +311,34 @@ namespace AiryBotCode.Application.Features.Counting
                     .Replace("{start}", StartNumber.ToString());
                 try { await message.Channel.SendMessageAsync(text); } catch { }
             }
+        }
+
+        // True while a channel is in the boss arrival window — boss live, puzzle not yet
+        // delivered, and not yet timed out. Reads committed state so it survives a restart.
+        private async Task<bool> IsArrivingAsync(ulong channelId)
+        {
+            var botId = _config.GetBotId();
+            using var scope = _services.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICountingStateRepository>();
+            var state = await repo.GetAsync(botId, channelId);
+            if (state is null || !state.BossActive || state.BossAnswer is not null) return false;
+            // Timed out → stop deleting (the next attempt formally abandons the boss).
+            if (state.BossSpawnedAt is { } at &&
+                (DateTime.UtcNow - at).TotalSeconds > Math.Max(30, BossTimeoutSeconds)) return false;
+            return true;
+        }
+
+        private static async Task TryDeleteAsync(SocketMessage message)
+        {
+            try { await message.DeleteAsync(); }
+            catch { /* missing Manage Messages / already gone — ignore */ }
+        }
+
+        private static async Task TrySendAsync(IMessageChannel channel, string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return;
+            try { await channel.SendMessageAsync(text); }
+            catch { /* missing perms / deleted channel — ignore */ }
         }
 
         private static async Task TryReactAsync(SocketMessage message, string emoji)
