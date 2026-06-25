@@ -247,16 +247,25 @@ namespace AiryBotCode.Application.Features.Counting
                 _arrivalLocks.TryRemove(message.Channel.Id, out _);   // defensive — already clear
                 if (ReactOnSuccess) await TryReactAsync(message, SuccessEmoji);
 
-                // Non-AI resume line (Markdown): always tells players the next number, even
-                // if Airy's voiced victory line is delayed or the Hive is mid-hiccup.
+                // The resume line ("next number is X") should read AFTER Airy's voiced
+                // victory line, not before it. So when the Hive is up we hand the resume
+                // text to the bridge, which posts it right after the victory say; only when
+                // the Hive is down (no voiced line at all) do we post it ourselves.
                 var next = state.CurrentCount + 1;
-                await TrySendAsync(message.Channel, BossNextMessage.Replace("{next}", next.ToString(CultureInfo.InvariantCulture)));
+                var resumeMessage = BossNextMessage.Replace("{next}", next.ToString(CultureInfo.InvariantCulture));
 
-                if (_hive.IsConnected) ShowTypingWhileVoicing(message);   // Airy is voicing the victory line
-                _ = _hive.SendEventAsync(
-                    "counting_boss_defeated",
-                    new { channelId = message.Channel.Id.ToString(), userId = member.Id.ToString() },
-                    message.Channel.Id.ToString());
+                if (_hive.IsConnected)
+                {
+                    ShowTypingWhileVoicing(message);   // Airy is voicing the victory line
+                    _ = _hive.SendEventAsync(
+                        "counting_boss_defeated",
+                        new { channelId = message.Channel.Id.ToString(), userId = member.Id.ToString(), resumeMessage },
+                        message.Channel.Id.ToString());
+                }
+                else
+                {
+                    await TrySendAsync(message.Channel, resumeMessage);
+                }
             }
             else if (BossWrongResets)
             {
