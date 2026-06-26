@@ -61,7 +61,7 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
             {
                 await BotSettingsSeeder.Seed(serviceProvider);
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
         }
 
         // Self-heal for tables added to the model after the database already existed
