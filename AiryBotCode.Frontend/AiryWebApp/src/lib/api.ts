@@ -305,6 +305,18 @@ export const api = {
     return json<Suggestion[]>('/api/suggestions')
   },
 
+  /** Current public share link (code + /suggest/{code} path) for the board. */
+  getSuggestionShareLink(): Promise<{ code: string; sharePath: string }> {
+    return json<{ code: string; sharePath: string }>('/api/suggestions/sharelink')
+  },
+
+  /** Mint a fresh share code — invalidates the previous link. */
+  async regenerateSuggestionShareLink(): Promise<{ code: string; sharePath: string }> {
+    const res = await authFetch('/api/suggestions/sharelink/regenerate', { method: 'POST' })
+    if (!res.ok) throw new ApiError(res.status, `Could not regenerate the link (${res.status}).`)
+    return (await res.json()) as { code: string; sharePath: string }
+  },
+
   async createSuggestion(title: string, body: string, submittedBy?: string): Promise<Suggestion> {
     const res = await authFetch('/api/suggestions', {
       method: 'POST',
