@@ -9,6 +9,7 @@ import SuggestionsView from '../views/SuggestionsView.vue'
 import DatabasesView from '../views/DatabasesView.vue'
 import DatabaseView from '../views/DatabaseView.vue'
 import HiveUiView from '../views/HiveUiView.vue'
+import PublicSuggestView from '../views/PublicSuggestView.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -23,5 +24,8 @@ export const router = createRouter({
     { path: '/database', name: 'databases', component: DatabasesView },
     { path: '/database/:db', name: 'database', component: DatabaseView, props: true },
     { path: '/hive-ui', name: 'hive-ui', component: HiveUiView },
+    // PUBLIC capability link — no login, no dashboard chrome (meta.public). The
+    // server validates the code on every API call; this route is UX only.
+    { path: '/suggest/:code', name: 'public-suggest', component: PublicSuggestView, props: true, meta: { public: true } },
   ],
 })

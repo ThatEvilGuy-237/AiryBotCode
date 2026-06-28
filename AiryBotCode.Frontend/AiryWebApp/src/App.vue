@@ -18,6 +18,8 @@ watch(() => route.path, () => (navOpen.value = false))
 // lands here too.
 const { currentBotId } = useBots()
 watch(currentBotId, async (id) => {
+  // The public /suggest/:code page has no auth — skip all dashboard/theme calls.
+  if (route.meta.public) return
   applyThemeForBot(id)
   if (!id) return
   try {
@@ -30,7 +32,10 @@ watch(currentBotId, async (id) => {
 </script>
 
 <template>
-  <div class="app-layout" :class="{ 'nav-open': navOpen }">
+  <!-- Public capability page: no sidebar / dashboard chrome, no auth. -->
+  <router-view v-if="route.meta.public" />
+
+  <div v-else class="app-layout" :class="{ 'nav-open': navOpen }">
     <!-- Mobile-only top bar -->
     <header class="topbar">
       <button class="menu-btn" aria-label="Open menu" @click="navOpen = true">☰</button>
