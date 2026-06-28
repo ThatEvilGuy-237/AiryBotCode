@@ -10,6 +10,8 @@ using AiryBotCode.Infrastructure.Database.Persistence;
 using AiryBotCode.Infrastructure.Database.Repository;
 using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
 using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Application.Interfaces.Service;
+using AiryBotCode.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -60,6 +62,10 @@ builder.Services.AddScoped<IBotCommandRepository, BotCommandRepository>();
 builder.Services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
 builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
 builder.Services.AddScoped<ISuggestionRepository, SuggestionRepository>();
+// The API registers its own DI (it doesn't call RegisterInfrastructure), so the
+// public suggestions share-code service must be wired here too.
+builder.Services.AddScoped<ISuggestionShareCodeRepository, SuggestionShareCodeRepository>();
+builder.Services.AddScoped<IShareCodeService, ShareCodeService>();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
