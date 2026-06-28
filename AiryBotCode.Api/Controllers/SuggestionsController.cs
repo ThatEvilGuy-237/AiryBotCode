@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Domain.database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,8 +18,13 @@ namespace AiryBotCode.Api.Controllers
     public class SuggestionsController : ControllerBase
     {
         private readonly ISuggestionRepository _repository;
+        private readonly IShareCodeService _shareCode;
 
-        public SuggestionsController(ISuggestionRepository repository) => _repository = repository;
+        public SuggestionsController(ISuggestionRepository repository, IShareCodeService shareCode)
+        {
+            _repository = repository;
+            _shareCode = shareCode;
+        }
 
         public class CreateSuggestionRequest
         {
@@ -63,6 +69,24 @@ namespace AiryBotCode.Api.Controllers
             };
             var saved = await _repository.AddAsync(entity);
             return StatusCode(201, ToDto(saved));
+        }
+
+        // ── Share link (capability code) management ─────────────────────────────
+        // The public board lives at /suggest/{code}; the SPA builds the absolute URL
+        // from its own origin, so we hand back the code + the relative path.
+        [HttpGet("sharelink")]
+        public async Task<IActionResult> GetShareLink()
+        {
+            var code = await _shareCode.GetOrCreateAsync();
+            return Ok(new { code, sharePath = $"/suggest/{code}" });
+        }
+
+        // Mint a fresh code — instantly invalidates the previous share link.
+        [HttpPost("sharelink/regenerate")]
+        public async Task<IActionResult> RegenerateShareLink()
+        {
+            var code = await _shareCode.RegenerateAsync();
+            return Ok(new { code, sharePath = $"/suggest/{code}" });
         }
 
         // Maintainer review: why it's a good idea + a rough time estimate.
