@@ -7,6 +7,7 @@ using AiryBotCode.Infrastructure.DiscordEvents;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Infrastructure.Database.Repository;
 using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
 using AiryBotCode.Infrastructure.Database.Repository.GiveAway;
@@ -30,6 +31,8 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<ILevelUserRepository, LevelUserRepository>();
             services.AddScoped<ICountingStateRepository, CountingStateRepository>();
             services.AddScoped<ISuggestionRepository, SuggestionRepository>();
+            services.AddScoped<ISuggestionShareCodeRepository, SuggestionShareCodeRepository>();
+            services.AddScoped<IShareCodeService, ShareCodeService>();
             // DbContext
             services = AIDbContext.registerDbContext(services);
             // Other
