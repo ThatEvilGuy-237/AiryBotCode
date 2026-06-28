@@ -6,6 +6,7 @@ using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Domain.database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AiryBotCode.Api.Controllers
 {
@@ -52,7 +53,9 @@ namespace AiryBotCode.Api.Controllers
         }
 
         // Submit an idea via the share link. Invalid code → 404. Caps + trim.
+        // Per-IP rate limited (5/min) to blunt spam on the unauthenticated surface.
         [HttpPost("{code}")]
+        [EnableRateLimiting("public-suggest-create")]
         public async Task<IActionResult> Create(string code, [FromBody] CreateRequest body)
         {
             if (!await _shareCode.ValidateAsync(code)) return NotFound();

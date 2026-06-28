@@ -2,11 +2,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using AiryBotCode.Infrastructure.Database.Repository;
 using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
 using AiryBotCode.Application.Interfaces.Repository;
+using AiryBotCode.Application.Interfaces.Service;
+using AiryBotCode.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -57,9 +62,36 @@ builder.Services.AddScoped<IBotCommandRepository, BotCommandRepository>();
 builder.Services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
 builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
 builder.Services.AddScoped<ISuggestionRepository, SuggestionRepository>();
+// The API registers its own DI (it doesn't call RegisterInfrastructure), so the
+// public suggestions share-code service must be wired here too.
+builder.Services.AddScoped<ISuggestionShareCodeRepository, SuggestionShareCodeRepository>();
+builder.Services.AddScoped<IShareCodeService, ShareCodeService>();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
+
+// Best-effort rate limit for the PUBLIC (code-gated) suggestion create endpoint —
+// blunts spam/abuse; the 256-bit code is the real gate, this just caps frequency.
+// Partition by the original client IP: behind Caddy the real client is the first
+// X-Forwarded-For hop; fall back to the socket address in dev / no-proxy. (XFF is
+// client-settable, so this is mitigation, not a hard boundary — acceptable here.)
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("public-suggest-create", httpContext =>
+    {
+        var xff = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        var clientKey = !string.IsNullOrWhiteSpace(xff)
+            ? xff.Split(',')[0].Trim()
+            : (httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown");
+        return RateLimitPartition.GetFixedWindowLimiter(clientKey, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(1),
+            QueueLimit = 0,
+        });
+    });
+});
 // Powers the panel's channel/role pickers (reads guild data from Discord with the
 // stored bot token). Singleton so its short-lived per-bot cache is shared.
 builder.Services.AddSingleton<AiryBotCode.Api.Services.DiscordGuildLookup>();
@@ -112,6 +144,7 @@ app.UseCors(svelteAppPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllers();
 
