@@ -41,6 +41,47 @@ namespace AiryBotCode.Application.Services.User
             return totalDeleted;
         }
 
+        /// <summary>
+        /// Delete a user's own recent messages across the guild — the same proven approach
+        /// as the /timeout "clear" sweep (<see cref="ClearMessage"/>): walk the guild's text
+        /// channels, gather everything authored by this user inside the window, and delete
+        /// it. The spam catcher uses this so a caught burst is wiped WHOLESALE (gathered BY
+        /// USER) instead of relying on the handful of message ids that tripped the threshold,
+        /// so stragglers — and messages we never got a gateway event for — get cleared too.
+        /// Differs from <see cref="ClearMessage"/> only in taking a seconds (not minutes)
+        /// window, so it stays tight to the spam burst.
+        /// </summary>
+        public async Task<int> ClearUserMessages(SocketGuildUser user, int withinSeconds)
+        {
+            if (user?.Guild == null) return 0;
+
+            int totalDeleted = 0;
+            var cutoff = DateTimeOffset.UtcNow.AddSeconds(-Math.Max(1, withinSeconds));
+
+            foreach (var channel in user.Guild.TextChannels)
+            {
+                try
+                {
+                    var messages = await channel.GetMessagesAsync(limit: 100).FlattenAsync();
+                    var userMessages = messages
+                        .Where(m => m.Author.Id == user.Id && m.Timestamp >= cutoff)
+                        .ToList();
+
+                    if (userMessages.Count > 0)
+                    {
+                        await channel.DeleteMessagesAsync(userMessages);
+                        totalDeleted += userMessages.Count;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[ClearUserMessages] channel {channel.Id}: {ex.Message}");
+                }
+            }
+
+            return totalDeleted;
+        }
+
         public async Task<ulong> GetAdminRole(SocketInteraction command)
         {
             var adminRoleId = ulong.TryParse(Environment.GetEnvironmentVariable("ADMINROLEID"), out var roleId) ? roleId : 0;
