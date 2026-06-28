@@ -74,7 +74,46 @@ async function remove(s: Suggestion) {
   } catch (e) { error.value = e instanceof ApiError ? e.message : 'Delete failed.' }
 }
 
-onMounted(load)
+// ── Public share link (capability URL) ───────────────────────────────────────
+const shareUrl = ref('')
+const shareLoading = ref(true)
+const shareMsg = ref('')
+
+async function loadShareLink() {
+  shareLoading.value = true
+  try {
+    const { sharePath } = await api.getSuggestionShareLink()
+    shareUrl.value = window.location.origin + sharePath
+  } catch (e) {
+    error.value = e instanceof ApiError ? e.message : 'Could not load the share link.'
+  } finally {
+    shareLoading.value = false
+  }
+}
+
+async function copyShareLink() {
+  try {
+    await navigator.clipboard.writeText(shareUrl.value)
+    shareMsg.value = 'Copied!'
+  } catch {
+    shareMsg.value = 'Copy failed — select the link and copy manually.'
+  }
+  setTimeout(() => (shareMsg.value = ''), 2500)
+}
+
+async function regenerateShareLink() {
+  if (!confirm('Regenerate the share link? The current link stops working immediately.')) return
+  try {
+    const { sharePath } = await api.regenerateSuggestionShareLink()
+    shareUrl.value = window.location.origin + sharePath
+    shareMsg.value = 'New link generated — the old one is now dead.'
+    setTimeout(() => (shareMsg.value = ''), 3500)
+  } catch (e) {
+    error.value = e instanceof ApiError ? e.message : 'Could not regenerate the link.'
+  }
+}
+
+onMounted(() => { load(); loadShareLink() })
 </script>
 
 <template>
@@ -90,6 +129,23 @@ onMounted(load)
     </PageHeader>
 
     <p v-if="error" class="banner err">{{ error }}</p>
+
+    <!-- Public share link -->
+    <Card>
+      <template #head><h3>Public share link</h3></template>
+      <p class="muted share-hint">Anyone with this link can view the board and submit ideas — no login. Approval stays here.</p>
+      <div class="share-row">
+        <input
+          class="share-input mono"
+          :value="shareLoading ? 'Loading…' : shareUrl"
+          readonly
+          @focus="($event.target as HTMLInputElement).select()"
+        />
+        <Button variant="outline" :disabled="shareLoading || !shareUrl" @click="copyShareLink">Copy</Button>
+        <Button variant="outline" :disabled="shareLoading" @click="regenerateShareLink">Regenerate</Button>
+      </div>
+      <span v-if="shareMsg" class="ok">{{ shareMsg }}</span>
+    </Card>
 
     <!-- Submit form -->
     <Card>
@@ -147,6 +203,13 @@ onMounted(load)
 .banner.err { color: var(--color-danger); background: var(--color-surface-mute); }
 .ok { color: var(--color-ok); font-weight: 500; }
 
+.share-hint { margin: 0 0 0.6rem; font-size: 0.85rem; }
+.share-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.share-input {
+  flex: 1; min-width: 12rem; box-sizing: border-box; padding: 0.55rem; font-size: 0.85rem;
+  border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-bg-2);
+  color: var(--color-fg);
+}
 .form { display: flex; flex-direction: column; gap: 0.6rem; }
 .form input, .form textarea {
   width: 100%; box-sizing: border-box; padding: 0.6rem; border: 1px solid var(--color-border);
