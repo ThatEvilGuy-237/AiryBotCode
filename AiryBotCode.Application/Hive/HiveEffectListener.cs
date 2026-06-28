@@ -17,6 +17,7 @@ namespace AiryBotCode.Application.Hive
         private readonly MessagePacer _pacer;
         private readonly IAskDelivery? _askDelivery;
         private readonly ICountingBossSink? _bossSink;
+        private readonly ISuggestionIngest? _suggestionIngest;
         private readonly Action<string>? _log;
 
         // The currently-connected socket, set on each (re)connect and cleared on drop.
@@ -24,16 +25,17 @@ namespace AiryBotCode.Application.Hive
         private ClientWebSocket? _activeSocket;
         private readonly SemaphoreSlim _sendLock = new(1, 1);
 
-        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null)
-            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink) { }
+        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null)
+            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink, suggestionIngest) { }
 
         // Test/advanced ctor: supply a pacer (e.g. with a fake clock).
-        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null)
+        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null)
         {
             _wsUrl = wsUrl;
             _pacer = pacer;
             _askDelivery = askDelivery;
             _bossSink = bossSink;
+            _suggestionIngest = suggestionIngest;
             _log = log;
         }
 
@@ -137,6 +139,23 @@ namespace AiryBotCode.Application.Hive
                     if (ask is null) return Task.CompletedTask;
                     if (_askDelivery is null) { _log?.Invoke("[HiveEffects] ask_user effect but no ask delivery configured"); return Task.CompletedTask; }
                     return _askDelivery.SendAskAsync(ask.ChannelId, ask.EffectId, ask.Question, ask.Options, userId, ct);
+                }
+
+                // ── submit_suggestion: file the agent's idea on the /suggestions board ──
+                // Fire-and-forget; project-wide (no channel). Dedup on effect id lives in
+                // the ingest singleton so multiple bot listeners can't double-file it.
+                if (name == SuggestionEffectRouter.Command)
+                {
+                    var sTitle = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("title", out var ti)
+                        ? ti.GetString() : null;
+                    var sBody = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("body", out var bo)
+                        ? bo.GetString() : null;
+                    var sBy = args.ValueKind == JsonValueKind.Object && args.TryGetProperty("submittedBy", out var sb)
+                        ? sb.GetString() : null;
+                    var suggestion = SuggestionEffectRouter.Route(name, effectId, sTitle, sBody, sBy);
+                    if (suggestion is null) return Task.CompletedTask;
+                    if (_suggestionIngest is null) { _log?.Invoke("[HiveEffects] submit_suggestion effect but no suggestion ingest configured"); return Task.CompletedTask; }
+                    return _suggestionIngest.SubmitAsync(suggestion, ct);
                 }
 
                 var intent = EffectRouter.Route(name, message, delay, sessionId);

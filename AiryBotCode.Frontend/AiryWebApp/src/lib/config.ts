@@ -1,7 +1,9 @@
 // Runtime configuration. Override via a .env file (VITE_API_BASE_URL,
 // VITE_DISCORD_CLIENT_ID) without touching code; the fallbacks match the
 // API's launchSettings (http://localhost:7215) and the existing Discord app.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:7215'
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://localhost:7215' : window.location.origin)
 
 // The Hive (Neural-Spine UI). Different origin → the token is handed over via
 // the `#token=` fragment. Override with VITE_HIVE_URL.

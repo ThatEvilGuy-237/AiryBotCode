@@ -56,6 +56,9 @@ namespace AiryBotCode.Infrastructure.Registers
                 sp => sp.GetRequiredService<AiryBotCode.Application.Hive.HiveEffectGateway>());
             // Counting mini-boss answers pushed from the Hive land here (→ DB).
             services.AddScoped<AiryBotCode.Application.Hive.ICountingBossSink, Hive.CountingBossSink>();
+            // Agent-filed suggestions (submit_suggestion effect) → /suggestions board.
+            // Singleton: holds the cross-listener effect-id dedup and scopes its own repo.
+            services.AddSingleton<AiryBotCode.Application.Hive.ISuggestionIngest, Hive.SuggestionIngest>();
 
 
 

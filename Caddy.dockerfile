@@ -2,9 +2,11 @@
 # standalone login app). Tailscale terminates TLS; Caddy runs plain HTTP (SPA
 # serving + /api routing), so no DNS plugin / custom Caddy build is needed.
 
-# The API base is baked into both frontends at build time so API calls and the
-# Discord redirect URI target the public domain.
-ARG API_BASE=https://thatevilserver.tail2a87af.ts.net
+# API base for both frontends. Empty by default → the SPAs call the API
+# same-origin (window.location.origin), so the panel works on ANY hostname it's
+# served from (thehive.thatevilguy.com, the ts.net funnel, etc.) with no rebuild.
+# Override with a build arg only to pin an absolute base.
+ARG API_BASE=
 
 # Build the main control-panel SPA (served at /).
 FROM node:22-alpine AS frontend
