@@ -1,6 +1,10 @@
-// Runtime config. The API base is baked in at build time (VITE_API_BASE_URL) so
-// the gate call and the Discord redirect target the public domain.
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:7215'
+// Runtime config. By default the API is reached SAME-ORIGIN (window.location.origin),
+// so the gate call + Discord redirect target whatever host the panel was loaded
+// from — works on any public hostname without a rebuild. Override with
+// VITE_API_BASE_URL to pin an absolute base; dev falls back to the local API port.
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? 'http://localhost:7215' : window.location.origin)
 
 const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID ?? '1318870826862379018'
 const DISCORD_SCOPE = 'identify'
