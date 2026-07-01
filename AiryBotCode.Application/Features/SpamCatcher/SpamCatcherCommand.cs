@@ -23,10 +23,13 @@ namespace AiryBotCode.Application.Features.SpamCatcher
     public class SpamCatcherCommand : EvilCommand
     {
         // --- Settings Declaration for Seeder ---
-        [ReloadableSetting("Role that is watched for cross-channel spam. None = catcher OFF. Only members WITH this role are monitored, each one independently.", Category = "SpamCatcher", UiHint = "role")]
+        [ReloadableSetting("Role used to scope the catcher. None = catcher OFF (both modes). By default only members WITH this role are monitored; turn on 'Invert monitored role' to instead monitor everyone EXCEPT holders of this role.", Category = "SpamCatcher", UiHint = "role")]
         public ulong MonitoredRoleId { get; set; } = 0;            // base: empty (off)
 
-        [ReloadableSetting("Exempt role: members WITH this role are never caught by the spam filter, even if they also hold the monitored role. None = no exemption.", Category = "SpamCatcher", UiHint = "role")]
+        [ReloadableSetting("Invert the monitored role: when ON, EVERYONE is watched EXCEPT members who hold the monitored role (i.e. target everyone that does NOT have that role). When OFF (default), only members WITH the monitored role are watched.", Category = "SpamCatcher", UiHint = "boolean")]
+        public bool InvertMonitoredRole { get; set; } = false;     // base: false (watch role-holders)
+
+        [ReloadableSetting("Exempt role: members WITH this role are never caught by the spam filter, regardless of the monitored role or invert setting. None = no exemption.", Category = "SpamCatcher", UiHint = "role")]
         public ulong IgnoredRoleId { get; set; } = 0;             // base: empty (no exemption)
 
         [ReloadableSetting("How many messages within the window count as spam.", Category = "SpamCatcher", UiHint = "slider:2,15")]
@@ -75,11 +78,14 @@ namespace AiryBotCode.Application.Features.SpamCatcher
             // upstream, but guard anyway).
             if (!MessageGuard.TryGuildMessage(message, out var member, out var guildChannel)) return;
 
-            // Only members who hold the monitored role are watched.
-            if (!member.Roles.Any(r => r.Id == MonitoredRoleId)) return;
+            // Scope by the monitored role. Normal mode: watch only members who HOLD it.
+            // Inverted mode: watch everyone EXCEPT members who hold it (target everyone
+            // that does not have the role).
+            bool hasMonitoredRole = member.Roles.Any(r => r.Id == MonitoredRoleId);
+            if (InvertMonitoredRole ? hasMonitoredRole : !hasMonitoredRole) return;
 
-            // Exempt: members holding the ignore role are never caught, even if they
-            // also hold the monitored role (e.g. trusted/staff role overrides the watch).
+            // Exempt: members holding the ignore role are never caught, regardless of the
+            // monitored role or invert setting (e.g. a trusted/staff role overrides the watch).
             if (IgnoredRoleId != 0 && member.Roles.Any(r => r.Id == IgnoredRoleId)) return;
 
             var result = _tracker.Record(
