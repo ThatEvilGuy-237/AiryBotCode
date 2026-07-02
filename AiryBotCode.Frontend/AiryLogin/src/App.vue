@@ -17,10 +17,14 @@ const keyInput = ref<HTMLInputElement | null>(null)
 // chooser. Stashed in sessionStorage so it survives the Discord round-trip, and
 // validated to our own host so we never leak the JWT to an outside URL.
 const RETURN_KEY = 'login_return'
+// Native-app deep links we hand the token to (Hive Pocket). Custom-scheme URLs
+// have origin "null", so they're allowlisted by scheme instead of hostname.
+const APP_SCHEMES = ['hivepocket:']
 function safeReturn(raw: string | null): string | null {
   if (!raw) return null
   try {
     const u = new URL(raw, window.location.origin)
+    if (APP_SCHEMES.includes(u.protocol)) return `${u.protocol}//${u.host}`
     return u.hostname === window.location.hostname ? u.origin + u.pathname : null
   } catch { return null }
 }
