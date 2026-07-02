@@ -42,6 +42,10 @@ namespace AiryBotCode.Application.Services
                 author,
                 userId = authorId.ToString(),   // Discord user id → per-user memory in the Hive
                 channelId = channelId.ToString(),
+                // Which bot forwarded this — lets the Hive's effect fan-out (Wraith's
+                // ToolWsServer) deliver the reply only to THIS bot instead of every
+                // bot subscribed on this multi-bot host (was the duplicate-reply bug).
+                botId = botId.ToString(),
                 // Image attachments for the agent's vision intake. MUST use lowercase
                 // keys (url/name/mime): the Hive's FlowRunner.ReadImages reads them
                 // case-sensitively, but the ForwardedImage record serializes PascalCase

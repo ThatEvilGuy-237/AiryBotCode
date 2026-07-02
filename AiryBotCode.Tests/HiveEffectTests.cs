@@ -92,5 +92,58 @@ namespace AiryBotCode.Tests
             await l.HandleMessageAsync("{\"type\":\"effect\"}");   // missing call
             Assert.Empty(d.Sent);
         }
+
+        private static string EffectWithBotId(string message, string sessionId, string? botId) =>
+            System.Text.Json.JsonSerializer.Serialize(new
+            {
+                type = "effect",
+                call = new { id = "e1", name = "say", arguments = new { message, delaySeconds = 0 } },
+                context = botId is null ? new { userId = "u", sessionId } : (object)new { userId = "u", sessionId, botId },
+                at = "now",
+            });
+
+        // Defense-in-depth: Wraith's ToolWsServer is the primary fix (targets
+        // delivery by botId), but a listener configured WITH its own botId must
+        // also refuse to post a reply meant for a different bot if one ever
+        // reaches it anyway.
+        [Fact]
+        public async Task Drops_an_effect_addressed_to_a_different_bot()
+        {
+            var d = new FakeDelivery();
+            var l = new HiveEffectListener("ws://unused", d, botId: 111UL);
+            await l.HandleMessageAsync(EffectWithBotId("not for me", "1", botId: "222"));
+            Assert.Empty(d.Sent);
+        }
+
+        [Fact]
+        public async Task Delivers_an_effect_addressed_to_this_bot()
+        {
+            var d = new FakeDelivery();
+            var l = new HiveEffectListener("ws://unused", d, botId: 111UL);
+            await l.HandleMessageAsync(EffectWithBotId("for me", "1", botId: "111"));
+            Assert.Single(d.Sent);
+        }
+
+        [Fact]
+        public async Task A_bot_scoped_listener_still_delivers_a_botId_less_frame()
+        {
+            // Legacy/non-Discord origins (portal chat, Hive Pocket, scheduler) don't
+            // set botId at all — those must keep working exactly as before.
+            var d = new FakeDelivery();
+            var l = new HiveEffectListener("ws://unused", d, botId: 111UL);
+            await l.HandleMessageAsync(EffectWithBotId("broadcast", "1", botId: null));
+            Assert.Single(d.Sent);
+        }
+
+        [Fact]
+        public async Task An_unconfigured_listener_delivers_regardless_of_botId()
+        {
+            // A listener with no botId (older config, or intentionally unscoped)
+            // keeps today's behavior: it takes whatever reaches it.
+            var d = new FakeDelivery();
+            var l = new HiveEffectListener("ws://unused", d);
+            await l.HandleMessageAsync(EffectWithBotId("anything", "1", botId: "999"));
+            Assert.Single(d.Sent);
+        }
     }
 }

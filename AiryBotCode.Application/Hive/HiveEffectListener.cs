@@ -19,17 +19,23 @@ namespace AiryBotCode.Application.Hive
         private readonly ICountingBossSink? _bossSink;
         private readonly ISuggestionIngest? _suggestionIngest;
         private readonly Action<string>? _log;
+        // Which bot this listener belongs to. Sent on subscribe so Wraith's
+        // ToolWsServer can target this socket instead of fanning an effect out to
+        // every bot on a multi-bot host; also used to defensively drop an effect
+        // whose context names a DIFFERENT bot, in case an older Wraith build (or a
+        // frame with no botId at all) still broadcasts.
+        private readonly ulong? _botId;
 
         // The currently-connected socket, set on each (re)connect and cleared on drop.
         // Used to send await-mode answers (effect_response) back up the same WS.
         private ClientWebSocket? _activeSocket;
         private readonly SemaphoreSlim _sendLock = new(1, 1);
 
-        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null)
-            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink, suggestionIngest) { }
+        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null, ulong? botId = null)
+            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink, suggestionIngest, botId) { }
 
         // Test/advanced ctor: supply a pacer (e.g. with a fake clock).
-        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null)
+        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null, ulong? botId = null)
         {
             _wsUrl = wsUrl;
             _pacer = pacer;
@@ -37,6 +43,7 @@ namespace AiryBotCode.Application.Hive
             _bossSink = bossSink;
             _suggestionIngest = suggestionIngest;
             _log = log;
+            _botId = botId;
         }
 
         public bool IsConnected => _activeSocket?.State == WebSocketState.Open;
@@ -50,8 +57,11 @@ namespace AiryBotCode.Application.Hive
                 {
                     using var ws = new ClientWebSocket();
                     await ws.ConnectAsync(new Uri(_wsUrl), ct);
-                    await SendAsync(ws, "{\"type\":\"subscribe_effects\"}", ct);
-                    _log?.Invoke($"[HiveEffects] subscribed at {_wsUrl}");
+                    var subscribeFrame = _botId is { } id
+                        ? JsonSerializer.Serialize(new { type = "subscribe_effects", botId = id.ToString() })
+                        : "{\"type\":\"subscribe_effects\"}";
+                    await SendAsync(ws, subscribeFrame, ct);
+                    _log?.Invoke($"[HiveEffects] subscribed at {_wsUrl}" + (_botId is { } b ? $" as bot {b}" : ""));
                     backoff = 2;
 
                     _activeSocket = ws;
@@ -107,6 +117,21 @@ namespace AiryBotCode.Application.Hive
                 if (frameType == "counting_boss_answer") return HandleBossAnswer(root, ct);
 
                 if (frameType != "effect") return Task.CompletedTask;
+
+                // Defense-in-depth: Wraith's ToolWsServer already targets delivery by
+                // botId, so this shouldn't normally fire — but if an effect carrying a
+                // DIFFERENT bot's id ever reaches this socket anyway (older Wraith
+                // build, race during a deploy), drop it rather than post a reply that
+                // isn't ours. A frame with no botId at all (legacy/non-Discord origin)
+                // is unaffected and still delivered.
+                if (_botId is { } myBotId
+                    && root.TryGetProperty("context", out var effectCtx) && effectCtx.ValueKind == JsonValueKind.Object
+                    && effectCtx.TryGetProperty("botId", out var frameBotId) && frameBotId.ValueKind == JsonValueKind.String
+                    && ulong.TryParse(frameBotId.GetString(), out var frameBotIdValue)
+                    && frameBotIdValue != myBotId)
+                {
+                    return Task.CompletedTask;
+                }
 
                 var call = root.GetProperty("call");
                 var name = call.TryGetProperty("name", out var n) ? n.GetString() : null;
