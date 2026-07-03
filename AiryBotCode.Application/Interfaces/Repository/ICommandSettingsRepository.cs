@@ -23,6 +23,10 @@ namespace AiryBotCode.Application.Interfaces.Repository
 
         Task<bool> UpdateValueAsync(ulong botId, string commandName, string key, string value);
 
+        /// <summary>Remove specific setting rows for a bot+command. Used by one-time
+        /// migrations when a setting is renamed/replaced.</summary>
+        Task DeleteByKeysAsync(ulong botId, string commandName, IEnumerable<string> keys);
+
         /// <summary>Newest LastUpdated across this bot's settings, for hot-reload polling.</summary>
         Task<DateTime> GetMaxLastUpdatedAsync(ulong botId);
 
