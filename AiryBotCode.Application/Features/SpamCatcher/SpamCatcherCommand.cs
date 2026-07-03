@@ -23,14 +23,11 @@ namespace AiryBotCode.Application.Features.SpamCatcher
     public class SpamCatcherCommand : EvilCommand
     {
         // --- Settings Declaration for Seeder ---
-        [ReloadableSetting("Role used to scope the catcher. None = catcher OFF (both modes). By default only members WITH this role are monitored; turn on 'Invert monitored role' to instead monitor everyone EXCEPT holders of this role.", Category = "SpamCatcher", UiHint = "role")]
-        public ulong MonitoredRoleId { get; set; } = 0;            // base: empty (off)
+        [ReloadableSetting("Monitor these roles (targeting). Members holding ANY of these roles are watched for spam. Leave empty AND with no excluded roles to turn the catcher OFF. Leave empty WHILE excluded roles are set to watch EVERYONE except the excluded roles.", Category = "SpamCatcher", UiHint = "roles")]
+        public List<ulong> MonitoredRoleIds { get; set; } = new();   // base: empty (off)
 
-        [ReloadableSetting("Invert the monitored role: when ON, EVERYONE is watched EXCEPT members who hold the monitored role (i.e. target everyone that does NOT have that role). When OFF (default), only members WITH the monitored role are watched.", Category = "SpamCatcher", UiHint = "boolean")]
-        public bool InvertMonitoredRole { get; set; } = false;     // base: false (watch role-holders)
-
-        [ReloadableSetting("Exempt role: members WITH this role are never caught by the spam filter, regardless of the monitored role or invert setting. None = no exemption.", Category = "SpamCatcher", UiHint = "role")]
-        public ulong IgnoredRoleId { get; set; } = 0;             // base: empty (no exemption)
+        [ReloadableSetting("Never monitor these roles (not-targeting). Members holding ANY of these roles are always skipped by the spam filter, even if they also hold a monitored role — use it to exempt staff/trusted roles. With no monitored roles set, this becomes 'watch everyone EXCEPT these roles'.", Category = "SpamCatcher", UiHint = "roles")]
+        public List<ulong> IgnoredRoleIds { get; set; } = new();     // base: empty (no exemptions)
 
         [ReloadableSetting("How many messages within the window count as spam.", Category = "SpamCatcher", UiHint = "slider:2,15")]
         public int MessageThreshold { get; set; } = 3;             // base: 3
@@ -71,22 +68,24 @@ namespace AiryBotCode.Application.Features.SpamCatcher
 
         public async Task HandleMessageAsync(SocketMessage message)
         {
-            // Off until a role is configured.
-            if (MonitoredRoleId == 0) return;
+            // Off until at least one targeting or exclusion role is configured (both
+            // lists empty = catcher OFF, the safe default).
+            if (MonitoredRoleIds.Count == 0 && IgnoredRoleIds.Count == 0) return;
 
             // Guild text messages from real members only (bots are already filtered
             // upstream, but guard anyway).
             if (!MessageGuard.TryGuildMessage(message, out var member, out var guildChannel)) return;
 
-            // Scope by the monitored role. Normal mode: watch only members who HOLD it.
-            // Inverted mode: watch everyone EXCEPT members who hold it (target everyone
-            // that does not have the role).
-            bool hasMonitoredRole = member.Roles.Any(r => r.Id == MonitoredRoleId);
-            if (InvertMonitoredRole ? hasMonitoredRole : !hasMonitoredRole) return;
+            var memberRoleIds = member.Roles.Select(r => r.Id).ToHashSet();
 
-            // Exempt: members holding the ignore role are never caught, regardless of the
-            // monitored role or invert setting (e.g. a trusted/staff role overrides the watch).
-            if (IgnoredRoleId != 0 && member.Roles.Any(r => r.Id == IgnoredRoleId)) return;
+            // Not-targeting: a member holding ANY excluded role is always skipped —
+            // even if they also hold a monitored role (e.g. a staff/trusted role).
+            if (IgnoredRoleIds.Any(memberRoleIds.Contains)) return;
+
+            // Targeting: when a monitor list is set, watch only members holding ONE of
+            // those roles. When it's empty (but exclusions exist), everyone not excluded
+            // above is watched.
+            if (MonitoredRoleIds.Count > 0 && !MonitoredRoleIds.Any(memberRoleIds.Contains)) return;
 
             var result = _tracker.Record(
                 guildChannel.Guild.Id, member.Id, message.Channel.Id, message.Id,

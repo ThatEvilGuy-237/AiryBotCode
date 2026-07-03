@@ -62,12 +62,37 @@ namespace AiryBotCode.Infrastructure.Database.Repository
         {
             var row = await _context.CommandSettings
                 .FirstOrDefaultAsync(c => c.BotId == botId && c.CommandName == commandName && c.Key == key);
-            if (row == null) return false;
+            if (row == null)
+            {
+                // Defensive upsert: a value save normally targets a seeded row, but if the
+                // row is missing (a not-yet-seeded bot, or a freshly-renamed setting) create
+                // it rather than silently dropping the edit. Declared metadata (description /
+                // category / ui-hint) is refreshed on the next settings scan.
+                row = new CommandSetting
+                {
+                    BotId = botId,
+                    CommandName = commandName,
+                    Key = key,
+                    Description = string.Empty,
+                    Category = string.Empty,
+                    UiHint = "text",
+                };
+                await _context.CommandSettings.AddAsync(row);
+            }
 
             row.Value = value;
             row.LastUpdated = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task DeleteByKeysAsync(ulong botId, string commandName, IEnumerable<string> keys)
+        {
+            var set = keys.ToHashSet();
+            var rows = _context.CommandSettings
+                .Where(c => c.BotId == botId && c.CommandName == commandName && set.Contains(c.Key));
+            _context.CommandSettings.RemoveRange(rows);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<DateTime> GetMaxLastUpdatedAsync(ulong botId)
