@@ -47,7 +47,11 @@
 		reverse_proxy spine:7000
 	}
 	handle_path /hive/api/wraith/* {
-		reverse_proxy wraith-worker:5000
+		# X-Hive-Public: Wraith requires a valid JWT (?token= on WS upgrades,
+		# Bearer otherwise) for requests entering through this public route.
+		reverse_proxy wraith-worker:5000 {
+			header_up X-Hive-Public 1
+		}
 	}
 	handle_path /hive/api/obsidian/* {
 		reverse_proxy obsidian-mind:3000
