@@ -21,6 +21,7 @@ namespace AiryBotCode.Bot.Bots
             _buttonPressHandler.AssignActions(actions);
             _formHandler.AssignActions(actions);
             _banHandler.AssignActions(actions);
+            _leftHandler.AssignActions(actions);
             Console.WriteLine($"[INFO] {actions.Count} actions loaded and assigned.");
 
         }
@@ -83,6 +84,9 @@ namespace AiryBotCode.Bot.Bots
             _client.ButtonExecuted       += c => { _ = Task.Run(() => _buttonPressHandler.HandleButtonInteraction(c)); return Task.CompletedTask; };
             _client.ModalSubmitted       += m => { _ = Task.Run(() => _formHandler.HandleFormInteraction(m)); return Task.CompletedTask; };
             _client.UserBanned           += (u, g) => { _ = Task.Run(() => _banHandler.HandleInteractionAsync(u, g)); return Task.CompletedTask; };
+            // Kick detection: Discord has no kick event — UserLeft + a fresh audit
+            // Kick entry (see UserlogsAction.HandleLeftAsync). Off-gateway like bans.
+            _client.UserLeft             += (g, u) => { _ = Task.Run(() => _leftHandler.HandleInteractionAsync(g, u)); return Task.CompletedTask; };
 
             // Hive effect passthrough (opt-in): when a tools-WS url is configured,
             // subscribe to the Hive's outbound agent effects (the `say` tool's

@@ -44,6 +44,7 @@ namespace AiryBotCode.Infrastructure.Registers
             services.AddScoped<FormHandler>();
             services.AddScoped<CommandService>();
             services.AddScoped<BanHandler>();
+            services.AddScoped<LeftHandler>();
             services.AddScoped<DiscordService>();
             // Per-channel dedup shared by the effect (say) + webhook-reply paths so an
             // answer the agent both says and finishes with is posted only once.

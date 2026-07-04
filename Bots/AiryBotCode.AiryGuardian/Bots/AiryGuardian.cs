@@ -19,6 +19,7 @@ namespace AiryBotCode.Bot.Bots
             _buttonPressHandler.AssignActions(actions);
             _formHandler.AssignActions(actions);
             _banHandler.AssignActions(actions);
+            _leftHandler.AssignActions(actions);
             Console.WriteLine($"[INFO] {actions.Count} actions loaded and assigned.");
 
         }
@@ -57,7 +58,11 @@ namespace AiryBotCode.Bot.Bots
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
             _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
             _client.ModalSubmitted += _formHandler.HandleFormInteraction;
-            _client.UserBanned += _banHandler.HandleInteractionAsync;
+            // Moderation handlers do audit-log fetches — run them OFF the gateway
+            // task so a slow Discord API call can never stall event delivery
+            // (the suspected "airy dies when we kick people").
+            _client.UserBanned += (u, g) => { _ = Task.Run(() => _banHandler.HandleInteractionAsync(u, g)); return Task.CompletedTask; };
+            _client.UserLeft += (g, u) => { _ = Task.Run(() => _leftHandler.HandleInteractionAsync(g, u)); return Task.CompletedTask; };
 
         }
 

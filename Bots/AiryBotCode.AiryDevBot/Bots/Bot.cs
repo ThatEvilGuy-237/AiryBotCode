@@ -20,6 +20,7 @@
 ﻿        protected readonly ButtonPressHandler _buttonPressHandler;
 ﻿        protected readonly FormHandler _formHandler;
 ﻿        protected readonly BanHandler _banHandler;
+﻿        protected readonly LeftHandler _leftHandler;
 ﻿        protected readonly ILogger<Bot> _logger;
 ﻿
 ﻿        public Bot(IServiceProvider serviceProvider, IConfigurationReader configuration, ILogger<Bot> logger)
@@ -38,6 +39,7 @@
 ﻿            _buttonPressHandler = _serviceProvider.GetRequiredService<ButtonPressHandler>();
 ﻿            _formHandler = _serviceProvider.GetRequiredService<FormHandler>();
 ﻿            _banHandler = _serviceProvider.GetRequiredService<BanHandler>();
+            _leftHandler = _serviceProvider.GetRequiredService<LeftHandler>();
 ﻿        }
 ﻿        // Create a gloabal client service
 ﻿        public static IServiceCollection CreateClientService(IServiceCollection services)
