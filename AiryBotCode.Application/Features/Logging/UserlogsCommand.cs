@@ -101,18 +101,24 @@ namespace AiryBotCode.Application.Features.Logging
         }
         public async Task SendUserLog(IUser user, LogInfo logInfo)
         {
+            // Banned/kicked members are usually gone from the guild cache, so
+            // Target is often null on moderation events — fall back to the raw
+            // SocketUser from the gateway event instead of NRE'ing (which was
+            // silently eating ban logs).
+            var targetId = logInfo.Target?.Id ?? logInfo.TargetUser?.Id ?? 0;
             var buttonEncripter = new ButtonEncriptionService
             {
                 CommandName = Name,
                 Action = ActionEdit,
                 UsersId = new List<ulong> { user.Id },
-                TargetsId = new List<ulong> { logInfo.Target.Id }
+                TargetsId = new List<ulong> { targetId }
             };
 
             var logData = new UserLogData();
             logData.SetUser(user);
             logData.Type = logInfo.Type;
-            logData.SetTarget(logInfo.Target);
+            if (logInfo.Target != null) logData.SetTarget(logInfo.Target);
+            else if (logInfo.TargetUser != null) logData.SetTarget(logInfo.TargetUser);
             logData.Reason = logInfo.Reason;
             logData.Action = logInfo.Action;
             logData.Consequences = logInfo.Consequences;

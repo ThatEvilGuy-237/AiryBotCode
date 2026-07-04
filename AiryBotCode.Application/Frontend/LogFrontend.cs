@@ -54,14 +54,13 @@ namespace AiryBotCode.Tool.Frontend
         }
         public UserLogData SetTarget(SocketUser target)
         {
-            UserLogData userLog = new UserLogData
-            {
-                TargetMention = target.Mention,
-                TargetName = target.GlobalName,
-                TargetId = target.Id.ToString(),
-                TargetAvatarUrl = target.GetDisplayAvatarUrl(),
-            };
-            return userLog;
+            // Mutate THIS (like the SocketGuildUser overload) — the old copy-and-
+            // return silently discarded every field set before the call.
+            TargetMention = target.Mention;
+            TargetName = target.GlobalName ?? target.Username;
+            TargetId = target.Id.ToString();
+            TargetAvatarUrl = target.GetDisplayAvatarUrl();
+            return this;
         }
         public UserLogData SetUser(IUser user)
         {

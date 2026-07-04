@@ -7,10 +7,12 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 {
     public class BanHandler : EvilEventHandler
     {
-        private List<EvilAction> _banAction;
+        private List<EvilAction> _banAction = new();
         public void AssignActions(List<EvilAction> events)
         {
-            _banAction = events.OfType<ISlashAction>().Cast<EvilAction>().ToList();
+            // Filter on the interface this handler actually dispatches to — the old
+            // ISlashAction filter only worked by coincidence.
+            _banAction = events.Where(e => e is IBanAction).ToList();
             Console.WriteLine("BanHandler");
         }
 
@@ -23,17 +25,13 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
         {
             Console.WriteLine("[UserBan] user: ");
 
-            foreach (var slashEvent in _banAction)
+            foreach (var action in _banAction)
             {
-                if (slashEvent is IBanAction slashEventHandler)
+                if (action is IBanAction handler)
                 {
-                    //TODO: [READ ABOUT RESPONSES TO USER]
-                    //await command.DeferAsync(ephemeral: true);
                     Console.WriteLine("- " + user.ToString() + " Guild: " + guild.ToString());
-                    await slashEventHandler.HandleBanAsync(user, guild);
-                    return;
+                    await handler.HandleBanAsync(user, guild);
                 }
-                return;
             }
         }
     }
