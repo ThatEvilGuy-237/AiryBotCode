@@ -100,7 +100,11 @@ namespace AiryBotCode.Bot.Bots
                 var bossSink = services.GetRequiredService<ICountingBossSink>();
                 // Agent-filed suggestions (submit_suggestion effect) → /suggestions board.
                 var suggestionIngest = services.GetRequiredService<ISuggestionIngest>();
-                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine, askDelivery, bossSink, suggestionIngest);
+                // Pass this bot's id so it subscribes as ITSELF: the Hive then routes
+                // each agent reply to the one bot it belongs to instead of every
+                // listener on the socket.
+                var listener = new HiveEffectListener(effectsUrl, delivery, Console.WriteLine, askDelivery, bossSink, suggestionIngest,
+                    _configuration.GetBotId().ToString());
                 // Bind into the singleton gateway so the button handler can send answers
                 // (ask_user) back up this same socket via IHiveResponseSender.
                 services.GetRequiredService<HiveEffectGateway>().Bind(listener);

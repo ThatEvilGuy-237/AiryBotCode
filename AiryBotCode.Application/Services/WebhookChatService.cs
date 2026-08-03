@@ -42,6 +42,11 @@ namespace AiryBotCode.Application.Services
                 author,
                 userId = authorId.ToString(),   // Discord user id → per-user memory in the Hive
                 channelId = channelId.ToString(),
+                // WHICH BOT this run belongs to. The Hive threads it into the agent
+                // run's effect context, and Wraith's tools-WS then delivers the reply
+                // ONLY to the listener that subscribed as this bot — which is what
+                // stops every bot on the hub posting the same answer.
+                botId = botId.ToString(),
                 // Image attachments for the agent's vision intake. MUST use lowercase
                 // keys (url/name/mime): the Hive's FlowRunner.ReadImages reads them
                 // case-sensitively, but the ForwardedImage record serializes PascalCase

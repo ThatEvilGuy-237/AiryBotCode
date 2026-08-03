@@ -14,6 +14,9 @@ namespace AiryBotCode.Application.Hive
     public sealed class HiveEffectListener : IHiveResponseSender
     {
         private readonly string _wsUrl;
+        /// <summary>This listener's Discord bot id, sent on subscribe so the Hive can
+        /// address effects to it. Null = legacy broadcast listener (receives everything).</summary>
+        private readonly string? _botId;
         private readonly MessagePacer _pacer;
         private readonly IAskDelivery? _askDelivery;
         private readonly ICountingBossSink? _bossSink;
@@ -25,13 +28,14 @@ namespace AiryBotCode.Application.Hive
         private ClientWebSocket? _activeSocket;
         private readonly SemaphoreSlim _sendLock = new(1, 1);
 
-        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null)
-            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink, suggestionIngest) { }
+        public HiveEffectListener(string wsUrl, IEffectDelivery delivery, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null, string? botId = null)
+            : this(wsUrl, new MessagePacer(delivery), log, askDelivery, bossSink, suggestionIngest, botId) { }
 
         // Test/advanced ctor: supply a pacer (e.g. with a fake clock).
-        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null)
+        public HiveEffectListener(string wsUrl, MessagePacer pacer, Action<string>? log = null, IAskDelivery? askDelivery = null, ICountingBossSink? bossSink = null, ISuggestionIngest? suggestionIngest = null, string? botId = null)
         {
             _wsUrl = wsUrl;
+            _botId = string.IsNullOrWhiteSpace(botId) ? null : botId;
             _pacer = pacer;
             _askDelivery = askDelivery;
             _bossSink = bossSink;
@@ -50,8 +54,14 @@ namespace AiryBotCode.Application.Hive
                 {
                     using var ws = new ClientWebSocket();
                     await ws.ConnectAsync(new Uri(_wsUrl), ct);
-                    await SendAsync(ws, "{\"type\":\"subscribe_effects\"}", ct);
-                    _log?.Invoke($"[HiveEffects] subscribed at {_wsUrl}");
+                    // Declare which bot we are, so the Hive delivers only OUR effects.
+                    // Omitted when unknown → the hub treats us as a legacy broadcast
+                    // listener and we keep receiving everything, as before.
+                    var subscribe = _botId is null
+                        ? "{\"type\":\"subscribe_effects\"}"
+                        : $"{{\"type\":\"subscribe_effects\",\"botId\":\"{_botId}\"}}";
+                    await SendAsync(ws, subscribe, ct);
+                    _log?.Invoke($"[HiveEffects] subscribed at {_wsUrl}{(_botId is null ? "" : $" as bot {_botId}")}");
                     backoff = 2;
 
                     _activeSocket = ws;
