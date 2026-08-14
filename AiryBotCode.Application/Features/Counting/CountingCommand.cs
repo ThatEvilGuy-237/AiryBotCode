@@ -223,6 +223,7 @@ namespace AiryBotCode.Application.Features.Counting
                 {
                     state.BossActive = false;
                     state.BossSpawnedAt = null;
+                    state.LastUserId = 0;   // abandoned boss ends the turn order too
                     await repo.SaveAsync(state);
                     _arrivalLocks.TryRemove(message.Channel.Id, out _);
                     return;
@@ -236,12 +237,12 @@ namespace AiryBotCode.Application.Features.Counting
                 state.BossActive = false;
                 state.BossAnswer = null;
                 state.BossSpawnedAt = null;
-                // The solver is now the most recent actor, exactly like a normal count.
-                // Without this LastUserId stays whoever HIT the milestone — so when they
-                // post the (correct) next number, the "no counting twice in a row" guard
-                // wrongly fails them, even though the boss interrupted their turn. This
-                // was the post-boss "you bungled the count" reset bug.
-                state.LastUserId = member.Id;
+                // A boss ends the turn order: nobody "counted last", so anyone may take
+                // the next number — the milestone-hitter and the solver included. Naming
+                // either of them here re-arms the "no counting twice in a row" guard and
+                // resets the run on a perfectly correct next number, which is the
+                // post-boss "you bungled the count" bug (seen both ways round).
+                state.LastUserId = 0;
                 state.LastMessageId = message.Id;
                 await repo.SaveAsync(state);
                 _arrivalLocks.TryRemove(message.Channel.Id, out _);   // defensive — already clear

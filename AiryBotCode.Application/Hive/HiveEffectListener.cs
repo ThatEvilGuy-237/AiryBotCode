@@ -111,6 +111,12 @@ namespace AiryBotCode.Application.Hive
                 var root = doc.RootElement;
                 var frameType = root.TryGetProperty("type", out var t) ? t.GetString() : null;
 
+                // Addressed to another bot → not ours to act on. The hub already filters
+                // by subscriber identity; this is the second line of defence, so a bot
+                // whose command is switched off can never post someone else's effect.
+                // No botId on the frame = legacy broadcast, still accepted.
+                if (!IsForThisBot(root)) return Task.CompletedTask;
+
                 // Inbound mini-boss answer: Airy generated a puzzle and sends back the
                 // expected answer for the bot to judge against. Frame:
                 //   { type:"counting_boss_answer", context:{ sessionId:<channelId> }, payload:{ answer:<number> } }
@@ -213,6 +219,17 @@ namespace AiryBotCode.Application.Hive
             finally { _sendLock.Release(); }
         }
 
+        // True when a frame is ours to handle: either it names no bot (broadcast) or it
+        // names us. A listener that doesn't know its own id accepts everything.
+        private bool IsForThisBot(JsonElement root)
+        {
+            if (_botId is null) return true;
+            if (!root.TryGetProperty("context", out var c) || c.ValueKind != JsonValueKind.Object) return true;
+            if (!c.TryGetProperty("botId", out var b) || b.ValueKind != JsonValueKind.String) return true;
+            var target = b.GetString();
+            return string.IsNullOrEmpty(target) || target == _botId;
+        }
+
         // Parse a counting_boss_answer frame and hand the answer to the sink.
         private Task HandleBossAnswer(JsonElement root, CancellationToken ct)
         {
@@ -232,7 +249,10 @@ namespace AiryBotCode.Application.Hive
             var ws = _activeSocket;
             if (ws is null || ws.State != WebSocketState.Open) return false;
 
-            var frame = JsonSerializer.Serialize(new { type, payload, context = new { sessionId } });
+            // botId travels with the event so the Hive can address whatever it sends back
+            // to this bot alone — without it the counting replies fan out to every bot on
+            // the socket and they all post the same line.
+            var frame = JsonSerializer.Serialize(new { type, payload, context = new { sessionId, botId = _botId } });
 
             await _sendLock.WaitAsync(ct);
             try

@@ -83,6 +83,33 @@ namespace AiryBotCode.Tests
             Assert.Empty(d.Sent);
         }
 
+        private static string AddressedEffect(string sessionId, string botId) =>
+            System.Text.Json.JsonSerializer.Serialize(new
+            {
+                type = "effect",
+                call = new { id = "e1", name = "say", arguments = new { message = "not yours" } },
+                context = new { sessionId, botId },
+            });
+
+        [Fact]
+        public async Task Drops_an_effect_addressed_to_another_bot()
+        {
+            var d = new FakeDelivery();
+            var l = new HiveEffectListener("ws://unused", d, botId: "guardian");
+            await l.HandleMessageAsync(AddressedEffect("124654654000000000", "airy"));
+            Assert.Empty(d.Sent);
+        }
+
+        [Fact]
+        public async Task Delivers_an_effect_addressed_to_this_bot_or_to_nobody()
+        {
+            var d = new FakeDelivery();
+            var l = new HiveEffectListener("ws://unused", d, botId: "airy");
+            await l.HandleMessageAsync(AddressedEffect("124654654000000000", "airy"));
+            await l.HandleMessageAsync(Effect("say", "broadcast", "124654654000000000"));
+            Assert.Equal(2, d.Sent.Count);
+        }
+
         [Fact]
         public async Task Malformed_frame_does_not_throw_or_deliver()
         {
