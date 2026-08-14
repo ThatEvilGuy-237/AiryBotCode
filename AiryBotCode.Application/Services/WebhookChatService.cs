@@ -17,6 +17,19 @@ namespace AiryBotCode.Application.Services
         private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(30) };
         private readonly IChannelWebhookRepository _repository;
 
+        /// <summary>What to say when the channel IS linked but the Hive gave us nothing —
+        /// the run errored, timed out, or the model is unreachable (no credits, provider
+        /// down). Silence reads as "the bot is broken/ignoring me"; this says which it is,
+        /// quietly, in Discord subtext. An UNLINKED channel still gets nothing at all.</summary>
+        private static readonly string[] Offline =
+        {
+            "I heard you — I just can't think right now.\n-# my servers are down, try me again later",
+            "Your ping landed. My brain didn't.\n-# servers are down — this is the answering machine",
+            "…nothing. Not you, it's me.\n-# my servers are down right now",
+        };
+
+        private static string OfflineReply() => Offline[Random.Shared.Next(Offline.Length)];
+
         public WebhookChatService(IChannelWebhookRepository repository)
         {
             _repository = repository;
@@ -79,17 +92,17 @@ namespace AiryBotCode.Application.Services
                 if (!res.IsSuccessStatusCode)
                 {
                     Console.WriteLine($"[Webhook] async send to {sendUrl} returned {(int)res.StatusCode}: {body}");
-                    return null;
+                    return OfflineReply();
                 }
                 runId = ReadString(body, "runId");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[Webhook] forward to {link.WebhookUrl} failed: {ex.Message}");
-                return null;
+                return OfflineReply();
             }
 
-            if (string.IsNullOrEmpty(runId)) return null;
+            if (string.IsNullOrEmpty(runId)) return OfflineReply();
 
             // Poll the signed result endpoint until the run reaches a terminal state.
             // Window is generous so an interactive run that BLOCKS on an ask_user button
@@ -112,15 +125,21 @@ namespace AiryBotCode.Application.Services
                     if (!pres.IsSuccessStatusCode) continue;
                     var pbody = await pres.Content.ReadAsStringAsync();
                     var status = (ReadString(pbody, "status") ?? "").ToLowerInvariant();
-                    if (status is "completed" or "completedwitherrors") return ExtractReply(pbody);
-                    if (status is "failed" or "cancelled") return null;
+                    // A CLEAN completion with no text is left silent on purpose: the agent
+                    // may have answered through a say-effect instead, and an "I'm offline"
+                    // posted on top of a real reply is worse than saying nothing. Only
+                    // completedwitherrors — the shape of a dead model, e.g. the provider
+                    // answering 429 — gets the stand-in.
+                    if (status is "completed") return ExtractReply(pbody);
+                    if (status is "completedwitherrors") return ExtractReply(pbody) ?? OfflineReply();
+                    if (status is "failed" or "cancelled") return OfflineReply();
                     // pending / running → keep polling
                 }
                 catch { /* transient — keep polling until the deadline */ }
             }
 
             Console.WriteLine($"[Webhook] run {runId} did not finish within the poll window.");
-            return null;
+            return OfflineReply();
         }
 
         // Pull a top-level string property from a JSON object response.
