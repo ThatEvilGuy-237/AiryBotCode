@@ -17,9 +17,12 @@ const keyInput = ref<HTMLInputElement | null>(null)
 // chooser. Stashed in sessionStorage so it survives the Discord round-trip, and
 // validated to our own host so we never leak the JWT to an outside URL.
 const RETURN_KEY = 'login_return'
-// Native-app deep links we hand the token to (Hive Pocket). Custom-scheme URLs
-// have origin "null", so they're allowlisted by scheme instead of hostname.
-const APP_SCHEMES = ['hivepocket:']
+// Native-app deep links we hand the token to (Hive Pocket, Hive Desktop). Custom
+// scheme URLs have origin "null", so they're allowlisted by scheme instead of
+// hostname — and a scheme that is missing here silently falls through to the
+// chooser, which is what made desktop sign-in look like it just did nothing.
+// 'hivecoder:' is Hive Desktop's scheme, kept from the product it was renamed from.
+const APP_SCHEMES = ['hivepocket:', 'hivecoder:']
 function safeReturn(raw: string | null): string | null {
   if (!raw) return null
   try {
