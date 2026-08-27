@@ -21,8 +21,9 @@ const RETURN_KEY = 'login_return'
 // scheme URLs have origin "null", so they're allowlisted by scheme instead of
 // hostname — and a scheme that is missing here silently falls through to the
 // chooser, which is what made desktop sign-in look like it just did nothing.
-// 'hivecoder:' is Hive Desktop's scheme, kept from the product it was renamed from.
-const APP_SCHEMES = ['hivepocket:', 'hivecoder:']
+// 'hivedesktop:' is Hive Desktop's scheme; 'hivecoder:' is what it registered before
+// the rename and stays here so installs predating it keep signing in.
+const APP_SCHEMES = ['hivepocket:', 'hivedesktop:', 'hivecoder:']
 function safeReturn(raw: string | null): string | null {
   if (!raw) return null
   try {
