@@ -3,9 +3,11 @@ import { onMounted, ref, nextTick } from 'vue'
 import { API_BASE_URL, APP_URL, HIVE_URL, discordAuthUrl } from './lib/config'
 import { isAuthenticated, captureTokenFromHash, getToken } from './lib/auth'
 
-type Step = 'key' | 'identity' | 'choose'
+type Step = 'key' | 'identity' | 'choose' | 'handoff'
 
 const step = ref<Step>('key')
+const handoffUrl = ref<string | null>(null)
+const handoffTried = ref(false)
 const password = ref('')
 const gateToken = ref('')
 const error = ref('')
@@ -46,10 +48,15 @@ onMounted(() => {
   // Discord redirects back here with `#token=` — capture it.
   captureTokenFromHash()
   if (isAuthenticated()) {
-    // If an app asked for the token back, hand it over and skip the chooser.
+    // If an app asked for the token back, hand it over instead of the chooser.
     const dest = consumeReturn()
     if (dest) {
-      window.location.href = `${dest}#token=${encodeURIComponent(getToken() ?? '')}`
+      handoffUrl.value = `${dest}#token=${encodeURIComponent(getToken() ?? '')}`
+      step.value = 'handoff'
+      // Try once, but do not rely on it: a browser silently drops a custom-scheme
+      // navigation that has no user gesture behind it, and the click below is the
+      // gesture that makes it work (and lets the browser show its own prompt).
+      openApp()
       return
     }
     step.value = 'choose'
@@ -57,6 +64,12 @@ onMounted(() => {
   }
   keyInput.value?.focus()
 })
+
+function openApp(): void {
+  if (!handoffUrl.value) return
+  handoffTried.value = true
+  window.location.href = handoffUrl.value
+}
 
 function goAiry() {
   window.location.href = APP_URL
@@ -156,6 +169,27 @@ function continueWithIdentity() {
           </button>
 
           <button class="ghost" type="button" :disabled="busy" @click="back">Back</button>
+        </div>
+
+        <!-- Hand the session to a native app (Hive Desktop / Hive Pocket) -->
+        <div v-else-if="step === 'handoff'" key="handoff" class="panel">
+          <h1>Signed in</h1>
+          <p class="hint">Open the app to finish.</p>
+
+          <button class="choice" @click="openApp">
+            <span class="choice-mark hive" aria-hidden="true"></span>
+            <span class="choice-text">
+              <span class="choice-title">Open the app</span>
+              <span class="choice-sub">hand this session over</span>
+            </span>
+          </button>
+
+          <p v-if="handoffTried" class="hint small">
+            Your browser will ask permission the first time — allow it. If nothing happens,
+            check the app is installed, then press the button again.
+          </p>
+
+          <button class="ghost" type="button" @click="step = 'choose'">Stay in the browser</button>
         </div>
 
         <!-- Step 3 — choose destination -->
@@ -262,6 +296,7 @@ h1 {
   color: #fff;
   letter-spacing: 0.2px;
 }
+.hint.small { font-size: 12px; line-height: 1.5; opacity: .85; }
 .hint {
   margin: 0 0 0.6rem;
   font-size: 0.86rem;
