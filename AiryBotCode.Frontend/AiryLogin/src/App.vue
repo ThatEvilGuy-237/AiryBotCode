@@ -3,11 +3,21 @@ import { onMounted, ref, nextTick } from 'vue'
 import { API_BASE_URL, APP_URL, HIVE_URL, discordAuthUrl } from './lib/config'
 import { isAuthenticated, captureTokenFromHash, getToken } from './lib/auth'
 
-type Step = 'key' | 'identity' | 'choose' | 'handoff'
+type Step = 'key' | 'identity' | 'choose' | 'handoff' | 'device'
 
 const step = ref<Step>('key')
 const handoffUrl = ref<string | null>(null)
 const handoffTried = ref(false)
+
+// A native app asking to be paired: it shows a code, we show what machine that
+// code came from so the human can refuse one they do not recognise.
+interface DeviceRequest {
+  code: string; deviceName: string; os: string; appVersion: string
+  requestedFromIp: string; requestedAt: string
+}
+const deviceCode = ref<string | null>(null)
+const device = ref<DeviceRequest | null>(null)
+const deviceDone = ref<'approved' | 'denied' | null>(null)
 const password = ref('')
 const gateToken = ref('')
 const error = ref('')
@@ -19,6 +29,7 @@ const keyInput = ref<HTMLInputElement | null>(null)
 // chooser. Stashed in sessionStorage so it survives the Discord round-trip, and
 // validated to our own host so we never leak the JWT to an outside URL.
 const RETURN_KEY = 'login_return'
+const DEVICE_KEY = 'login_device_code'
 // Native-app deep links we hand the token to (Hive Pocket, Hive Desktop). Custom
 // scheme URLs have origin "null", so they're allowlisted by scheme instead of
 // hostname — and a scheme that is missing here silently falls through to the
@@ -45,9 +56,22 @@ onMounted(() => {
   const ret = safeReturn(new URLSearchParams(window.location.search).get('return'))
   if (ret) sessionStorage.setItem(RETURN_KEY, ret)
 
+  // A pairing code survives the Discord round-trip the same way a return target does.
+  const codeParam = new URLSearchParams(window.location.search).get('device')
+  if (codeParam) sessionStorage.setItem(DEVICE_KEY, codeParam)
+
   // Discord redirects back here with `#token=` — capture it.
   captureTokenFromHash()
   if (isAuthenticated()) {
+    const pending = sessionStorage.getItem(DEVICE_KEY)
+    if (pending) {
+      sessionStorage.removeItem(DEVICE_KEY)
+      deviceCode.value = pending
+      step.value = 'device'
+      void loadDevice(pending)
+      return
+    }
+
     // If an app asked for the token back, hand it over instead of the chooser.
     const dest = consumeReturn()
     if (dest) {
@@ -64,6 +88,37 @@ onMounted(() => {
   }
   keyInput.value?.focus()
 })
+
+async function loadDevice(code: string): Promise<void> {
+  error.value = ''
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/device/${encodeURIComponent(code)}`, {
+      headers: { Authorization: `Bearer ${getToken() ?? ''}` },
+    })
+    if (!res.ok) { error.value = 'That pairing code is unknown or has expired.'; return }
+    device.value = await res.json()
+  } catch {
+    error.value = 'Could not reach the Hive to check that code.'
+  }
+}
+
+async function answerDevice(approve: boolean): Promise<void> {
+  if (!deviceCode.value || busy.value) return
+  busy.value = true; error.value = ''
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/auth/device/${approve ? 'approve' : 'deny'}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken() ?? ''}` },
+      body: JSON.stringify({ code: deviceCode.value }),
+    })
+    if (!res.ok) { error.value = (await res.json().catch(() => ({}))).message ?? 'That request could not be answered.'; return }
+    deviceDone.value = approve ? 'approved' : 'denied'
+  } catch {
+    error.value = 'Could not reach the Hive.'
+  } finally {
+    busy.value = false
+  }
+}
 
 function openApp(): void {
   if (!handoffUrl.value) return
@@ -169,6 +224,39 @@ function continueWithIdentity() {
           </button>
 
           <button class="ghost" type="button" :disabled="busy" @click="back">Back</button>
+        </div>
+
+        <!-- A device is asking to be paired -->
+        <div v-else-if="step === 'device'" key="device" class="panel">
+          <template v-if="deviceDone === 'approved'">
+            <h1>Approved</h1>
+            <p class="hint">{{ device?.deviceName ?? 'The device' }} is signing in now. You can close this tab.</p>
+          </template>
+          <template v-else-if="deviceDone === 'denied'">
+            <h1>Denied</h1>
+            <p class="hint">Nothing was handed over.</p>
+          </template>
+          <template v-else>
+            <h1>Approve this device?</h1>
+            <p class="hint">Only continue if this is you, on this machine.</p>
+
+            <p v-if="error" class="error">{{ error }}</p>
+
+            <div v-if="device" class="device">
+              <div class="device-row"><span class="device-k">Device</span><span class="device-v">{{ device.deviceName }}</span></div>
+              <div class="device-row"><span class="device-k">System</span><span class="device-v">{{ device.os }}</span></div>
+              <div class="device-row"><span class="device-k">Build</span><span class="device-v">{{ device.appVersion }}</span></div>
+              <div class="device-row"><span class="device-k">From</span><span class="device-v">{{ device.requestedFromIp }}</span></div>
+              <div class="device-row"><span class="device-k">Code</span><span class="device-v code">{{ device.code }}</span></div>
+            </div>
+
+            <p class="hint small">Check the code matches the one shown on the device.</p>
+
+            <button class="discord" :disabled="busy || !device" @click="answerDevice(true)">
+              <span>{{ busy ? 'Approving…' : 'Approve' }}</span>
+            </button>
+            <button class="ghost" type="button" :disabled="busy" @click="answerDevice(false)">Deny</button>
+          </template>
         </div>
 
         <!-- Hand the session to a native app (Hive Desktop / Hive Pocket) -->
@@ -296,6 +384,12 @@ h1 {
   color: #fff;
   letter-spacing: 0.2px;
 }
+.device { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 12px; padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: rgba(255,255,255,.03); }
+.device-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; }
+.device-k { color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .06em; font-size: 11px; }
+.device-v { color: rgba(255,255,255,.9); text-align: right; word-break: break-all; }
+.device-v.code { font-family: ui-monospace, monospace; letter-spacing: .12em; font-size: 15px; }
 .hint.small { font-size: 12px; line-height: 1.5; opacity: .85; }
 .hint {
   margin: 0 0 0.6rem;

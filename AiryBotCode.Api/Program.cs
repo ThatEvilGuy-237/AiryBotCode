@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +57,10 @@ builder.Services.AddAuthentication(options =>
 // Database access for the control panel (shares the bot's CommandSettings table).
 builder.Services.AddDbContext<AIDbContext>(options =>
     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+// Device pairings are short-lived and in-memory, so this must be a singleton —
+// a scoped instance would forget the request between the start call and the poll.
+builder.Services.AddSingleton<AiryBotCode.Api.Services.DevicePairingService>();
+
 builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
 builder.Services.AddScoped<IBotCommandRepository, BotCommandRepository>();
 builder.Services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
