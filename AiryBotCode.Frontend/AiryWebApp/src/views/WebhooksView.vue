@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// Migrated to @hive/ui (Item E — full panel on the shared design system). Logic unchanged.
 import { ref, watch, onMounted } from 'vue'
 import { PageHeader, Card, Button, Badge, TextField, Toggle } from '@hive/ui'
 import { api, ApiError, type ChannelWebhook } from '../lib/api'
@@ -11,7 +10,6 @@ const links = ref<ChannelWebhook[]>([])
 const loading = ref(true)
 const error = ref('')
 
-// null = not editing; a draft = adding (id 0) or editing an existing link.
 const draft = ref<ChannelWebhook | null>(null)
 const saving = ref(false)
 
@@ -36,7 +34,6 @@ function add() {
   draft.value = blank()
 }
 function edit(l: ChannelWebhook) {
-  // Secret is write-only; start blank (leave blank to keep).
   draft.value = { ...l, secret: '' }
 }
 function cancel() {
@@ -50,16 +47,12 @@ async function save() {
   try {
     const d = draft.value
     if (d.id === 0) {
-      // Adding: the Channel ID field accepts several ids (comma / space / newline
-      // separated) so one webhook can be linked to many channels at once — each
-      // becomes its own link sharing the name, URL, secret and mode.
       const channelIds = String(d.channelId).split(/[\s,]+/).map(s => s.trim()).filter(Boolean)
       if (!channelIds.length) { error.value = 'Enter at least one channel id.'; saving.value = false; return }
       for (const channelId of channelIds) {
         await api.createChannelWebhook(currentBotId.value, { ...d, channelId })
       }
     } else {
-      // Blank secret on edit → don't change it (send only if typed).
       const payload: Partial<ChannelWebhook> = { ...d }
       if (!d.secret) delete payload.secret
       await api.updateChannelWebhook(currentBotId.value, d.id, payload)
@@ -99,7 +92,6 @@ onMounted(async () => { await loadBots(); await load() })
 
     <p v-if="error" class="err">{{ error }}</p>
 
-    <!-- Editor -->
     <Card v-if="draft">
       <template #head><h3>{{ draft.id === 0 ? 'New link' : 'Edit link' }}</h3></template>
 
@@ -108,19 +100,23 @@ onMounted(async () => { await loadBots(); await load() })
         <TextField
           v-model="draft.channelId"
           :label="draft.id === 0 ? 'Channel ID(s)' : 'Channel ID'"
-          :placeholder="draft.id === 0 ? 'Discord channel id(s) — comma or space separated' : 'Discord channel id'"
+          :placeholder="draft.id === 0 ? 'Discord channel id(s), comma or space separated' : 'Discord channel id'"
         />
       </div>
-      <TextField v-model="draft.webhookUrl" label="Webhook URL" placeholder="https://…/hooks/{triggerId}" />
+      <TextField
+        v-model="draft.webhookUrl"
+        :label="draft.mode === 'agent' ? 'Agent run URL' : 'Webhook URL'"
+        :placeholder="draft.mode === 'agent' ? 'http://spine:7000/agents/{agentId}/run' : 'https://…/hooks/{triggerId}'"
+      />
 
       <div class="grid2">
         <label class="fld">
-          <span class="lbl">Secret <span class="hint">(HMAC; {{ draft.id !== 0 && draft.hasSecret ? 'leave blank to keep' : 'optional' }})</span></span>
-          <input class="in" v-model="draft.secret" type="password" autocomplete="off" placeholder="whsec_…" />
+          <span class="lbl">{{ draft.mode === 'agent' ? 'App key' : 'Secret' }} <span class="hint">({{ draft.mode === 'agent' ? 'with agents.run' : 'HMAC' }}; {{ draft.id !== 0 && draft.hasSecret ? 'leave blank to keep' : draft.mode === 'agent' ? 'required' : 'optional' }})</span></span>
+          <input class="in" v-model="draft.secret" type="password" autocomplete="off" :placeholder="draft.mode === 'agent' ? 'hive_ak_…' : 'whsec_…'" />
         </label>
         <label class="fld">
           <span class="lbl">Mode</span>
-          <select class="in" v-model="draft.mode"><option value="sync">sync</option><option value="async">async</option></select>
+          <select class="in" v-model="draft.mode"><option value="agent">Hive agent</option><option value="sync">sync</option><option value="async">async</option></select>
         </label>
       </div>
 

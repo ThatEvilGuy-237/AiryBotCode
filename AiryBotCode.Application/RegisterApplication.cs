@@ -17,10 +17,8 @@ namespace AiryBotCode.Application
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            // Configuration
             services.AddSingleton<IConfigurationReader, ConfigurationReader>();
 
-            // Register commands
             services.AddScoped<TimeoutCommand>();
             services.AddScoped<UntimeoutCommand>();
             services.AddScoped<UserlogsCommand>();
@@ -29,18 +27,15 @@ namespace AiryBotCode.Application
             services.AddScoped<ContactUserCommand>();
             services.AddScoped<GiveawayCommand>();
             services.AddScoped<Features.SpamCatcher.SpamCatcherCommand>();
-            // Per-user spam sliding-window state — shared across message handlers.
             services.AddSingleton<Features.SpamCatcher.SpamTracker>();
             services.AddScoped<Features.Leveling.LevelingCommand>();
-            // Per-user XP cooldown gate — shared across message handlers.
             services.AddSingleton<Features.Leveling.XpCooldown>();
             services.AddScoped<Features.Counting.CountingCommand>();
-            // Hive AI chat — per-bot settings (e.g. require @mention/reply to engage).
             services.AddScoped<Features.HiveChat.HiveChatCommand>();
-            // SERVICES
             services.AddScoped<UserService>();
             services.AddScoped<LogService>();
             services.AddScoped<DiscordService>();
+            services.AddSingleton(new Hive.HiveAgentClient(new System.Net.Http.HttpClient { Timeout = TimeSpan.FromMinutes(5) }));
             services.AddScoped<WebhookChatService>();
             services.AddScoped<IGiveAwayUserService, GiveAwayUserService>();
             services.AddScoped<GiveAwayUserService>();

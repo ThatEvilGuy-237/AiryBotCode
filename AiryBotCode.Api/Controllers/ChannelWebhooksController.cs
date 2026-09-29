@@ -5,11 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
 {
-    /// <summary>
-    /// Manage a bot's channel → webhook links (the "chat" routing). Messages in a
-    /// linked channel are forwarded to its webhook (e.g. a Hive trigger). Per bot
-    /// via the required <c>botId</c>. Requires a JWT.
-    /// </summary>
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
@@ -22,7 +17,6 @@ namespace AiryBotCode.Api.Controllers
             _repository = repository;
         }
 
-        // GET /api/channelwebhooks?botId=123
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] string botId)
         {
@@ -31,7 +25,6 @@ namespace AiryBotCode.Api.Controllers
             return Ok(links.Select(ToDto));
         }
 
-        // POST /api/channelwebhooks?botId=123
         [HttpPost]
         public async Task<IActionResult> Create([FromQuery] string botId, [FromBody] ChannelWebhookDto dto)
         {
@@ -46,13 +39,12 @@ namespace AiryBotCode.Api.Controllers
                 Name = string.IsNullOrWhiteSpace(dto.Name) ? "Webhook" : dto.Name,
                 WebhookUrl = dto.WebhookUrl.Trim(),
                 Secret = string.IsNullOrWhiteSpace(dto.Secret) ? null : dto.Secret,
-                Mode = dto.Mode == "async" ? "async" : "sync",
+                Mode = dto.Mode is "async" or "agent" ? dto.Mode : "sync",
                 Enabled = dto.Enabled,
             });
             return StatusCode(201, ToDto(created));
         }
 
-        // PUT /api/channelwebhooks/{id}?botId=123
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromQuery] string botId, [FromBody] ChannelWebhookDto dto)
         {
@@ -67,13 +59,12 @@ namespace AiryBotCode.Api.Controllers
                 Name = string.IsNullOrWhiteSpace(dto.Name) ? "Webhook" : dto.Name,
                 WebhookUrl = (dto.WebhookUrl ?? string.Empty).Trim(),
                 Secret = string.IsNullOrWhiteSpace(dto.Secret) ? null : dto.Secret,
-                Mode = dto.Mode == "async" ? "async" : "sync",
+                Mode = dto.Mode is "async" or "agent" ? dto.Mode : "sync",
                 Enabled = dto.Enabled,
             });
             return ok ? NoContent() : NotFound();
         }
 
-        // DELETE /api/channelwebhooks/{id}?botId=123
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id, [FromQuery] string botId)
         {
@@ -100,7 +91,6 @@ namespace AiryBotCode.Api.Controllers
         public string ChannelId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string WebhookUrl { get; set; } = string.Empty;
-        // Write-only on input; never returned (HasSecret flags presence).
         public string? Secret { get; set; }
         public bool HasSecret { get; set; }
         public string Mode { get; set; } = "sync";
