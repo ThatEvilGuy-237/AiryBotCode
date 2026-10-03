@@ -1,4 +1,5 @@
-﻿using AiryBotCode.Bot.Bots;
+﻿using Evil.Log.Telemetry;
+using AiryBotCode.Bot.Bots;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Registers;
 using Microsoft.Extensions.Configuration;
@@ -21,14 +22,18 @@ namespace AiryBotCode.Bot.Registers
             return services;
         }
 
+        public static EvilTelemetry? Telemetry { get; set; }
+
         public static IServiceProvider BuildServiceProvider(IConfiguration configuration)
         {
-            return new ServiceCollection()
+            var services = new ServiceCollection()
                 .AddLogging()
                 .AddSingleton<IConfiguration>(configuration)
                 .AddScoped<IConfigurationReader, ConfigurationReader>()
-                .RegisterServices()
-                .BuildServiceProvider();
+                .RegisterServices();
+            if (Telemetry is not null)
+                services.AddEvilTelemetry(Telemetry);
+            return services.BuildServiceProvider();
         }
     }
 }
