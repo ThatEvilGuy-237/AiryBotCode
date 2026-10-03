@@ -26,6 +26,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
+      - OTEL_SERVICE_NAME=airy-api
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -86,6 +87,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
+      - OTEL_SERVICE_NAME=airy-bots
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
     # Default network (db) + the Hive's network so the bot can subscribe to the
