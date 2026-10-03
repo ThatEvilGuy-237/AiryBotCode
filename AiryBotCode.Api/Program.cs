@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Evil.Log.Telemetry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
@@ -14,6 +15,7 @@ using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddEvilTelemetry("airybotcode", "api");
 var Configuration = builder.Configuration;
 
 var svelteAppPolicy = "SvelteApp";

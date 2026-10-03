@@ -17,7 +17,7 @@ RUN dotnet restore ${SLN_PATH}
 RUN dotnet publish ${PROJECT_PATH} -c Release -o /app --no-restore
 
 # Use the .NET 8 runtime image to run the application
-FROM mcr.microsoft.com/dotnet/runtime:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 ARG DLL_NAME
 WORKDIR /app
 COPY --from=build /app .

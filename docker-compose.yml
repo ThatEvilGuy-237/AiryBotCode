@@ -22,6 +22,12 @@ services:
     depends_on:
       - db
     restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json
 
@@ -71,10 +77,15 @@ services:
     depends_on:
       - db
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # Reach Postgres by its compose service name; overrides Database:Host in the
     # mounted appsettings.json (which is "localhost" for host runs).
     environment:
       - Database__Host=db
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
     # Default network (db) + the Hive's network so the bot can subscribe to the

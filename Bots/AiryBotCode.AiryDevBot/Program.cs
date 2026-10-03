@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AiryBotCode.Bot.Bots;
 using Microsoft.Extensions.Configuration;
+using Evil.Log.Telemetry;
 
 namespace AiryBotCode
 {
@@ -28,6 +29,8 @@ namespace AiryBotCode
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
+            using var telemetry = EvilTelemetry.Start("airybotcode", "bots", baseConfig);
+            ServiceRegistration.Telemetry = telemetry;
 
             // Read the roster (enabled rows) from the control database.
             List<BotSetting> roster = LoadRoster(baseConfig);
