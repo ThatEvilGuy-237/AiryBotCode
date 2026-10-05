@@ -30,13 +30,10 @@ const keyInput = ref<HTMLInputElement | null>(null)
 // validated to our own host so we never leak the JWT to an outside URL.
 const RETURN_KEY = 'login_return'
 const DEVICE_KEY = 'login_device_code'
-// Native-app deep links we hand the token to (Hive Pocket, Hive Desktop). Custom
-// scheme URLs have origin "null", so they're allowlisted by scheme instead of
-// hostname — and a scheme that is missing here silently falls through to the
-// chooser, which is what made desktop sign-in look like it just did nothing.
-// 'hivedesktop:' is Hive Desktop's scheme; 'hivecoder:' is what it registered before
-// the rename and stays here so installs predating it keep signing in.
-const APP_SCHEMES = ['hivepocket:', 'hivedesktop:', 'hivecoder:']
+// Native-app deep links we hand the token to (Hive Pocket). Custom scheme URLs
+// have origin "null", so they're allowlisted by scheme instead of hostname — and
+// a scheme that is missing here silently falls through to the chooser.
+const APP_SCHEMES = ['hivepocket:']
 function safeReturn(raw: string | null): string | null {
   if (!raw) return null
   try {
@@ -259,7 +256,7 @@ function continueWithIdentity() {
           </template>
         </div>
 
-        <!-- Hand the session to a native app (Hive Desktop / Hive Pocket) -->
+        <!-- Hand the session to the native app (Hive Pocket) -->
         <div v-else-if="step === 'handoff'" key="handoff" class="panel">
           <h1>Signed in</h1>
           <p class="hint">Open the app to finish.</p>
