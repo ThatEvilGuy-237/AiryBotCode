@@ -1,7 +1,6 @@
-# Behind Tailscale Serve/Funnel: Tailscale terminates TLS with a valid ts.net
-# cert and proxies here over plain HTTP. So Caddy listens on plain HTTP and just
-# routes between the two SPAs and the API — no TLS, no DuckDNS, and no basic-auth
-# popup (the password gate now lives in our own /login app).
+# thehive.thatevilguy.com (Cloudflare tunnel -> here, plain HTTP) serves The Hive
+# only. Since 2026-10-06 Airy's control panel, its access-key and Discord login
+# and its /api are no longer served on this host; every other path opens the Hive.
 
 :8088 {
 	# CORS for the Hive Pocket app — its Capacitor WebView runs on the origin
@@ -24,20 +23,6 @@
 	header @pocketOrigin {
 		Access-Control-Allow-Origin "https://localhost"
 		Vary Origin
-	}
-
-	# API — JWT-protected at the application layer.
-	handle /api/* {
-		reverse_proxy api:8080
-	}
-
-	# Standalone login SPA (its own tiny app). handle_path strips the /login
-	# prefix; the app is built with base "/login/" so its assets route back here.
-	redir /login /login/
-	handle_path /login/* {
-		root * /srv-login
-		try_files {path} /index.html
-		file_server
 	}
 
 	# The Hive portal (Aether-Sight), over the hive-core docker network. Each
@@ -68,15 +53,11 @@
 		}
 	}
 
-	# The Hive DEV environment lives on its own Funnel port (:8443), served by the
-	# hive-dev stack's own gateway — not through this Caddy. See
+	# The Hive DEV environment lives on its own host, served by the hive-dev
+	# stack's own gateway, not through this Caddy. See
 	# The-Hive/deploy/gateway-dev.Caddyfile + Plan-Documents/ENVIRONMENTS.md.
 
-	# Main control panel SPA. Reachable only with a valid JWT — enforced
-	# client-side by a router guard (→ /login) and server-side by [Authorize].
 	handle {
-		root * /srv
-		try_files {path} /index.html
-		file_server
+		redir * /hive/ 302
 	}
 }
