@@ -3,6 +3,7 @@
   "spec": 2,
   "id": "airybotcode",
   "name": "AiryBotCode",
+  "tagline": "Discord bot fleet with a control panel",
   "description": "Discord bot fleet with a Vue control panel and an ASP.NET API. Its compose project also carries the shared Postgres and the prod Caddy that serves The Hive.",
   "kind": "bot",
   "lifecycle": "live",
