@@ -1,0 +1,62 @@
+{
+  "$schema": "../evil-dash/schemas/evil-app.v2.schema.json",
+  "spec": 2,
+  "id": "airybotcode",
+  "name": "AiryBotCode",
+  "description": "Discord bot fleet with a Vue control panel and an ASP.NET API. Its compose project also carries the shared Postgres and the prod Caddy that serves The Hive.",
+  "kind": "bot",
+  "lifecycle": "live",
+  "owner": "Thatevilguy",
+  "envs": {
+    "prod": {
+      "local": "http://127.0.0.1:8088",
+      "ports": {
+        "caddy": 8088,
+        "postgres": "0.0.0.0:5432"
+      },
+      "branch": "main",
+      "runs": [
+        {
+          "compose": "airybotcode"
+        }
+      ],
+      "start": "docker compose -p airybotcode -f docker-compose.yml up -d --no-build --no-deps api caddy airydevbot",
+      "deploy": "./scripts/airy-deploy.sh prod (bot only: docker compose -f docker-compose.yml -p airybotcode up -d --build airydevbot)",
+      "db": "airy-postgres-db/airy_db (the shared Postgres: every app's database lives here)",
+      "notes": "thehive.thatevilguy.com and the quick tunnel hit Caddy :8088 and show only The Hive. The Caddyfile is a one-file bind mount: an edit changes the inode, so restart the container."
+    },
+    "dev": {
+      "local": "http://127.0.0.1:10000",
+      "ports": {
+        "caddy": 10000
+      },
+      "branch": "channel-webhooks",
+      "runs": [
+        {
+          "compose": "airybotcode-dev"
+        }
+      ],
+      "start": "docker compose -f docker-compose.dev.yml -p airybotcode-dev up -d --build",
+      "deploy": "./scripts/airy-deploy.sh dev",
+      "db": "db-dev container/airy_db_dev",
+      "notes": "Local only, own Postgres. Stopped since late September."
+    },
+    "tools": {
+      "ports": {
+        "panel-vite": 5173,
+        "login-vite": 5174
+      },
+      "start": "npm run dev in AiryBotCode.Frontend/AiryWebApp or AiryLogin"
+    }
+  },
+  "flow": {
+    "branch": "main",
+    "promote": "Feature work may sit on the airy-deploy.sh FEATURE_BRANCH (today channel-webhooks); ./scripts/airy-deploy.sh promote fast-forwards it into main, pushes and deploys prod.",
+    "rules": [
+      "Public repo: appsettings.json holds secrets and stays gitignored.",
+      "Never point hooks, OAuth or API calls at the *.ts.net Funnel host.",
+      "Docker builds leave root-owned obj/bin: chown before a host dotnet build or test.",
+      "Carries the shared Postgres and prod Caddy: restart only in a maintenance window."
+    ]
+  }
+}
