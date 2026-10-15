@@ -4,6 +4,7 @@ import CommandsView from '../views/CommandsView.vue'
 import BotSettingsView from '../views/BotSettingsView.vue'
 import ThemeView from '../views/ThemeView.vue'
 import WebhooksView from '../views/WebhooksView.vue'
+import DecisionWatchesView from '../views/DecisionWatchesView.vue'
 import StatusView from '../views/StatusView.vue'
 import SuggestionsView from '../views/SuggestionsView.vue'
 import DatabasesView from '../views/DatabasesView.vue'
@@ -19,6 +20,7 @@ export const router = createRouter({
     { path: '/bot-settings', name: 'bot-settings', component: BotSettingsView },
     { path: '/theme', name: 'theme', component: ThemeView },
     { path: '/webhooks', name: 'webhooks', component: WebhooksView },
+    { path: '/decision-watches', name: 'decision-watches', component: DecisionWatchesView },
     { path: '/status', name: 'status', component: StatusView },
     { path: '/suggestions', name: 'suggestions', component: SuggestionsView },
     { path: '/database', name: 'databases', component: DatabasesView },

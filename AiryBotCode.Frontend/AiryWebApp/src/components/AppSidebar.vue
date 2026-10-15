@@ -13,6 +13,7 @@ const botItems = [
   { to: '/bot-settings', label: 'Settings' },
   { to: '/theme', label: 'Theme' },
   { to: '/webhooks', label: 'Webhooks' },
+  { to: '/decision-watches', label: 'Decision watches' },
 ]
 const serverItems = [{ to: '/database', label: 'Databases' }]
 

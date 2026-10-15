@@ -5,6 +5,7 @@ using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Services;
+using AiryBotCode.Domain.database;
 using AiryBotCode.Infrastructure.Activitys;
 using AiryBotCode.Infrastructure.Interfaces;
 using Discord;
@@ -51,6 +52,11 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     mentioned.TryGetValue(id, out var n) ? n
                         : (guild?.GetUser(id) is { } gu ? (gu.Nickname ?? gu.Username) : null));
 
+                var mentionsBot = message.MentionedUsers.Any(u => u.Id == botId);
+                var repliesToBot = message.Reference != null
+                    && (message as SocketUserMessage)?.ReferencedMessage?.Author?.Id == botId;
+                var engage = await RunDecisionWatchesAsync(scope.ServiceProvider, message, botId, content, repliesToBot);
+
                 // First-message consent gate: only for channels linked to a Hive chat
                 // (where messages are forwarded + stored). Until the user accepts the
                 // data-use notice, post the notice + Accept button and don't forward.
@@ -58,6 +64,8 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 // missing table / DB hiccup never bricks the bot.
                 var link = await scope.ServiceProvider.GetRequiredService<IChannelWebhookRepository>()
                     .GetForChannelAsync(botId, message.Channel.Id);
+                if (link != null && engage == false && !mentionsBot && !repliesToBot)
+                    link = null;
                 if (link != null)
                 {
                     // RequireMention gate: when this bot's HiveChat setting is on, only engage
@@ -75,11 +83,8 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     }
                     catch (Exception sx) { Console.WriteLine($"[HiveChat] setting read failed, allowing through: {sx.Message}"); }
 
-                    if (requireMention)
+                    if (requireMention && engage != true)
                     {
-                        var mentionsBot = message.MentionedUsers.Any(u => u.Id == botId);
-                        var repliesToBot = message.Reference != null
-                            && (message as SocketUserMessage)?.ReferencedMessage?.Author?.Id == botId;
                         if (!mentionsBot && !repliesToBot)
                             return;   // not targeted at this bot → stay silent
                     }
@@ -114,7 +119,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var images = ImageAttachments.Pick(
                     message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)));
 
-                var reply = await forwarder.TryForwardAsync(
+                var reply = link == null ? null : await forwarder.TryForwardAsync(
                     botId, message.Channel.Id, message.Author.Id, message.Author.Username, content,
                     images, () => message.Channel.EnterTypingState());
                 if (!string.IsNullOrWhiteSpace(reply))
@@ -147,6 +152,59 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     await messageEvent.HandleMessageReceivedAsync(message);
                 }
             }
+        }
+
+        private static async Task<bool?> RunDecisionWatchesAsync(IServiceProvider services, SocketMessage message, ulong botId, string content, bool repliesToBot)
+        {
+            if (string.IsNullOrWhiteSpace(content)) return null;
+            List<ChannelDecisionWatch> watches;
+            try
+            {
+                watches = await services.GetRequiredService<IChannelDecisionWatchRepository>().GetForChannelAsync(botId, message.Channel.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DecisionWatch] could not read the watches, none run: {ex.Message}");
+                return null;
+            }
+            if (watches.Count == 0) return null;
+
+            var client = services.GetRequiredService<HiveDecisionClient>();
+            var discord = services.GetService<DiscordSocketClient>();
+            var guild = (message.Channel as SocketGuildChannel)?.Guild;
+            var author = (message.Author as SocketGuildUser)?.Nickname ?? message.Author.Username;
+            var watchEvent = new WatchEvent(content, message.Channel.Name, message.Channel.Id, author, message.Author.Id,
+                discord?.CurrentUser?.Username ?? "the bot", repliesToBot, guild?.Id, message.Id);
+
+            var verdicts = await Task.WhenAll(watches.Select(async w => (Watch: w, Verdict: await client.DecideAsync(w, watchEvent))));
+            var outcomes = new List<(ChannelDecisionWatch, WatchAction)>();
+            foreach (var (watch, verdict) in verdicts)
+            {
+                if (verdict.Error is not null) Console.WriteLine($"[DecisionWatch] {watch.Name}: {verdict.Error}");
+                var action = DecisionWatchRules.ActionFor(watch, verdict);
+                outcomes.Add((watch, action));
+                try
+                {
+                    if (action.Kind == "react" && action.Emoji is { } emoji)
+                    {
+                        IEmote emote = Emote.TryParse(emoji, out var custom) ? custom : new Emoji(emoji);
+                        await message.AddReactionAsync(emote);
+                    }
+                    else if (action.Kind == WatchActions.Alert)
+                    {
+                        var alertId = watch.AlertChannelId != 0 ? watch.AlertChannelId : services.GetRequiredService<IConfigurationReader>().GetLogChannelId();
+                        if (alertId != 0 && discord?.GetChannel(alertId) is IMessageChannel alerts)
+                            await alerts.SendMessageAsync(DecisionWatchRules.AlertLine(watch, verdict, watchEvent, message.GetJumpUrl()), allowedMentions: AllowedMentions.None);
+                        else
+                            Console.WriteLine($"[DecisionWatch] {watch.Name}: no alert channel to post to.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[DecisionWatch] {watch.Name}: acting on '{verdict.Answer}' failed: {ex.Message}");
+                }
+            }
+            return DecisionWatchRules.Engage(outcomes);
         }
 
         // Split text into <=max-char chunks for Discord, breaking on line then

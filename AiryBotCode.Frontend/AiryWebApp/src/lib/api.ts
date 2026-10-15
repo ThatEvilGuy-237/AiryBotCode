@@ -24,6 +24,20 @@ export interface DiscordEntity {
   guild: string
 }
 
+export interface DecisionWatch {
+  id: number
+  channelId: string
+  name: string
+  listenerUrl: string
+  secret?: string
+  hasSecret: boolean
+  questionKey: string | null
+  actions: Record<string, string>
+  unsureAction: string
+  alertChannelId: string | null
+  enabled: boolean
+}
+
 export interface ChannelWebhook {
   id: number
   channelId: string
@@ -155,6 +169,32 @@ export const api = {
   },
 
   // ---- Channel → webhook chat links ----
+  getDecisionWatches(botId: string): Promise<DecisionWatch[]> {
+    return json<DecisionWatch[]>(`/api/channeldecisionwatches?botId=${encodeURIComponent(botId)}`)
+  },
+
+  async createDecisionWatch(botId: string, watch: Partial<DecisionWatch>): Promise<DecisionWatch> {
+    const res = await authFetch(`/api/channeldecisionwatches?botId=${encodeURIComponent(botId)}`, {
+      method: 'POST',
+      body: JSON.stringify(watch),
+    })
+    if (!res.ok) throw new ApiError(res.status, (await res.text()) || `Could not add the watch (${res.status}).`)
+    return (await res.json()) as DecisionWatch
+  },
+
+  async updateDecisionWatch(botId: string, id: number, watch: Partial<DecisionWatch>): Promise<void> {
+    const res = await authFetch(`/api/channeldecisionwatches/${id}?botId=${encodeURIComponent(botId)}`, {
+      method: 'PUT',
+      body: JSON.stringify(watch),
+    })
+    if (!res.ok) throw new ApiError(res.status, (await res.text()) || `Could not save the watch (${res.status}).`)
+  },
+
+  async deleteDecisionWatch(botId: string, id: number): Promise<void> {
+    const res = await authFetch(`/api/channeldecisionwatches/${id}?botId=${encodeURIComponent(botId)}`, { method: 'DELETE' })
+    if (!res.ok && res.status !== 204) throw new ApiError(res.status, `Could not delete the watch (${res.status}).`)
+  },
+
   getChannelWebhooks(botId: string): Promise<ChannelWebhook[]> {
     return json<ChannelWebhook[]>(`/api/channelwebhooks?botId=${encodeURIComponent(botId)}`)
   },
