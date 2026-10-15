@@ -2,6 +2,15 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-15 · Two switches per channel: Listens and Answers
+
+Owner: while listening is still being worked on, each channel gets a switch to stop listening, and one for
+answering. `AiryChannels.Listens` (default on, added at start like the other columns). Listens off: the bot stops
+logging that channel and forgets what it had; answers then carry only the message itself. Answers off: Airy stays
+quiet there (no decisions, no runs) and, while Listens is on, keeps reading along. Both off: the channel is off.
+Panel rows show both switches with Undo; Home shows "Listening only" or "Off". Tests 151 of 151; Channels axe 0,
+phone probe 0.
+
 ## 2026-10-15 · Airy listens in its channels
 
 Owner: the decision only decides whether to answer; Airy should keep listening so that when it answers it has the

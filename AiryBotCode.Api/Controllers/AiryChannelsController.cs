@@ -38,7 +38,7 @@ namespace AiryBotCode.Api.Controllers
             if (!ulong.TryParse(dto.ChannelId, out var channelId)) return BadRequest("Pick a channel.");
             if (!AnswerModes.IsValid(dto.AnswerMode)) return BadRequest("answerMode is always, mention or decide.");
             if ((await _channels.GetForBotAsync(id)).Any(c => c.ChannelId == channelId)) return Conflict("Airy already talks in this channel.");
-            var created = await _channels.AddAsync(new AiryChannel { BotId = id, ChannelId = channelId, AnswerMode = dto.AnswerMode!, Enabled = dto.Enabled });
+            var created = await _channels.AddAsync(new AiryChannel { BotId = id, ChannelId = channelId, AnswerMode = dto.AnswerMode!, Enabled = dto.Enabled, Listens = dto.Listens });
             var (names, known) = await NamesAsync(id);
             return StatusCode(201, ToDto(created, names, known));
         }
@@ -48,7 +48,7 @@ namespace AiryBotCode.Api.Controllers
         {
             if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
             if (!AnswerModes.IsValid(dto.AnswerMode)) return BadRequest("answerMode is always, mention or decide.");
-            var ok = await _channels.UpdateAsync(new AiryChannel { Id = channelRowId, BotId = id, AnswerMode = dto.AnswerMode!, Enabled = dto.Enabled });
+            var ok = await _channels.UpdateAsync(new AiryChannel { Id = channelRowId, BotId = id, AnswerMode = dto.AnswerMode!, Enabled = dto.Enabled, Listens = dto.Listens });
             return ok ? NoContent() : NotFound();
         }
 
@@ -79,6 +79,7 @@ namespace AiryBotCode.Api.Controllers
                 NamesKnown = namesKnown,
                 AnswerMode = c.AnswerMode,
                 Enabled = c.Enabled,
+                Listens = c.Listens,
                 LastDecisionAt = c.LastDecisionAt,
                 LastDecision = c.LastDecision,
                 LastDecisionError = c.LastDecisionError,
@@ -95,6 +96,7 @@ namespace AiryBotCode.Api.Controllers
         public bool NamesKnown { get; set; } = true;
         public string? AnswerMode { get; set; }
         public bool Enabled { get; set; } = true;
+        public bool Listens { get; set; } = true;
         public DateTime? LastDecisionAt { get; set; }
         public string? LastDecision { get; set; }
         public string? LastDecisionError { get; set; }

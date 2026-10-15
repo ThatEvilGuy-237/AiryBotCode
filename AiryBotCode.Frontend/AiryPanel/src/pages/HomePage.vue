@@ -51,7 +51,7 @@ const found = computed(() => grouped(concerns({ bot: bot.value, hive: hive.value
 const commandsOn = computed(() => commands.value?.filter(c => c.enabled).length ?? 0)
 const waiting = computed(() => suggestions.value?.filter(s => s.status === 'new').length ?? 0)
 const record = computed(() => Math.max(0, ...(counting.value ?? []).map(c => c.highScore)))
-const tone = (c: AiryChannel) => (!c.enabled ? 'off' : (c.channelName === null && c.namesKnown) || c.lastDecisionError ? 'warn' : 'ok')
+const tone = (c: AiryChannel) => (!c.enabled && !c.listens ? 'off' : (c.channelName === null && c.namesKnown) || c.lastDecisionError ? 'warn' : 'ok')
 </script>
 
 <template>
@@ -110,11 +110,11 @@ const tone = (c: AiryChannel) => (!c.enabled ? 'off' : (c.channelName === null &
           <Button @click="$router.push('/channels')">Pick a channel</Button>
         </EmptyState>
         <ul v-else-if="channels" class="rows">
-          <li v-for="c in channels" :key="c.id" class="row" :class="{ off: !c.enabled }">
+          <li v-for="c in channels" :key="c.id" class="row" :class="{ off: !c.enabled && !c.listens }">
             <StatusDot :variant="tone(c)" />
             <span class="name" :title="channelName(c)">{{ channelName(c) }}</span>
             <span class="guild">{{ c.guild ?? '' }}</span>
-            <Badge tone="neutral" outline>{{ c.enabled ? ruleLabels[c.answerMode] : 'Paused' }}</Badge>
+            <Badge tone="neutral" outline>{{ c.enabled ? ruleLabels[c.answerMode] : c.listens ? 'Listening only' : 'Off' }}</Badge>
             <span class="last" :class="{ failed: c.lastDecisionError }">{{ c.lastDecision ? `${c.lastDecision} · ${ago(c.lastDecisionAt)}` : '' }}</span>
           </li>
         </ul>

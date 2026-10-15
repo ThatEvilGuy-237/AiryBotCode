@@ -28,6 +28,7 @@ export type AiryChannel = {
   namesKnown: boolean
   answerMode: AnswerMode
   enabled: boolean
+  listens: boolean
   lastDecisionAt: string | null
   lastDecision: string | null
   lastDecisionError: string | null
@@ -170,9 +171,9 @@ export const api = {
   dropHive: (botId: string) => call<void>('DELETE', `/api/settings/${botId}/hive`),
   discordChannels: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/channels`),
   addChannel: (botId: string, channelId: string, answerMode: AnswerMode) =>
-    call<AiryChannel>('POST', `/api/channels?botId=${botId}`, { channelId, answerMode, enabled: true }),
-  saveChannel: (botId: string, c: Pick<AiryChannel, 'id' | 'answerMode' | 'enabled'>) =>
-    call<void>('PUT', `/api/channels/${c.id}?botId=${botId}`, { answerMode: c.answerMode, enabled: c.enabled }),
+    call<AiryChannel>('POST', `/api/channels?botId=${botId}`, { channelId, answerMode, enabled: true, listens: true }),
+  saveChannel: (botId: string, c: Pick<AiryChannel, 'id' | 'answerMode' | 'enabled' | 'listens'>) =>
+    call<void>('PUT', `/api/channels/${c.id}?botId=${botId}`, { answerMode: c.answerMode, enabled: c.enabled, listens: c.listens }),
   dropChannel: (botId: string, id: number) => call<void>('DELETE', `/api/channels/${id}?botId=${botId}`),
   webhooks: (botId: string) => call<ChannelWebhook[]>('GET', `/api/channelwebhooks?botId=${botId}`),
   addWebhook: (botId: string, w: Omit<ChannelWebhook, 'id' | 'hasSecret'>) => call<ChannelWebhook>('POST', `/api/channelwebhooks?botId=${botId}`, w),

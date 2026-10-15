@@ -1,4 +1,4 @@
-# r6-channels at 1440px: 25 boxes; axe 0 violations, 25 passes
+# r6-channels at 1440px: 26 boxes; axe 0 violations, 25 passes
 
 Picture: `r6-channels-1440-findings.png`. Numbers match the boxes.
 
@@ -70,11 +70,14 @@ Ai (targets/small-target)
 **#22 SMALL TARGET**: input (targets/small-target)
   1x1
 
-**#23 SMALL TARGET**: Airy talks in #airy-talk (targets/small-target)
+**#23 SMALL TARGET**: button (targets/small-target)
   36x20
 
-**#24 SMALL TARGET**: Remove #airy-talk-🚧 (targets/small-target)
+**#24 SMALL TARGET**: button (targets/small-target)
+  36x20
+
+**#25 SMALL TARGET**: Remove #airy-talk-🚧 (targets/small-target)
   42x28
 
-**#25 SMALL TARGET**: Webhooks (0) (targets/small-target)
+**#26 SMALL TARGET**: Webhooks (0) (targets/small-target)
   1070x39

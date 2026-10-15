@@ -61,6 +61,8 @@ namespace AiryBotCode.Application.Hive
 
     public static class AnswerRules
     {
+        public static bool Hears(bool listens, bool consented) => listens && consented;
+
         public static bool AsksHive(string mode, bool targeted, bool consented) =>
             mode == AnswerModes.Decide && !targeted && consented;
 

@@ -64,15 +64,17 @@ async function add() {
   }
 }
 
-async function save(c: AiryChannel, change: Partial<Pick<AiryChannel, 'answerMode' | 'enabled'>>, undo = true) {
+async function save(c: AiryChannel, change: Partial<Pick<AiryChannel, 'answerMode' | 'enabled' | 'listens'>>, undo = true) {
   if (!botId.value) return
-  const before = { answerMode: c.answerMode, enabled: c.enabled }
+  const before = { answerMode: c.answerMode, enabled: c.enabled, listens: c.listens }
   Object.assign(c, change)
   try {
     await api.saveChannel(botId.value, c)
-    const said = change.enabled === undefined
-      ? `${channelName(c)}: ${ruleLabels[c.answerMode]}`
-      : `${channelName(c)} is ${c.enabled ? 'on' : 'paused'}`
+    const said = change.listens !== undefined
+      ? `Airy ${c.listens ? 'reads along in' : 'no longer reads along in'} ${channelName(c)}`
+      : change.enabled !== undefined
+        ? `Airy ${c.enabled ? 'answers in' : 'stays quiet in'} ${channelName(c)}`
+        : `${channelName(c)}: ${ruleLabels[c.answerMode]}`
     if (undo) toast.action(said, { label: 'Undo', run: () => save(c, before, false) }, 'success')
     else toast.success(said)
   } catch (e) {
@@ -93,8 +95,8 @@ async function remove() {
       label: 'Undo',
       run: async () => {
         const back = await api.addChannel(id, c.channelId, c.answerMode)
-        if (!c.enabled) await api.saveChannel(id, { ...back, enabled: false })
-        if (botId.value === id) channels.value = [{ ...back, enabled: c.enabled }, ...(channels.value ?? [])]
+        if (!c.enabled || !c.listens) await api.saveChannel(id, { ...back, enabled: c.enabled, listens: c.listens })
+        if (botId.value === id) channels.value = [{ ...back, enabled: c.enabled, listens: c.listens }, ...(channels.value ?? [])]
       },
     }, 'success')
   } catch (e) {
@@ -143,9 +145,9 @@ async function remove() {
         </div>
         <EmptyState v-else-if="!channels.length" title="Airy talks nowhere yet" sub="Pick a channel above and choose when Airy answers there." />
         <ul v-else class="rows">
-          <li v-for="c in channels" :key="c.id" class="row" :class="{ off: !c.enabled }">
+          <li v-for="c in channels" :key="c.id" class="row" :class="{ off: !c.enabled && !c.listens }">
             <div class="who">
-              <StatusDot :variant="!c.enabled ? 'off' : (c.channelName === null && c.namesKnown) || c.lastDecisionError ? 'warn' : 'ok'" />
+              <StatusDot :variant="!c.enabled && !c.listens ? 'off' : (c.channelName === null && c.namesKnown) || c.lastDecisionError ? 'warn' : 'ok'" />
               <div class="names">
                 <span class="name" :title="channelName(c)">{{ c.channelName ?? 'Unknown channel' }}</span>
                 <span v-if="c.channelName" class="guild">{{ c.guild }}</span>
@@ -164,10 +166,19 @@ async function remove() {
               />
             </Field>
             <div class="end">
-              <Toggle :model-value="c.enabled" :label="`Airy talks in ${channelName(c)}`" @update:model-value="v => save(c, { enabled: v })" />
+              <span class="switch">
+                <Toggle :model-value="c.listens" :labelledby="`listens-${c.id}`" @update:model-value="v => save(c, { listens: v })" />
+                <span :id="`listens-${c.id}`">Listens<span class="sr-only"> in {{ channelName(c) }}</span></span>
+              </span>
+              <span class="switch">
+                <Toggle :model-value="c.enabled" :labelledby="`answers-${c.id}`" @update:model-value="v => save(c, { enabled: v })" />
+                <span :id="`answers-${c.id}`">Answers<span class="sr-only"> in {{ channelName(c) }}</span></span>
+              </span>
               <Button variant="ghost" size="sm" :aria-label="`Remove ${channelName(c)}`" @click="removing = c"><Icon name="trash-2" :size="16" /></Button>
             </div>
-            <p v-if="c.enabled && c.answerMode === 'decide' && cannotDecide" class="note attention">Answers only when mentioned until the Hive can decide.</p>
+            <p v-if="!c.enabled && c.listens" class="note">Reads along but stays quiet.</p>
+            <p v-else-if="c.enabled && !c.listens" class="note">Answers without reading along: only the message it answers.</p>
+            <p v-else-if="c.enabled && c.answerMode === 'decide' && cannotDecide" class="note attention">Answers only when mentioned until the Hive can decide.</p>
             <p v-else-if="c.lastDecisionError" class="note warn">Last check failed: {{ c.lastDecisionError }}</p>
             <p v-else-if="c.lastDecision" class="note">Last check: <span class="mono">{{ c.lastDecision }}</span> · {{ ago(c.lastDecisionAt) }}</p>
           </li>
@@ -291,8 +302,24 @@ h2 {
 }
 .end {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+.switch {
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  color: var(--color-text-dim);
+  font-size: var(--font-size-sm);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 .note {
   grid-column: 1 / -1;

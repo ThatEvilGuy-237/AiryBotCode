@@ -11,7 +11,7 @@
       "path": "/workspace/AiryBotCode/docs/screenshots/r6-channels-1440.png"
     },
     {
-      "label": "Image 2: 1440 viewport, 25 findings boxed (red = probe, orange = axe)",
+      "label": "Image 2: 1440 viewport, 26 findings boxed (red = probe, orange = axe)",
       "path": "/workspace/AiryBotCode/docs/screenshots/r6-channels-1440-findings.png"
     },
     {
@@ -83,8 +83,8 @@
             "y": 6
           },
           "name": "Open the menu",
-          "number": 4045,
-          "ref": "e4045",
+          "number": 4136,
+          "ref": "e4136",
           "role": "button"
         },
         {
@@ -95,8 +95,8 @@
             "y": 6
           },
           "name": "Sign out",
-          "number": 4046,
-          "ref": "e4046",
+          "number": 4137,
+          "ref": "e4137",
           "role": "button"
         },
         {
@@ -107,8 +107,8 @@
             "y": 182
           },
           "name": "Hive connection",
-          "number": 4047,
-          "ref": "e4047",
+          "number": 4138,
+          "ref": "e4138",
           "role": "heading"
         },
         {
@@ -119,8 +119,8 @@
             "y": 218
           },
           "name": "Try a message",
-          "number": 4048,
-          "ref": "e4048",
+          "number": 4139,
+          "ref": "e4139",
           "role": "button"
         },
         {
@@ -131,8 +131,8 @@
             "y": 218
           },
           "name": "Change",
-          "number": 4049,
-          "ref": "e4049",
+          "number": 4140,
+          "ref": "e4140",
           "role": "button"
         },
         {
@@ -143,8 +143,8 @@
             "y": 444
           },
           "name": "Where Airy talks",
-          "number": 4050,
-          "ref": "e4050",
+          "number": 4141,
+          "ref": "e4141",
           "role": "heading"
         },
         {
@@ -152,11 +152,11 @@
             "height": 39,
             "width": 286,
             "x": 17,
-            "y": 1208
+            "y": 1236
           },
           "name": "Webhooks (0)",
-          "number": 4051,
-          "ref": "e4051",
+          "number": 4142,
+          "ref": "e4142",
           "role": "button"
         },
         {
@@ -167,8 +167,8 @@
             "y": 72
           },
           "name": "Channels",
-          "number": 4052,
-          "ref": "e4052",
+          "number": 4143,
+          "ref": "e4143",
           "role": "heading"
         },
         {
@@ -178,8 +178,8 @@
             "x": 33,
             "y": 574
           },
-          "number": 4053,
-          "ref": "e4053",
+          "number": 4144,
+          "ref": "e4144",
           "role": "LabelText"
         },
         {
@@ -190,8 +190,8 @@
             "y": 656
           },
           "name": "Add channel",
-          "number": 4054,
-          "ref": "e4054",
+          "number": 4145,
+          "ref": "e4145",
           "role": "button"
         },
         {
@@ -202,8 +202,8 @@
             "y": 599
           },
           "name": "Channel",
-          "number": 4055,
-          "ref": "e4055",
+          "number": 4146,
+          "ref": "e4146",
           "role": "combobox"
         },
         {
@@ -213,8 +213,8 @@
             "x": 33,
             "y": 740
           },
-          "number": 4056,
-          "ref": "e4056",
+          "number": 4147,
+          "ref": "e4147",
           "role": "LabelText"
         },
         {
@@ -224,8 +224,8 @@
             "x": 33,
             "y": 816
           },
-          "number": 4057,
-          "ref": "e4057",
+          "number": 4148,
+          "ref": "e4148",
           "role": "LabelText"
         },
         {
@@ -235,32 +235,44 @@
             "x": 33,
             "y": 911
           },
-          "number": 4058,
-          "ref": "e4058",
+          "number": 4149,
+          "ref": "e4149",
           "role": "LabelText"
         },
         {
           "box": {
             "height": 20,
             "width": 36,
-            "x": 201,
-            "y": 1050
+            "x": 49,
+            "y": 1038
           },
-          "name": "Airy talks in #airy-talk-🚧",
-          "number": 4059,
-          "ref": "e4059",
+          "name": "Listens in #airy-talk-🚧",
+          "number": 4150,
+          "ref": "e4150",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 152,
+            "y": 1038
+          },
+          "name": "Answers in #airy-talk-🚧",
+          "number": 4151,
+          "ref": "e4151",
           "role": "switch"
         },
         {
           "box": {
             "height": 44,
             "width": 42,
-            "x": 245,
-            "y": 1038
+            "x": 49,
+            "y": 1066
           },
           "name": "Remove #airy-talk-🚧",
-          "number": 4060,
-          "ref": "e4060",
+          "number": 4152,
+          "ref": "e4152",
           "role": "button"
         },
         {
@@ -271,8 +283,8 @@
             "y": 741
           },
           "name": "Always",
-          "number": 4061,
-          "ref": "e4061",
+          "number": 4153,
+          "ref": "e4153",
           "role": "radio"
         },
         {
@@ -283,8 +295,8 @@
             "y": 817
           },
           "name": "When mentioned",
-          "number": 4062,
-          "ref": "e4062",
+          "number": 4154,
+          "ref": "e4154",
           "role": "radio"
         },
         {
@@ -295,8 +307,8 @@
             "y": 912
           },
           "name": "When it's worth it",
-          "number": 4063,
-          "ref": "e4063",
+          "number": 4155,
+          "ref": "e4155",
           "role": "radio"
         },
         {
@@ -304,10 +316,10 @@
             "height": 28,
             "width": 73,
             "x": 53,
-            "y": 1090
+            "y": 1118
           },
-          "number": 4064,
-          "ref": "e4064",
+          "number": 4156,
+          "ref": "e4156",
           "role": "LabelText"
         },
         {
@@ -315,10 +327,10 @@
             "height": 28,
             "width": 136,
             "x": 142,
-            "y": 1090
+            "y": 1118
           },
-          "number": 4065,
-          "ref": "e4065",
+          "number": 4157,
+          "ref": "e4157",
           "role": "LabelText"
         },
         {
@@ -326,10 +338,10 @@
             "height": 28,
             "width": 137,
             "x": 53,
-            "y": 1134
+            "y": 1162
           },
-          "number": 4066,
-          "ref": "e4066",
+          "number": 4158,
+          "ref": "e4158",
           "role": "LabelText"
         },
         {
@@ -337,11 +349,11 @@
             "height": 1,
             "width": 1,
             "x": 53,
-            "y": 1090
+            "y": 1118
           },
           "name": "Always",
-          "number": 4067,
-          "ref": "e4067",
+          "number": 4159,
+          "ref": "e4159",
           "role": "radio"
         },
         {
@@ -349,11 +361,11 @@
             "height": 1,
             "width": 1,
             "x": 142,
-            "y": 1090
+            "y": 1118
           },
           "name": "When mentioned",
-          "number": 4068,
-          "ref": "e4068",
+          "number": 4160,
+          "ref": "e4160",
           "role": "radio"
         },
         {
@@ -361,11 +373,11 @@
             "height": 1,
             "width": 1,
             "x": 53,
-            "y": 1134
+            "y": 1162
           },
           "name": "When it's worth it",
-          "number": 4069,
-          "ref": "e4069",
+          "number": 4161,
+          "ref": "e4161",
           "role": "radio"
         }
       ],
@@ -477,8 +489,8 @@
             "y": 6
           },
           "name": "Open the menu",
-          "number": 4020,
-          "ref": "e4020",
+          "number": 4110,
+          "ref": "e4110",
           "role": "button"
         },
         {
@@ -489,8 +501,8 @@
             "y": 6
           },
           "name": "Sign out",
-          "number": 4021,
-          "ref": "e4021",
+          "number": 4111,
+          "ref": "e4111",
           "role": "button"
         },
         {
@@ -501,8 +513,8 @@
             "y": 189
           },
           "name": "Hive connection",
-          "number": 4022,
-          "ref": "e4022",
+          "number": 4112,
+          "ref": "e4112",
           "role": "heading"
         },
         {
@@ -513,8 +525,8 @@
             "y": 182
           },
           "name": "Try a message",
-          "number": 4023,
-          "ref": "e4023",
+          "number": 4113,
+          "ref": "e4113",
           "role": "button"
         },
         {
@@ -525,8 +537,8 @@
             "y": 234
           },
           "name": "Change",
-          "number": 4024,
-          "ref": "e4024",
+          "number": 4114,
+          "ref": "e4114",
           "role": "button"
         },
         {
@@ -537,8 +549,8 @@
             "y": 423
           },
           "name": "Where Airy talks",
-          "number": 4025,
-          "ref": "e4025",
+          "number": 4115,
+          "ref": "e4115",
           "role": "heading"
         },
         {
@@ -549,8 +561,8 @@
             "y": 1149
           },
           "name": "Webhooks (0)",
-          "number": 4026,
-          "ref": "e4026",
+          "number": 4116,
+          "ref": "e4116",
           "role": "button"
         },
         {
@@ -561,8 +573,8 @@
             "y": 72
           },
           "name": "Channels",
-          "number": 4027,
-          "ref": "e4027",
+          "number": 4117,
+          "ref": "e4117",
           "role": "heading"
         },
         {
@@ -572,8 +584,8 @@
             "x": 33,
             "y": 533
           },
-          "number": 4028,
-          "ref": "e4028",
+          "number": 4118,
+          "ref": "e4118",
           "role": "LabelText"
         },
         {
@@ -584,8 +596,8 @@
             "y": 615
           },
           "name": "Add channel",
-          "number": 4029,
-          "ref": "e4029",
+          "number": 4119,
+          "ref": "e4119",
           "role": "button"
         },
         {
@@ -596,8 +608,8 @@
             "y": 558
           },
           "name": "Channel",
-          "number": 4030,
-          "ref": "e4030",
+          "number": 4120,
+          "ref": "e4120",
           "role": "combobox"
         },
         {
@@ -607,8 +619,8 @@
             "x": 33,
             "y": 699
           },
-          "number": 4031,
-          "ref": "e4031",
+          "number": 4121,
+          "ref": "e4121",
           "role": "LabelText"
         },
         {
@@ -618,8 +630,8 @@
             "x": 33,
             "y": 776
           },
-          "number": 4032,
-          "ref": "e4032",
+          "number": 4122,
+          "ref": "e4122",
           "role": "LabelText"
         },
         {
@@ -629,20 +641,32 @@
             "x": 33,
             "y": 852
           },
-          "number": 4033,
-          "ref": "e4033",
+          "number": 4123,
+          "ref": "e4123",
           "role": "LabelText"
         },
         {
           "box": {
             "height": 20,
             "width": 36,
-            "x": 256,
+            "x": 87,
             "y": 991
           },
-          "name": "Airy talks in #airy-talk-🚧",
-          "number": 4034,
-          "ref": "e4034",
+          "name": "Listens in #airy-talk-🚧",
+          "number": 4124,
+          "ref": "e4124",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 189,
+            "y": 991
+          },
+          "name": "Answers in #airy-talk-🚧",
+          "number": 4125,
+          "ref": "e4125",
           "role": "switch"
         },
         {
@@ -653,8 +677,8 @@
             "y": 979
           },
           "name": "Remove #airy-talk-🚧",
-          "number": 4035,
-          "ref": "e4035",
+          "number": 4126,
+          "ref": "e4126",
           "role": "button"
         },
         {
@@ -665,8 +689,8 @@
             "y": 700
           },
           "name": "Always",
-          "number": 4036,
-          "ref": "e4036",
+          "number": 4127,
+          "ref": "e4127",
           "role": "radio"
         },
         {
@@ -677,8 +701,8 @@
             "y": 777
           },
           "name": "When mentioned",
-          "number": 4037,
-          "ref": "e4037",
+          "number": 4128,
+          "ref": "e4128",
           "role": "radio"
         },
         {
@@ -689,8 +713,8 @@
             "y": 853
           },
           "name": "When it's worth it",
-          "number": 4038,
-          "ref": "e4038",
+          "number": 4129,
+          "ref": "e4129",
           "role": "radio"
         },
         {
@@ -700,8 +724,8 @@
             "x": 53,
             "y": 1031
           },
-          "number": 4039,
-          "ref": "e4039",
+          "number": 4130,
+          "ref": "e4130",
           "role": "LabelText"
         },
         {
@@ -711,8 +735,8 @@
             "x": 142,
             "y": 1031
           },
-          "number": 4040,
-          "ref": "e4040",
+          "number": 4131,
+          "ref": "e4131",
           "role": "LabelText"
         },
         {
@@ -722,8 +746,8 @@
             "x": 53,
             "y": 1075
           },
-          "number": 4041,
-          "ref": "e4041",
+          "number": 4132,
+          "ref": "e4132",
           "role": "LabelText"
         },
         {
@@ -734,8 +758,8 @@
             "y": 1031
           },
           "name": "Always",
-          "number": 4042,
-          "ref": "e4042",
+          "number": 4133,
+          "ref": "e4133",
           "role": "radio"
         },
         {
@@ -746,8 +770,8 @@
             "y": 1031
           },
           "name": "When mentioned",
-          "number": 4043,
-          "ref": "e4043",
+          "number": 4134,
+          "ref": "e4134",
           "role": "radio"
         },
         {
@@ -758,8 +782,8 @@
             "y": 1075
           },
           "name": "When it's worth it",
-          "number": 4044,
-          "ref": "e4044",
+          "number": 4135,
+          "ref": "e4135",
           "role": "radio"
         }
       ],
@@ -1060,7 +1084,7 @@
             "kind": "small-target",
             "name": "input",
             "rect": [
-              856,
+              686,
               658,
               1,
               1
@@ -1076,7 +1100,7 @@
             "kind": "small-target",
             "name": "input",
             "rect": [
-              944,
+              775,
               658,
               1,
               1
@@ -1092,7 +1116,7 @@
             "kind": "small-target",
             "name": "input",
             "rect": [
-              1096,
+              927,
               658,
               1,
               1
@@ -1106,9 +1130,25 @@
               28
             ],
             "kind": "small-target",
-            "name": "Airy talks in #airy-talk",
+            "name": "button",
             "rect": [
-              1249,
+              1080,
+              662,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "button",
+            "rect": [
+              1182,
               662,
               36,
               20
@@ -1441,7 +1481,7 @@
           "kind": "targets/small-target",
           "label": "input",
           "rect": [
-            856,
+            686,
             658,
             1,
             1
@@ -1454,7 +1494,7 @@
           "kind": "targets/small-target",
           "label": "input",
           "rect": [
-            944,
+            775,
             658,
             1,
             1
@@ -1467,7 +1507,7 @@
           "kind": "targets/small-target",
           "label": "input",
           "rect": [
-            1096,
+            927,
             658,
             1,
             1
@@ -1478,9 +1518,9 @@
           "n": 23,
           "source": "probe",
           "kind": "targets/small-target",
-          "label": "Airy talks in #airy-talk",
+          "label": "button",
           "rect": [
-            1249,
+            1080,
             662,
             36,
             20
@@ -1489,6 +1529,19 @@
         },
         {
           "n": 24,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "button",
+          "rect": [
+            1182,
+            662,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 25,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Remove #airy-talk-🚧",
@@ -1501,7 +1554,7 @@
           "detail": "42x28"
         },
         {
-          "n": 25,
+          "n": 26,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Webhooks (0)",
@@ -1516,7 +1569,7 @@
       ],
       "overlay": {
         "path": "/workspace/AiryBotCode/docs/screenshots/r6-channels-1440-findings.png",
-        "boxes": 25
+        "boxes": 26
       },
       "legend": {
         "md": "/workspace/AiryBotCode/docs/screenshots/r6-channels-1440-legend.md",
@@ -1531,8 +1584,8 @@
             "y": 14
           },
           "name": "Sign out",
-          "number": 3981,
-          "ref": "e3981",
+          "number": 4070,
+          "ref": "e4070",
           "role": "button"
         },
         {
@@ -1543,8 +1596,8 @@
             "y": 190
           },
           "name": "Hive connection",
-          "number": 3982,
-          "ref": "e3982",
+          "number": 4071,
+          "ref": "e4071",
           "role": "heading"
         },
         {
@@ -1555,8 +1608,8 @@
             "y": 190
           },
           "name": "Try a message",
-          "number": 3983,
-          "ref": "e3983",
+          "number": 4072,
+          "ref": "e4072",
           "role": "button"
         },
         {
@@ -1567,8 +1620,8 @@
             "y": 190
           },
           "name": "Change",
-          "number": 3984,
-          "ref": "e3984",
+          "number": 4073,
+          "ref": "e4073",
           "role": "button"
         },
         {
@@ -1579,8 +1632,8 @@
             "y": 337
           },
           "name": "Where Airy talks",
-          "number": 3985,
-          "ref": "e3985",
+          "number": 4074,
+          "ref": "e4074",
           "role": "heading"
         },
         {
@@ -1591,8 +1644,8 @@
             "y": 739
           },
           "name": "Webhooks (0)",
-          "number": 3986,
-          "ref": "e3986",
+          "number": 4075,
+          "ref": "e4075",
           "role": "button"
         },
         {
@@ -1603,8 +1656,8 @@
             "y": 128
           },
           "name": "Airy",
-          "number": 3987,
-          "ref": "e3987",
+          "number": 4076,
+          "ref": "e4076",
           "role": "navigation"
         },
         {
@@ -1615,8 +1668,8 @@
             "y": 80
           },
           "name": "Channels",
-          "number": 3988,
-          "ref": "e3988",
+          "number": 4077,
+          "ref": "e4077",
           "role": "heading"
         },
         {
@@ -1626,8 +1679,8 @@
             "x": 297,
             "y": 427
           },
-          "number": 3989,
-          "ref": "e3989",
+          "number": 4078,
+          "ref": "e4078",
           "role": "LabelText"
         },
         {
@@ -1638,8 +1691,8 @@
             "y": 449
           },
           "name": "Add channel",
-          "number": 3990,
-          "ref": "e3990",
+          "number": 4079,
+          "ref": "e4079",
           "role": "button"
         },
         {
@@ -1650,8 +1703,8 @@
             "y": 452
           },
           "name": "Channel",
-          "number": 3991,
-          "ref": "e3991",
+          "number": 4080,
+          "ref": "e4080",
           "role": "combobox"
         },
         {
@@ -1661,8 +1714,8 @@
             "x": 297,
             "y": 525
           },
-          "number": 3992,
-          "ref": "e3992",
+          "number": 4081,
+          "ref": "e4081",
           "role": "LabelText"
         },
         {
@@ -1672,8 +1725,8 @@
             "x": 646,
             "y": 525
           },
-          "number": 3993,
-          "ref": "e3993",
+          "number": 4082,
+          "ref": "e4082",
           "role": "LabelText"
         },
         {
@@ -1683,20 +1736,32 @@
             "x": 994,
             "y": 525
           },
-          "number": 3994,
-          "ref": "e3994",
+          "number": 4083,
+          "ref": "e4083",
           "role": "LabelText"
         },
         {
           "box": {
             "height": 20,
             "width": 36,
-            "x": 1249,
+            "x": 1080,
             "y": 662
           },
-          "name": "Airy talks in #airy-talk-🚧",
-          "number": 3995,
-          "ref": "e3995",
+          "name": "Listens in #airy-talk-🚧",
+          "number": 4084,
+          "ref": "e4084",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1182,
+            "y": 662
+          },
+          "name": "Answers in #airy-talk-🚧",
+          "number": 4085,
+          "ref": "e4085",
           "role": "switch"
         },
         {
@@ -1707,8 +1772,8 @@
             "y": 658
           },
           "name": "Remove #airy-talk-🚧",
-          "number": 3996,
-          "ref": "e3996",
+          "number": 4086,
+          "ref": "e4086",
           "role": "button"
         },
         {
@@ -1718,8 +1783,8 @@
             "x": 69,
             "y": 67
           },
-          "number": 3997,
-          "ref": "e3997",
+          "number": 4087,
+          "ref": "e4087",
           "role": "LabelText"
         },
         {
@@ -1730,8 +1795,8 @@
             "y": 526
           },
           "name": "Always",
-          "number": 3998,
-          "ref": "e3998",
+          "number": 4088,
+          "ref": "e4088",
           "role": "radio"
         },
         {
@@ -1742,8 +1807,8 @@
             "y": 526
           },
           "name": "When mentioned",
-          "number": 3999,
-          "ref": "e3999",
+          "number": 4089,
+          "ref": "e4089",
           "role": "radio"
         },
         {
@@ -1754,41 +1819,41 @@
             "y": 526
           },
           "name": "When it's worth it",
-          "number": 4000,
-          "ref": "e4000",
+          "number": 4090,
+          "ref": "e4090",
           "role": "radio"
         },
         {
           "box": {
             "height": 28,
             "width": 73,
-            "x": 856,
+            "x": 686,
             "y": 658
           },
-          "number": 4001,
-          "ref": "e4001",
+          "number": 4091,
+          "ref": "e4091",
           "role": "LabelText"
         },
         {
           "box": {
             "height": 28,
             "width": 136,
-            "x": 944,
+            "x": 775,
             "y": 658
           },
-          "number": 4002,
-          "ref": "e4002",
+          "number": 4092,
+          "ref": "e4092",
           "role": "LabelText"
         },
         {
           "box": {
             "height": 28,
             "width": 137,
-            "x": 1096,
+            "x": 927,
             "y": 658
           },
-          "number": 4003,
-          "ref": "e4003",
+          "number": 4093,
+          "ref": "e4093",
           "role": "LabelText"
         },
         {
@@ -1799,44 +1864,44 @@
             "y": 67
           },
           "name": "Bot",
-          "number": 4004,
-          "ref": "e4004",
+          "number": 4094,
+          "ref": "e4094",
           "role": "combobox"
         },
         {
           "box": {
             "height": 1,
             "width": 1,
-            "x": 856,
+            "x": 686,
             "y": 658
           },
           "name": "Always",
-          "number": 4005,
-          "ref": "e4005",
+          "number": 4095,
+          "ref": "e4095",
           "role": "radio"
         },
         {
           "box": {
             "height": 1,
             "width": 1,
-            "x": 944,
+            "x": 775,
             "y": 658
           },
           "name": "When mentioned",
-          "number": 4006,
-          "ref": "e4006",
+          "number": 4096,
+          "ref": "e4096",
           "role": "radio"
         },
         {
           "box": {
             "height": 1,
             "width": 1,
-            "x": 1096,
+            "x": 927,
             "y": 658
           },
           "name": "When it's worth it",
-          "number": 4007,
-          "ref": "e4007",
+          "number": 4097,
+          "ref": "e4097",
           "role": "radio"
         },
         {
@@ -1847,8 +1912,8 @@
             "y": 170
           },
           "name": "Home",
-          "number": 4008,
-          "ref": "e4008",
+          "number": 4098,
+          "ref": "e4098",
           "role": "link"
         },
         {
@@ -1859,8 +1924,8 @@
             "y": 203
           },
           "name": "Channels",
-          "number": 4009,
-          "ref": "e4009",
+          "number": 4099,
+          "ref": "e4099",
           "role": "link"
         },
         {
@@ -1871,8 +1936,8 @@
             "y": 236
           },
           "name": "Commands",
-          "number": 4010,
-          "ref": "e4010",
+          "number": 4100,
+          "ref": "e4100",
           "role": "link"
         },
         {
@@ -1883,8 +1948,8 @@
             "y": 269
           },
           "name": "Activity",
-          "number": 4011,
-          "ref": "e4011",
+          "number": 4101,
+          "ref": "e4101",
           "role": "link"
         },
         {
@@ -1895,8 +1960,8 @@
             "y": 302
           },
           "name": "Look",
-          "number": 4012,
-          "ref": "e4012",
+          "number": 4102,
+          "ref": "e4102",
           "role": "link"
         },
         {
@@ -1907,8 +1972,8 @@
             "y": 335
           },
           "name": "Settings",
-          "number": 4013,
-          "ref": "e4013",
+          "number": 4103,
+          "ref": "e4103",
           "role": "link"
         },
         {
@@ -1919,8 +1984,8 @@
             "y": 413
           },
           "name": "Suggestions",
-          "number": 4014,
-          "ref": "e4014",
+          "number": 4104,
+          "ref": "e4104",
           "role": "link"
         },
         {
@@ -1931,8 +1996,8 @@
             "y": 446
           },
           "name": "Databases",
-          "number": 4015,
-          "ref": "e4015",
+          "number": 4105,
+          "ref": "e4105",
           "role": "link"
         }
       ],
@@ -1946,31 +2011,27 @@
     "cls": {
       "entries": [
         {
-          "startTime": 218.3,
-          "value": 0.0138
+          "startTime": 192.6,
+          "value": 0.0292
         },
         {
-          "startTime": 244,
+          "startTime": 235.2,
           "value": 0
-        },
-        {
-          "startTime": 479.1,
-          "value": 0.0056
         }
       ],
-      "score": 0.02
+      "score": 0.03
     },
-    "fcp": 224,
+    "fcp": 180,
     "hydration": null,
     "inp": null,
     "lcp": {
       "element": "p",
       "size": 9673,
-      "startTime": 224,
+      "startTime": 180,
       "url": null
     },
-    "ttfb": 4.8,
+    "ttfb": 3.5,
     "url": "http://host.docker.internal:5173/channels"
   },
-  "generatedAt": "2026-10-15T18:29:15.853Z"
+  "generatedAt": "2026-10-15T19:12:41.507Z"
 }

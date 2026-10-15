@@ -22,7 +22,7 @@ namespace AiryBotCode.Infrastructure.Database.Repository
 
         public async Task<AiryChannel?> GetForChannelAsync(ulong botId, ulong channelId) =>
             await _context.AiryChannels.AsNoTracking()
-                .FirstOrDefaultAsync(c => c.BotId == botId && c.ChannelId == channelId && c.Enabled);
+                .FirstOrDefaultAsync(c => c.BotId == botId && c.ChannelId == channelId && (c.Enabled || c.Listens));
 
         public async Task<AiryChannel?> GetAsync(ulong botId, int id) =>
             await _context.AiryChannels.AsNoTracking()
@@ -41,6 +41,7 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             if (row is null) return false;
             row.AnswerMode = channel.AnswerMode;
             row.Enabled = channel.Enabled;
+            row.Listens = channel.Listens;
             await _context.SaveChangesAsync();
             return true;
         }

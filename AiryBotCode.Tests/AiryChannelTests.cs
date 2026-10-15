@@ -326,6 +326,24 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void AChannelThatStopsListeningForgetsWhatItHeard()
+        {
+            var log = new ChannelTranscript();
+            log.Hear(1, 10, new HeardLine(1, "kirra", "hello", false));
+
+            Assert.True(AnswerRules.Hears(listens: true, consented: true));
+            Assert.False(AnswerRules.Hears(listens: false, consented: true));
+            Assert.False(AnswerRules.Hears(listens: true, consented: false));
+
+            log.Forget(1, 10);
+            Assert.Empty(log.Recent(1, 10, 0, 5));
+            log.HearIfKnown(1, 10, new HeardLine(2, "Airy", "still here?", true));
+            Assert.Empty(log.Recent(1, 10, 0, 5));
+            var dto = AiryChannelsController.ToDto(new AiryChannel { Id = 1, ChannelId = 10, AnswerMode = AnswerModes.Mention, Enabled = false, Listens = true }, new Dictionary<string, DiscordEntity>());
+            Assert.Equal((false, true), (dto.Enabled, dto.Listens));
+        }
+
+        [Fact]
         public void TheLogKeepsThirtyLinesAndTheContextStaysSmall()
         {
             var log = new ChannelTranscript();

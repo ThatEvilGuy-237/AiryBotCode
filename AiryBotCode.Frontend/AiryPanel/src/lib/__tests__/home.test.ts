@@ -4,7 +4,7 @@ import { concerns, grouped } from '../home'
 
 const bot: Bot = { botId: '1', botName: 'Airy', enabled: true, adminRoleIds: '', evilId: '0', logChannelId: '0', evilLogChannelId: '0', hasToken: true }
 const channel = (over: Partial<AiryChannel>): AiryChannel => ({
-  id: 1, channelId: '10', channelName: '#chat', guild: 'Server', namesKnown: true, answerMode: 'decide', enabled: true,
+  id: 1, channelId: '10', channelName: '#chat', guild: 'Server', namesKnown: true, listens: true, answerMode: 'decide', enabled: true,
   lastDecisionAt: null, lastDecision: null, lastDecisionError: null, ...over,
 })
 
@@ -18,7 +18,7 @@ describe('Home concerns', () => {
       bot: { ...bot, hasToken: false },
       hive: { url: null, agentId: null, hasKey: false, keyHint: null },
       check: null,
-      channels: [channel({ channelName: null, channelId: '11' }), channel({ id: 2, lastDecisionError: 'no decider' }), channel({ id: 3, channelName: null, enabled: false })],
+      channels: [channel({ channelName: null, channelId: '11' }), channel({ id: 2, lastDecisionError: 'no decider' }), channel({ id: 3, channelName: null, enabled: false, listens: false })],
     })
     expect(found.map(f => f.tone)).toEqual(['danger', 'warn', 'warn', 'warn'])
     expect(found[2].title).toContain('11')

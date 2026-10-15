@@ -24,6 +24,8 @@ namespace AiryBotCode.Application.Hive
             }
         }
 
+        public void Forget(ulong botId, ulong channelId) => _channels.TryRemove((botId, channelId), out _);
+
         public void HearIfKnown(ulong botId, ulong channelId, HeardLine line)
         {
             if (_channels.ContainsKey((botId, channelId))) Hear(botId, channelId, line);

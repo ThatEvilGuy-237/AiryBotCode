@@ -138,7 +138,9 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             var transcript = services.GetRequiredService<ChannelTranscript>();
             var botName = services.GetService<DiscordSocketClient>()?.CurrentUser?.Username ?? bot!.BotName ?? "Airy";
             var author = NameOf(message.Author);
-            if (consented) transcript.Hear(botId, message.Channel.Id, new HeardLine(message.Id, author, content, false));
+            if (AnswerRules.Hears(channel.Listens, consented)) transcript.Hear(botId, message.Channel.Id, new HeardLine(message.Id, author, content, false));
+            else if (!channel.Listens) transcript.Forget(botId, message.Channel.Id);
+            if (!channel.Enabled) return true;
             WorthVerdict? verdict = null;
             if (!string.IsNullOrWhiteSpace(content) && AnswerRules.AsksHive(channel.AnswerMode, targeted, consented))
             {

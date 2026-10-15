@@ -155,7 +155,8 @@ namespace AiryBotCode.Infrastructure.Database.Persistence
                 ""CreatedAt""         timestamp with time zone NOT NULL DEFAULT now()
             );
             CREATE UNIQUE INDEX IF NOT EXISTS ""IX_AiryChannels_BotId_ChannelId""
-                ON ""AiryChannels"" (""BotId"", ""ChannelId"");";
+                ON ""AiryChannels"" (""BotId"", ""ChannelId"");
+            ALTER TABLE ""AiryChannels"" ADD COLUMN IF NOT EXISTS ""Listens"" boolean NOT NULL DEFAULT true;";
 
         // Self-heal for tables added to the model after the database already existed
         // (EnsureCreated skips them; this project uses no EF migrations). Idempotent —

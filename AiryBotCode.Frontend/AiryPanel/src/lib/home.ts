@@ -25,7 +25,7 @@ export function concerns({ bot, hive, check, channels }: HomeFacts): Concern[] {
     for (const problem of new Set(check.problems)) found.push({ tone, title: problem, fix: channelsFix })
   }
   for (const c of channels ?? []) {
-    if (!c.enabled) continue
+    if (!c.enabled && !c.listens) continue
     if (c.channelName === null && c.namesKnown) found.push({ tone: 'warn', title: `Channel ${c.channelId} is gone from its server, or the bot cannot see it.`, fix: channelsFix })
     else if (c.lastDecisionError) found.push({ tone: 'warn', title: `In ${c.channelName} the last check failed: ${c.lastDecisionError}`, fix: channelsFix })
   }
