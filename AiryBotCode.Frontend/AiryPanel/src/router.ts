@@ -4,6 +4,7 @@ import Shell from './layouts/Shell.vue'
 import HomePage from './pages/HomePage.vue'
 import SignInPage from './pages/SignInPage.vue'
 import ChannelsPage from './pages/ChannelsPage.vue'
+import CommandsPage from './pages/CommandsPage.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +16,7 @@ export const router = createRouter({
       children: [
         { path: '', name: 'home', component: HomePage, meta: { title: 'Home' } },
         { path: 'channels', name: 'channels', component: ChannelsPage, meta: { title: 'Channels' } },
+        { path: 'commands', name: 'commands', component: CommandsPage, meta: { title: 'Commands' } },
       ],
     },
     { path: '/:rest(.*)*', redirect: '/' },

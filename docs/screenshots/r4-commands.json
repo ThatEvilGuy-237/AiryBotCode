@@ -1,0 +1,1893 @@
+{
+  "ok": false,
+  "url": "http://host.docker.internal:5173/commands",
+  "flutter": false,
+  "project": "AiryBotCode",
+  "round": "r4-commands",
+  "dir": "/workspace/AiryBotCode/docs/screenshots",
+  "images": [
+    {
+      "label": "Image 1: 1440x900 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440.png"
+    },
+    {
+      "label": "Image 2: 1440 viewport, 24 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440-findings.png"
+    },
+    {
+      "label": "Image 3: 1440 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440-annotated.png"
+    },
+    {
+      "label": "Image 4: 375x812 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-375.png"
+    },
+    {
+      "label": "Image 5: 375 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-375-annotated.png"
+    },
+    {
+      "label": "Image 6: 320x568 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-320.png"
+    },
+    {
+      "label": "Image 7: 320 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-320-annotated.png"
+    }
+  ],
+  "viewports": {
+    "320": {
+      "viewport": [
+        320,
+        568
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-commands-320.png",
+      "screenshotSize": [
+        320,
+        568
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 37,
+          "incomplete": 0,
+          "passes": 23,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-commands-320-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-commands-320-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 2172,
+          "ref": "e2172",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 203,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 2173,
+          "ref": "e2173",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 131,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Commands",
+          "number": 2174,
+          "ref": "e2174",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 147,
+            "x": 16,
+            "y": 144
+          },
+          "name": "Restart bots",
+          "number": 2175,
+          "ref": "e2175",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 288,
+            "x": 16,
+            "y": 225
+          },
+          "name": "Find a command or setting",
+          "number": 2176,
+          "ref": "e2176",
+          "role": "searchbox"
+        },
+        {
+          "box": {
+            "height": 61,
+            "width": 218,
+            "x": 17,
+            "y": 290
+          },
+          "name": "Contact a user 2 settings",
+          "number": 2177,
+          "ref": "e2177",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 310
+          },
+          "name": "Contact a user on",
+          "number": 2178,
+          "ref": "e2178",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 361
+          },
+          "name": "Counting 17 settings",
+          "number": 2179,
+          "ref": "e2179",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 379
+          },
+          "name": "Counting on",
+          "number": 2180,
+          "ref": "e2180",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 427
+          },
+          "name": "Age check 3 settings",
+          "number": 2181,
+          "ref": "e2181",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 445
+          },
+          "name": "Age check on",
+          "number": 2182,
+          "ref": "e2182",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 61,
+            "width": 218,
+            "x": 17,
+            "y": 493
+          },
+          "name": "End a timeout 2 settings",
+          "number": 2183,
+          "ref": "e2183",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 513
+          },
+          "name": "End a timeout on",
+          "number": 2184,
+          "ref": "e2184",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 564
+          },
+          "name": "Giveaway 1 setting",
+          "number": 2185,
+          "ref": "e2185",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 582
+          },
+          "name": "Giveaway on",
+          "number": 2186,
+          "ref": "e2186",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 630
+          },
+          "name": "Leveling 14 settings",
+          "number": 2187,
+          "ref": "e2187",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 648
+          },
+          "name": "Leveling on",
+          "number": 2188,
+          "ref": "e2188",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 696
+          },
+          "name": "Reminder 2 settings",
+          "number": 2189,
+          "ref": "e2189",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 714
+          },
+          "name": "Reminder on",
+          "number": 2190,
+          "ref": "e2190",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 61,
+            "width": 218,
+            "x": 17,
+            "y": 762
+          },
+          "name": "Spam catcher 8 settings",
+          "number": 2191,
+          "ref": "e2191",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 782
+          },
+          "name": "Spam catcher on",
+          "number": 2192,
+          "ref": "e2192",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 833
+          },
+          "name": "Timeout 4 settings",
+          "number": 2193,
+          "ref": "e2193",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 851
+          },
+          "name": "Timeout on",
+          "number": 2194,
+          "ref": "e2194",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 218,
+            "x": 17,
+            "y": 899
+          },
+          "name": "User logs 3 settings",
+          "number": 2195,
+          "ref": "e2195",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 251,
+            "y": 917
+          },
+          "name": "User logs on",
+          "number": 2196,
+          "ref": "e2196",
+          "role": "switch"
+        }
+      ],
+      "ok": true
+    },
+    "375": {
+      "viewport": [
+        375,
+        812
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-commands-375.png",
+      "screenshotSize": [
+        375,
+        812
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 37,
+          "incomplete": 0,
+          "passes": 23,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-commands-375-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-commands-375-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 2147,
+          "ref": "e2147",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 258,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 2148,
+          "ref": "e2148",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 131,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Commands",
+          "number": 2149,
+          "ref": "e2149",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 147,
+            "x": 16,
+            "y": 144
+          },
+          "name": "Restart bots",
+          "number": 2150,
+          "ref": "e2150",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 343,
+            "x": 16,
+            "y": 225
+          },
+          "name": "Find a command or setting",
+          "number": 2151,
+          "ref": "e2151",
+          "role": "searchbox"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 290
+          },
+          "name": "Contact a user 2 settings",
+          "number": 2152,
+          "ref": "e2152",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 308
+          },
+          "name": "Contact a user on",
+          "number": 2153,
+          "ref": "e2153",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 356
+          },
+          "name": "Counting 17 settings",
+          "number": 2154,
+          "ref": "e2154",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 374
+          },
+          "name": "Counting on",
+          "number": 2155,
+          "ref": "e2155",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 422
+          },
+          "name": "Age check 3 settings",
+          "number": 2156,
+          "ref": "e2156",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 440
+          },
+          "name": "Age check on",
+          "number": 2157,
+          "ref": "e2157",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 488
+          },
+          "name": "End a timeout 2 settings",
+          "number": 2158,
+          "ref": "e2158",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 506
+          },
+          "name": "End a timeout on",
+          "number": 2159,
+          "ref": "e2159",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 554
+          },
+          "name": "Giveaway 1 setting",
+          "number": 2160,
+          "ref": "e2160",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 572
+          },
+          "name": "Giveaway on",
+          "number": 2161,
+          "ref": "e2161",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 620
+          },
+          "name": "Leveling 14 settings",
+          "number": 2162,
+          "ref": "e2162",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 638
+          },
+          "name": "Leveling on",
+          "number": 2163,
+          "ref": "e2163",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 686
+          },
+          "name": "Reminder 2 settings",
+          "number": 2164,
+          "ref": "e2164",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 704
+          },
+          "name": "Reminder on",
+          "number": 2165,
+          "ref": "e2165",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 752
+          },
+          "name": "Spam catcher 8 settings",
+          "number": 2166,
+          "ref": "e2166",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 770
+          },
+          "name": "Spam catcher on",
+          "number": 2167,
+          "ref": "e2167",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 818
+          },
+          "name": "Timeout 4 settings",
+          "number": 2168,
+          "ref": "e2168",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 836
+          },
+          "name": "Timeout on",
+          "number": 2169,
+          "ref": "e2169",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 273,
+            "x": 17,
+            "y": 884
+          },
+          "name": "User logs 3 settings",
+          "number": 2170,
+          "ref": "e2170",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 306,
+            "y": 902
+          },
+          "name": "User logs on",
+          "number": 2171,
+          "ref": "e2171",
+          "role": "switch"
+        }
+      ],
+      "ok": true
+    },
+    "1440": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440.png",
+      "screenshotSize": [
+        1440,
+        900
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [
+          {
+            "h": 36,
+            "hit": [
+              156,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Pick a bot\ndevairybot\nAi",
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "w": 155
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Home",
+            "rect": [
+              9,
+              170,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Channels",
+            "rect": [
+              9,
+              203,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Commands",
+            "rect": [
+              9,
+              236,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Activity",
+            "rect": [
+              9,
+              269,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Look",
+            "rect": [
+              9,
+              302,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Settings",
+            "rect": [
+              9,
+              335,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Suggestions",
+            "rect": [
+              9,
+              413,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Databases",
+            "rect": [
+              9,
+              446,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 28,
+            "hit": [
+              102,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Sign out",
+            "rect": [
+              1315,
+              14,
+              101,
+              28
+            ],
+            "w": 101
+          },
+          {
+            "h": 36,
+            "hit": [
+              147,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Restart bots",
+            "rect": [
+              1206,
+              80,
+              147,
+              36
+            ],
+            "w": 147
+          },
+          {
+            "h": 34,
+            "hit": [
+              1072,
+              34
+            ],
+            "kind": "small-target",
+            "name": "Find a command or settin",
+            "rect": [
+              280,
+              177,
+              1072,
+              34
+            ],
+            "w": 1072
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Contact a user on",
+            "rect": [
+              1299,
+              250,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Counting on",
+            "rect": [
+              1299,
+              316,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Age check on",
+            "rect": [
+              1299,
+              382,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "End a timeout on",
+            "rect": [
+              1299,
+              448,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Giveaway on",
+            "rect": [
+              1299,
+              514,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Leveling on",
+            "rect": [
+              1299,
+              580,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Reminder on",
+            "rect": [
+              1299,
+              646,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Spam catcher on",
+            "rect": [
+              1299,
+              712,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Timeout on",
+            "rect": [
+              1299,
+              778,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "User logs on",
+            "rect": [
+              1299,
+              844,
+              36,
+              20
+            ],
+            "w": 36
+          }
+        ],
+        "smalltext": [
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              280,
+              177,
+              1072,
+              34
+            ],
+            "size": 15,
+            "text": "Find a command or setting"
+          }
+        ],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 35,
+          "incomplete": 0,
+          "passes": 25,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 2,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "Find a command or setting",
+          "rect": [
+            280,
+            177,
+            1072,
+            34
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 3,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Pick a bot\ndevairybot\nAi",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "155x36"
+        },
+        {
+          "n": 4,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Home",
+          "rect": [
+            9,
+            170,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 5,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Channels",
+          "rect": [
+            9,
+            203,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 6,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Commands",
+          "rect": [
+            9,
+            236,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 7,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Activity",
+          "rect": [
+            9,
+            269,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 8,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Look",
+          "rect": [
+            9,
+            302,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 9,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Settings",
+          "rect": [
+            9,
+            335,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 10,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Suggestions",
+          "rect": [
+            9,
+            413,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 11,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Databases",
+          "rect": [
+            9,
+            446,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 12,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Sign out",
+          "rect": [
+            1315,
+            14,
+            101,
+            28
+          ],
+          "detail": "101x28"
+        },
+        {
+          "n": 13,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Restart bots",
+          "rect": [
+            1206,
+            80,
+            147,
+            36
+          ],
+          "detail": "147x36"
+        },
+        {
+          "n": 14,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Find a command or settin",
+          "rect": [
+            280,
+            177,
+            1072,
+            34
+          ],
+          "detail": "1072x34"
+        },
+        {
+          "n": 15,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Contact a user on",
+          "rect": [
+            1299,
+            250,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 16,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Counting on",
+          "rect": [
+            1299,
+            316,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 17,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Age check on",
+          "rect": [
+            1299,
+            382,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 18,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "End a timeout on",
+          "rect": [
+            1299,
+            448,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 19,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Giveaway on",
+          "rect": [
+            1299,
+            514,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 20,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Leveling on",
+          "rect": [
+            1299,
+            580,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 21,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Reminder on",
+          "rect": [
+            1299,
+            646,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 22,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Spam catcher on",
+          "rect": [
+            1299,
+            712,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 23,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Timeout on",
+          "rect": [
+            1299,
+            778,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 24,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "User logs on",
+          "rect": [
+            1299,
+            844,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440-findings.png",
+        "boxes": 24
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-commands-1440-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 28,
+            "width": 101,
+            "x": 1315,
+            "y": 14
+          },
+          "name": "Sign out",
+          "number": 2108,
+          "ref": "e2108",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 771,
+            "width": 254,
+            "x": 1,
+            "y": 128
+          },
+          "name": "Airy",
+          "number": 2109,
+          "ref": "e2109",
+          "role": "navigation"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 131,
+            "x": 280,
+            "y": 80
+          },
+          "name": "Commands",
+          "number": 2110,
+          "ref": "e2110",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 147,
+            "x": 1206,
+            "y": 80
+          },
+          "name": "Restart bots",
+          "number": 2111,
+          "ref": "e2111",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 34,
+            "width": 1072,
+            "x": 280,
+            "y": 177
+          },
+          "name": "Find a command or setting",
+          "number": 2112,
+          "ref": "e2112",
+          "role": "searchbox"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 232
+          },
+          "name": "Contact a user 2 settings",
+          "number": 2113,
+          "ref": "e2113",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 250
+          },
+          "name": "Contact a user on",
+          "number": 2114,
+          "ref": "e2114",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 298
+          },
+          "name": "Counting 17 settings",
+          "number": 2115,
+          "ref": "e2115",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 316
+          },
+          "name": "Counting on",
+          "number": 2116,
+          "ref": "e2116",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 364
+          },
+          "name": "Age check 3 settings",
+          "number": 2117,
+          "ref": "e2117",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 382
+          },
+          "name": "Age check on",
+          "number": 2118,
+          "ref": "e2118",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 430
+          },
+          "name": "End a timeout 2 settings",
+          "number": 2119,
+          "ref": "e2119",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 448
+          },
+          "name": "End a timeout on",
+          "number": 2120,
+          "ref": "e2120",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 496
+          },
+          "name": "Giveaway 1 setting",
+          "number": 2121,
+          "ref": "e2121",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 514
+          },
+          "name": "Giveaway on",
+          "number": 2122,
+          "ref": "e2122",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 562
+          },
+          "name": "Leveling 14 settings",
+          "number": 2123,
+          "ref": "e2123",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 580
+          },
+          "name": "Leveling on",
+          "number": 2124,
+          "ref": "e2124",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 628
+          },
+          "name": "Reminder 2 settings",
+          "number": 2125,
+          "ref": "e2125",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 646
+          },
+          "name": "Reminder on",
+          "number": 2126,
+          "ref": "e2126",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 694
+          },
+          "name": "Spam catcher 8 settings",
+          "number": 2127,
+          "ref": "e2127",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 712
+          },
+          "name": "Spam catcher on",
+          "number": 2128,
+          "ref": "e2128",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 760
+          },
+          "name": "Timeout 4 settings",
+          "number": 2129,
+          "ref": "e2129",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 778
+          },
+          "name": "Timeout on",
+          "number": 2130,
+          "ref": "e2130",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 56,
+            "width": 1002,
+            "x": 281,
+            "y": 826
+          },
+          "name": "User logs 3 settings",
+          "number": 2131,
+          "ref": "e2131",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1299,
+            "y": 844
+          },
+          "name": "User logs on",
+          "number": 2132,
+          "ref": "e2132",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 21,
+            "x": 69,
+            "y": 67
+          },
+          "number": 2133,
+          "ref": "e2133",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 155,
+            "x": 69,
+            "y": 67
+          },
+          "name": "Bot",
+          "number": 2134,
+          "ref": "e2134",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 170
+          },
+          "name": "Home",
+          "number": 2135,
+          "ref": "e2135",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 203
+          },
+          "name": "Channels",
+          "number": 2136,
+          "ref": "e2136",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 236
+          },
+          "name": "Commands",
+          "number": 2137,
+          "ref": "e2137",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 269
+          },
+          "name": "Activity",
+          "number": 2138,
+          "ref": "e2138",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 302
+          },
+          "name": "Look",
+          "number": 2139,
+          "ref": "e2139",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 335
+          },
+          "name": "Settings",
+          "number": 2140,
+          "ref": "e2140",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 413
+          },
+          "name": "Suggestions",
+          "number": 2141,
+          "ref": "e2141",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 446
+          },
+          "name": "Databases",
+          "number": 2142,
+          "ref": "e2142",
+          "role": "link"
+        }
+      ],
+      "ok": false
+    }
+  },
+  "crops": {},
+  "dark": null,
+  "tree": "/workspace/AiryBotCode/docs/screenshots/r4-commands-tree.txt",
+  "vitals": {
+    "cls": {
+      "entries": [
+        {
+          "startTime": 171.7,
+          "value": 0
+        }
+      ],
+      "score": 0
+    },
+    "fcp": 180,
+    "hydration": null,
+    "inp": null,
+    "lcp": {
+      "element": "h1",
+      "size": 4092,
+      "startTime": 180,
+      "url": null
+    },
+    "ttfb": 6.3,
+    "url": "http://host.docker.internal:5173/commands"
+  },
+  "generatedAt": "2026-10-15T17:50:11.067Z"
+}

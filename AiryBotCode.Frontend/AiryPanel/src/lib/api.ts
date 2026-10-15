@@ -64,7 +64,7 @@ export type ChannelWebhook = {
 
 export type HiveTry = { yes: boolean | null; sure: boolean; confidence: number; error: string | null; summary: string; answers: boolean }
 
-export type CommandConfig = { commandName: string; enabled: boolean }
+export type CommandConfig = { commandName: string; enabled: boolean; settings?: import('./commands').Setting[] }
 
 export type Suggestion = { id: number; title: string; status: string }
 
@@ -120,6 +120,14 @@ export const api = {
   saveWebhook: (botId: string, w: Omit<ChannelWebhook, 'hasSecret'>) => call<void>('PUT', `/api/channelwebhooks/${w.id}?botId=${botId}`, w),
   dropWebhook: (botId: string, id: number) => call<void>('DELETE', `/api/channelwebhooks/${id}?botId=${botId}`),
   commands: (botId: string) => call<CommandConfig[]>('GET', `/api/commands?botId=${botId}`),
+  commandsFull: (botId: string) => call<import('./commands').Command[]>('GET', `/api/commands?botId=${botId}`),
+  saveCommand: (botId: string, name: string, settings: { key: string; value: string }[]) =>
+    call<void>('PUT', `/api/commands/${encodeURIComponent(name)}?botId=${botId}`, { settings }),
+  setCommandOn: (botId: string, name: string, enabled: boolean) =>
+    call<void>('PUT', `/api/commands/${encodeURIComponent(name)}/enabled?botId=${botId}`, { enabled }),
+  restartBots: () => call<{ requested: boolean }>('POST', '/api/bot/reload'),
+  discordCategories: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/categories`),
+  discordRoles: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/roles`),
   suggestions: () => call<Suggestion[]>('GET', '/api/suggestions'),
   counting: (botId: string) => call<CountingChannel[]>('GET', `/api/featurestatus/${botId}/counting`),
 }
