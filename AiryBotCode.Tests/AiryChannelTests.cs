@@ -270,6 +270,37 @@ namespace AiryBotCode.Tests
             Assert.False(dto.NamesKnown);
         }
 
+        private sealed class Bots(BotSetting bot) : AiryBotCode.Application.Interfaces.Repository.IBotSettingRepository
+        {
+            public int Saves { get; private set; }
+            public Task<BotSetting> GetBotSettingAsync(ulong botId) => Task.FromResult(bot);
+            public Task<BotSetting> GetBotSettingAsync(string botName) => Task.FromResult(bot);
+            public Task CreateBotSettingAsync(BotSetting botSetting) => Task.CompletedTask;
+            public Task<BotSetting?> GetByIdAsync(object id) => Task.FromResult<BotSetting?>(bot);
+            public Task<IEnumerable<BotSetting>> GetAllAsync() => Task.FromResult<IEnumerable<BotSetting>>([bot]);
+            public Task<BotSetting> AddAsync(BotSetting entity) => Task.FromResult(entity);
+            public Task<BotSetting> UpdateAsync(BotSetting entity) => Task.FromResult(entity);
+            public Task DeleteAsync(BotSetting entity) => Task.CompletedTask;
+            public Task DeleteAllAsync() => Task.CompletedTask;
+            public Task SaveChangesAsync() { Saves++; return Task.CompletedTask; }
+        }
+
+        [Fact]
+        public async Task AConnectionChangeIsSavedAndABlankKeyKeepsTheStoredOne()
+        {
+            var bot = new BotSetting { BotId = 7, BotName = "Airy", HiveUrl = "http://spine:7000", HiveAgentId = AgentId, HiveAppKey = "hive_ak_kept" };
+            var bots = new Bots(bot);
+            var controller = new HiveConnectionController(bots, new HiveAnswerClient(new HttpClient(new Down())));
+
+            var put = await controller.Put("7", new HiveConnectionDto { Url = "http://127.0.0.1:7002/", AgentId = AgentId, AppKey = " " });
+            Assert.IsType<NoContentResult>(put);
+            Assert.Equal(("http://127.0.0.1:7002", "hive_ak_kept", 1), (bot.HiveUrl, bot.HiveAppKey, bots.Saves));
+
+            Assert.IsType<BadRequestObjectResult>(await controller.Put("7", new HiveConnectionDto { Url = "ftp://x", AgentId = AgentId }));
+            Assert.IsType<NoContentResult>(await controller.Delete("7"));
+            Assert.Equal((null, 2), (bot.HiveAppKey, bots.Saves));
+        }
+
         [Fact]
         public void EveryPanelControllerCanBeBuiltFromThePanelServices()
         {

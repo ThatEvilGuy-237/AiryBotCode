@@ -2,6 +2,20 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-15 · R2 shell and Home, R3 Channels
+
+- Panel `AiryBotCode.Frontend/AiryPanel` on `@airy/ui` 0.1.3: sign-in (password, then Discord) as a public route,
+  sidebar with the bot switcher, phone menu sliding the same sidebar in, Update/Install pill, PWA files, Home (bot,
+  needs a look grouped per page, stats, where Airy talks), Channels (Hive connection with a check and Try a message,
+  channels picked by name with one-tap rules and Undo, webhooks). Briefs `briefs/r2-shell-home.md`,
+  `briefs/r3-channels.md` carry the measurements; R2 review in `docs/review/r2.md` (all findings closed).
+- Kit: Airy ghost text lifted, phone sizes in Airy overrides; base ConfirmDialog uses Button, Modal has no landmarks.
+- API: Discord lookups shared between callers and retried once on a rate limit, names reported unknown instead of
+  gone; `hive/try`; the Hive connection save now stores (148 tests).
+- Dev loop: `scripts/panel-dev-api.sh` (127.0.0.1:8202, scratch database `airy_panel_dev`), Vite on 172.17.0.1:5173.
+  Dev Hive key "Airy panel test (dev)" (agents.run, decisions.make, Evil helper) for live checks; revoke when the
+  rebuild ships.
+
 ## 2026-10-15 · R1 backend: one Hive connection, channels with an answer rule
 
 - Bot settings carry the Hive connection (`HiveUrl`, `HiveAgentId`, `HiveAppKey`); table `AiryChannels`

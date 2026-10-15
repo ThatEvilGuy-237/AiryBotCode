@@ -48,6 +48,7 @@ namespace AiryBotCode.Api.Controllers
             bot.HiveAgentId = agent.ToString();
             bot.HiveAppKey = key;
             await _bots.UpdateAsync(bot);
+            await _bots.SaveChangesAsync();
             return NoContent();
         }
 
@@ -61,6 +62,7 @@ namespace AiryBotCode.Api.Controllers
             bot.HiveAgentId = null;
             bot.HiveAppKey = null;
             await _bots.UpdateAsync(bot);
+            await _bots.SaveChangesAsync();
             return NoContent();
         }
 
@@ -88,8 +90,28 @@ namespace AiryBotCode.Api.Controllers
             return Ok(await _hive.CheckAsync(url!, key!, agent));
         }
 
+        [HttpPost("try")]
+        public async Task<IActionResult> Try(string botId, [FromBody] HiveTryDto dto)
+        {
+            if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
+            if (string.IsNullOrWhiteSpace(dto.Message)) return BadRequest("Write a message to try.");
+            var bot = await _bots.GetBotSettingAsync(id);
+            if (bot is null) return NotFound();
+            var hive = HiveConnection.Of(bot);
+            if (hive is null) return BadRequest("Connect the Hive first.");
+            var channel = string.IsNullOrWhiteSpace(dto.Channel) ? "general" : dto.Channel.Trim().TrimStart('#');
+            var verdict = await _hive.AskAsync(hive, new WorthEvent(bot.BotName ?? "Airy", channel, "someone", 0, dto.Message.Trim(), []));
+            return Ok(new { verdict.Yes, verdict.Sure, verdict.Confidence, verdict.DecisionId, verdict.Error, verdict.Summary, Answers = verdict.SaysAnswer });
+        }
+
         public static string? Hint(string? key) =>
             string.IsNullOrWhiteSpace(key) ? null : key.Length <= 12 ? "…" : key[..12] + "…";
+    }
+
+    public class HiveTryDto
+    {
+        public string? Message { get; set; }
+        public string? Channel { get; set; }
     }
 
     public class HiveConnectionDto

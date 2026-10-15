@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Alert, Button, Card, ConfirmDialog, Field, Icon, Modal, Select, StatusDot, TextField, useToast } from '@airy/ui'
-import { api, type HiveAgent, type HiveCheck, type HiveConnection } from '@/lib/api'
+import { Alert, Button, Card, ConfirmDialog, Field, Icon, Modal, Select, StatusDot, Textarea, TextField, useToast } from '@airy/ui'
+import { api, type HiveAgent, type HiveCheck, type HiveConnection, type HiveTry } from '@/lib/api'
 
 const props = defineProps<{ botId: string }>()
 const emit = defineEmits<{ changed: [check: HiveCheck | null] }>()
@@ -23,6 +23,28 @@ const findError = ref<string | null>(null)
 const saving = ref(false)
 const saveError = ref<string | null>(null)
 const confirmDrop = ref(false)
+
+const trying = ref(false)
+const tryOpen = ref(false)
+const tryMessage = ref('')
+const tryChannel = ref('general')
+const tryResult = ref<HiveTry | null>(null)
+const tryError = ref<string | null>(null)
+const canTry = computed(() => connected.value && !!check.value?.canDecide && (check.value?.deciders.length ?? 0) > 0)
+
+async function ask() {
+  if (!tryMessage.value.trim()) return
+  trying.value = true
+  tryError.value = null
+  tryResult.value = null
+  try {
+    tryResult.value = await api.tryHive(props.botId, tryMessage.value, tryChannel.value)
+  } catch (e) {
+    tryError.value = e instanceof Error ? e.message : 'The Hive did not answer.'
+  } finally {
+    trying.value = false
+  }
+}
 
 const connected = computed(() => !!hive.value?.url && !!hive.value.hasKey && !!hive.value.agentId)
 const agentName = computed(() => check.value?.agents.find(a => a.id === hive.value?.agentId)?.name ?? null)
@@ -123,6 +145,7 @@ defineExpose({ reload: load })
         <StatusDot :variant="dot" />
         <h2>Hive connection</h2>
         <span class="spacer" />
+        <Button v-if="canTry" size="sm" variant="ghost" @click="tryOpen = true; tryResult = null">Try a message</Button>
         <Button v-if="connected" size="sm" variant="outline" @click="edit">Change</Button>
       </div>
     </template>
@@ -175,6 +198,28 @@ defineExpose({ reload: load })
         <span class="spacer" />
         <Button variant="ghost" @click="open = false">Cancel</Button>
         <Button :loading="saving" :disabled="!url || !agentId || (!key && !hive?.hasKey)" @click="save">Save</Button>
+      </template>
+    </Modal>
+    <Modal :open="tryOpen" title="Would Airy answer this?" size="md" @close="tryOpen = false">
+      <form class="form" @submit.prevent="ask">
+        <Field label="Message">
+          <Textarea v-model="tryMessage" :rows="3" />
+        </Field>
+        <Field label="Channel name" hint="The Hive reads it as part of the message">
+          <TextField v-model="tryChannel" autocomplete="off" />
+        </Field>
+        <Alert v-if="tryError" variant="danger" :title="tryError" dense />
+        <div v-if="tryResult" class="verdict" :class="tryResult.error ? 'bad' : tryResult.answers ? 'yes' : 'no'" role="status">
+          <Icon :name="tryResult.error ? 'x' : tryResult.answers ? 'check' : 'minus'" :size="18" />
+          <span v-if="tryResult.error">{{ tryResult.error }}</span>
+          <span v-else-if="tryResult.answers">Airy would answer</span>
+          <span v-else>Airy would stay quiet{{ tryResult.yes && !tryResult.sure ? ' (a yes, but not sure enough)' : '' }}</span>
+          <span v-if="!tryResult.error" class="mono">{{ tryResult.summary }}</span>
+        </div>
+      </form>
+      <template #footer>
+        <Button variant="ghost" @click="tryOpen = false">Close</Button>
+        <Button :loading="trying" :disabled="!tryMessage.trim()" @click="ask">Ask the Hive</Button>
       </template>
     </Modal>
     <ConfirmDialog
@@ -277,6 +322,26 @@ h2 {
   gap: var(--space-2);
 }
 .drop {
+  color: var(--color-danger);
+}
+.verdict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: var(--border);
+  border-radius: var(--r-2);
+  color: var(--color-fg);
+}
+.verdict.yes {
+  box-shadow: inset 2px 0 0 var(--color-ok);
+}
+.verdict.no {
+  box-shadow: inset 2px 0 0 var(--color-muted);
+}
+.verdict.bad {
+  box-shadow: inset 2px 0 0 var(--color-danger);
   color: var(--color-danger);
 }
 @media (max-width: 520px) {

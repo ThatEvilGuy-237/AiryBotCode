@@ -62,6 +62,8 @@ export type ChannelWebhook = {
   enabled: boolean
 }
 
+export type HiveTry = { yes: boolean | null; sure: boolean; confidence: number; error: string | null; summary: string; answers: boolean }
+
 export type CommandConfig = { commandName: string; enabled: boolean }
 
 export type Suggestion = { id: number; title: string; status: string }
@@ -105,6 +107,7 @@ export const api = {
   hiveCheck: (botId: string) => call<HiveCheck>('POST', `/api/settings/${botId}/hive/check`, {}),
   hiveAgents: (botId: string, url: string, appKey: string) => call<HiveAgent[]>('POST', `/api/settings/${botId}/hive/agents`, { url, appKey }),
   saveHive: (botId: string, body: HiveSave) => call<void>('PUT', `/api/settings/${botId}/hive`, body),
+  tryHive: (botId: string, message: string, channel: string) => call<HiveTry>('POST', `/api/settings/${botId}/hive/try`, { message, channel }),
   dropHive: (botId: string) => call<void>('DELETE', `/api/settings/${botId}/hive`),
   discordChannels: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/channels`),
   addChannel: (botId: string, channelId: string, answerMode: AnswerMode) =>
