@@ -20,12 +20,10 @@ namespace AiryBotCode.Api.Controllers
     // Body for setting a bot's theme palette + (optional) server-side image theme.
     public class ThemeRequest
     {
-        public string Primary { get; set; }
-        public string Accent { get; set; }
-        // Downscaled data-URL of the chosen image (also the bot profile pic).
-        public string Image { get; set; }
-        // The derived @hive/ui theme as JSON (accent L/C/hue + base hue/chroma).
-        public string Data { get; set; }
+        public string? Primary { get; set; }
+        public string? Accent { get; set; }
+        public string? Image { get; set; }
+        public string? Data { get; set; }
     }
 
     // Reads/writes the real BotSettings table (the row a bot seeds on first run).
@@ -134,7 +132,18 @@ namespace AiryBotCode.Api.Controllers
                     return Conflict("A bot with the new ID already exists.");
                 }
 
-                var replacement = new BotSetting { BotId = newId, Token = entity.Token };
+                var replacement = new BotSetting
+                {
+                    BotId = newId,
+                    Token = entity.Token,
+                    ThemePrimary = entity.ThemePrimary,
+                    ThemeAccent = entity.ThemeAccent,
+                    ThemeImage = entity.ThemeImage,
+                    ThemeData = entity.ThemeData,
+                    HiveUrl = entity.HiveUrl,
+                    HiveAgentId = entity.HiveAgentId,
+                    HiveAppKey = entity.HiveAppKey,
+                };
                 ApplyDto(replacement, dto, isCreate: false);
 
                 await _repository.DeleteAsync(entity);

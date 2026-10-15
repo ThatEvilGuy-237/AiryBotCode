@@ -237,6 +237,7 @@ defineExpose({ reload: load })
 <style scoped>
 .head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
   width: 100%;

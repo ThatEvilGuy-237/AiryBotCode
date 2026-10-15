@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Alert, Button, Card, ConfirmDialog, EmptyState, Field, Icon, PageHeader, RadioGroup, Select, Skeleton, StatusDot, Toggle, useToast } from '@airy/ui'
+import { Alert, Button, Card, ConfirmDialog, EmptyState, Field, Icon, PageHeader, RadioGroup, Skeleton, StatusDot, Toggle, useToast } from '@airy/ui'
+import ChannelPicker from '@/components/ChannelPicker.vue'
 import HiveConnectionCard from '@/components/HiveConnectionCard.vue'
 import WebhooksSection from '@/components/WebhooksSection.vue'
 import { api, type AiryChannel, type AnswerMode, type DiscordEntity, type HiveCheck } from '@/lib/api'
@@ -17,7 +18,7 @@ const check = ref<HiveCheck | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-const pick = ref('')
+const pick = ref<string | null>(null)
 const rule = ref<AnswerMode>('mention')
 const adding = ref(false)
 const removing = ref<AiryChannel | null>(null)
@@ -53,7 +54,8 @@ async function add() {
   try {
     const created = await api.addChannel(botId.value, pick.value, rule.value)
     channels.value = [created, ...(channels.value ?? [])]
-    pick.value = ''
+    pick.value = null
+    rule.value = 'mention'
     toast.success(`Airy talks in ${channelName(created)}`)
   } catch (e) {
     toast.error(e instanceof Error ? e.message : 'Adding failed.')
@@ -119,7 +121,7 @@ async function remove() {
         <form class="add" @submit.prevent="add">
           <div class="add-top">
             <Field label="Channel">
-              <Select v-model="pick" :options="pickOptions" :placeholder="servers === null ? 'Reading the servers…' : pickOptions.length ? 'Pick a channel' : servers.length ? 'Airy is in every channel already' : 'No channels to pick'" :disabled="!pickOptions.length" />
+              <ChannelPicker v-model="pick" :channels="servers ?? []" :exclude="[...taken]" :placeholder="servers === null ? 'Reading the servers…' : pickOptions.length ? 'Find a channel' : servers.length ? 'Airy is in every channel already' : 'No channels to pick'" />
             </Field>
             <Button type="submit" :loading="adding" :disabled="!pick"><Icon name="plus" :size="16" />Add channel</Button>
           </div>
@@ -164,7 +166,8 @@ async function remove() {
               <Toggle :model-value="c.enabled" :label="`Airy talks in ${channelName(c)}`" @update:model-value="v => save(c, { enabled: v })" />
               <Button variant="ghost" size="sm" :aria-label="`Remove ${channelName(c)}`" @click="removing = c"><Icon name="trash-2" :size="16" /></Button>
             </div>
-            <p v-if="c.lastDecisionError" class="note warn">Last check failed: {{ c.lastDecisionError }}</p>
+            <p v-if="c.enabled && c.answerMode === 'decide' && cannotDecide" class="note attention">Answers only when mentioned until the Hive can decide.</p>
+            <p v-else-if="c.lastDecisionError" class="note warn">Last check failed: {{ c.lastDecisionError }}</p>
             <p v-else-if="c.lastDecision" class="note">Last check: <span class="mono">{{ c.lastDecision }}</span> · {{ ago(c.lastDecisionAt) }}</p>
           </li>
         </ul>
@@ -292,6 +295,9 @@ h2 {
   padding-left: calc(8px + var(--space-3));
   font-size: var(--font-size-sm);
   color: var(--color-muted);
+}
+.note.attention {
+  color: var(--color-warn);
 }
 .note.warn {
   color: var(--color-danger);

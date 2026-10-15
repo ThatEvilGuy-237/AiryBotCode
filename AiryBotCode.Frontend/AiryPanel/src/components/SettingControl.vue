@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button, Field, Icon, MultiSelect, NumberField, Select, Slider, TagInput, Textarea, TextField, Toggle } from '@airy/ui'
+import ChannelPicker from '@/components/ChannelPicker.vue'
 import type { DiscordEntity } from '@/lib/api'
 import { controlFor, type Setting } from '@/lib/commands'
 import { parseIdList, parseRoleRewards, serializeIdList, serializeRoleRewards, type RewardRow } from '@/lib/discordIds'
@@ -117,7 +118,8 @@ function savePairs() {
       </div>
     </div>
 
-    <Select v-else-if="control === 'channel' || control === 'category' || control === 'role'" v-model="single" :options="singleOptions" />
+    <ChannelPicker v-else-if="control === 'channel'" :model-value="single" :channels="channels" none @update:model-value="v => (single = v ?? '0')" />
+    <Select v-else-if="control === 'category' || control === 'role'" v-model="single" :options="singleOptions" />
 
     <MultiSelect v-else-if="control === 'channels' || control === 'roles'" v-model="ids" :options="manyOptions" :placeholder="control === 'channels' ? 'No channels' : 'No roles'" clearable :aria-label="label" />
 

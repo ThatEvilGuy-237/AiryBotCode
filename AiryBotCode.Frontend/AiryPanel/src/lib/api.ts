@@ -72,6 +72,26 @@ export type CountingChannel = { channelId: string; channelName: string | null; c
 
 export type BotLook = { primary: string | null; accent: string | null; image: string | null }
 
+export function readError(raw: string, status: number): string {
+  const text = raw.trim()
+  const fallback = `Airy answered ${status}.`
+  if (!text || text.startsWith('<')) return fallback
+  try {
+    const body = JSON.parse(text) as unknown
+    if (typeof body === 'string') return body
+    if (body && typeof body === 'object') {
+      const o = body as { error?: unknown; errors?: Record<string, unknown>; title?: unknown }
+      if (typeof o.error === 'string') return o.error
+      const first = o.errors ? Object.values(o.errors).flat()[0] : undefined
+      if (typeof first === 'string') return first
+      if (typeof o.title === 'string') return o.title
+    }
+    return fallback
+  } catch {
+    return text.length < 300 ? text : fallback
+  }
+}
+
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
   let response: Response
   try {
@@ -90,10 +110,7 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
     signOut()
     throw new ApiError(401, 'Signed out.')
   }
-  if (!response.ok) {
-    const text = (await response.text()).trim()
-    throw new ApiError(response.status, text && text.length < 300 && !text.startsWith('<') ? text.replace(/^"|"$/g, '') : `Airy answered ${response.status}.`)
-  }
+  if (!response.ok) throw new ApiError(response.status, readError(await response.text(), response.status))
   if (response.status === 204) return undefined as T
   const text = await response.text()
   return (text ? JSON.parse(text) : undefined) as T
@@ -101,7 +118,15 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
 
 export const api = {
   bots: () => call<Bot[]>('GET', '/api/settings'),
+  addBot: (bot: Bot & { token: string }) => call<Bot>('POST', '/api/settings', bot),
+  saveBot: (bot: Bot & { token?: string }) => call<Bot>('PUT', `/api/settings/${bot.botId}`, bot),
+  dropBot: (botId: string) => call<void>('DELETE', `/api/settings/${botId}`),
+  revealToken: (botId: string, password: string) => call<{ token: string }>('POST', `/api/settings/${botId}/token`, { password }),
+  databases: () => call<string[]>('GET', '/api/db/databases'),
   look: (botId: string) => call<BotLook>('GET', `/api/settings/${botId}/theme`),
+  saveLook: (botId: string, look: { primary: string; accent: string; image: string | null }) =>
+    call<Bot>('PUT', `/api/settings/${botId}/theme`, { ...look, data: null }),
+  useAvatar: (botId: string) => call<void>('POST', `/api/settings/${botId}/avatar`),
   channels: (botId: string) => call<AiryChannel[]>('GET', `/api/channels?botId=${botId}`),
   hive: (botId: string) => call<HiveConnection>('GET', `/api/settings/${botId}/hive`),
   hiveCheck: (botId: string) => call<HiveCheck>('POST', `/api/settings/${botId}/hive/check`, {}),

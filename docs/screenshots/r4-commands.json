@@ -79,8 +79,8 @@
             "y": 6
           },
           "name": "Open the menu",
-          "number": 2172,
-          "ref": "e2172",
+          "number": 3054,
+          "ref": "e3054",
           "role": "button"
         },
         {
@@ -91,8 +91,8 @@
             "y": 6
           },
           "name": "Sign out",
-          "number": 2173,
-          "ref": "e2173",
+          "number": 3055,
+          "ref": "e3055",
           "role": "button"
         },
         {
@@ -103,8 +103,8 @@
             "y": 72
           },
           "name": "Commands",
-          "number": 2174,
-          "ref": "e2174",
+          "number": 3056,
+          "ref": "e3056",
           "role": "heading"
         },
         {
@@ -115,8 +115,8 @@
             "y": 144
           },
           "name": "Restart bots",
-          "number": 2175,
-          "ref": "e2175",
+          "number": 3057,
+          "ref": "e3057",
           "role": "button"
         },
         {
@@ -127,8 +127,8 @@
             "y": 225
           },
           "name": "Find a command or setting",
-          "number": 2176,
-          "ref": "e2176",
+          "number": 3058,
+          "ref": "e3058",
           "role": "searchbox"
         },
         {
@@ -139,8 +139,8 @@
             "y": 290
           },
           "name": "Contact a user 2 settings",
-          "number": 2177,
-          "ref": "e2177",
+          "number": 3059,
+          "ref": "e3059",
           "role": "button"
         },
         {
@@ -151,8 +151,8 @@
             "y": 310
           },
           "name": "Contact a user on",
-          "number": 2178,
-          "ref": "e2178",
+          "number": 3060,
+          "ref": "e3060",
           "role": "switch"
         },
         {
@@ -163,8 +163,8 @@
             "y": 361
           },
           "name": "Counting 17 settings",
-          "number": 2179,
-          "ref": "e2179",
+          "number": 3061,
+          "ref": "e3061",
           "role": "button"
         },
         {
@@ -175,8 +175,8 @@
             "y": 379
           },
           "name": "Counting on",
-          "number": 2180,
-          "ref": "e2180",
+          "number": 3062,
+          "ref": "e3062",
           "role": "switch"
         },
         {
@@ -187,8 +187,8 @@
             "y": 427
           },
           "name": "Age check 3 settings",
-          "number": 2181,
-          "ref": "e2181",
+          "number": 3063,
+          "ref": "e3063",
           "role": "button"
         },
         {
@@ -199,8 +199,8 @@
             "y": 445
           },
           "name": "Age check on",
-          "number": 2182,
-          "ref": "e2182",
+          "number": 3064,
+          "ref": "e3064",
           "role": "switch"
         },
         {
@@ -211,8 +211,8 @@
             "y": 493
           },
           "name": "End a timeout 2 settings",
-          "number": 2183,
-          "ref": "e2183",
+          "number": 3065,
+          "ref": "e3065",
           "role": "button"
         },
         {
@@ -223,8 +223,8 @@
             "y": 513
           },
           "name": "End a timeout on",
-          "number": 2184,
-          "ref": "e2184",
+          "number": 3066,
+          "ref": "e3066",
           "role": "switch"
         },
         {
@@ -235,8 +235,8 @@
             "y": 564
           },
           "name": "Giveaway 1 setting",
-          "number": 2185,
-          "ref": "e2185",
+          "number": 3067,
+          "ref": "e3067",
           "role": "button"
         },
         {
@@ -247,8 +247,8 @@
             "y": 582
           },
           "name": "Giveaway on",
-          "number": 2186,
-          "ref": "e2186",
+          "number": 3068,
+          "ref": "e3068",
           "role": "switch"
         },
         {
@@ -259,8 +259,8 @@
             "y": 630
           },
           "name": "Leveling 14 settings",
-          "number": 2187,
-          "ref": "e2187",
+          "number": 3069,
+          "ref": "e3069",
           "role": "button"
         },
         {
@@ -271,8 +271,8 @@
             "y": 648
           },
           "name": "Leveling on",
-          "number": 2188,
-          "ref": "e2188",
+          "number": 3070,
+          "ref": "e3070",
           "role": "switch"
         },
         {
@@ -283,8 +283,8 @@
             "y": 696
           },
           "name": "Reminder 2 settings",
-          "number": 2189,
-          "ref": "e2189",
+          "number": 3071,
+          "ref": "e3071",
           "role": "button"
         },
         {
@@ -295,8 +295,8 @@
             "y": 714
           },
           "name": "Reminder on",
-          "number": 2190,
-          "ref": "e2190",
+          "number": 3072,
+          "ref": "e3072",
           "role": "switch"
         },
         {
@@ -307,8 +307,8 @@
             "y": 762
           },
           "name": "Spam catcher 8 settings",
-          "number": 2191,
-          "ref": "e2191",
+          "number": 3073,
+          "ref": "e3073",
           "role": "button"
         },
         {
@@ -319,8 +319,8 @@
             "y": 782
           },
           "name": "Spam catcher on",
-          "number": 2192,
-          "ref": "e2192",
+          "number": 3074,
+          "ref": "e3074",
           "role": "switch"
         },
         {
@@ -331,8 +331,8 @@
             "y": 833
           },
           "name": "Timeout 4 settings",
-          "number": 2193,
-          "ref": "e2193",
+          "number": 3075,
+          "ref": "e3075",
           "role": "button"
         },
         {
@@ -343,8 +343,8 @@
             "y": 851
           },
           "name": "Timeout on",
-          "number": 2194,
-          "ref": "e2194",
+          "number": 3076,
+          "ref": "e3076",
           "role": "switch"
         },
         {
@@ -355,8 +355,8 @@
             "y": 899
           },
           "name": "User logs 3 settings",
-          "number": 2195,
-          "ref": "e2195",
+          "number": 3077,
+          "ref": "e3077",
           "role": "button"
         },
         {
@@ -367,8 +367,8 @@
             "y": 917
           },
           "name": "User logs on",
-          "number": 2196,
-          "ref": "e2196",
+          "number": 3078,
+          "ref": "e3078",
           "role": "switch"
         }
       ],
@@ -417,8 +417,8 @@
             "y": 6
           },
           "name": "Open the menu",
-          "number": 2147,
-          "ref": "e2147",
+          "number": 3029,
+          "ref": "e3029",
           "role": "button"
         },
         {
@@ -429,8 +429,8 @@
             "y": 6
           },
           "name": "Sign out",
-          "number": 2148,
-          "ref": "e2148",
+          "number": 3030,
+          "ref": "e3030",
           "role": "button"
         },
         {
@@ -441,8 +441,8 @@
             "y": 72
           },
           "name": "Commands",
-          "number": 2149,
-          "ref": "e2149",
+          "number": 3031,
+          "ref": "e3031",
           "role": "heading"
         },
         {
@@ -453,8 +453,8 @@
             "y": 144
           },
           "name": "Restart bots",
-          "number": 2150,
-          "ref": "e2150",
+          "number": 3032,
+          "ref": "e3032",
           "role": "button"
         },
         {
@@ -465,8 +465,8 @@
             "y": 225
           },
           "name": "Find a command or setting",
-          "number": 2151,
-          "ref": "e2151",
+          "number": 3033,
+          "ref": "e3033",
           "role": "searchbox"
         },
         {
@@ -477,8 +477,8 @@
             "y": 290
           },
           "name": "Contact a user 2 settings",
-          "number": 2152,
-          "ref": "e2152",
+          "number": 3034,
+          "ref": "e3034",
           "role": "button"
         },
         {
@@ -489,8 +489,8 @@
             "y": 308
           },
           "name": "Contact a user on",
-          "number": 2153,
-          "ref": "e2153",
+          "number": 3035,
+          "ref": "e3035",
           "role": "switch"
         },
         {
@@ -501,8 +501,8 @@
             "y": 356
           },
           "name": "Counting 17 settings",
-          "number": 2154,
-          "ref": "e2154",
+          "number": 3036,
+          "ref": "e3036",
           "role": "button"
         },
         {
@@ -513,8 +513,8 @@
             "y": 374
           },
           "name": "Counting on",
-          "number": 2155,
-          "ref": "e2155",
+          "number": 3037,
+          "ref": "e3037",
           "role": "switch"
         },
         {
@@ -525,8 +525,8 @@
             "y": 422
           },
           "name": "Age check 3 settings",
-          "number": 2156,
-          "ref": "e2156",
+          "number": 3038,
+          "ref": "e3038",
           "role": "button"
         },
         {
@@ -537,8 +537,8 @@
             "y": 440
           },
           "name": "Age check on",
-          "number": 2157,
-          "ref": "e2157",
+          "number": 3039,
+          "ref": "e3039",
           "role": "switch"
         },
         {
@@ -549,8 +549,8 @@
             "y": 488
           },
           "name": "End a timeout 2 settings",
-          "number": 2158,
-          "ref": "e2158",
+          "number": 3040,
+          "ref": "e3040",
           "role": "button"
         },
         {
@@ -561,8 +561,8 @@
             "y": 506
           },
           "name": "End a timeout on",
-          "number": 2159,
-          "ref": "e2159",
+          "number": 3041,
+          "ref": "e3041",
           "role": "switch"
         },
         {
@@ -573,8 +573,8 @@
             "y": 554
           },
           "name": "Giveaway 1 setting",
-          "number": 2160,
-          "ref": "e2160",
+          "number": 3042,
+          "ref": "e3042",
           "role": "button"
         },
         {
@@ -585,8 +585,8 @@
             "y": 572
           },
           "name": "Giveaway on",
-          "number": 2161,
-          "ref": "e2161",
+          "number": 3043,
+          "ref": "e3043",
           "role": "switch"
         },
         {
@@ -597,8 +597,8 @@
             "y": 620
           },
           "name": "Leveling 14 settings",
-          "number": 2162,
-          "ref": "e2162",
+          "number": 3044,
+          "ref": "e3044",
           "role": "button"
         },
         {
@@ -609,8 +609,8 @@
             "y": 638
           },
           "name": "Leveling on",
-          "number": 2163,
-          "ref": "e2163",
+          "number": 3045,
+          "ref": "e3045",
           "role": "switch"
         },
         {
@@ -621,8 +621,8 @@
             "y": 686
           },
           "name": "Reminder 2 settings",
-          "number": 2164,
-          "ref": "e2164",
+          "number": 3046,
+          "ref": "e3046",
           "role": "button"
         },
         {
@@ -633,8 +633,8 @@
             "y": 704
           },
           "name": "Reminder on",
-          "number": 2165,
-          "ref": "e2165",
+          "number": 3047,
+          "ref": "e3047",
           "role": "switch"
         },
         {
@@ -645,8 +645,8 @@
             "y": 752
           },
           "name": "Spam catcher 8 settings",
-          "number": 2166,
-          "ref": "e2166",
+          "number": 3048,
+          "ref": "e3048",
           "role": "button"
         },
         {
@@ -657,8 +657,8 @@
             "y": 770
           },
           "name": "Spam catcher on",
-          "number": 2167,
-          "ref": "e2167",
+          "number": 3049,
+          "ref": "e3049",
           "role": "switch"
         },
         {
@@ -669,8 +669,8 @@
             "y": 818
           },
           "name": "Timeout 4 settings",
-          "number": 2168,
-          "ref": "e2168",
+          "number": 3050,
+          "ref": "e3050",
           "role": "button"
         },
         {
@@ -681,8 +681,8 @@
             "y": 836
           },
           "name": "Timeout on",
-          "number": 2169,
-          "ref": "e2169",
+          "number": 3051,
+          "ref": "e3051",
           "role": "switch"
         },
         {
@@ -693,8 +693,8 @@
             "y": 884
           },
           "name": "User logs 3 settings",
-          "number": 2170,
-          "ref": "e2170",
+          "number": 3052,
+          "ref": "e3052",
           "role": "button"
         },
         {
@@ -705,8 +705,8 @@
             "y": 902
           },
           "name": "User logs on",
-          "number": 2171,
-          "ref": "e2171",
+          "number": 3053,
+          "ref": "e3053",
           "role": "switch"
         }
       ],
@@ -1449,8 +1449,8 @@
             "y": 14
           },
           "name": "Sign out",
-          "number": 2108,
-          "ref": "e2108",
+          "number": 2990,
+          "ref": "e2990",
           "role": "button"
         },
         {
@@ -1461,8 +1461,8 @@
             "y": 128
           },
           "name": "Airy",
-          "number": 2109,
-          "ref": "e2109",
+          "number": 2991,
+          "ref": "e2991",
           "role": "navigation"
         },
         {
@@ -1473,8 +1473,8 @@
             "y": 80
           },
           "name": "Commands",
-          "number": 2110,
-          "ref": "e2110",
+          "number": 2992,
+          "ref": "e2992",
           "role": "heading"
         },
         {
@@ -1485,8 +1485,8 @@
             "y": 80
           },
           "name": "Restart bots",
-          "number": 2111,
-          "ref": "e2111",
+          "number": 2993,
+          "ref": "e2993",
           "role": "button"
         },
         {
@@ -1497,8 +1497,8 @@
             "y": 177
           },
           "name": "Find a command or setting",
-          "number": 2112,
-          "ref": "e2112",
+          "number": 2994,
+          "ref": "e2994",
           "role": "searchbox"
         },
         {
@@ -1509,8 +1509,8 @@
             "y": 232
           },
           "name": "Contact a user 2 settings",
-          "number": 2113,
-          "ref": "e2113",
+          "number": 2995,
+          "ref": "e2995",
           "role": "button"
         },
         {
@@ -1521,8 +1521,8 @@
             "y": 250
           },
           "name": "Contact a user on",
-          "number": 2114,
-          "ref": "e2114",
+          "number": 2996,
+          "ref": "e2996",
           "role": "switch"
         },
         {
@@ -1533,8 +1533,8 @@
             "y": 298
           },
           "name": "Counting 17 settings",
-          "number": 2115,
-          "ref": "e2115",
+          "number": 2997,
+          "ref": "e2997",
           "role": "button"
         },
         {
@@ -1545,8 +1545,8 @@
             "y": 316
           },
           "name": "Counting on",
-          "number": 2116,
-          "ref": "e2116",
+          "number": 2998,
+          "ref": "e2998",
           "role": "switch"
         },
         {
@@ -1557,8 +1557,8 @@
             "y": 364
           },
           "name": "Age check 3 settings",
-          "number": 2117,
-          "ref": "e2117",
+          "number": 2999,
+          "ref": "e2999",
           "role": "button"
         },
         {
@@ -1569,8 +1569,8 @@
             "y": 382
           },
           "name": "Age check on",
-          "number": 2118,
-          "ref": "e2118",
+          "number": 3000,
+          "ref": "e3000",
           "role": "switch"
         },
         {
@@ -1581,8 +1581,8 @@
             "y": 430
           },
           "name": "End a timeout 2 settings",
-          "number": 2119,
-          "ref": "e2119",
+          "number": 3001,
+          "ref": "e3001",
           "role": "button"
         },
         {
@@ -1593,8 +1593,8 @@
             "y": 448
           },
           "name": "End a timeout on",
-          "number": 2120,
-          "ref": "e2120",
+          "number": 3002,
+          "ref": "e3002",
           "role": "switch"
         },
         {
@@ -1605,8 +1605,8 @@
             "y": 496
           },
           "name": "Giveaway 1 setting",
-          "number": 2121,
-          "ref": "e2121",
+          "number": 3003,
+          "ref": "e3003",
           "role": "button"
         },
         {
@@ -1617,8 +1617,8 @@
             "y": 514
           },
           "name": "Giveaway on",
-          "number": 2122,
-          "ref": "e2122",
+          "number": 3004,
+          "ref": "e3004",
           "role": "switch"
         },
         {
@@ -1629,8 +1629,8 @@
             "y": 562
           },
           "name": "Leveling 14 settings",
-          "number": 2123,
-          "ref": "e2123",
+          "number": 3005,
+          "ref": "e3005",
           "role": "button"
         },
         {
@@ -1641,8 +1641,8 @@
             "y": 580
           },
           "name": "Leveling on",
-          "number": 2124,
-          "ref": "e2124",
+          "number": 3006,
+          "ref": "e3006",
           "role": "switch"
         },
         {
@@ -1653,8 +1653,8 @@
             "y": 628
           },
           "name": "Reminder 2 settings",
-          "number": 2125,
-          "ref": "e2125",
+          "number": 3007,
+          "ref": "e3007",
           "role": "button"
         },
         {
@@ -1665,8 +1665,8 @@
             "y": 646
           },
           "name": "Reminder on",
-          "number": 2126,
-          "ref": "e2126",
+          "number": 3008,
+          "ref": "e3008",
           "role": "switch"
         },
         {
@@ -1677,8 +1677,8 @@
             "y": 694
           },
           "name": "Spam catcher 8 settings",
-          "number": 2127,
-          "ref": "e2127",
+          "number": 3009,
+          "ref": "e3009",
           "role": "button"
         },
         {
@@ -1689,8 +1689,8 @@
             "y": 712
           },
           "name": "Spam catcher on",
-          "number": 2128,
-          "ref": "e2128",
+          "number": 3010,
+          "ref": "e3010",
           "role": "switch"
         },
         {
@@ -1701,8 +1701,8 @@
             "y": 760
           },
           "name": "Timeout 4 settings",
-          "number": 2129,
-          "ref": "e2129",
+          "number": 3011,
+          "ref": "e3011",
           "role": "button"
         },
         {
@@ -1713,8 +1713,8 @@
             "y": 778
           },
           "name": "Timeout on",
-          "number": 2130,
-          "ref": "e2130",
+          "number": 3012,
+          "ref": "e3012",
           "role": "switch"
         },
         {
@@ -1725,8 +1725,8 @@
             "y": 826
           },
           "name": "User logs 3 settings",
-          "number": 2131,
-          "ref": "e2131",
+          "number": 3013,
+          "ref": "e3013",
           "role": "button"
         },
         {
@@ -1737,8 +1737,8 @@
             "y": 844
           },
           "name": "User logs on",
-          "number": 2132,
-          "ref": "e2132",
+          "number": 3014,
+          "ref": "e3014",
           "role": "switch"
         },
         {
@@ -1748,8 +1748,8 @@
             "x": 69,
             "y": 67
           },
-          "number": 2133,
-          "ref": "e2133",
+          "number": 3015,
+          "ref": "e3015",
           "role": "LabelText"
         },
         {
@@ -1760,8 +1760,8 @@
             "y": 67
           },
           "name": "Bot",
-          "number": 2134,
-          "ref": "e2134",
+          "number": 3016,
+          "ref": "e3016",
           "role": "combobox"
         },
         {
@@ -1772,8 +1772,8 @@
             "y": 170
           },
           "name": "Home",
-          "number": 2135,
-          "ref": "e2135",
+          "number": 3017,
+          "ref": "e3017",
           "role": "link"
         },
         {
@@ -1784,8 +1784,8 @@
             "y": 203
           },
           "name": "Channels",
-          "number": 2136,
-          "ref": "e2136",
+          "number": 3018,
+          "ref": "e3018",
           "role": "link"
         },
         {
@@ -1796,8 +1796,8 @@
             "y": 236
           },
           "name": "Commands",
-          "number": 2137,
-          "ref": "e2137",
+          "number": 3019,
+          "ref": "e3019",
           "role": "link"
         },
         {
@@ -1808,8 +1808,8 @@
             "y": 269
           },
           "name": "Activity",
-          "number": 2138,
-          "ref": "e2138",
+          "number": 3020,
+          "ref": "e3020",
           "role": "link"
         },
         {
@@ -1820,8 +1820,8 @@
             "y": 302
           },
           "name": "Look",
-          "number": 2139,
-          "ref": "e2139",
+          "number": 3021,
+          "ref": "e3021",
           "role": "link"
         },
         {
@@ -1832,8 +1832,8 @@
             "y": 335
           },
           "name": "Settings",
-          "number": 2140,
-          "ref": "e2140",
+          "number": 3022,
+          "ref": "e3022",
           "role": "link"
         },
         {
@@ -1844,8 +1844,8 @@
             "y": 413
           },
           "name": "Suggestions",
-          "number": 2141,
-          "ref": "e2141",
+          "number": 3023,
+          "ref": "e3023",
           "role": "link"
         },
         {
@@ -1856,8 +1856,8 @@
             "y": 446
           },
           "name": "Databases",
-          "number": 2142,
-          "ref": "e2142",
+          "number": 3024,
+          "ref": "e3024",
           "role": "link"
         }
       ],
@@ -1871,23 +1871,23 @@
     "cls": {
       "entries": [
         {
-          "startTime": 171.7,
+          "startTime": 155.8,
           "value": 0
         }
       ],
       "score": 0
     },
-    "fcp": 180,
+    "fcp": 160,
     "hydration": null,
     "inp": null,
     "lcp": {
       "element": "h1",
       "size": 4092,
-      "startTime": 180,
+      "startTime": 160,
       "url": null
     },
-    "ttfb": 6.3,
+    "ttfb": 5.1,
     "url": "http://host.docker.internal:5173/commands"
   },
-  "generatedAt": "2026-10-15T17:50:11.067Z"
+  "generatedAt": "2026-10-15T18:02:21.276Z"
 }

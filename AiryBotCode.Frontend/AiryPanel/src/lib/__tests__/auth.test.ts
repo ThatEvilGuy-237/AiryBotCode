@@ -19,3 +19,15 @@ describe('tokens and times', () => {
     expect(ago(null, now)).toBe('')
   })
 })
+
+describe('error messages', async () => {
+  const { readError } = await import('../api')
+  it('reads a sentence out of whatever the API sent', () => {
+    expect(readError('"A valid botId is required."', 400)).toBe('A valid botId is required.')
+    expect(readError('{"error":"Airy already talks in this channel."}', 409)).toBe('Airy already talks in this channel.')
+    expect(readError('{"title":"One or more validation errors occurred.","errors":{"Data":["The Data field is required."]}}', 400)).toBe('The Data field is required.')
+    expect(readError('<html>oops</html>', 502)).toBe('Airy answered 502.')
+    expect(readError('Plain words', 400)).toBe('Plain words')
+    expect(readError('', 500)).toBe('Airy answered 500.')
+  })
+})

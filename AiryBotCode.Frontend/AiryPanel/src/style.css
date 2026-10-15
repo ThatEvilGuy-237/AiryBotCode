@@ -7,3 +7,7 @@ body {
 a {
   color: var(--color-accent);
 }
+.page > *,
+.page form > * {
+  min-width: 0;
+}

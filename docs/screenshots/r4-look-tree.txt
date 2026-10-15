@@ -1,0 +1,9 @@
+- button "Open the menu" [ref=e2981]
+- button "Sign out" [ref=e2982]
+- heading "Look" [level=1, ref=e2988]
+- heading "Now" [level=2, ref=e2983]
+- button "Use as Discord avatar" [ref=e2984]
+- button "Reset the look" [ref=e2985]
+- heading "New picture" [level=2, ref=e2986]
+- LabelText "Drop a picture here, or choose one" [ref=e2987] clickable [cursor:pointer]
+  - button "Drop a picture here, or choose one" [ref=e2989]: No file chosen

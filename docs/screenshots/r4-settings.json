@@ -1,0 +1,2409 @@
+{
+  "ok": false,
+  "url": "http://host.docker.internal:5173/settings",
+  "flutter": false,
+  "project": "AiryBotCode",
+  "round": "r4-settings",
+  "dir": "/workspace/AiryBotCode/docs/screenshots",
+  "images": [
+    {
+      "label": "Image 1: 1440x900 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440.png"
+    },
+    {
+      "label": "Image 2: 1440 viewport, 36 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-findings.png"
+    },
+    {
+      "label": "Image 3: 1440 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-annotated.png"
+    },
+    {
+      "label": "Image 4: 375x812 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-375.png"
+    },
+    {
+      "label": "Image 5: 375 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-375-annotated.png"
+    },
+    {
+      "label": "Image 6: 320x568 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-320.png"
+    },
+    {
+      "label": "Image 7: 320 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-320-annotated.png"
+    }
+  ],
+  "viewports": {
+    "320": {
+      "viewport": [
+        320,
+        568
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-settings-320.png",
+      "screenshotSize": [
+        320,
+        568
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 38,
+          "incomplete": 1,
+          "passes": 22,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-settings-320-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-settings-320-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 3282,
+          "ref": "e3282",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 203,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 3283,
+          "ref": "e3283",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 94,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Settings",
+          "number": 3284,
+          "ref": "e3284",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 129,
+            "x": 16,
+            "y": 144
+          },
+          "name": "Add a bot",
+          "number": 3285,
+          "ref": "e3285",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 32,
+            "x": 33,
+            "y": 238
+          },
+          "name": "Bot",
+          "number": 3286,
+          "ref": "e3286",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 33,
+            "y": 291
+          },
+          "number": 3287,
+          "ref": "e3287",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 43,
+            "width": 254,
+            "x": 33,
+            "y": 315
+          },
+          "name": "Name",
+          "number": 3288,
+          "ref": "e3288",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 33,
+            "y": 374
+          },
+          "name": "On: the bot signs in to Discord",
+          "number": 3289,
+          "ref": "e3289",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 67,
+            "x": 189,
+            "y": 438
+          },
+          "name": "Copy",
+          "number": 3290,
+          "ref": "e3290",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 129,
+            "x": 33,
+            "y": 528
+          },
+          "name": "Discord token",
+          "number": 3291,
+          "ref": "e3291",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 64,
+            "x": 33,
+            "y": 582
+          },
+          "number": 3292,
+          "ref": "e3292",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 43,
+            "width": 254,
+            "x": 33,
+            "y": 606
+          },
+          "name": "New token",
+          "number": 3293,
+          "ref": "e3293",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 155,
+            "x": 33,
+            "y": 778
+          },
+          "name": "Logs and admins",
+          "number": 3294,
+          "ref": "e3294",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 73,
+            "x": 33,
+            "y": 832
+          },
+          "number": 3295,
+          "ref": "e3295",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 113,
+            "x": 33,
+            "y": 941
+          },
+          "number": 3296,
+          "ref": "e3296",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 73,
+            "x": 33,
+            "y": 1051
+          },
+          "number": 3297,
+          "ref": "e3297",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 145,
+            "x": 33,
+            "y": 1213
+          },
+          "number": 3298,
+          "ref": "e3298",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 43,
+            "width": 254,
+            "x": 33,
+            "y": 1237
+          },
+          "name": "Owner's Discord user id",
+          "number": 3299,
+          "ref": "e3299",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 58,
+            "x": 33,
+            "y": 1319
+          },
+          "number": 3300,
+          "ref": "e3300",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 150,
+            "x": 33,
+            "y": 1546
+          },
+          "name": "Remove this bot",
+          "number": 3301,
+          "ref": "e3301",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 212,
+            "x": 33,
+            "y": 1672
+          },
+          "name": "Remove Cookie&Creams",
+          "number": 3302,
+          "ref": "e3302",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 190,
+            "x": 33,
+            "y": 688
+          },
+          "name": "Show the stored token",
+          "number": 3303,
+          "ref": "e3303",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 192,
+            "x": 64,
+            "y": 857
+          },
+          "name": "Log channel",
+          "number": 3304,
+          "ref": "e3304",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 14,
+            "width": 14,
+            "x": 264,
+            "y": 872
+          },
+          "name": "Clear",
+          "number": 3305,
+          "ref": "e3305",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 192,
+            "x": 64,
+            "y": 966
+          },
+          "name": "Owner log channel",
+          "number": 3306,
+          "ref": "e3306",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 14,
+            "width": 14,
+            "x": 264,
+            "y": 981
+          },
+          "name": "Clear",
+          "number": 3307,
+          "ref": "e3307",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 136,
+            "x": 92,
+            "y": 512
+          },
+          "name": "Undo changes",
+          "number": 3308,
+          "ref": "e3308",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 68,
+            "x": 236,
+            "y": 512
+          },
+          "name": "Save",
+          "number": 3309,
+          "ref": "e3309",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 13,
+            "width": 13,
+            "x": 260,
+            "y": 1084
+          },
+          "name": "Remove @Moderator · Cookies&Cream Audios",
+          "number": 3310,
+          "ref": "e3310",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 22,
+            "width": 218,
+            "x": 42,
+            "y": 1106
+          },
+          "name": "Admin roles",
+          "number": 3311,
+          "ref": "e3311",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 254,
+            "x": 33,
+            "y": 1343
+          },
+          "name": "Database",
+          "number": 3312,
+          "ref": "e3312",
+          "role": "combobox"
+        }
+      ],
+      "ok": true
+    },
+    "375": {
+      "viewport": [
+        375,
+        812
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-settings-375.png",
+      "screenshotSize": [
+        375,
+        812
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 38,
+          "incomplete": 1,
+          "passes": 22,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-settings-375-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-settings-375-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 3232,
+          "ref": "e3232",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 258,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 3233,
+          "ref": "e3233",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 94,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Settings",
+          "number": 3234,
+          "ref": "e3234",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 129,
+            "x": 16,
+            "y": 144
+          },
+          "name": "Add a bot",
+          "number": 3235,
+          "ref": "e3235",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 32,
+            "x": 33,
+            "y": 238
+          },
+          "name": "Bot",
+          "number": 3236,
+          "ref": "e3236",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 33,
+            "y": 291
+          },
+          "number": 3237,
+          "ref": "e3237",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 43,
+            "width": 309,
+            "x": 33,
+            "y": 315
+          },
+          "name": "Name",
+          "number": 3238,
+          "ref": "e3238",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 33,
+            "y": 374
+          },
+          "name": "On: the bot signs in to Discord",
+          "number": 3239,
+          "ref": "e3239",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 67,
+            "x": 33,
+            "y": 438
+          },
+          "name": "Copy",
+          "number": 3240,
+          "ref": "e3240",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 129,
+            "x": 33,
+            "y": 528
+          },
+          "name": "Discord token",
+          "number": 3241,
+          "ref": "e3241",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 64,
+            "x": 33,
+            "y": 582
+          },
+          "number": 3242,
+          "ref": "e3242",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 43,
+            "width": 309,
+            "x": 33,
+            "y": 606
+          },
+          "name": "New token",
+          "number": 3243,
+          "ref": "e3243",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 155,
+            "x": 33,
+            "y": 778
+          },
+          "name": "Logs and admins",
+          "number": 3244,
+          "ref": "e3244",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 73,
+            "x": 33,
+            "y": 832
+          },
+          "number": 3245,
+          "ref": "e3245",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 113,
+            "x": 33,
+            "y": 941
+          },
+          "number": 3246,
+          "ref": "e3246",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 73,
+            "x": 33,
+            "y": 1051
+          },
+          "number": 3247,
+          "ref": "e3247",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 145,
+            "x": 33,
+            "y": 1213
+          },
+          "number": 3248,
+          "ref": "e3248",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 43,
+            "width": 309,
+            "x": 33,
+            "y": 1237
+          },
+          "name": "Owner's Discord user id",
+          "number": 3249,
+          "ref": "e3249",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 58,
+            "x": 33,
+            "y": 1319
+          },
+          "number": 3250,
+          "ref": "e3250",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 150,
+            "x": 33,
+            "y": 1546
+          },
+          "name": "Remove this bot",
+          "number": 3251,
+          "ref": "e3251",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 212,
+            "x": 33,
+            "y": 1652
+          },
+          "name": "Remove Cookie&Creams",
+          "number": 3252,
+          "ref": "e3252",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 190,
+            "x": 33,
+            "y": 688
+          },
+          "name": "Show the stored token",
+          "number": 3253,
+          "ref": "e3253",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 247,
+            "x": 64,
+            "y": 857
+          },
+          "name": "Log channel",
+          "number": 3254,
+          "ref": "e3254",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 14,
+            "width": 14,
+            "x": 319,
+            "y": 872
+          },
+          "name": "Clear",
+          "number": 3255,
+          "ref": "e3255",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 247,
+            "x": 64,
+            "y": 966
+          },
+          "name": "Owner log channel",
+          "number": 3256,
+          "ref": "e3256",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 14,
+            "width": 14,
+            "x": 319,
+            "y": 981
+          },
+          "name": "Clear",
+          "number": 3257,
+          "ref": "e3257",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 136,
+            "x": 147,
+            "y": 756
+          },
+          "name": "Undo changes",
+          "number": 3258,
+          "ref": "e3258",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 68,
+            "x": 291,
+            "y": 756
+          },
+          "name": "Save",
+          "number": 3259,
+          "ref": "e3259",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 13,
+            "width": 13,
+            "x": 293,
+            "y": 1084
+          },
+          "name": "Remove @Moderator · Cookies&Cream Audios",
+          "number": 3260,
+          "ref": "e3260",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 22,
+            "width": 273,
+            "x": 42,
+            "y": 1106
+          },
+          "name": "Admin roles",
+          "number": 3261,
+          "ref": "e3261",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 309,
+            "x": 33,
+            "y": 1343
+          },
+          "name": "Database",
+          "number": 3262,
+          "ref": "e3262",
+          "role": "combobox"
+        }
+      ],
+      "ok": true
+    },
+    "1440": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440.png",
+      "screenshotSize": [
+        1440,
+        900
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [
+          {
+            "a": "405431299323461634",
+            "area": 4034,
+            "b": "Undo changes",
+            "kind": "overlap",
+            "rect": [
+              1140,
+              852,
+              136,
+              30
+            ]
+          },
+          {
+            "a": "405431299323461634",
+            "area": 1507,
+            "b": "Save",
+            "kind": "overlap",
+            "rect": [
+              1284,
+              852,
+              51,
+              30
+            ]
+          }
+        ],
+        "targets": [
+          {
+            "h": 36,
+            "hit": [
+              156,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Pick a bot\ndevairybot\nAi",
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "w": 155
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Home",
+            "rect": [
+              9,
+              170,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Channels",
+            "rect": [
+              9,
+              203,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Commands",
+            "rect": [
+              9,
+              236,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Activity",
+            "rect": [
+              9,
+              269,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Look",
+            "rect": [
+              9,
+              302,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Settings",
+            "rect": [
+              9,
+              335,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Suggestions",
+            "rect": [
+              9,
+              413,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Databases",
+            "rect": [
+              9,
+              446,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 28,
+            "hit": [
+              102,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Sign out",
+            "rect": [
+              1315,
+              14,
+              101,
+              28
+            ],
+            "w": 101
+          },
+          {
+            "h": 36,
+            "hit": [
+              130,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Add a bot",
+            "rect": [
+              1223,
+              80,
+              129,
+              36
+            ],
+            "w": 129
+          },
+          {
+            "h": 41,
+            "hit": [
+              1038,
+              42
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              297,
+              267,
+              1038,
+              41
+            ],
+            "w": 1038
+          },
+          {
+            "h": 20,
+            "hit": [
+              44,
+              28
+            ],
+            "kind": "small-target",
+            "name": "button",
+            "rect": [
+              297,
+              324,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 26,
+            "hit": [
+              68,
+              26
+            ],
+            "kind": "small-target",
+            "name": "Copy",
+            "rect": [
+              593,
+              361,
+              67,
+              26
+            ],
+            "w": 67
+          },
+          {
+            "h": 41,
+            "hit": [
+              1038,
+              42
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              297,
+              510,
+              1038,
+              41
+            ],
+            "w": 1038
+          },
+          {
+            "h": 28,
+            "hit": [
+              191,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Show the stored token",
+            "rect": [
+              297,
+              591,
+              190,
+              28
+            ],
+            "w": 190
+          },
+          {
+            "h": 32,
+            "hit": [
+              288,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Find a channel",
+            "rect": [
+              328,
+              744,
+              287,
+              32
+            ],
+            "w": 287
+          },
+          {
+            "h": 14,
+            "hit": [
+              14,
+              14
+            ],
+            "kind": "small-target",
+            "name": "Clear",
+            "rect": [
+              785,
+              753,
+              14,
+              14
+            ],
+            "w": 14
+          },
+          {
+            "h": 32,
+            "hit": [
+              288,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Find a channel",
+            "rect": [
+              855,
+              744,
+              287,
+              32
+            ],
+            "w": 287
+          },
+          {
+            "h": 14,
+            "hit": [
+              14,
+              14
+            ],
+            "kind": "small-target",
+            "name": "Clear",
+            "rect": [
+              1312,
+              753,
+              14,
+              14
+            ],
+            "w": 14
+          },
+          {
+            "coveredBy": "div.bar",
+            "h": 13,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "covered",
+            "name": "Remove @Moderator · Cook",
+            "rect": [
+              557,
+              851,
+              13,
+              13
+            ],
+            "w": 13
+          },
+          {
+            "coveredBy": "div.bar",
+            "h": 22,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "covered",
+            "name": "input",
+            "rect": [
+              579,
+              846,
+              202,
+              22
+            ],
+            "w": 202
+          },
+          {
+            "coveredBy": "div.bar",
+            "h": 14,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "covered",
+            "name": "button",
+            "rect": [
+              785,
+              850,
+              14,
+              14
+            ],
+            "w": 14
+          },
+          {
+            "coveredBy": "div.bar",
+            "h": 41,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "covered",
+            "name": "input",
+            "rect": [
+              824,
+              840,
+              511,
+              41
+            ],
+            "w": 511
+          },
+          {
+            "h": 36,
+            "hit": [
+              137,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Undo changes",
+            "rect": [
+              1140,
+              852,
+              136,
+              36
+            ],
+            "w": 136
+          },
+          {
+            "h": 36,
+            "hit": [
+              68,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Save",
+            "rect": [
+              1284,
+              852,
+              68,
+              36
+            ],
+            "w": 68
+          }
+        ],
+        "smalltext": [
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              297,
+              267,
+              1038,
+              41
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              297,
+              510,
+              1038,
+              41
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              328,
+              744,
+              287,
+              32
+            ],
+            "size": 13,
+            "text": "Find a channel"
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              855,
+              744,
+              287,
+              32
+            ],
+            "size": 13,
+            "text": "Find a channel"
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              579,
+              846,
+              202,
+              22
+            ],
+            "size": 13,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              824,
+              840,
+              511,
+              41
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              297,
+              960,
+              511,
+              36
+            ],
+            "size": 15,
+            "text": ""
+          }
+        ],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 35,
+          "incomplete": 1,
+          "passes": 25,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 2,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            297,
+            267,
+            1038,
+            41
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 3,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            297,
+            510,
+            1038,
+            41
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 4,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "Find a channel",
+          "rect": [
+            328,
+            744,
+            287,
+            32
+          ],
+          "detail": "13px text, under 16px"
+        },
+        {
+          "n": 5,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "Find a channel",
+          "rect": [
+            855,
+            744,
+            287,
+            32
+          ],
+          "detail": "13px text, under 16px"
+        },
+        {
+          "n": 6,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            579,
+            846,
+            202,
+            22
+          ],
+          "detail": "13px text, under 16px"
+        },
+        {
+          "n": 7,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            824,
+            840,
+            511,
+            41
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 8,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            297,
+            960,
+            511,
+            36
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 9,
+          "source": "probe",
+          "kind": "overlap/overlap",
+          "label": "405431299323461634",
+          "rect": [
+            1140,
+            852,
+            136,
+            30
+          ],
+          "detail": ""
+        },
+        {
+          "n": 10,
+          "source": "probe",
+          "kind": "overlap/overlap",
+          "label": "405431299323461634",
+          "rect": [
+            1284,
+            852,
+            51,
+            30
+          ],
+          "detail": ""
+        },
+        {
+          "n": 11,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Pick a bot\ndevairybot\nAi",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "155x36"
+        },
+        {
+          "n": 12,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Home",
+          "rect": [
+            9,
+            170,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 13,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Channels",
+          "rect": [
+            9,
+            203,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 14,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Commands",
+          "rect": [
+            9,
+            236,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 15,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Activity",
+          "rect": [
+            9,
+            269,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 16,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Look",
+          "rect": [
+            9,
+            302,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 17,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Settings",
+          "rect": [
+            9,
+            335,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 18,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Suggestions",
+          "rect": [
+            9,
+            413,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 19,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Databases",
+          "rect": [
+            9,
+            446,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 20,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Sign out",
+          "rect": [
+            1315,
+            14,
+            101,
+            28
+          ],
+          "detail": "101x28"
+        },
+        {
+          "n": 21,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Add a bot",
+          "rect": [
+            1223,
+            80,
+            129,
+            36
+          ],
+          "detail": "129x36"
+        },
+        {
+          "n": 22,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            297,
+            267,
+            1038,
+            41
+          ],
+          "detail": "1038x41"
+        },
+        {
+          "n": 23,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "button",
+          "rect": [
+            297,
+            324,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 24,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Copy",
+          "rect": [
+            593,
+            361,
+            67,
+            26
+          ],
+          "detail": "67x26"
+        },
+        {
+          "n": 25,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            297,
+            510,
+            1038,
+            41
+          ],
+          "detail": "1038x41"
+        },
+        {
+          "n": 26,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Show the stored token",
+          "rect": [
+            297,
+            591,
+            190,
+            28
+          ],
+          "detail": "190x28"
+        },
+        {
+          "n": 27,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Find a channel",
+          "rect": [
+            328,
+            744,
+            287,
+            32
+          ],
+          "detail": "287x32"
+        },
+        {
+          "n": 28,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Clear",
+          "rect": [
+            785,
+            753,
+            14,
+            14
+          ],
+          "detail": "14x14"
+        },
+        {
+          "n": 29,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Find a channel",
+          "rect": [
+            855,
+            744,
+            287,
+            32
+          ],
+          "detail": "287x32"
+        },
+        {
+          "n": 30,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Clear",
+          "rect": [
+            1312,
+            753,
+            14,
+            14
+          ],
+          "detail": "14x14"
+        },
+        {
+          "n": 31,
+          "source": "probe",
+          "kind": "targets/covered",
+          "label": "Remove @Moderator · Cook",
+          "rect": [
+            557,
+            851,
+            13,
+            13
+          ],
+          "detail": "13x13, covered by div.bar"
+        },
+        {
+          "n": 32,
+          "source": "probe",
+          "kind": "targets/covered",
+          "label": "input",
+          "rect": [
+            579,
+            846,
+            202,
+            22
+          ],
+          "detail": "202x22, covered by div.bar"
+        },
+        {
+          "n": 33,
+          "source": "probe",
+          "kind": "targets/covered",
+          "label": "button",
+          "rect": [
+            785,
+            850,
+            14,
+            14
+          ],
+          "detail": "14x14, covered by div.bar"
+        },
+        {
+          "n": 34,
+          "source": "probe",
+          "kind": "targets/covered",
+          "label": "input",
+          "rect": [
+            824,
+            840,
+            511,
+            41
+          ],
+          "detail": "511x41, covered by div.bar"
+        },
+        {
+          "n": 35,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Undo changes",
+          "rect": [
+            1140,
+            852,
+            136,
+            36
+          ],
+          "detail": "136x36"
+        },
+        {
+          "n": 36,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Save",
+          "rect": [
+            1284,
+            852,
+            68,
+            36
+          ],
+          "detail": "68x36"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-findings.png",
+        "boxes": 36
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 28,
+            "width": 101,
+            "x": 1315,
+            "y": 14
+          },
+          "name": "Sign out",
+          "number": 3168,
+          "ref": "e3168",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 771,
+            "width": 254,
+            "x": 1,
+            "y": 128
+          },
+          "name": "Airy",
+          "number": 3169,
+          "ref": "e3169",
+          "role": "navigation"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 94,
+            "x": 280,
+            "y": 80
+          },
+          "name": "Settings",
+          "number": 3170,
+          "ref": "e3170",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 129,
+            "x": 1223,
+            "y": 80
+          },
+          "name": "Add a bot",
+          "number": 3171,
+          "ref": "e3171",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 32,
+            "x": 297,
+            "y": 190
+          },
+          "name": "Bot",
+          "number": 3172,
+          "ref": "e3172",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 297,
+            "y": 243
+          },
+          "number": 3173,
+          "ref": "e3173",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 41,
+            "width": 1038,
+            "x": 297,
+            "y": 267
+          },
+          "name": "Name",
+          "number": 3174,
+          "ref": "e3174",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 297,
+            "y": 324
+          },
+          "name": "On: the bot signs in to Discord",
+          "number": 3175,
+          "ref": "e3175",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 26,
+            "width": 67,
+            "x": 593,
+            "y": 361
+          },
+          "name": "Copy",
+          "number": 3176,
+          "ref": "e3176",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 129,
+            "x": 297,
+            "y": 433
+          },
+          "name": "Discord token",
+          "number": 3177,
+          "ref": "e3177",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 64,
+            "x": 297,
+            "y": 486
+          },
+          "number": 3178,
+          "ref": "e3178",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 41,
+            "width": 1038,
+            "x": 297,
+            "y": 510
+          },
+          "name": "New token",
+          "number": 3179,
+          "ref": "e3179",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 155,
+            "x": 297,
+            "y": 665
+          },
+          "name": "Logs and admins",
+          "number": 3180,
+          "ref": "e3180",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 73,
+            "x": 297,
+            "y": 719
+          },
+          "number": 3181,
+          "ref": "e3181",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 113,
+            "x": 824,
+            "y": 719
+          },
+          "number": 3182,
+          "ref": "e3182",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 73,
+            "x": 297,
+            "y": 816
+          },
+          "number": 3183,
+          "ref": "e3183",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 145,
+            "x": 824,
+            "y": 816
+          },
+          "number": 3184,
+          "ref": "e3184",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 41,
+            "width": 511,
+            "x": 824,
+            "y": 840
+          },
+          "name": "Owner's Discord user id",
+          "number": 3185,
+          "ref": "e3185",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 58,
+            "x": 297,
+            "y": 936
+          },
+          "number": 3186,
+          "ref": "e3186",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 150,
+            "x": 297,
+            "y": 1146
+          },
+          "name": "Remove this bot",
+          "number": 3187,
+          "ref": "e3187",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 212,
+            "x": 1123,
+            "y": 1200
+          },
+          "name": "Remove Cookie&Creams",
+          "number": 3188,
+          "ref": "e3188",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 190,
+            "x": 297,
+            "y": 591
+          },
+          "name": "Show the stored token",
+          "number": 3189,
+          "ref": "e3189",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 287,
+            "x": 328,
+            "y": 744
+          },
+          "name": "Log channel",
+          "number": 3190,
+          "ref": "e3190",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 14,
+            "width": 14,
+            "x": 785,
+            "y": 753
+          },
+          "name": "Clear",
+          "number": 3191,
+          "ref": "e3191",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 287,
+            "x": 855,
+            "y": 744
+          },
+          "name": "Owner log channel",
+          "number": 3192,
+          "ref": "e3192",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 14,
+            "width": 14,
+            "x": 1312,
+            "y": 753
+          },
+          "name": "Clear",
+          "number": 3193,
+          "ref": "e3193",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 136,
+            "x": 1140,
+            "y": 852
+          },
+          "name": "Undo changes",
+          "number": 3194,
+          "ref": "e3194",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 68,
+            "x": 1284,
+            "y": 852
+          },
+          "name": "Save",
+          "number": 3195,
+          "ref": "e3195",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 21,
+            "x": 69,
+            "y": 67
+          },
+          "number": 3196,
+          "ref": "e3196",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 13,
+            "width": 13,
+            "x": 557,
+            "y": 851
+          },
+          "name": "Remove @Moderator · Cookies&Cream Audios",
+          "number": 3197,
+          "ref": "e3197",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 22,
+            "width": 202,
+            "x": 579,
+            "y": 846
+          },
+          "name": "Admin roles",
+          "number": 3198,
+          "ref": "e3198",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 511,
+            "x": 297,
+            "y": 960
+          },
+          "name": "Database",
+          "number": 3199,
+          "ref": "e3199",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 155,
+            "x": 69,
+            "y": 67
+          },
+          "name": "Bot",
+          "number": 3200,
+          "ref": "e3200",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 170
+          },
+          "name": "Home",
+          "number": 3201,
+          "ref": "e3201",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 203
+          },
+          "name": "Channels",
+          "number": 3202,
+          "ref": "e3202",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 236
+          },
+          "name": "Commands",
+          "number": 3203,
+          "ref": "e3203",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 269
+          },
+          "name": "Activity",
+          "number": 3204,
+          "ref": "e3204",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 302
+          },
+          "name": "Look",
+          "number": 3205,
+          "ref": "e3205",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 335
+          },
+          "name": "Settings",
+          "number": 3206,
+          "ref": "e3206",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 413
+          },
+          "name": "Suggestions",
+          "number": 3207,
+          "ref": "e3207",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 446
+          },
+          "name": "Databases",
+          "number": 3208,
+          "ref": "e3208",
+          "role": "link"
+        }
+      ],
+      "ok": false
+    }
+  },
+  "crops": {},
+  "dark": null,
+  "tree": "/workspace/AiryBotCode/docs/screenshots/r4-settings-tree.txt",
+  "vitals": {
+    "cls": {
+      "entries": [
+        {
+          "startTime": 174.7,
+          "value": 0
+        }
+      ],
+      "score": 0
+    },
+    "fcp": 144,
+    "hydration": null,
+    "inp": null,
+    "lcp": {
+      "element": "span",
+      "size": 4233,
+      "startTime": 196,
+      "url": null
+    },
+    "ttfb": 3.9,
+    "url": "http://host.docker.internal:5173/settings"
+  },
+  "generatedAt": "2026-10-15T18:03:53.940Z"
+}

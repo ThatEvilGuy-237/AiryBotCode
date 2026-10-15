@@ -1,0 +1,1092 @@
+{
+  "ok": false,
+  "url": "http://host.docker.internal:5173/look",
+  "flutter": false,
+  "project": "AiryBotCode",
+  "round": "r4-look",
+  "dir": "/workspace/AiryBotCode/docs/screenshots",
+  "images": [
+    {
+      "label": "Image 1: 1440x900 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440.png"
+    },
+    {
+      "label": "Image 2: 1440 viewport, 15 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440-findings.png"
+    },
+    {
+      "label": "Image 3: 1440 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440-annotated.png"
+    },
+    {
+      "label": "Image 4: 375x812 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-375.png"
+    },
+    {
+      "label": "Image 5: 375 viewport, 1 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-375-findings.png"
+    },
+    {
+      "label": "Image 6: 375 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-375-annotated.png"
+    },
+    {
+      "label": "Image 7: 320x568 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-320.png"
+    },
+    {
+      "label": "Image 8: 320 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-320-annotated.png"
+    }
+  ],
+  "viewports": {
+    "320": {
+      "viewport": [
+        320,
+        568
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-look-320.png",
+      "screenshotSize": [
+        320,
+        568
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 40,
+          "incomplete": 0,
+          "passes": 20,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-look-320-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-look-320-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 2981,
+          "ref": "e2981",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 203,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 2982,
+          "ref": "e2982",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 41,
+            "x": 33,
+            "y": 201
+          },
+          "name": "Now",
+          "number": 2983,
+          "ref": "e2983",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 214,
+            "x": 33,
+            "y": 439
+          },
+          "name": "Use as Discord avatar",
+          "number": 2984,
+          "ref": "e2984",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 136,
+            "x": 33,
+            "y": 491
+          },
+          "name": "Reset the look",
+          "number": 2985,
+          "ref": "e2985",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 113,
+            "x": 33,
+            "y": 581
+          },
+          "name": "New picture",
+          "number": 2986,
+          "ref": "e2986",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 120,
+            "width": 254,
+            "x": 33,
+            "y": 635
+          },
+          "number": 2987,
+          "ref": "e2987",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 54,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Look",
+          "number": 2988,
+          "ref": "e2988",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 160,
+            "y": 660
+          },
+          "name": "Drop a picture here, or choose one",
+          "number": 2989,
+          "ref": "e2989",
+          "role": "button"
+        }
+      ],
+      "ok": true
+    },
+    "375": {
+      "viewport": [
+        375,
+        812
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-look-375.png",
+      "screenshotSize": [
+        375,
+        812
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [
+          {
+            "h": 1,
+            "hit": [
+              2,
+              2
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              187,
+              620,
+              1,
+              1
+            ],
+            "w": 1
+          }
+        ],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 40,
+          "incomplete": 0,
+          "passes": 20,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            187,
+            620,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-375-findings.png",
+        "boxes": 1
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-look-375-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-look-375-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 2972,
+          "ref": "e2972",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 258,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 2973,
+          "ref": "e2973",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 41,
+            "x": 33,
+            "y": 182
+          },
+          "name": "Now",
+          "number": 2974,
+          "ref": "e2974",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 214,
+            "x": 33,
+            "y": 400
+          },
+          "name": "Use as Discord avatar",
+          "number": 2975,
+          "ref": "e2975",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 136,
+            "x": 33,
+            "y": 452
+          },
+          "name": "Reset the look",
+          "number": 2976,
+          "ref": "e2976",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 113,
+            "x": 33,
+            "y": 542
+          },
+          "name": "New picture",
+          "number": 2977,
+          "ref": "e2977",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 100,
+            "width": 309,
+            "x": 33,
+            "y": 595
+          },
+          "number": 2978,
+          "ref": "e2978",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 54,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Look",
+          "number": 2979,
+          "ref": "e2979",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 187,
+            "y": 620
+          },
+          "name": "Drop a picture here, or choose one",
+          "number": 2980,
+          "ref": "e2980",
+          "role": "button"
+        }
+      ],
+      "ok": false
+    },
+    "1440": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440.png",
+      "screenshotSize": [
+        1440,
+        900
+      ],
+      "probe": {
+        "overflow": [
+          {
+            "by": 2,
+            "kind": "clipped-y",
+            "rect": [
+              297,
+              243,
+              96,
+              96
+            ],
+            "sel": "span.avatar",
+            "text": ""
+          }
+        ],
+        "overlap": [],
+        "targets": [
+          {
+            "h": 36,
+            "hit": [
+              156,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Pick a bot\ndevairybot\nAi",
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "w": 155
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Home",
+            "rect": [
+              9,
+              170,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Channels",
+            "rect": [
+              9,
+              203,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Commands",
+            "rect": [
+              9,
+              236,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Activity",
+            "rect": [
+              9,
+              269,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Look",
+            "rect": [
+              9,
+              302,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Settings",
+            "rect": [
+              9,
+              335,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Suggestions",
+            "rect": [
+              9,
+              413,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Databases",
+            "rect": [
+              9,
+              446,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 28,
+            "hit": [
+              102,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Sign out",
+            "rect": [
+              1315,
+              14,
+              101,
+              28
+            ],
+            "w": 101
+          },
+          {
+            "h": 36,
+            "hit": [
+              214,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Use as Discord avatar",
+            "rect": [
+              297,
+              415,
+              214,
+              36
+            ],
+            "w": 214
+          },
+          {
+            "h": 36,
+            "hit": [
+              137,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Reset the look",
+            "rect": [
+              519,
+              415,
+              136,
+              36
+            ],
+            "w": 136
+          },
+          {
+            "h": 1,
+            "hit": [
+              2,
+              2
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              816,
+              576,
+              1,
+              1
+            ],
+            "w": 1
+          }
+        ],
+        "smalltext": [
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "size": 15,
+            "text": ""
+          }
+        ],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 36,
+          "incomplete": 0,
+          "passes": 24,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "overflow/clipped-y",
+          "label": "",
+          "rect": [
+            297,
+            243,
+            96,
+            96
+          ],
+          "detail": "by 2px"
+        },
+        {
+          "n": 2,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 3,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Pick a bot\ndevairybot\nAi",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "155x36"
+        },
+        {
+          "n": 4,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Home",
+          "rect": [
+            9,
+            170,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 5,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Channels",
+          "rect": [
+            9,
+            203,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 6,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Commands",
+          "rect": [
+            9,
+            236,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 7,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Activity",
+          "rect": [
+            9,
+            269,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 8,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Look",
+          "rect": [
+            9,
+            302,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 9,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Settings",
+          "rect": [
+            9,
+            335,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 10,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Suggestions",
+          "rect": [
+            9,
+            413,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 11,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Databases",
+          "rect": [
+            9,
+            446,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 12,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Sign out",
+          "rect": [
+            1315,
+            14,
+            101,
+            28
+          ],
+          "detail": "101x28"
+        },
+        {
+          "n": 13,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Use as Discord avatar",
+          "rect": [
+            297,
+            415,
+            214,
+            36
+          ],
+          "detail": "214x36"
+        },
+        {
+          "n": 14,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Reset the look",
+          "rect": [
+            519,
+            415,
+            136,
+            36
+          ],
+          "detail": "136x36"
+        },
+        {
+          "n": 15,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            816,
+            576,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440-findings.png",
+        "boxes": 15
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r4-look-1440-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 28,
+            "width": 101,
+            "x": 1315,
+            "y": 14
+          },
+          "name": "Sign out",
+          "number": 2949,
+          "ref": "e2949",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 41,
+            "x": 297,
+            "y": 190
+          },
+          "name": "Now",
+          "number": 2950,
+          "ref": "e2950",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 214,
+            "x": 297,
+            "y": 415
+          },
+          "name": "Use as Discord avatar",
+          "number": 2951,
+          "ref": "e2951",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 136,
+            "x": 519,
+            "y": 415
+          },
+          "name": "Reset the look",
+          "number": 2952,
+          "ref": "e2952",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 113,
+            "x": 297,
+            "y": 497
+          },
+          "name": "New picture",
+          "number": 2953,
+          "ref": "e2953",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 100,
+            "width": 1038,
+            "x": 297,
+            "y": 551
+          },
+          "number": 2954,
+          "ref": "e2954",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 771,
+            "width": 254,
+            "x": 1,
+            "y": 128
+          },
+          "name": "Airy",
+          "number": 2955,
+          "ref": "e2955",
+          "role": "navigation"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 54,
+            "x": 280,
+            "y": 80
+          },
+          "name": "Look",
+          "number": 2956,
+          "ref": "e2956",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 816,
+            "y": 576
+          },
+          "name": "Drop a picture here, or choose one",
+          "number": 2957,
+          "ref": "e2957",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 21,
+            "x": 69,
+            "y": 67
+          },
+          "number": 2958,
+          "ref": "e2958",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 155,
+            "x": 69,
+            "y": 67
+          },
+          "name": "Bot",
+          "number": 2959,
+          "ref": "e2959",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 170
+          },
+          "name": "Home",
+          "number": 2960,
+          "ref": "e2960",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 203
+          },
+          "name": "Channels",
+          "number": 2961,
+          "ref": "e2961",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 236
+          },
+          "name": "Commands",
+          "number": 2962,
+          "ref": "e2962",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 269
+          },
+          "name": "Activity",
+          "number": 2963,
+          "ref": "e2963",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 302
+          },
+          "name": "Look",
+          "number": 2964,
+          "ref": "e2964",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 335
+          },
+          "name": "Settings",
+          "number": 2965,
+          "ref": "e2965",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 413
+          },
+          "name": "Suggestions",
+          "number": 2966,
+          "ref": "e2966",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 446
+          },
+          "name": "Databases",
+          "number": 2967,
+          "ref": "e2967",
+          "role": "link"
+        }
+      ],
+      "ok": false
+    }
+  },
+  "crops": {},
+  "dark": null,
+  "tree": "/workspace/AiryBotCode/docs/screenshots/r4-look-tree.txt",
+  "vitals": {
+    "cls": {
+      "entries": [
+        {
+          "startTime": 135.2,
+          "value": 0
+        }
+      ],
+      "score": 0
+    },
+    "fcp": 136,
+    "hydration": null,
+    "inp": null,
+    "lcp": {
+      "element": "img",
+      "size": 9216,
+      "startTime": 240,
+      "url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCI"
+    },
+    "ttfb": 5.7,
+    "url": "http://host.docker.internal:5173/look"
+  },
+  "generatedAt": "2026-10-15T18:02:11.621Z"
+}

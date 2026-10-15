@@ -5,6 +5,8 @@ import HomePage from './pages/HomePage.vue'
 import SignInPage from './pages/SignInPage.vue'
 import ChannelsPage from './pages/ChannelsPage.vue'
 import CommandsPage from './pages/CommandsPage.vue'
+import SettingsPage from './pages/SettingsPage.vue'
+import LookPage from './pages/LookPage.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +19,8 @@ export const router = createRouter({
         { path: '', name: 'home', component: HomePage, meta: { title: 'Home' } },
         { path: 'channels', name: 'channels', component: ChannelsPage, meta: { title: 'Channels' } },
         { path: 'commands', name: 'commands', component: CommandsPage, meta: { title: 'Commands' } },
+        { path: 'settings', name: 'settings', component: SettingsPage, meta: { title: 'Settings' } },
+        { path: 'look', name: 'look', component: LookPage, meta: { title: 'Look' } },
       ],
     },
     { path: '/:rest(.*)*', redirect: '/' },

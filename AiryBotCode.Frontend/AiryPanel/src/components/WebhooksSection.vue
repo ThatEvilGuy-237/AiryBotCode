@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Alert, Badge, Button, Collapsible, ConfirmDialog, EmptyState, Field, Icon, Modal, RadioGroup, Select, StatusDot, TextField, Toggle, useToast } from '@airy/ui'
+import { Alert, Badge, Button, Collapsible, ConfirmDialog, EmptyState, Field, Icon, Modal, RadioGroup, StatusDot, TextField, Toggle, useToast } from '@airy/ui'
+import ChannelPicker from '@/components/ChannelPicker.vue'
 import { api, type ChannelWebhook, type DiscordEntity } from '@/lib/api'
 
 const props = defineProps<{ botId: string; servers: DiscordEntity[] | null }>()
@@ -17,11 +18,6 @@ const draft = ref({ channelId: '', name: '', webhookUrl: '', secret: '', mode: '
 
 const names = computed(() => new Map((props.servers ?? []).map(s => [s.id, s.name])))
 const nameOf = (id: string) => names.value.get(id) ?? `channel ${id}`
-const channelOptions = computed(() => {
-  const list = (props.servers ?? []).map(s => ({ label: s.name, value: s.id }))
-  if (draft.value.channelId && !list.some(o => o.value === draft.value.channelId)) list.unshift({ label: nameOf(draft.value.channelId), value: draft.value.channelId })
-  return list
-})
 const modes = [
   { label: 'Wait for the answer', value: 'sync', description: 'The webhook answers and Airy posts the answer.' },
   { label: 'Send and forget', value: 'async', description: 'Airy hands the message over and moves on.' },
@@ -109,7 +105,7 @@ async function remove() {
     <Modal :open="open" :title="editing ? 'Change webhook' : 'Add a webhook'" size="md" @close="open = false">
       <form class="form" @submit.prevent="save">
         <Field label="Channel">
-          <Select v-model="draft.channelId" :options="channelOptions" placeholder="Pick a channel" />
+          <ChannelPicker :model-value="draft.channelId || null" :channels="servers ?? []" @update:model-value="v => (draft.channelId = v ?? '')" />
         </Field>
         <Field label="Name">
           <TextField v-model="draft.name" autocomplete="off" />

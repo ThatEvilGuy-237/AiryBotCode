@@ -60,7 +60,7 @@ const tone = (c: AiryChannel) => (!c.enabled ? 'off' : (c.channelName === null &
       <template #actions><Button size="sm" variant="outline" @click="loadBots(true)">Try again</Button></template>
     </Alert>
     <EmptyState v-else-if="botsLoaded && !bots.length" title="No bots yet" sub="Add the first bot with its Discord token in Settings.">
-      <Button @click="$router.push('/settings')">Add a bot</Button>
+      <Button @click="$router.push('/settings?new=1')">Add a bot</Button>
     </EmptyState>
     <template v-else-if="bot">
       <header class="bot">
