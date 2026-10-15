@@ -15,7 +15,7 @@ const KINDS = [
   { label: 'Alert the mods', value: 'alert' },
   { label: 'React with an emoji', value: 'react' },
 ]
-const KIND_WORD: Record<string, string> = { ignore: 'nothing', answer: 'answers', alert: 'alerts the mods', react: 'reacts' }
+const KIND_WORD: Record<string, string> = { ignore: 'does nothing', answer: 'answers', alert: 'alerts the mods', react: 'reacts' }
 
 const watches = ref<DecisionWatch[]>([])
 const loading = ref(true)
@@ -214,7 +214,7 @@ onMounted(async () => { await loadBots(); await load() })
             </div>
             <p class="line"><span class="mono">#{{ w.channelId }}</span> · acts on <span class="mono">{{ w.questionKey || 'the first question' }}</span></p>
             <p class="line">
-              <template v-for="(action, answer, i) in w.actions" :key="answer"><template v-if="i">, </template><span class="mono">{{ answer }}</span> {{ describe(action) }}</template><template v-if="Object.keys(w.actions).length">; </template>unsure: {{ describe(w.unsureAction) }}
+              <template v-for="(action, answer, i) in w.actions" :key="answer"><template v-if="i"> · </template><span class="mono">{{ answer }}</span>: {{ describe(action) }}</template><template v-if="Object.keys(w.actions).length"> · </template>unsure: {{ describe(w.unsureAction) }}
             </p>
             <code class="url">{{ w.listenerUrl }}</code>
           </div>
