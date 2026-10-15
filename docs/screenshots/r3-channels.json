@@ -1,0 +1,1936 @@
+{
+  "ok": false,
+  "url": "http://host.docker.internal:5173/channels",
+  "flutter": false,
+  "project": "AiryBotCode",
+  "round": "r3-channels",
+  "dir": "/workspace/AiryBotCode/docs/screenshots",
+  "images": [
+    {
+      "label": "Image 1: 1440x900 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440.png"
+    },
+    {
+      "label": "Image 2: 1440 viewport, 24 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440-findings.png"
+    },
+    {
+      "label": "Image 3: 1440 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440-annotated.png"
+    },
+    {
+      "label": "Image 4: 375x812 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375.png"
+    },
+    {
+      "label": "Image 5: 375 viewport, 3 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375-findings.png"
+    },
+    {
+      "label": "Image 6: 375 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375-annotated.png"
+    },
+    {
+      "label": "Image 7: 320x568 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-320.png"
+    },
+    {
+      "label": "Image 8: 320 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-320-annotated.png"
+    }
+  ],
+  "viewports": {
+    "320": {
+      "viewport": [
+        320,
+        568
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r3-channels-320.png",
+      "screenshotSize": [
+        320,
+        568
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 36,
+          "incomplete": 0,
+          "passes": 24,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r3-channels-320-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r3-channels-320-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 1706,
+          "ref": "e1706",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 203,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 1707,
+          "ref": "e1707",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 57,
+            "width": 149,
+            "x": 49,
+            "y": 182
+          },
+          "name": "Hive connection",
+          "number": 1708,
+          "ref": "e1708",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 73,
+            "x": 214,
+            "y": 188
+          },
+          "name": "Change",
+          "number": 1709,
+          "ref": "e1709",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 154,
+            "x": 33,
+            "y": 473
+          },
+          "name": "Where Airy talks",
+          "number": 1710,
+          "ref": "e1710",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 39,
+            "width": 286,
+            "x": 17,
+            "y": 1158
+          },
+          "name": "Webhooks (0)",
+          "number": 1711,
+          "ref": "e1711",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 106,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Channels",
+          "number": 1712,
+          "ref": "e1712",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 50,
+            "x": 33,
+            "y": 526
+          },
+          "number": 1713,
+          "ref": "e1713",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 254,
+            "x": 33,
+            "y": 607
+          },
+          "name": "Add channel",
+          "number": 1714,
+          "ref": "e1714",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 68,
+            "width": 254,
+            "x": 33,
+            "y": 691
+          },
+          "number": 1715,
+          "ref": "e1715",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 86,
+            "width": 254,
+            "x": 33,
+            "y": 767
+          },
+          "number": 1716,
+          "ref": "e1716",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 86,
+            "width": 254,
+            "x": 33,
+            "y": 861
+          },
+          "number": 1717,
+          "ref": "e1717",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 201,
+            "y": 1000
+          },
+          "name": "Airy talks in #airy-talk-🚧",
+          "number": 1718,
+          "ref": "e1718",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 42,
+            "x": 245,
+            "y": 988
+          },
+          "name": "Remove #airy-talk-🚧",
+          "number": 1719,
+          "ref": "e1719",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 254,
+            "x": 33,
+            "y": 551
+          },
+          "name": "Channel",
+          "number": 1720,
+          "ref": "e1720",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 34,
+            "y": 692
+          },
+          "name": "Always",
+          "number": 1721,
+          "ref": "e1721",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 34,
+            "y": 768
+          },
+          "name": "When mentioned",
+          "number": 1722,
+          "ref": "e1722",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 34,
+            "y": 862
+          },
+          "name": "When it's worth it",
+          "number": 1723,
+          "ref": "e1723",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 73,
+            "x": 53,
+            "y": 1040
+          },
+          "number": 1724,
+          "ref": "e1724",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 136,
+            "x": 142,
+            "y": 1040
+          },
+          "number": 1725,
+          "ref": "e1725",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 137,
+            "x": 53,
+            "y": 1084
+          },
+          "number": 1726,
+          "ref": "e1726",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 53,
+            "y": 1040
+          },
+          "name": "Always",
+          "number": 1727,
+          "ref": "e1727",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 142,
+            "y": 1040
+          },
+          "name": "When mentioned",
+          "number": 1728,
+          "ref": "e1728",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 53,
+            "y": 1084
+          },
+          "name": "When it's worth it",
+          "number": 1729,
+          "ref": "e1729",
+          "role": "radio"
+        }
+      ],
+      "ok": true
+    },
+    "375": {
+      "viewport": [
+        375,
+        812
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375.png",
+      "screenshotSize": [
+        375,
+        812
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              34,
+              659,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              34,
+              735,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              34,
+              811,
+              1,
+              1
+            ],
+            "w": 1
+          }
+        ],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 36,
+          "incomplete": 0,
+          "passes": 24,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            34,
+            659,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 2,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            34,
+            735,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 3,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            34,
+            811,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375-findings.png",
+        "boxes": 3
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r3-channels-375-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 44,
+            "width": 44,
+            "x": 8,
+            "y": 6
+          },
+          "name": "Open the menu",
+          "number": 1489,
+          "ref": "e1489",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 101,
+            "x": 258,
+            "y": 6
+          },
+          "name": "Sign out",
+          "number": 1490,
+          "ref": "e1490",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 151,
+            "x": 49,
+            "y": 189
+          },
+          "name": "Hive connection",
+          "number": 1491,
+          "ref": "e1491",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 73,
+            "x": 269,
+            "y": 182
+          },
+          "name": "Change",
+          "number": 1492,
+          "ref": "e1492",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 154,
+            "x": 33,
+            "y": 440
+          },
+          "name": "Where Airy talks",
+          "number": 1493,
+          "ref": "e1493",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 39,
+            "width": 341,
+            "x": 17,
+            "y": 1107
+          },
+          "name": "Webhooks (0)",
+          "number": 1494,
+          "ref": "e1494",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 106,
+            "x": 16,
+            "y": 72
+          },
+          "name": "Channels",
+          "number": 1495,
+          "ref": "e1495",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 50,
+            "x": 33,
+            "y": 493
+          },
+          "number": 1496,
+          "ref": "e1496",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 309,
+            "x": 33,
+            "y": 573
+          },
+          "name": "Add channel",
+          "number": 1497,
+          "ref": "e1497",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 68,
+            "width": 309,
+            "x": 33,
+            "y": 658
+          },
+          "number": 1498,
+          "ref": "e1498",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 68,
+            "width": 309,
+            "x": 33,
+            "y": 734
+          },
+          "number": 1499,
+          "ref": "e1499",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 86,
+            "width": 309,
+            "x": 33,
+            "y": 810
+          },
+          "number": 1500,
+          "ref": "e1500",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 256,
+            "y": 949
+          },
+          "name": "Airy talks in #airy-talk-🚧",
+          "number": 1501,
+          "ref": "e1501",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 42,
+            "x": 300,
+            "y": 937
+          },
+          "name": "Remove #airy-talk-🚧",
+          "number": 1502,
+          "ref": "e1502",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 309,
+            "x": 33,
+            "y": 517
+          },
+          "name": "Channel",
+          "number": 1503,
+          "ref": "e1503",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 34,
+            "y": 659
+          },
+          "name": "Always",
+          "number": 1504,
+          "ref": "e1504",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 34,
+            "y": 735
+          },
+          "name": "When mentioned",
+          "number": 1505,
+          "ref": "e1505",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 34,
+            "y": 811
+          },
+          "name": "When it's worth it",
+          "number": 1506,
+          "ref": "e1506",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 73,
+            "x": 53,
+            "y": 989
+          },
+          "number": 1507,
+          "ref": "e1507",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 136,
+            "x": 142,
+            "y": 989
+          },
+          "number": 1508,
+          "ref": "e1508",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 137,
+            "x": 53,
+            "y": 1033
+          },
+          "number": 1509,
+          "ref": "e1509",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 53,
+            "y": 989
+          },
+          "name": "Always",
+          "number": 1510,
+          "ref": "e1510",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 142,
+            "y": 989
+          },
+          "name": "When mentioned",
+          "number": 1511,
+          "ref": "e1511",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 53,
+            "y": 1033
+          },
+          "name": "When it's worth it",
+          "number": 1512,
+          "ref": "e1512",
+          "role": "radio"
+        }
+      ],
+      "ok": false
+    },
+    "1440": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440.png",
+      "screenshotSize": [
+        1440,
+        900
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [
+          {
+            "h": 36,
+            "hit": [
+              156,
+              36
+            ],
+            "kind": "small-target",
+            "name": "No bots yet\ndevairybot\nA",
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "w": 155
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Home",
+            "rect": [
+              9,
+              170,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Channels",
+            "rect": [
+              9,
+              203,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Commands",
+            "rect": [
+              9,
+              236,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Activity",
+            "rect": [
+              9,
+              269,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Look",
+            "rect": [
+              9,
+              302,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Settings",
+            "rect": [
+              9,
+              335,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Suggestions",
+            "rect": [
+              9,
+              413,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 32,
+            "hit": [
+              238,
+              32
+            ],
+            "kind": "small-target",
+            "name": "Databases",
+            "rect": [
+              9,
+              446,
+              238,
+              32
+            ],
+            "w": 238
+          },
+          {
+            "h": 28,
+            "hit": [
+              102,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Sign out",
+            "rect": [
+              1315,
+              14,
+              101,
+              28
+            ],
+            "w": 101
+          },
+          {
+            "h": 28,
+            "hit": [
+              74,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Change",
+            "rect": [
+              1262,
+              190,
+              73,
+              28
+            ],
+            "w": 73
+          },
+          {
+            "h": 36,
+            "hit": [
+              420,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Pick a channel\n#welcome ",
+            "rect": [
+              297,
+              443,
+              420,
+              36
+            ],
+            "w": 420
+          },
+          {
+            "h": 36,
+            "hit": [
+              606,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Add channel",
+            "rect": [
+              729,
+              443,
+              606,
+              36
+            ],
+            "w": 606
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              298,
+              520,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              647,
+              520,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              995,
+              520,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              856,
+              652,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              944,
+              652,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 1,
+            "hit": [
+              1,
+              1
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              1096,
+              652,
+              1,
+              1
+            ],
+            "w": 1
+          },
+          {
+            "h": 20,
+            "hit": [
+              36,
+              20
+            ],
+            "kind": "small-target",
+            "name": "Airy talks in #airy-talk",
+            "rect": [
+              1249,
+              656,
+              36,
+              20
+            ],
+            "w": 36
+          },
+          {
+            "h": 28,
+            "hit": [
+              42,
+              28
+            ],
+            "kind": "small-target",
+            "name": "Remove #airy-talk-🚧",
+            "rect": [
+              1293,
+              652,
+              42,
+              28
+            ],
+            "w": 42
+          },
+          {
+            "h": 39,
+            "hit": [
+              1070,
+              39
+            ],
+            "kind": "small-target",
+            "name": "Webhooks (0)",
+            "rect": [
+              281,
+              733,
+              1070,
+              39
+            ],
+            "w": 1070
+          }
+        ],
+        "smalltext": [
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              69,
+              67,
+              155,
+              36
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              297,
+              443,
+              420,
+              36
+            ],
+            "size": 15,
+            "text": ""
+          }
+        ],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 35,
+          "incomplete": 0,
+          "passes": 25,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 2,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            297,
+            443,
+            420,
+            36
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 3,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "No bots yet\ndevairybot\nA",
+          "rect": [
+            69,
+            67,
+            155,
+            36
+          ],
+          "detail": "155x36"
+        },
+        {
+          "n": 4,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Home",
+          "rect": [
+            9,
+            170,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 5,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Channels",
+          "rect": [
+            9,
+            203,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 6,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Commands",
+          "rect": [
+            9,
+            236,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 7,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Activity",
+          "rect": [
+            9,
+            269,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 8,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Look",
+          "rect": [
+            9,
+            302,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 9,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Settings",
+          "rect": [
+            9,
+            335,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 10,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Suggestions",
+          "rect": [
+            9,
+            413,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 11,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Databases",
+          "rect": [
+            9,
+            446,
+            238,
+            32
+          ],
+          "detail": "238x32"
+        },
+        {
+          "n": 12,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Sign out",
+          "rect": [
+            1315,
+            14,
+            101,
+            28
+          ],
+          "detail": "101x28"
+        },
+        {
+          "n": 13,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Change",
+          "rect": [
+            1262,
+            190,
+            73,
+            28
+          ],
+          "detail": "73x28"
+        },
+        {
+          "n": 14,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Pick a channel\n#welcome ",
+          "rect": [
+            297,
+            443,
+            420,
+            36
+          ],
+          "detail": "420x36"
+        },
+        {
+          "n": 15,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Add channel",
+          "rect": [
+            729,
+            443,
+            606,
+            36
+          ],
+          "detail": "606x36"
+        },
+        {
+          "n": 16,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            298,
+            520,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 17,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            647,
+            520,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 18,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            995,
+            520,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 19,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            856,
+            652,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 20,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            944,
+            652,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 21,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            1096,
+            652,
+            1,
+            1
+          ],
+          "detail": "1x1"
+        },
+        {
+          "n": 22,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Airy talks in #airy-talk",
+          "rect": [
+            1249,
+            656,
+            36,
+            20
+          ],
+          "detail": "36x20"
+        },
+        {
+          "n": 23,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Remove #airy-talk-🚧",
+          "rect": [
+            1293,
+            652,
+            42,
+            28
+          ],
+          "detail": "42x28"
+        },
+        {
+          "n": 24,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Webhooks (0)",
+          "rect": [
+            281,
+            733,
+            1070,
+            39
+          ],
+          "detail": "1070x39"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440-findings.png",
+        "boxes": 24
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/r3-channels-1440-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 28,
+            "width": 101,
+            "x": 1315,
+            "y": 14
+          },
+          "name": "Sign out",
+          "number": 1258,
+          "ref": "e1258",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 151,
+            "x": 313,
+            "y": 190
+          },
+          "name": "Hive connection",
+          "number": 1259,
+          "ref": "e1259",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 73,
+            "x": 1262,
+            "y": 190
+          },
+          "name": "Change",
+          "number": 1260,
+          "ref": "e1260",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 29,
+            "width": 154,
+            "x": 297,
+            "y": 365
+          },
+          "name": "Where Airy talks",
+          "number": 1261,
+          "ref": "e1261",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 39,
+            "width": 1070,
+            "x": 281,
+            "y": 733
+          },
+          "name": "Webhooks (0)",
+          "number": 1262,
+          "ref": "e1262",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 771,
+            "width": 254,
+            "x": 1,
+            "y": 128
+          },
+          "name": "Airy",
+          "number": 1263,
+          "ref": "e1263",
+          "role": "navigation"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 106,
+            "x": 280,
+            "y": 80
+          },
+          "name": "Channels",
+          "number": 1264,
+          "ref": "e1264",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 50,
+            "x": 297,
+            "y": 419
+          },
+          "number": 1265,
+          "ref": "e1265",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 606,
+            "x": 729,
+            "y": 443
+          },
+          "name": "Add channel",
+          "number": 1266,
+          "ref": "e1266",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 86,
+            "width": 341,
+            "x": 297,
+            "y": 519
+          },
+          "number": 1267,
+          "ref": "e1267",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 86,
+            "width": 341,
+            "x": 646,
+            "y": 519
+          },
+          "number": 1268,
+          "ref": "e1268",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 86,
+            "width": 341,
+            "x": 994,
+            "y": 519
+          },
+          "number": 1269,
+          "ref": "e1269",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 36,
+            "x": 1249,
+            "y": 656
+          },
+          "name": "Airy talks in #airy-talk-🚧",
+          "number": 1270,
+          "ref": "e1270",
+          "role": "switch"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 42,
+            "x": 1293,
+            "y": 652
+          },
+          "name": "Remove #airy-talk-🚧",
+          "number": 1271,
+          "ref": "e1271",
+          "role": "button"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 21,
+            "x": 69,
+            "y": 67
+          },
+          "number": 1272,
+          "ref": "e1272",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 420,
+            "x": 297,
+            "y": 443
+          },
+          "name": "Channel",
+          "number": 1273,
+          "ref": "e1273",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 298,
+            "y": 520
+          },
+          "name": "Always",
+          "number": 1274,
+          "ref": "e1274",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 647,
+            "y": 520
+          },
+          "name": "When mentioned",
+          "number": 1275,
+          "ref": "e1275",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 995,
+            "y": 520
+          },
+          "name": "When it's worth it",
+          "number": 1276,
+          "ref": "e1276",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 73,
+            "x": 856,
+            "y": 652
+          },
+          "number": 1277,
+          "ref": "e1277",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 136,
+            "x": 944,
+            "y": 652
+          },
+          "number": 1278,
+          "ref": "e1278",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 28,
+            "width": 137,
+            "x": 1096,
+            "y": 652
+          },
+          "number": 1279,
+          "ref": "e1279",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 155,
+            "x": 69,
+            "y": 67
+          },
+          "name": "Bot",
+          "number": 1280,
+          "ref": "e1280",
+          "role": "combobox"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 856,
+            "y": 652
+          },
+          "name": "Always",
+          "number": 1281,
+          "ref": "e1281",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 944,
+            "y": 652
+          },
+          "name": "When mentioned",
+          "number": 1282,
+          "ref": "e1282",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 1,
+            "width": 1,
+            "x": 1096,
+            "y": 652
+          },
+          "name": "When it's worth it",
+          "number": 1283,
+          "ref": "e1283",
+          "role": "radio"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 170
+          },
+          "name": "Home",
+          "number": 1284,
+          "ref": "e1284",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 203
+          },
+          "name": "Channels",
+          "number": 1285,
+          "ref": "e1285",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 236
+          },
+          "name": "Commands",
+          "number": 1286,
+          "ref": "e1286",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 269
+          },
+          "name": "Activity",
+          "number": 1287,
+          "ref": "e1287",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 302
+          },
+          "name": "Look",
+          "number": 1288,
+          "ref": "e1288",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 335
+          },
+          "name": "Settings",
+          "number": 1289,
+          "ref": "e1289",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 413
+          },
+          "name": "Suggestions",
+          "number": 1290,
+          "ref": "e1290",
+          "role": "link"
+        },
+        {
+          "box": {
+            "height": 32,
+            "width": 238,
+            "x": 9,
+            "y": 446
+          },
+          "name": "Databases",
+          "number": 1291,
+          "ref": "e1291",
+          "role": "link"
+        }
+      ],
+      "ok": false
+    }
+  },
+  "crops": {},
+  "dark": null,
+  "tree": "/workspace/AiryBotCode/docs/screenshots/r3-channels-tree.txt",
+  "vitals": {
+    "cls": {
+      "entries": [
+        {
+          "startTime": 190.2,
+          "value": 0.0274
+        },
+        {
+          "startTime": 613.4,
+          "value": 0.0078
+        }
+      ],
+      "score": 0.04
+    },
+    "fcp": 180,
+    "hydration": null,
+    "inp": null,
+    "lcp": {
+      "element": "p",
+      "size": 12563,
+      "startTime": 624,
+      "url": null
+    },
+    "ttfb": 5.6,
+    "url": "http://host.docker.internal:5173/channels"
+  },
+  "generatedAt": "2026-10-15T17:30:34.483Z"
+}

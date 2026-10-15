@@ -33,7 +33,7 @@ function back() {
     <section class="panel" aria-labelledby="signin-title">
       <BrandMark name="Airy" :size="40" class="mark" />
       <div class="steps" role="progressbar" aria-label="Sign-in steps" aria-valuemin="1" aria-valuemax="2" :aria-valuenow="step" :aria-valuetext="`Step ${step} of 2`">
-        <span class="seg on" />
+        <span class="seg" :class="step === 1 ? 'on' : 'done'" />
         <span class="seg" :class="{ on: step === 2 }" />
       </div>
       <template v-if="step === 1">
@@ -91,6 +91,9 @@ function back() {
 }
 .seg.on {
   background: var(--color-accent);
+}
+.seg.done {
+  background: var(--color-accent-edge);
 }
 h1 {
   margin: 0;

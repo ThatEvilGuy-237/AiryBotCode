@@ -37,9 +37,13 @@ namespace AiryBotCode.Api.Services
 
         public DiscordGuildLookup(IHttpClientFactory httpFactory) => _httpFactory = httpFactory;
 
+        private static readonly TimeSpan FailedTtl = TimeSpan.FromSeconds(10);
+        private readonly ConcurrentDictionary<ulong, Lazy<Task<CacheEntry>>> _inflight = new();
+
         private sealed class CacheEntry
         {
             public DateTime FetchedAt;
+            public bool Failed;
             public List<DiscordEntity> Channels = new();
             public List<DiscordEntity> Categories = new();
             public List<DiscordEntity> Roles = new();
@@ -47,6 +51,12 @@ namespace AiryBotCode.Api.Services
 
         public async Task<IReadOnlyList<DiscordEntity>> GetChannelsAsync(ulong botId, string? token)
             => (await GetAsync(botId, token)).Channels;
+
+        public async Task<(IReadOnlyList<DiscordEntity> Channels, bool Known)> GetChannelsKnownAsync(ulong botId, string? token)
+        {
+            var entry = await GetAsync(botId, token);
+            return (entry.Channels, !entry.Failed);
+        }
 
         public async Task<IReadOnlyList<DiscordEntity>> GetCategoriesAsync(ulong botId, string? token)
             => (await GetAsync(botId, token)).Categories;
@@ -112,28 +122,46 @@ namespace AiryBotCode.Api.Services
 
         private async Task<CacheEntry> GetAsync(ulong botId, string? token)
         {
-            if (_cache.TryGetValue(botId, out var cached) && DateTime.UtcNow - cached.FetchedAt < CacheTtl)
+            if (_cache.TryGetValue(botId, out var cached) && DateTime.UtcNow - cached.FetchedAt < (cached.Failed ? FailedTtl : CacheTtl))
                 return cached;
 
-            var fresh = new CacheEntry { FetchedAt = DateTime.UtcNow };
-            if (!string.IsNullOrWhiteSpace(token))
+            var fetch = _inflight.GetOrAdd(botId, _ => new Lazy<Task<CacheEntry>>(() => FetchAsync(botId, token)));
+            try
             {
-                try { await PopulateAsync(token!, fresh); }
-                catch { /* swallow — empty lists make the UI fall back to a text input */ }
+                return await fetch.Value;
             }
+            finally
+            {
+                _inflight.TryRemove(new KeyValuePair<ulong, Lazy<Task<CacheEntry>>>(botId, fetch));
+            }
+        }
 
+        private async Task<CacheEntry> FetchAsync(ulong botId, string? token)
+        {
+            var fresh = new CacheEntry { FetchedAt = DateTime.UtcNow, Failed = string.IsNullOrWhiteSpace(token) };
+            if (!fresh.Failed)
+            {
+                try { fresh.Failed = !await PopulateAsync(token!, fresh); }
+                catch { fresh.Failed = true; }
+            }
+            if (fresh.Failed && _cache.TryGetValue(botId, out var lastGood) && !lastGood.Failed)
+            {
+                lastGood.FetchedAt = DateTime.UtcNow - CacheTtl + FailedTtl;
+                return lastGood;
+            }
             _cache[botId] = fresh;
             return fresh;
         }
 
-        private async Task PopulateAsync(string token, CacheEntry into)
+        private async Task<bool> PopulateAsync(string token, CacheEntry into)
         {
             var http = _httpFactory.CreateClient();
             http.Timeout = TimeSpan.FromSeconds(8);
             http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bot", token);
             http.DefaultRequestHeaders.UserAgent.ParseAdd("AiryBotCode-Panel/1.0");
 
-            var guilds = await GetJsonArrayAsync(http, $"{ApiBase}/users/@me/guilds");
+            var (guilds, ok) = await GetGuildsAsync(http);
+            if (!ok) return false;
             foreach (var guild in guilds)
             {
                 var guildId = guild.GetProperty("id").GetString();
@@ -158,6 +186,28 @@ namespace AiryBotCode.Api.Services
                     if (name != null) into.Roles.Add(new DiscordEntity(id, "@" + name, guildName));
                 }
             }
+            return true;
+        }
+
+        private static async Task<(List<JsonElement> Guilds, bool Ok)> GetGuildsAsync(HttpClient http)
+        {
+            for (var attempt = 0; attempt < 2; attempt++)
+            {
+                using var resp = await http.GetAsync($"{ApiBase}/users/@me/guilds");
+                if (resp.StatusCode == System.Net.HttpStatusCode.TooManyRequests && attempt == 0)
+                {
+                    var wait = resp.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(1);
+                    if (wait > TimeSpan.FromSeconds(3)) return (new List<JsonElement>(), false);
+                    await Task.Delay(wait);
+                    continue;
+                }
+                if (!resp.IsSuccessStatusCode) return (new List<JsonElement>(), false);
+                await using var stream = await resp.Content.ReadAsStreamAsync();
+                using var doc = await JsonDocument.ParseAsync(stream);
+                if (doc.RootElement.ValueKind != JsonValueKind.Array) return (new List<JsonElement>(), false);
+                return (doc.RootElement.EnumerateArray().Select(e => e.Clone()).ToList(), true);
+            }
+            return (new List<JsonElement>(), false);
         }
 
         private static async Task<List<JsonElement>> GetJsonArrayAsync(HttpClient http, string url)

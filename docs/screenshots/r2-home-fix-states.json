@@ -1,0 +1,784 @@
+{
+  "ok": true,
+  "url": "http://host.docker.internal:5173/",
+  "round": "r2-home-fix",
+  "dir": "/workspace/AiryBotCode/docs/screenshots",
+  "states": [
+    {
+      "state": "no-bots",
+      "rendered": true,
+      "url": "http://host.docker.internal:5173/",
+      "mocks": [
+        {
+          "pattern": "**/api/settings",
+          "abort": false
+        }
+      ],
+      "offline": false,
+      "loading": null,
+      "images": [
+        {
+          "label": "Image 1: state \"no-bots\" at 1440x900",
+          "path": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-no-bots-1440.png"
+        },
+        {
+          "label": "Image 2: state \"no-bots\" at 375x812",
+          "path": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-no-bots-375.png"
+        }
+      ],
+      "viewports": {
+        "375": {
+          "screenshot": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-no-bots-375.png",
+          "size": [
+            375,
+            812
+          ],
+          "probe": {
+            "overflow": [],
+            "overlap": [],
+            "targets": [],
+            "smalltext": [],
+            "spacing": [
+              {
+                "el": "empty-state",
+                "kind": "off-scale",
+                "prop": "paddingTop",
+                "rect": [
+                  16,
+                  72,
+                  343,
+                  248
+                ],
+                "value": 36
+              },
+              {
+                "el": "empty-state",
+                "kind": "off-scale",
+                "prop": "paddingBottom",
+                "rect": [
+                  16,
+                  72,
+                  343,
+                  248
+                ],
+                "value": 36
+              }
+            ],
+            "scrollers": []
+          },
+          "probeTotal": 2,
+          "a11y": {
+            "counts": {
+              "inapplicable": 44,
+              "incomplete": 0,
+              "passes": 16,
+              "violations": 0
+            },
+            "violations": []
+          },
+          "treeLines": 9,
+          "tree": [
+            "- banner",
+            "  - button \"Open the menu\"",
+            "  - StaticText \"Airy\"",
+            "  - button \"Sign out\"",
+            "- main",
+            "  - StaticText \"+\"",
+            "  - StaticText \"No bots yet\"",
+            "  - StaticText \"Add the first bot with its Discord token in Settings.\"",
+            "  - button \"Add a bot\""
+          ],
+          "text": "Airy\nSign out\n+\nNo bots yet\nAdd the first bot with its Discord token in Settings.\nAdd a bot"
+        },
+        "1440": {
+          "screenshot": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-no-bots-1440.png",
+          "size": [
+            1440,
+            900
+          ],
+          "probe": {
+            "overflow": [],
+            "overlap": [],
+            "targets": [
+              {
+                "h": 36,
+                "hit": [
+                  116,
+                  36
+                ],
+                "kind": "small-target",
+                "name": "No bot yet",
+                "rect": [
+                  69,
+                  67,
+                  115,
+                  36
+                ],
+                "w": 115
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Home",
+                "rect": [
+                  9,
+                  170,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Channels",
+                "rect": [
+                  9,
+                  203,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Commands",
+                "rect": [
+                  9,
+                  236,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Activity",
+                "rect": [
+                  9,
+                  269,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Look",
+                "rect": [
+                  9,
+                  302,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Settings",
+                "rect": [
+                  9,
+                  335,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Suggestions",
+                "rect": [
+                  9,
+                  413,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Databases",
+                "rect": [
+                  9,
+                  446,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 28,
+                "hit": [
+                  102,
+                  28
+                ],
+                "kind": "small-target",
+                "name": "Sign out",
+                "rect": [
+                  1315,
+                  14,
+                  101,
+                  28
+                ],
+                "w": 101
+              },
+              {
+                "h": 36,
+                "hit": [
+                  106,
+                  36
+                ],
+                "kind": "small-target",
+                "name": "Add a bot",
+                "rect": [
+                  764,
+                  247,
+                  105,
+                  36
+                ],
+                "w": 105
+              }
+            ],
+            "smalltext": [
+              {
+                "kind": "small-field-text",
+                "limit": 16,
+                "rect": [
+                  69,
+                  67,
+                  115,
+                  36
+                ],
+                "size": 15,
+                "text": ""
+              }
+            ],
+            "spacing": [
+              {
+                "el": "empty-state",
+                "kind": "off-scale",
+                "prop": "paddingTop",
+                "rect": [
+                  280,
+                  80,
+                  1072,
+                  240
+                ],
+                "value": 36
+              },
+              {
+                "el": "empty-state",
+                "kind": "off-scale",
+                "prop": "paddingBottom",
+                "rect": [
+                  280,
+                  80,
+                  1072,
+                  240
+                ],
+                "value": 36
+              }
+            ],
+            "scrollers": []
+          },
+          "probeTotal": 14,
+          "a11y": {
+            "counts": {
+              "inapplicable": 39,
+              "incomplete": 0,
+              "passes": 21,
+              "violations": 0
+            },
+            "violations": []
+          },
+          "treeLines": 46,
+          "tree": [
+            "- complementary",
+            "  - sectionheader",
+            "    - StaticText \"Airy\"",
+            "    - LabelText clickable [cursor:pointer]",
+            "      - StaticText \"Bot\"",
+            "    - combobox \"Bot\" [expanded=false, disabled]: No bot yet",
+            "      - MenuListPopup",
+            "        - option \"No bot yet\" [disabled]",
+            "  - navigation \"Airy\"",
+            "    - generic",
+            "      - StaticText \"THIS BOT\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - link \"Home\"",
+            "            - StaticText \"Home\"",
+            "        - listitem [level=1]",
+            "          - link \"Channels\"",
+            "            - StaticText \"Channels\"",
+            "        - listitem [level=1]",
+            "          - link \"Commands\"",
+            "            - StaticText \"Commands\"",
+            "        - listitem [level=1]",
+            "          - link \"Activity\"",
+            "            - StaticText \"Activity\"",
+            "        - listitem [level=1]",
+            "          - link \"Look\"",
+            "            - StaticText \"Look\"",
+            "        - listitem [level=1]",
+            "          - link \"Settings\"",
+            "            - StaticText \"Settings\"",
+            "    - generic",
+            "      - StaticText \"ALL BOTS\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - link \"Suggestions\"",
+            "            - StaticText \"Suggestions\"",
+            "        - listitem [level=1]",
+            "          - link \"Databases\"",
+            "            - StaticText \"Databases\"",
+            "- banner",
+            "  - button \"Sign out\"",
+            "- main",
+            "  - StaticText \"+\"",
+            "  - StaticText \"No bots yet\"",
+            "  - StaticText \"Add the first bot with its Discord token in Settings.\"",
+            "  - button \"Add a bot\""
+          ],
+          "text": "Airy\nBot\nNo bot yet\nTHIS BOT\nHome\nChannels\nCommands\nActivity\nLook\nSettings\nALL BOTS\nSuggestions\nDatabases\nSign out\n+\nNo bots yet\nAdd the first bot with its Discord token in Settings.\nAdd a bot"
+        }
+      }
+    },
+    {
+      "state": "healthy",
+      "rendered": true,
+      "url": "http://host.docker.internal:5173/",
+      "mocks": [
+        {
+          "pattern": "**/api/settings/*/hive/check",
+          "abort": false
+        }
+      ],
+      "offline": false,
+      "loading": null,
+      "images": [
+        {
+          "label": "Image 1: state \"healthy\" at 1440x900",
+          "path": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-healthy-1440.png"
+        },
+        {
+          "label": "Image 2: state \"healthy\" at 375x812",
+          "path": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-healthy-375.png"
+        }
+      ],
+      "viewports": {
+        "375": {
+          "screenshot": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-healthy-375.png",
+          "size": [
+            375,
+            812
+          ],
+          "probe": {
+            "overflow": [],
+            "overlap": [],
+            "targets": [],
+            "smalltext": [],
+            "spacing": [],
+            "scrollers": []
+          },
+          "probeTotal": 0,
+          "a11y": {
+            "counts": {
+              "inapplicable": 41,
+              "incomplete": 0,
+              "passes": 19,
+              "violations": 0
+            },
+            "violations": []
+          },
+          "treeLines": 31,
+          "tree": [
+            "- banner",
+            "  - button \"Open the menu\"",
+            "  - StaticText \"Airy\"",
+            "  - button \"Sign out\"",
+            "- main",
+            "  - sectionheader",
+            "    - heading \"Cookie&Creams\" [level=1]",
+            "    - StaticText \"// 1437132076066406510\"",
+            "    - StaticText \"ON\"",
+            "  - link \"CHANNELS 1 where Airy talks\"",
+            "    - StaticText \"CHANNELS\"",
+            "    - StaticText \"1\"",
+            "    - StaticText \"where Airy talks\"",
+            "  - link \"COMMANDS ON 2 of 10\"",
+            "    - StaticText \"COMMANDS ON\"",
+            "    - StaticText \"2 of 10\"",
+            "  - link \"SUGGESTIONS 0 waiting\"",
+            "    - StaticText \"SUGGESTIONS\"",
+            "    - StaticText \"0\"",
+            "    - StaticText \"waiting\"",
+            "  - link \"COUNTING RECORD 274\"",
+            "    - StaticText \"COUNTING RECORD\"",
+            "    - StaticText \"274\"",
+            "  - heading \"Where Airy talks\" [level=2]",
+            "  - link \"Change\"",
+            "  - separator",
+            "  - list",
+            "    - listitem [level=1]",
+            "      - StaticText \"#airy-talk-🚧\"",
+            "      - StaticText \"Cookies&Cream Audios\"",
+            "      - StaticText \"WHEN MENTIONED\""
+          ],
+          "text": "Airy\nSign out\nCookie&Creams\n// 1437132076066406510\nON\nCHANNELS\n1\nwhere Airy talks\nCOMMANDS ON\n2 of 10\nSUGGESTIONS\n0\nwaiting\nCOUNTING RECORD\n274\nWhere Airy talks\nChange\n#airy-talk-🚧\nCookies&Cream Audios\nWHEN MENTIONED"
+        },
+        "1440": {
+          "screenshot": "/workspace/AiryBotCode/docs/screenshots/r2-home-fix-healthy-1440.png",
+          "size": [
+            1440,
+            900
+          ],
+          "probe": {
+            "overflow": [],
+            "overlap": [],
+            "targets": [
+              {
+                "h": 36,
+                "hit": [
+                  156,
+                  36
+                ],
+                "kind": "small-target",
+                "name": "Pick a bot\ndevairybot\nAi",
+                "rect": [
+                  69,
+                  67,
+                  155,
+                  36
+                ],
+                "w": 155
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Home",
+                "rect": [
+                  9,
+                  170,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Channels",
+                "rect": [
+                  9,
+                  203,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Commands",
+                "rect": [
+                  9,
+                  236,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Activity",
+                "rect": [
+                  9,
+                  269,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Look",
+                "rect": [
+                  9,
+                  302,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Settings",
+                "rect": [
+                  9,
+                  335,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Suggestions",
+                "rect": [
+                  9,
+                  413,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Databases",
+                "rect": [
+                  9,
+                  446,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 28,
+                "hit": [
+                  102,
+                  28
+                ],
+                "kind": "small-target",
+                "name": "Sign out",
+                "rect": [
+                  1315,
+                  14,
+                  101,
+                  28
+                ],
+                "w": 101
+              },
+              {
+                "h": 32,
+                "hit": [
+                  62,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Change",
+                "rect": [
+                  1281,
+                  285,
+                  62,
+                  32
+                ],
+                "w": 62
+              }
+            ],
+            "smalltext": [
+              {
+                "kind": "small-field-text",
+                "limit": 16,
+                "rect": [
+                  69,
+                  67,
+                  155,
+                  36
+                ],
+                "size": 15,
+                "text": ""
+              }
+            ],
+            "spacing": [],
+            "scrollers": []
+          },
+          "probeTotal": 12,
+          "a11y": {
+            "counts": {
+              "inapplicable": 39,
+              "incomplete": 0,
+              "passes": 21,
+              "violations": 0
+            },
+            "violations": []
+          },
+          "treeLines": 71,
+          "tree": [
+            "- complementary",
+            "  - sectionheader",
+            "    - StaticText \"Airy\"",
+            "    - LabelText clickable [cursor:pointer]",
+            "      - StaticText \"Bot\"",
+            "    - combobox \"Bot\" [expanded=false]: Cookie&Creams",
+            "      - MenuListPopup",
+            "        - option \"Pick a bot\" [disabled]",
+            "        - option \"devairybot\"",
+            "        - option \"Airy Guardian\"",
+            "        - option \"Cookie&Creams\" [selected]",
+            "  - navigation \"Airy\"",
+            "    - generic",
+            "      - StaticText \"THIS BOT\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - link \"Home\"",
+            "            - StaticText \"Home\"",
+            "        - listitem [level=1]",
+            "          - link \"Channels\"",
+            "            - StaticText \"Channels\"",
+            "        - listitem [level=1]",
+            "          - link \"Commands\"",
+            "            - StaticText \"Commands\"",
+            "        - listitem [level=1]",
+            "          - link \"Activity\"",
+            "            - StaticText \"Activity\"",
+            "        - listitem [level=1]",
+            "          - link \"Look\"",
+            "            - StaticText \"Look\"",
+            "        - listitem [level=1]",
+            "          - link \"Settings\"",
+            "            - StaticText \"Settings\"",
+            "    - generic",
+            "      - StaticText \"ALL BOTS\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - link \"Suggestions\"",
+            "            - StaticText \"Suggestions\"",
+            "        - listitem [level=1]",
+            "          - link \"Databases\"",
+            "            - StaticText \"Databases\"",
+            "- banner",
+            "  - button \"Sign out\"",
+            "- main",
+            "  - sectionheader",
+            "    - heading \"Cookie&Creams\" [level=1]",
+            "    - StaticText \"// 1437132076066406510\"",
+            "    - StaticText \"ON\"",
+            "  - link \"CHANNELS 1 where Airy talks\"",
+            "    - StaticText \"CHANNELS\"",
+            "    - StaticText \"1\"",
+            "    - StaticText \"where Airy talks\"",
+            "  - link \"COMMANDS ON 2 of 10\"",
+            "    - StaticText \"COMMANDS ON\"",
+            "    - StaticText \"2 of 10\"",
+            "  - link \"SUGGESTIONS 0 waiting\"",
+            "    - StaticText \"SUGGESTIONS\"",
+            "    - StaticText \"0\"",
+            "    - StaticText \"waiting\""
+          ],
+          "text": "Airy\nBot\nPick a bot\ndevairybot\nAiry Guardian\nCookie&Creams\nTHIS BOT\nHome\nChannels\nCommands\nActivity\nLook\nSettings\nALL BOTS\nSuggestions\nDatabases\nSign out\nCookie&Creams\n// 1437132076066406510\nON\nCHANNELS\n1\nwhere Airy talks\nCOMMANDS ON\n2 of 1"
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "state": "no-bots",
+      "rendered": true,
+      "error": null,
+      "findings": {
+        "375": {
+          "probe": 2,
+          "axe": 0
+        },
+        "1440": {
+          "probe": 14,
+          "axe": 0
+        }
+      }
+    },
+    {
+      "state": "healthy",
+      "rendered": true,
+      "error": null,
+      "findings": {
+        "375": {
+          "probe": 0,
+          "axe": 0
+        },
+        "1440": {
+          "probe": 12,
+          "axe": 0
+        }
+      }
+    }
+  ],
+  "browserRestarted": false,
+  "generatedAt": "2026-10-15T17:36:10.083Z"
+}

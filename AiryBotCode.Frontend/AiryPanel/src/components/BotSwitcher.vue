@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Field, Select } from '@airy/ui'
+import { Field, Icon, Select } from '@airy/ui'
 import { bot, botId, botImage, bots, pickBot } from '@/lib/bots'
 
 const options = computed(() => bots.value.map(b => ({ label: b.botName || b.botId, value: b.botId })))
 const value = computed({
-  get: () => botId.value ?? '',
+  get: () => (bot.value ? botId.value ?? '' : ''),
   set: (id: string) => pickBot(id),
 })
 const initial = computed(() => (bot.value?.botName ?? '?').trim().charAt(0).toUpperCase())
@@ -14,11 +14,12 @@ const initial = computed(() => (bot.value?.botName ?? '?').trim().charAt(0).toUp
 <template>
   <div class="switcher">
     <span class="avatar" aria-hidden="true">
-      <img v-if="botImage" :src="botImage" alt="" />
-      <span v-else>{{ initial }}</span>
+      <img v-if="bot && botImage" :src="botImage" alt="" />
+      <span v-else-if="bot">{{ initial }}</span>
+      <Icon v-else name="bot" :size="18" />
     </span>
     <Field label="Bot" hide-label>
-      <Select v-model="value" :options="options" placeholder="No bots yet" :disabled="!options.length" />
+      <Select v-model="value" :options="options" :placeholder="options.length ? 'Pick a bot' : 'No bot yet'" :disabled="!options.length" />
     </Field>
   </div>
 </template>

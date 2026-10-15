@@ -27,8 +27,8 @@ namespace AiryBotCode.Api.Controllers
         public async Task<IActionResult> GetAll([FromQuery] string botId)
         {
             if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
-            var names = await NamesAsync(id);
-            return Ok((await _channels.GetForBotAsync(id)).Select(c => ToDto(c, names)));
+            var (names, known) = await NamesAsync(id);
+            return Ok((await _channels.GetForBotAsync(id)).Select(c => ToDto(c, names, known)));
         }
 
         [HttpPost]
@@ -39,7 +39,8 @@ namespace AiryBotCode.Api.Controllers
             if (!AnswerModes.IsValid(dto.AnswerMode)) return BadRequest("answerMode is always, mention or decide.");
             if ((await _channels.GetForBotAsync(id)).Any(c => c.ChannelId == channelId)) return Conflict("Airy already talks in this channel.");
             var created = await _channels.AddAsync(new AiryChannel { BotId = id, ChannelId = channelId, AnswerMode = dto.AnswerMode!, Enabled = dto.Enabled });
-            return StatusCode(201, ToDto(created, await NamesAsync(id)));
+            var (names, known) = await NamesAsync(id);
+            return StatusCode(201, ToDto(created, names, known));
         }
 
         [HttpPut("{channelRowId:int}")]
@@ -58,14 +59,14 @@ namespace AiryBotCode.Api.Controllers
             return await _channels.DeleteAsync(id, channelRowId) ? NoContent() : NotFound();
         }
 
-        private async Task<IReadOnlyDictionary<string, DiscordEntity>> NamesAsync(ulong botId)
+        private async Task<(IReadOnlyDictionary<string, DiscordEntity> Names, bool Known)> NamesAsync(ulong botId)
         {
             var bot = await _bots.GetBotSettingAsync(botId);
-            var channels = await _discord.GetChannelsAsync(botId, bot?.Token);
-            return channels.GroupBy(c => c.Id).ToDictionary(g => g.Key, g => g.First());
+            var (channels, known) = await _discord.GetChannelsKnownAsync(botId, bot?.Token);
+            return (channels.GroupBy(c => c.Id).ToDictionary(g => g.Key, g => g.First()), known);
         }
 
-        public static AiryChannelDto ToDto(AiryChannel c, IReadOnlyDictionary<string, DiscordEntity> names)
+        public static AiryChannelDto ToDto(AiryChannel c, IReadOnlyDictionary<string, DiscordEntity> names, bool namesKnown = true)
         {
             var key = c.ChannelId.ToString();
             names.TryGetValue(key, out var named);
@@ -75,6 +76,7 @@ namespace AiryBotCode.Api.Controllers
                 ChannelId = key,
                 ChannelName = named?.Name,
                 Guild = named?.Guild,
+                NamesKnown = namesKnown,
                 AnswerMode = c.AnswerMode,
                 Enabled = c.Enabled,
                 LastDecisionAt = c.LastDecisionAt,
@@ -90,6 +92,7 @@ namespace AiryBotCode.Api.Controllers
         public string ChannelId { get; set; } = string.Empty;
         public string? ChannelName { get; set; }
         public string? Guild { get; set; }
+        public bool NamesKnown { get; set; } = true;
         public string? AnswerMode { get; set; }
         public bool Enabled { get; set; } = true;
         public DateTime? LastDecisionAt { get; set; }

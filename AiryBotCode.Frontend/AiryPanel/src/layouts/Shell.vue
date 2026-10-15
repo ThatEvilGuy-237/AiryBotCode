@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { ActionPill, AppSidebar, BrandMark, Button, Icon, SidebarItem, SidebarSection, ToastHost, useAppUpdate, useInstallPrompt } from '@airy/ui'
 import BotSwitcher from '@/components/BotSwitcher.vue'
 import { signOut } from '@/lib/auth'
-import { loadBots } from '@/lib/bots'
+import { botId, loadBots } from '@/lib/bots'
 
 const route = useRoute()
 const menuOpen = ref(false)
@@ -26,7 +26,7 @@ async function openMenu() {
   side.value?.querySelector<HTMLElement>('a, select, button')?.focus()
 }
 
-watch(() => route.fullPath, () => { menuOpen.value = false })
+watch(() => [route.fullPath, botId.value], () => { menuOpen.value = false })
 
 onMounted(() => {
   installLater.value = Number(localStorage.getItem('airy.install-later') ?? 0) > Date.now()

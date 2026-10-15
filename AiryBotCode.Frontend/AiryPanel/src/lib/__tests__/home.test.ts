@@ -4,7 +4,7 @@ import { concerns, grouped } from '../home'
 
 const bot: Bot = { botId: '1', botName: 'Airy', enabled: true, adminRoleIds: '', evilId: '0', logChannelId: '0', evilLogChannelId: '0', hasToken: true }
 const channel = (over: Partial<AiryChannel>): AiryChannel => ({
-  id: 1, channelId: '10', channelName: '#chat', guild: 'Server', answerMode: 'decide', enabled: true,
+  id: 1, channelId: '10', channelName: '#chat', guild: 'Server', namesKnown: true, answerMode: 'decide', enabled: true,
   lastDecisionAt: null, lastDecision: null, lastDecisionError: null, ...over,
 })
 
@@ -23,6 +23,10 @@ describe('Home concerns', () => {
     expect(found.map(f => f.tone)).toEqual(['danger', 'warn', 'warn', 'warn'])
     expect(found[2].title).toContain('11')
     expect(found[3].title).toContain('no decider')
+  })
+
+  it('does not call a channel gone when Discord could not be read', () => {
+    expect(concerns({ bot, hive: null, check: null, channels: [channel({ channelName: null, namesKnown: false })] })).toEqual([])
   })
 
   it('groups concerns that share a fix and keeps the worst tone first', () => {

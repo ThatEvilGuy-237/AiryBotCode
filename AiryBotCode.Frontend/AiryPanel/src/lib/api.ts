@@ -25,6 +25,7 @@ export type AiryChannel = {
   channelId: string
   channelName: string | null
   guild: string | null
+  namesKnown: boolean
   answerMode: AnswerMode
   enabled: boolean
   lastDecisionAt: string | null
@@ -42,6 +43,23 @@ export type HiveCheck = {
   agents: { id: string; name: string }[]
   deciders: string[]
   problems: string[]
+}
+
+export type DiscordEntity = { id: string; name: string; guild: string }
+
+export type HiveAgent = { id: string; name: string }
+
+export type HiveSave = { url: string; agentId: string; appKey?: string }
+
+export type ChannelWebhook = {
+  id: number
+  channelId: string
+  name: string
+  webhookUrl: string
+  hasSecret: boolean
+  secret?: string | null
+  mode: 'sync' | 'async'
+  enabled: boolean
 }
 
 export type CommandConfig = { commandName: string; enabled: boolean }
@@ -85,6 +103,19 @@ export const api = {
   channels: (botId: string) => call<AiryChannel[]>('GET', `/api/channels?botId=${botId}`),
   hive: (botId: string) => call<HiveConnection>('GET', `/api/settings/${botId}/hive`),
   hiveCheck: (botId: string) => call<HiveCheck>('POST', `/api/settings/${botId}/hive/check`, {}),
+  hiveAgents: (botId: string, url: string, appKey: string) => call<HiveAgent[]>('POST', `/api/settings/${botId}/hive/agents`, { url, appKey }),
+  saveHive: (botId: string, body: HiveSave) => call<void>('PUT', `/api/settings/${botId}/hive`, body),
+  dropHive: (botId: string) => call<void>('DELETE', `/api/settings/${botId}/hive`),
+  discordChannels: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/channels`),
+  addChannel: (botId: string, channelId: string, answerMode: AnswerMode) =>
+    call<AiryChannel>('POST', `/api/channels?botId=${botId}`, { channelId, answerMode, enabled: true }),
+  saveChannel: (botId: string, c: Pick<AiryChannel, 'id' | 'answerMode' | 'enabled'>) =>
+    call<void>('PUT', `/api/channels/${c.id}?botId=${botId}`, { answerMode: c.answerMode, enabled: c.enabled }),
+  dropChannel: (botId: string, id: number) => call<void>('DELETE', `/api/channels/${id}?botId=${botId}`),
+  webhooks: (botId: string) => call<ChannelWebhook[]>('GET', `/api/channelwebhooks?botId=${botId}`),
+  addWebhook: (botId: string, w: Omit<ChannelWebhook, 'id' | 'hasSecret'>) => call<ChannelWebhook>('POST', `/api/channelwebhooks?botId=${botId}`, w),
+  saveWebhook: (botId: string, w: Omit<ChannelWebhook, 'hasSecret'>) => call<void>('PUT', `/api/channelwebhooks/${w.id}?botId=${botId}`, w),
+  dropWebhook: (botId: string, id: number) => call<void>('DELETE', `/api/channelwebhooks/${id}?botId=${botId}`),
   commands: (botId: string) => call<CommandConfig[]>('GET', `/api/commands?botId=${botId}`),
   suggestions: () => call<Suggestion[]>('GET', '/api/suggestions'),
   counting: (botId: string) => call<CountingChannel[]>('GET', `/api/featurestatus/${botId}/counting`),

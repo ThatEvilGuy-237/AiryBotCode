@@ -29,12 +29,12 @@ export async function loadBots(force = false): Promise<void> {
   }
 }
 
-watch(botId, async id => {
+watch(() => bot.value?.botId ?? null, async id => {
   botImage.value = null
   if (!id) return
   try {
     const look = await api.look(id)
-    if (botId.value === id) botImage.value = look.image
+    if (bot.value?.botId === id) botImage.value = look.image
   } catch {
     botImage.value = null
   }

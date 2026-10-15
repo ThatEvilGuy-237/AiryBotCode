@@ -1,13 +1,13 @@
-# r2-home at 1440px: 14 boxes; axe 0 violations, 24 passes
+# r2-home at 1440px: 13 boxes; axe 0 violations, 24 passes
 
 Picture: `r2-home-1440-findings.png`. Numbers match the boxes.
 
 **#1 SMALL FIELD TEXT**: (no text) (smalltext/small-field-text)
   15px text, under 16px
 
-**#2 SMALL TARGET**: No bots yet
+**#2 SMALL TARGET**: Pick a bot
 devairybot
-A (targets/small-target)
+Ai (targets/small-target)
   155x36
 
 **#3 SMALL TARGET**: Home (targets/small-target)
@@ -40,8 +40,5 @@ A (targets/small-target)
 **#12 SMALL TARGET**: Open channels (targets/small-target)
   120x28
 
-**#13 SMALL TARGET**: Open channels (targets/small-target)
-  120x28
-
-**#14 SMALL TARGET**: Change (targets/small-target)
+**#13 SMALL TARGET**: Change (targets/small-target)
   62x32

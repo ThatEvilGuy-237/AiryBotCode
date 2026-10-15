@@ -51,7 +51,7 @@ const found = computed(() => grouped(concerns({ bot: bot.value, hive: hive.value
 const commandsOn = computed(() => commands.value?.filter(c => c.enabled).length ?? 0)
 const waiting = computed(() => suggestions.value?.filter(s => s.status === 'new').length ?? 0)
 const record = computed(() => Math.max(0, ...(counting.value ?? []).map(c => c.highScore)))
-const tone = (c: AiryChannel) => (!c.enabled ? 'off' : c.channelName === null || c.lastDecisionError ? 'warn' : 'ok')
+const tone = (c: AiryChannel) => (!c.enabled ? 'off' : (c.channelName === null && c.namesKnown) || c.lastDecisionError ? 'warn' : 'ok')
 </script>
 
 <template>
@@ -88,7 +88,8 @@ const tone = (c: AiryChannel) => (!c.enabled ? 'off' : c.channelName === null ||
         </Alert>
       </section>
 
-      <StatStrip class="stats">
+      <Skeleton v-if="loading && commands === null" variant="block" height="92px" class="stats-wait" />
+      <StatStrip v-else class="stats">
         <RouterLink to="/channels" class="stat-link"><Stat label="Channels" :value="channels ? String(channels.length) : '…'" sub="where Airy talks" /></RouterLink>
         <RouterLink to="/commands" class="stat-link"><Stat label="Commands on" :value="commands ? `${commandsOn} of ${commands.length}` : '…'" /></RouterLink>
         <RouterLink to="/suggestions" class="stat-link"><Stat label="Suggestions" :value="suggestions ? String(waiting) : '…'" sub="waiting" :tone="waiting ? 'accent' : 'default'" /></RouterLink>
@@ -114,7 +115,7 @@ const tone = (c: AiryChannel) => (!c.enabled ? 'off' : c.channelName === null ||
             <span class="name" :title="channelName(c)">{{ channelName(c) }}</span>
             <span class="guild">{{ c.guild ?? '' }}</span>
             <Badge tone="neutral" outline>{{ c.enabled ? ruleLabels[c.answerMode] : 'Paused' }}</Badge>
-            <span class="last">{{ c.lastDecision ? `${c.lastDecision} · ${ago(c.lastDecisionAt)}` : '' }}</span>
+            <span class="last" :class="{ failed: c.lastDecisionError }">{{ c.lastDecision ? `${c.lastDecision} · ${ago(c.lastDecisionAt)}` : '' }}</span>
           </li>
         </ul>
       </Card>
@@ -263,6 +264,9 @@ h2 {
   font-size: var(--font-size-xs);
   color: var(--color-muted);
   white-space: nowrap;
+}
+.last.failed {
+  color: var(--color-danger);
 }
 @media (max-width: 860px) {
   .more {

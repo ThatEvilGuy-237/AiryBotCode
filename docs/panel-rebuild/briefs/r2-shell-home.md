@@ -16,5 +16,5 @@
 | Cannot be decided from here (ask the owner) | Whether the bot's image should still recolour the panel (the old Theme page did); proposed no. | |
 
 Measured before: the old panel is reachable nowhere; no baseline.
-Measured after: (end of round)
+Measured after (2026-10-15, real data on a copy of prod, `docs/screenshots/r2-*`): 375 and 320 probe 0 and axe 0; 1440 axe 0, 13 probe boxes all desktop targets of 28 to 36 px (above the 24 px floor) and the phone-only 16 px field rule. Fixed on the way: stat labels too dim on navy (Airy ghost text lifted), phone buttons and links under 44 px, the picker's phone text under 16 px, the phone menu links at 32 px, a stray header line, a paused row dimmed by opacity under contrast, stale data under a newly picked bot. Design review (`docs/review/r2.md`): High 3 (empty switcher next to an old avatar: fixed; repeated alerts: grouped; the paused-row contrast: fixed), Medium 3 (failed check now red, stats skeleton while loading, phone loading recaptured), Low 1 (sign-in step 1 shows done on step 2: fixed). The phone menu now also closes after a bot switch.
 Owner reaction: (open)

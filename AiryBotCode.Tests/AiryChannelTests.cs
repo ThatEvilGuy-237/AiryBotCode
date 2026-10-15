@@ -223,6 +223,53 @@ namespace AiryBotCode.Tests
             Assert.Equal("hive_ak_test…", HiveConnectionController.Hint("hive_ak_test1234567"));
         }
 
+        private sealed class Factory(HttpMessageHandler handler) : IHttpClientFactory
+        {
+            public HttpClient CreateClient(string name) => new(handler, disposeHandler: false);
+        }
+
+        private static (HttpStatusCode, string) Discord(HttpRequestMessage r, ref int guildCalls, bool limited)
+        {
+            var path = r.RequestUri!.AbsolutePath;
+            if (path.EndsWith("/users/@me/guilds"))
+            {
+                Interlocked.Increment(ref guildCalls);
+                return limited ? (HttpStatusCode.TooManyRequests, "{}") : (HttpStatusCode.OK, """[{"id":"1","name":"Cookie & Cream"}]""");
+            }
+            if (path.EndsWith("/channels")) return (HttpStatusCode.OK, """[{"id":"10","name":"general","type":0}]""");
+            return (HttpStatusCode.OK, "[]");
+        }
+
+        [Fact]
+        public async Task CallersAtTheSameTimeShareOneDiscordFetch()
+        {
+            var guildCalls = 0;
+            var hub = new Hub(r => Discord(r, ref guildCalls, limited: false));
+            var lookup = new DiscordGuildLookup(new Factory(hub));
+
+            var both = await Task.WhenAll(lookup.GetChannelsKnownAsync(7, "token"), lookup.GetChannelsKnownAsync(7, "token"));
+
+            Assert.All(both, b => Assert.True(b.Known));
+            Assert.Equal("#general", both[0].Channels.Single().Name);
+            Assert.Equal(1, guildCalls);
+        }
+
+        [Fact]
+        public async Task ARateLimitIsTriedOnceMoreAndThenSaidNotHidden()
+        {
+            var guildCalls = 0;
+            var hub = new Hub(r => Discord(r, ref guildCalls, limited: true));
+            var lookup = new DiscordGuildLookup(new Factory(hub));
+
+            var (channels, known) = await lookup.GetChannelsKnownAsync(8, "token");
+
+            Assert.False(known);
+            Assert.Empty(channels);
+            Assert.Equal(2, guildCalls);
+            var dto = AiryChannelsController.ToDto(new AiryChannel { Id = 1, ChannelId = 10, AnswerMode = AnswerModes.Mention }, new Dictionary<string, DiscordEntity>(), known);
+            Assert.False(dto.NamesKnown);
+        }
+
         [Fact]
         public void EveryPanelControllerCanBeBuiltFromThePanelServices()
         {

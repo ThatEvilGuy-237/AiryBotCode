@@ -3,6 +3,7 @@ import { isSignedIn } from './lib/auth'
 import Shell from './layouts/Shell.vue'
 import HomePage from './pages/HomePage.vue'
 import SignInPage from './pages/SignInPage.vue'
+import ChannelsPage from './pages/ChannelsPage.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -13,6 +14,7 @@ export const router = createRouter({
       component: Shell,
       children: [
         { path: '', name: 'home', component: HomePage, meta: { title: 'Home' } },
+        { path: 'channels', name: 'channels', component: ChannelsPage, meta: { title: 'Channels' } },
       ],
     },
     { path: '/:rest(.*)*', redirect: '/' },
