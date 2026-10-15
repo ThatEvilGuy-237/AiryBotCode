@@ -1,0 +1,9 @@
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-family);
+}
+a {
+  color: var(--color-accent);
+}

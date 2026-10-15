@@ -47,9 +47,10 @@
     "tools": {
       "ports": {
         "panel-vite": 5173,
-        "login-vite": 5174
+        "panel-api": 8202
       },
-      "start": "npm run dev in AiryBotCode.Frontend/AiryWebApp or AiryLogin"
+      "start": "AiryBotCode.Frontend/AiryPanel: npm run dev (Vite on 172.17.0.1:5173, /api proxied to 127.0.0.1:8202); the API: scripts/panel-dev-api.sh (dotnet run on 127.0.0.1:8202 against the scratch database airy_panel_dev, a copy of prod airy_db)",
+      "notes": "Panel rebuild loop (docs/panel-rebuild). The scratch database is a restore of the newest prod backup; drop it when the rebuild ships."
     }
   },
   "flow": {

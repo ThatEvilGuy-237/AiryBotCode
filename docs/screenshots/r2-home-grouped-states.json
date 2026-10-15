@@ -1,0 +1,435 @@
+{
+  "ok": true,
+  "url": "http://host.docker.internal:5173/",
+  "round": "r2-home-grouped",
+  "dir": "/workspace/AiryBotCode/docs/screenshots",
+  "states": [
+    {
+      "state": "grouped",
+      "rendered": true,
+      "url": "http://host.docker.internal:5173/",
+      "mocks": [
+        {
+          "pattern": "**/api/channels?*",
+          "abort": false
+        }
+      ],
+      "offline": false,
+      "loading": null,
+      "images": [
+        {
+          "label": "Image 1: state \"grouped\" at 1440x900",
+          "path": "/workspace/AiryBotCode/docs/screenshots/r2-home-grouped-grouped-1440.png"
+        },
+        {
+          "label": "Image 2: state \"grouped\" at 375x812",
+          "path": "/workspace/AiryBotCode/docs/screenshots/r2-home-grouped-grouped-375.png"
+        }
+      ],
+      "viewports": {
+        "375": {
+          "screenshot": "/workspace/AiryBotCode/docs/screenshots/r2-home-grouped-grouped-375.png",
+          "size": [
+            375,
+            812
+          ],
+          "probe": {
+            "overflow": [],
+            "overlap": [],
+            "targets": [],
+            "smalltext": [],
+            "spacing": [],
+            "scrollers": []
+          },
+          "probeTotal": 0,
+          "a11y": {
+            "counts": {
+              "inapplicable": 38,
+              "incomplete": 0,
+              "passes": 22,
+              "violations": 0
+            },
+            "violations": []
+          },
+          "treeLines": 59,
+          "tree": [
+            "- banner",
+            "  - button \"Open the menu\"",
+            "  - StaticText \"Airy\"",
+            "  - button \"Sign out\"",
+            "- main",
+            "  - sectionheader",
+            "    - heading \"Cookie&Creams\" [level=1]",
+            "    - StaticText \"// 1437132076066406510\"",
+            "    - StaticText \"ON\"",
+            "  - region \"Needs a look\"",
+            "    - status",
+            "      - strong",
+            "        - StaticText \"3 things need a look\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - ListMarker \"• \"",
+            "          - StaticText \"This key may not ask for decisions (it needs decisions.make), so \\\"When it's worth it\\\" channels answer only when mentioned.\"",
+            "        - listitem [level=1]",
+            "          - ListMarker \"• \"",
+            "          - StaticText \"Channel 1422972239808299099 is gone from its server, or the bot cannot see it.\"",
+            "        - listitem [level=1]",
+            "          - ListMarker \"• \"",
+            "          - StaticText \"In #chat the last check failed: Airy's key may not ask for decisions (it needs decisions.make).\"",
+            "      - button \"Open channels\"",
+            "  - link \"CHANNELS 4 where Airy talks\"",
+            "    - StaticText \"CHANNELS\"",
+            "    - StaticText \"4\"",
+            "    - StaticText \"where Airy talks\"",
+            "  - link \"COMMANDS ON 2 of 10\"",
+            "    - StaticText \"COMMANDS ON\"",
+            "    - StaticText \"2 of 10\"",
+            "  - link \"SUGGESTIONS 0 waiting\"",
+            "    - StaticText \"SUGGESTIONS\"",
+            "    - StaticText \"0\"",
+            "    - StaticText \"waiting\"",
+            "  - link \"COUNTING RECORD 274\"",
+            "    - StaticText \"COUNTING RECORD\"",
+            "    - StaticText \"274\"",
+            "  - heading \"Where Airy talks\" [level=2]",
+            "  - link \"Change\"",
+            "  - separator",
+            "  - list",
+            "    - listitem [level=1]",
+            "      - StaticText \"#a-very-long-channel-name-for-the-community-announcements-and-more\"",
+            "      - StaticText \"Cookies&Cream Audios with a long server name\"",
+            "      - StaticText \"WHEN IT'S WORTH IT\"",
+            "      - StaticText \"yes 88% · 2 hours ago\"",
+            "    - listitem [level=1]",
+            "      - StaticText \"channel 1422972239808299099\"",
+            "      - StaticText \"WHEN MENTIONED\"",
+            "    - listitem [level=1]",
+            "      - StaticText \"#chat\"",
+            "      - StaticText \"Cookies&Cream Audios\"",
+            "      - StaticText \"WHEN IT'S WORTH IT\"",
+            "      - StaticText \"failed · 1 hour ago\"",
+            "    - listitem [level=1]",
+            "      - StaticText \"#off-topic\"",
+            "      - StaticText \"Cookies&Cream Audios\"",
+            "      - StaticText \"PAUSED\""
+          ],
+          "text": "Airy\nSign out\nCookie&Creams\n// 1437132076066406510\nON\n3 things need a look\nThis key may not ask for decisions (it needs decisions.make), so \"When it's worth it\" channels answer only when mentioned.\nChannel 1422972239808299099 is gone from i"
+        },
+        "1440": {
+          "screenshot": "/workspace/AiryBotCode/docs/screenshots/r2-home-grouped-grouped-1440.png",
+          "size": [
+            1440,
+            900
+          ],
+          "probe": {
+            "overflow": [],
+            "overlap": [],
+            "targets": [
+              {
+                "h": 36,
+                "hit": [
+                  156,
+                  36
+                ],
+                "kind": "small-target",
+                "name": "No bots yet\ndevairybot\nA",
+                "rect": [
+                  69,
+                  67,
+                  155,
+                  36
+                ],
+                "w": 155
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Home",
+                "rect": [
+                  9,
+                  170,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Channels",
+                "rect": [
+                  9,
+                  203,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Commands",
+                "rect": [
+                  9,
+                  236,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Activity",
+                "rect": [
+                  9,
+                  269,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Look",
+                "rect": [
+                  9,
+                  302,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Settings",
+                "rect": [
+                  9,
+                  335,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Suggestions",
+                "rect": [
+                  9,
+                  413,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 32,
+                "hit": [
+                  238,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Databases",
+                "rect": [
+                  9,
+                  446,
+                  238,
+                  32
+                ],
+                "w": 238
+              },
+              {
+                "h": 28,
+                "hit": [
+                  102,
+                  28
+                ],
+                "kind": "small-target",
+                "name": "Sign out",
+                "rect": [
+                  1315,
+                  14,
+                  101,
+                  28
+                ],
+                "w": 101
+              },
+              {
+                "h": 28,
+                "hit": [
+                  120,
+                  28
+                ],
+                "kind": "small-target",
+                "name": "Open channels",
+                "rect": [
+                  316,
+                  265,
+                  120,
+                  28
+                ],
+                "w": 120
+              },
+              {
+                "h": 32,
+                "hit": [
+                  62,
+                  32
+                ],
+                "kind": "small-target",
+                "name": "Change",
+                "rect": [
+                  1281,
+                  449,
+                  62,
+                  32
+                ],
+                "w": 62
+              }
+            ],
+            "smalltext": [
+              {
+                "kind": "small-field-text",
+                "limit": 16,
+                "rect": [
+                  69,
+                  67,
+                  155,
+                  36
+                ],
+                "size": 15,
+                "text": ""
+              }
+            ],
+            "spacing": [],
+            "scrollers": []
+          },
+          "probeTotal": 13,
+          "a11y": {
+            "counts": {
+              "inapplicable": 36,
+              "incomplete": 0,
+              "passes": 24,
+              "violations": 0
+            },
+            "violations": []
+          },
+          "treeLines": 99,
+          "tree": [
+            "- complementary",
+            "  - sectionheader",
+            "    - StaticText \"Airy\"",
+            "    - LabelText clickable [cursor:pointer]",
+            "      - StaticText \"Bot\"",
+            "    - combobox \"Bot\" [expanded=false]: Cookie&Creams",
+            "      - MenuListPopup",
+            "        - option \"No bots yet\" [disabled]",
+            "        - option \"devairybot\"",
+            "        - option \"Airy Guardian\"",
+            "        - option \"Cookie&Creams\" [selected]",
+            "  - navigation \"Airy\"",
+            "    - generic",
+            "      - StaticText \"THIS BOT\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - link \"Home\"",
+            "            - StaticText \"Home\"",
+            "        - listitem [level=1]",
+            "          - link \"Channels\"",
+            "            - StaticText \"Channels\"",
+            "        - listitem [level=1]",
+            "          - link \"Commands\"",
+            "            - StaticText \"Commands\"",
+            "        - listitem [level=1]",
+            "          - link \"Activity\"",
+            "            - StaticText \"Activity\"",
+            "        - listitem [level=1]",
+            "          - link \"Look\"",
+            "            - StaticText \"Look\"",
+            "        - listitem [level=1]",
+            "          - link \"Settings\"",
+            "            - StaticText \"Settings\"",
+            "    - generic",
+            "      - StaticText \"ALL BOTS\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - link \"Suggestions\"",
+            "            - StaticText \"Suggestions\"",
+            "        - listitem [level=1]",
+            "          - link \"Databases\"",
+            "            - StaticText \"Databases\"",
+            "- banner",
+            "  - button \"Sign out\"",
+            "- main",
+            "  - sectionheader",
+            "    - heading \"Cookie&Creams\" [level=1]",
+            "    - StaticText \"// 1437132076066406510\"",
+            "    - StaticText \"ON\"",
+            "  - region \"Needs a look\"",
+            "    - status",
+            "      - strong",
+            "        - StaticText \"3 things need a look\"",
+            "      - list",
+            "        - listitem [level=1]",
+            "          - ListMarker \"• \"",
+            "          - StaticText \"This key may not ask for decisions (it needs decisions.make), so \\\"When it's worth it\\\" channels answer only when mentioned.\"",
+            "        - listitem [level=1]",
+            "          - ListMarker \"• \"",
+            "          - StaticText \"Channel 1422972239808299099 is gone from its server, or the bot cannot see it.\""
+          ],
+          "text": "Airy\nBot\nNo bots yet\ndevairybot\nAiry Guardian\nCookie&Creams\nTHIS BOT\nHome\nChannels\nCommands\nActivity\nLook\nSettings\nALL BOTS\nSuggestions\nDatabases\nSign out\nCookie&Creams\n// 1437132076066406510\nON\n3 things need a look\nThis key may not ask for"
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "state": "grouped",
+      "rendered": true,
+      "error": null,
+      "findings": {
+        "375": {
+          "probe": 0,
+          "axe": 0
+        },
+        "1440": {
+          "probe": 13,
+          "axe": 0
+        }
+      }
+    }
+  ],
+  "browserRestarted": false,
+  "generatedAt": "2026-10-15T17:24:07.227Z"
+}
