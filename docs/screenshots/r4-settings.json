@@ -11,7 +11,7 @@
       "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440.png"
     },
     {
-      "label": "Image 2: 1440 viewport, 36 findings boxed (red = probe, orange = axe)",
+      "label": "Image 2: 1440 viewport, 32 findings boxed (red = probe, orange = axe)",
       "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-findings.png"
     },
     {
@@ -79,8 +79,8 @@
             "y": 6
           },
           "name": "Open the menu",
-          "number": 3282,
-          "ref": "e3282",
+          "number": 3948,
+          "ref": "e3948",
           "role": "button"
         },
         {
@@ -91,8 +91,8 @@
             "y": 6
           },
           "name": "Sign out",
-          "number": 3283,
-          "ref": "e3283",
+          "number": 3949,
+          "ref": "e3949",
           "role": "button"
         },
         {
@@ -103,8 +103,8 @@
             "y": 72
           },
           "name": "Settings",
-          "number": 3284,
-          "ref": "e3284",
+          "number": 3950,
+          "ref": "e3950",
           "role": "heading"
         },
         {
@@ -115,8 +115,8 @@
             "y": 144
           },
           "name": "Add a bot",
-          "number": 3285,
-          "ref": "e3285",
+          "number": 3951,
+          "ref": "e3951",
           "role": "button"
         },
         {
@@ -127,8 +127,8 @@
             "y": 238
           },
           "name": "Bot",
-          "number": 3286,
-          "ref": "e3286",
+          "number": 3952,
+          "ref": "e3952",
           "role": "heading"
         },
         {
@@ -138,20 +138,20 @@
             "x": 33,
             "y": 291
           },
-          "number": 3287,
-          "ref": "e3287",
+          "number": 3953,
+          "ref": "e3953",
           "role": "LabelText"
         },
         {
           "box": {
-            "height": 43,
+            "height": 48,
             "width": 254,
             "x": 33,
             "y": 315
           },
           "name": "Name",
-          "number": 3288,
-          "ref": "e3288",
+          "number": 3954,
+          "ref": "e3954",
           "role": "textbox"
         },
         {
@@ -159,11 +159,11 @@
             "height": 20,
             "width": 36,
             "x": 33,
-            "y": 374
+            "y": 379
           },
           "name": "On: the bot signs in to Discord",
-          "number": 3289,
-          "ref": "e3289",
+          "number": 3955,
+          "ref": "e3955",
           "role": "switch"
         },
         {
@@ -171,11 +171,11 @@
             "height": 44,
             "width": 67,
             "x": 189,
-            "y": 438
+            "y": 443
           },
           "name": "Copy",
-          "number": 3290,
-          "ref": "e3290",
+          "number": 3956,
+          "ref": "e3956",
           "role": "button"
         },
         {
@@ -183,11 +183,11 @@
             "height": 29,
             "width": 129,
             "x": 33,
-            "y": 528
+            "y": 533
           },
           "name": "Discord token",
-          "number": 3291,
-          "ref": "e3291",
+          "number": 3957,
+          "ref": "e3957",
           "role": "heading"
         },
         {
@@ -195,22 +195,22 @@
             "height": 20,
             "width": 64,
             "x": 33,
-            "y": 582
+            "y": 587
           },
-          "number": 3292,
-          "ref": "e3292",
+          "number": 3958,
+          "ref": "e3958",
           "role": "LabelText"
         },
         {
           "box": {
-            "height": 43,
+            "height": 48,
             "width": 254,
             "x": 33,
-            "y": 606
+            "y": 611
           },
           "name": "New token",
-          "number": 3293,
-          "ref": "e3293",
+          "number": 3959,
+          "ref": "e3959",
           "role": "textbox"
         },
         {
@@ -218,11 +218,11 @@
             "height": 29,
             "width": 155,
             "x": 33,
-            "y": 778
+            "y": 789
           },
           "name": "Logs and admins",
-          "number": 3294,
-          "ref": "e3294",
+          "number": 3960,
+          "ref": "e3960",
           "role": "heading"
         },
         {
@@ -230,10 +230,10 @@
             "height": 20,
             "width": 73,
             "x": 33,
-            "y": 832
+            "y": 842
           },
-          "number": 3295,
-          "ref": "e3295",
+          "number": 3961,
+          "ref": "e3961",
           "role": "LabelText"
         },
         {
@@ -241,10 +241,10 @@
             "height": 20,
             "width": 113,
             "x": 33,
-            "y": 941
+            "y": 952
           },
-          "number": 3296,
-          "ref": "e3296",
+          "number": 3962,
+          "ref": "e3962",
           "role": "LabelText"
         },
         {
@@ -252,10 +252,10 @@
             "height": 20,
             "width": 73,
             "x": 33,
-            "y": 1051
+            "y": 1061
           },
-          "number": 3297,
-          "ref": "e3297",
+          "number": 3963,
+          "ref": "e3963",
           "role": "LabelText"
         },
         {
@@ -263,22 +263,22 @@
             "height": 20,
             "width": 145,
             "x": 33,
-            "y": 1213
+            "y": 1223
           },
-          "number": 3298,
-          "ref": "e3298",
+          "number": 3964,
+          "ref": "e3964",
           "role": "LabelText"
         },
         {
           "box": {
-            "height": 43,
+            "height": 48,
             "width": 254,
             "x": 33,
-            "y": 1237
+            "y": 1247
           },
           "name": "Owner's Discord user id",
-          "number": 3299,
-          "ref": "e3299",
+          "number": 3965,
+          "ref": "e3965",
           "role": "textbox"
         },
         {
@@ -286,10 +286,10 @@
             "height": 20,
             "width": 58,
             "x": 33,
-            "y": 1319
+            "y": 1335
           },
-          "number": 3300,
-          "ref": "e3300",
+          "number": 3966,
+          "ref": "e3966",
           "role": "LabelText"
         },
         {
@@ -297,11 +297,11 @@
             "height": 29,
             "width": 150,
             "x": 33,
-            "y": 1546
+            "y": 1492
           },
           "name": "Remove this bot",
-          "number": 3301,
-          "ref": "e3301",
+          "number": 3967,
+          "ref": "e3967",
           "role": "heading"
         },
         {
@@ -309,11 +309,11 @@
             "height": 44,
             "width": 212,
             "x": 33,
-            "y": 1672
+            "y": 1618
           },
           "name": "Remove Cookie&Creams",
-          "number": 3302,
-          "ref": "e3302",
+          "number": 3968,
+          "ref": "e3968",
           "role": "button"
         },
         {
@@ -321,11 +321,11 @@
             "height": 44,
             "width": 190,
             "x": 33,
-            "y": 688
+            "y": 699
           },
           "name": "Show the stored token",
-          "number": 3303,
-          "ref": "e3303",
+          "number": 3969,
+          "ref": "e3969",
           "role": "button"
         },
         {
@@ -333,11 +333,11 @@
             "height": 44,
             "width": 192,
             "x": 64,
-            "y": 857
+            "y": 867
           },
           "name": "Log channel",
-          "number": 3304,
-          "ref": "e3304",
+          "number": 3970,
+          "ref": "e3970",
           "role": "combobox"
         },
         {
@@ -345,11 +345,11 @@
             "height": 14,
             "width": 14,
             "x": 264,
-            "y": 872
+            "y": 882
           },
           "name": "Clear",
-          "number": 3305,
-          "ref": "e3305",
+          "number": 3971,
+          "ref": "e3971",
           "role": "button"
         },
         {
@@ -357,11 +357,11 @@
             "height": 44,
             "width": 192,
             "x": 64,
-            "y": 966
+            "y": 977
           },
           "name": "Owner log channel",
-          "number": 3306,
-          "ref": "e3306",
+          "number": 3972,
+          "ref": "e3972",
           "role": "combobox"
         },
         {
@@ -369,35 +369,11 @@
             "height": 14,
             "width": 14,
             "x": 264,
-            "y": 981
+            "y": 992
           },
           "name": "Clear",
-          "number": 3307,
-          "ref": "e3307",
-          "role": "button"
-        },
-        {
-          "box": {
-            "height": 44,
-            "width": 136,
-            "x": 92,
-            "y": 512
-          },
-          "name": "Undo changes",
-          "number": 3308,
-          "ref": "e3308",
-          "role": "button"
-        },
-        {
-          "box": {
-            "height": 44,
-            "width": 68,
-            "x": 236,
-            "y": 512
-          },
-          "name": "Save",
-          "number": 3309,
-          "ref": "e3309",
+          "number": 3973,
+          "ref": "e3973",
           "role": "button"
         },
         {
@@ -405,11 +381,11 @@
             "height": 13,
             "width": 13,
             "x": 260,
-            "y": 1084
+            "y": 1094
           },
           "name": "Remove @Moderator · Cookies&Cream Audios",
-          "number": 3310,
-          "ref": "e3310",
+          "number": 3974,
+          "ref": "e3974",
           "role": "button"
         },
         {
@@ -417,11 +393,11 @@
             "height": 22,
             "width": 218,
             "x": 42,
-            "y": 1106
+            "y": 1116
           },
           "name": "Admin roles",
-          "number": 3311,
-          "ref": "e3311",
+          "number": 3975,
+          "ref": "e3975",
           "role": "combobox"
         },
         {
@@ -429,11 +405,11 @@
             "height": 44,
             "width": 254,
             "x": 33,
-            "y": 1343
+            "y": 1359
           },
           "name": "Database",
-          "number": 3312,
-          "ref": "e3312",
+          "number": 3976,
+          "ref": "e3976",
           "role": "combobox"
         }
       ],
@@ -482,8 +458,8 @@
             "y": 6
           },
           "name": "Open the menu",
-          "number": 3232,
-          "ref": "e3232",
+          "number": 3915,
+          "ref": "e3915",
           "role": "button"
         },
         {
@@ -494,8 +470,8 @@
             "y": 6
           },
           "name": "Sign out",
-          "number": 3233,
-          "ref": "e3233",
+          "number": 3916,
+          "ref": "e3916",
           "role": "button"
         },
         {
@@ -506,8 +482,8 @@
             "y": 72
           },
           "name": "Settings",
-          "number": 3234,
-          "ref": "e3234",
+          "number": 3917,
+          "ref": "e3917",
           "role": "heading"
         },
         {
@@ -518,8 +494,8 @@
             "y": 144
           },
           "name": "Add a bot",
-          "number": 3235,
-          "ref": "e3235",
+          "number": 3918,
+          "ref": "e3918",
           "role": "button"
         },
         {
@@ -530,8 +506,8 @@
             "y": 238
           },
           "name": "Bot",
-          "number": 3236,
-          "ref": "e3236",
+          "number": 3919,
+          "ref": "e3919",
           "role": "heading"
         },
         {
@@ -541,20 +517,20 @@
             "x": 33,
             "y": 291
           },
-          "number": 3237,
-          "ref": "e3237",
+          "number": 3920,
+          "ref": "e3920",
           "role": "LabelText"
         },
         {
           "box": {
-            "height": 43,
+            "height": 48,
             "width": 309,
             "x": 33,
             "y": 315
           },
           "name": "Name",
-          "number": 3238,
-          "ref": "e3238",
+          "number": 3921,
+          "ref": "e3921",
           "role": "textbox"
         },
         {
@@ -562,11 +538,11 @@
             "height": 20,
             "width": 36,
             "x": 33,
-            "y": 374
+            "y": 379
           },
           "name": "On: the bot signs in to Discord",
-          "number": 3239,
-          "ref": "e3239",
+          "number": 3922,
+          "ref": "e3922",
           "role": "switch"
         },
         {
@@ -574,11 +550,11 @@
             "height": 44,
             "width": 67,
             "x": 33,
-            "y": 438
+            "y": 443
           },
           "name": "Copy",
-          "number": 3240,
-          "ref": "e3240",
+          "number": 3923,
+          "ref": "e3923",
           "role": "button"
         },
         {
@@ -586,11 +562,11 @@
             "height": 29,
             "width": 129,
             "x": 33,
-            "y": 528
+            "y": 533
           },
           "name": "Discord token",
-          "number": 3241,
-          "ref": "e3241",
+          "number": 3924,
+          "ref": "e3924",
           "role": "heading"
         },
         {
@@ -598,22 +574,22 @@
             "height": 20,
             "width": 64,
             "x": 33,
-            "y": 582
+            "y": 587
           },
-          "number": 3242,
-          "ref": "e3242",
+          "number": 3925,
+          "ref": "e3925",
           "role": "LabelText"
         },
         {
           "box": {
-            "height": 43,
+            "height": 48,
             "width": 309,
             "x": 33,
-            "y": 606
+            "y": 611
           },
           "name": "New token",
-          "number": 3243,
-          "ref": "e3243",
+          "number": 3926,
+          "ref": "e3926",
           "role": "textbox"
         },
         {
@@ -621,11 +597,11 @@
             "height": 29,
             "width": 155,
             "x": 33,
-            "y": 778
+            "y": 789
           },
           "name": "Logs and admins",
-          "number": 3244,
-          "ref": "e3244",
+          "number": 3927,
+          "ref": "e3927",
           "role": "heading"
         },
         {
@@ -633,10 +609,10 @@
             "height": 20,
             "width": 73,
             "x": 33,
-            "y": 832
+            "y": 842
           },
-          "number": 3245,
-          "ref": "e3245",
+          "number": 3928,
+          "ref": "e3928",
           "role": "LabelText"
         },
         {
@@ -644,10 +620,10 @@
             "height": 20,
             "width": 113,
             "x": 33,
-            "y": 941
+            "y": 952
           },
-          "number": 3246,
-          "ref": "e3246",
+          "number": 3929,
+          "ref": "e3929",
           "role": "LabelText"
         },
         {
@@ -655,10 +631,10 @@
             "height": 20,
             "width": 73,
             "x": 33,
-            "y": 1051
+            "y": 1061
           },
-          "number": 3247,
-          "ref": "e3247",
+          "number": 3930,
+          "ref": "e3930",
           "role": "LabelText"
         },
         {
@@ -666,22 +642,22 @@
             "height": 20,
             "width": 145,
             "x": 33,
-            "y": 1213
+            "y": 1223
           },
-          "number": 3248,
-          "ref": "e3248",
+          "number": 3931,
+          "ref": "e3931",
           "role": "LabelText"
         },
         {
           "box": {
-            "height": 43,
+            "height": 48,
             "width": 309,
             "x": 33,
-            "y": 1237
+            "y": 1247
           },
           "name": "Owner's Discord user id",
-          "number": 3249,
-          "ref": "e3249",
+          "number": 3932,
+          "ref": "e3932",
           "role": "textbox"
         },
         {
@@ -689,10 +665,10 @@
             "height": 20,
             "width": 58,
             "x": 33,
-            "y": 1319
+            "y": 1335
           },
-          "number": 3250,
-          "ref": "e3250",
+          "number": 3933,
+          "ref": "e3933",
           "role": "LabelText"
         },
         {
@@ -700,11 +676,11 @@
             "height": 29,
             "width": 150,
             "x": 33,
-            "y": 1546
+            "y": 1492
           },
           "name": "Remove this bot",
-          "number": 3251,
-          "ref": "e3251",
+          "number": 3934,
+          "ref": "e3934",
           "role": "heading"
         },
         {
@@ -712,11 +688,11 @@
             "height": 44,
             "width": 212,
             "x": 33,
-            "y": 1652
+            "y": 1598
           },
           "name": "Remove Cookie&Creams",
-          "number": 3252,
-          "ref": "e3252",
+          "number": 3935,
+          "ref": "e3935",
           "role": "button"
         },
         {
@@ -724,11 +700,11 @@
             "height": 44,
             "width": 190,
             "x": 33,
-            "y": 688
+            "y": 699
           },
           "name": "Show the stored token",
-          "number": 3253,
-          "ref": "e3253",
+          "number": 3936,
+          "ref": "e3936",
           "role": "button"
         },
         {
@@ -736,11 +712,11 @@
             "height": 44,
             "width": 247,
             "x": 64,
-            "y": 857
+            "y": 867
           },
           "name": "Log channel",
-          "number": 3254,
-          "ref": "e3254",
+          "number": 3937,
+          "ref": "e3937",
           "role": "combobox"
         },
         {
@@ -748,11 +724,11 @@
             "height": 14,
             "width": 14,
             "x": 319,
-            "y": 872
+            "y": 882
           },
           "name": "Clear",
-          "number": 3255,
-          "ref": "e3255",
+          "number": 3938,
+          "ref": "e3938",
           "role": "button"
         },
         {
@@ -760,11 +736,11 @@
             "height": 44,
             "width": 247,
             "x": 64,
-            "y": 966
+            "y": 977
           },
           "name": "Owner log channel",
-          "number": 3256,
-          "ref": "e3256",
+          "number": 3939,
+          "ref": "e3939",
           "role": "combobox"
         },
         {
@@ -772,35 +748,11 @@
             "height": 14,
             "width": 14,
             "x": 319,
-            "y": 981
+            "y": 992
           },
           "name": "Clear",
-          "number": 3257,
-          "ref": "e3257",
-          "role": "button"
-        },
-        {
-          "box": {
-            "height": 44,
-            "width": 136,
-            "x": 147,
-            "y": 756
-          },
-          "name": "Undo changes",
-          "number": 3258,
-          "ref": "e3258",
-          "role": "button"
-        },
-        {
-          "box": {
-            "height": 44,
-            "width": 68,
-            "x": 291,
-            "y": 756
-          },
-          "name": "Save",
-          "number": 3259,
-          "ref": "e3259",
+          "number": 3940,
+          "ref": "e3940",
           "role": "button"
         },
         {
@@ -808,11 +760,11 @@
             "height": 13,
             "width": 13,
             "x": 293,
-            "y": 1084
+            "y": 1094
           },
           "name": "Remove @Moderator · Cookies&Cream Audios",
-          "number": 3260,
-          "ref": "e3260",
+          "number": 3941,
+          "ref": "e3941",
           "role": "button"
         },
         {
@@ -820,11 +772,11 @@
             "height": 22,
             "width": 273,
             "x": 42,
-            "y": 1106
+            "y": 1116
           },
           "name": "Admin roles",
-          "number": 3261,
-          "ref": "e3261",
+          "number": 3942,
+          "ref": "e3942",
           "role": "combobox"
         },
         {
@@ -832,11 +784,11 @@
             "height": 44,
             "width": 309,
             "x": 33,
-            "y": 1343
+            "y": 1359
           },
           "name": "Database",
-          "number": 3262,
-          "ref": "e3262",
+          "number": 3943,
+          "ref": "e3943",
           "role": "combobox"
         }
       ],
@@ -854,32 +806,7 @@
       ],
       "probe": {
         "overflow": [],
-        "overlap": [
-          {
-            "a": "405431299323461634",
-            "area": 4034,
-            "b": "Undo changes",
-            "kind": "overlap",
-            "rect": [
-              1140,
-              852,
-              136,
-              30
-            ]
-          },
-          {
-            "a": "405431299323461634",
-            "area": 1507,
-            "b": "Save",
-            "kind": "overlap",
-            "rect": [
-              1284,
-              852,
-              51,
-              30
-            ]
-          }
-        ],
+        "overlap": [],
         "targets": [
           {
             "h": 36,
@@ -1202,13 +1129,12 @@
             "w": 14
           },
           {
-            "coveredBy": "div.bar",
             "h": 13,
             "hit": [
-              1,
-              1
+              14,
+              14
             ],
-            "kind": "covered",
+            "kind": "small-target",
             "name": "Remove @Moderator · Cook",
             "rect": [
               557,
@@ -1219,13 +1145,12 @@
             "w": 13
           },
           {
-            "coveredBy": "div.bar",
             "h": 22,
             "hit": [
-              1,
-              1
+              204,
+              22
             ],
-            "kind": "covered",
+            "kind": "small-target",
             "name": "input",
             "rect": [
               579,
@@ -1236,13 +1161,12 @@
             "w": 202
           },
           {
-            "coveredBy": "div.bar",
             "h": 14,
             "hit": [
-              1,
-              1
+              14,
+              14
             ],
-            "kind": "covered",
+            "kind": "small-target",
             "name": "button",
             "rect": [
               785,
@@ -1253,13 +1177,12 @@
             "w": 14
           },
           {
-            "coveredBy": "div.bar",
             "h": 41,
             "hit": [
-              1,
-              1
+              512,
+              42
             ],
-            "kind": "covered",
+            "kind": "small-target",
             "name": "input",
             "rect": [
               824,
@@ -1268,38 +1191,6 @@
               41
             ],
             "w": 511
-          },
-          {
-            "h": 36,
-            "hit": [
-              137,
-              36
-            ],
-            "kind": "small-target",
-            "name": "Undo changes",
-            "rect": [
-              1140,
-              852,
-              136,
-              36
-            ],
-            "w": 136
-          },
-          {
-            "h": 36,
-            "hit": [
-              68,
-              36
-            ],
-            "kind": "small-target",
-            "name": "Save",
-            "rect": [
-              1284,
-              852,
-              68,
-              36
-            ],
-            "w": 68
           }
         ],
         "smalltext": [
@@ -1521,32 +1412,6 @@
         {
           "n": 9,
           "source": "probe",
-          "kind": "overlap/overlap",
-          "label": "405431299323461634",
-          "rect": [
-            1140,
-            852,
-            136,
-            30
-          ],
-          "detail": ""
-        },
-        {
-          "n": 10,
-          "source": "probe",
-          "kind": "overlap/overlap",
-          "label": "405431299323461634",
-          "rect": [
-            1284,
-            852,
-            51,
-            30
-          ],
-          "detail": ""
-        },
-        {
-          "n": 11,
-          "source": "probe",
           "kind": "targets/small-target",
           "label": "Pick a bot\ndevairybot\nAi",
           "rect": [
@@ -1558,7 +1423,7 @@
           "detail": "155x36"
         },
         {
-          "n": 12,
+          "n": 10,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Home",
@@ -1571,7 +1436,7 @@
           "detail": "238x32"
         },
         {
-          "n": 13,
+          "n": 11,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Channels",
@@ -1584,7 +1449,7 @@
           "detail": "238x32"
         },
         {
-          "n": 14,
+          "n": 12,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Commands",
@@ -1597,7 +1462,7 @@
           "detail": "238x32"
         },
         {
-          "n": 15,
+          "n": 13,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Activity",
@@ -1610,7 +1475,7 @@
           "detail": "238x32"
         },
         {
-          "n": 16,
+          "n": 14,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Look",
@@ -1623,7 +1488,7 @@
           "detail": "238x32"
         },
         {
-          "n": 17,
+          "n": 15,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Settings",
@@ -1636,7 +1501,7 @@
           "detail": "238x32"
         },
         {
-          "n": 18,
+          "n": 16,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Suggestions",
@@ -1649,7 +1514,7 @@
           "detail": "238x32"
         },
         {
-          "n": 19,
+          "n": 17,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Databases",
@@ -1662,7 +1527,7 @@
           "detail": "238x32"
         },
         {
-          "n": 20,
+          "n": 18,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Sign out",
@@ -1675,7 +1540,7 @@
           "detail": "101x28"
         },
         {
-          "n": 21,
+          "n": 19,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Add a bot",
@@ -1688,7 +1553,7 @@
           "detail": "129x36"
         },
         {
-          "n": 22,
+          "n": 20,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "input",
@@ -1701,7 +1566,7 @@
           "detail": "1038x41"
         },
         {
-          "n": 23,
+          "n": 21,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "button",
@@ -1714,7 +1579,7 @@
           "detail": "36x20"
         },
         {
-          "n": 24,
+          "n": 22,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Copy",
@@ -1727,7 +1592,7 @@
           "detail": "67x26"
         },
         {
-          "n": 25,
+          "n": 23,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "input",
@@ -1740,7 +1605,7 @@
           "detail": "1038x41"
         },
         {
-          "n": 26,
+          "n": 24,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Show the stored token",
@@ -1753,7 +1618,7 @@
           "detail": "190x28"
         },
         {
-          "n": 27,
+          "n": 25,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Find a channel",
@@ -1766,7 +1631,7 @@
           "detail": "287x32"
         },
         {
-          "n": 28,
+          "n": 26,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Clear",
@@ -1779,7 +1644,7 @@
           "detail": "14x14"
         },
         {
-          "n": 29,
+          "n": 27,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Find a channel",
@@ -1792,7 +1657,7 @@
           "detail": "287x32"
         },
         {
-          "n": 30,
+          "n": 28,
           "source": "probe",
           "kind": "targets/small-target",
           "label": "Clear",
@@ -1805,9 +1670,9 @@
           "detail": "14x14"
         },
         {
-          "n": 31,
+          "n": 29,
           "source": "probe",
-          "kind": "targets/covered",
+          "kind": "targets/small-target",
           "label": "Remove @Moderator · Cook",
           "rect": [
             557,
@@ -1815,12 +1680,12 @@
             13,
             13
           ],
-          "detail": "13x13, covered by div.bar"
+          "detail": "13x13"
         },
         {
-          "n": 32,
+          "n": 30,
           "source": "probe",
-          "kind": "targets/covered",
+          "kind": "targets/small-target",
           "label": "input",
           "rect": [
             579,
@@ -1828,12 +1693,12 @@
             202,
             22
           ],
-          "detail": "202x22, covered by div.bar"
+          "detail": "202x22"
         },
         {
-          "n": 33,
+          "n": 31,
           "source": "probe",
-          "kind": "targets/covered",
+          "kind": "targets/small-target",
           "label": "button",
           "rect": [
             785,
@@ -1841,12 +1706,12 @@
             14,
             14
           ],
-          "detail": "14x14, covered by div.bar"
+          "detail": "14x14"
         },
         {
-          "n": 34,
+          "n": 32,
           "source": "probe",
-          "kind": "targets/covered",
+          "kind": "targets/small-target",
           "label": "input",
           "rect": [
             824,
@@ -1854,38 +1719,12 @@
             511,
             41
           ],
-          "detail": "511x41, covered by div.bar"
-        },
-        {
-          "n": 35,
-          "source": "probe",
-          "kind": "targets/small-target",
-          "label": "Undo changes",
-          "rect": [
-            1140,
-            852,
-            136,
-            36
-          ],
-          "detail": "136x36"
-        },
-        {
-          "n": 36,
-          "source": "probe",
-          "kind": "targets/small-target",
-          "label": "Save",
-          "rect": [
-            1284,
-            852,
-            68,
-            36
-          ],
-          "detail": "68x36"
+          "detail": "511x41"
         }
       ],
       "overlay": {
         "path": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-findings.png",
-        "boxes": 36
+        "boxes": 32
       },
       "legend": {
         "md": "/workspace/AiryBotCode/docs/screenshots/r4-settings-1440-legend.md",
@@ -1900,8 +1739,8 @@
             "y": 14
           },
           "name": "Sign out",
-          "number": 3168,
-          "ref": "e3168",
+          "number": 3868,
+          "ref": "e3868",
           "role": "button"
         },
         {
@@ -1912,8 +1751,8 @@
             "y": 128
           },
           "name": "Airy",
-          "number": 3169,
-          "ref": "e3169",
+          "number": 3869,
+          "ref": "e3869",
           "role": "navigation"
         },
         {
@@ -1924,8 +1763,8 @@
             "y": 80
           },
           "name": "Settings",
-          "number": 3170,
-          "ref": "e3170",
+          "number": 3870,
+          "ref": "e3870",
           "role": "heading"
         },
         {
@@ -1936,8 +1775,8 @@
             "y": 80
           },
           "name": "Add a bot",
-          "number": 3171,
-          "ref": "e3171",
+          "number": 3871,
+          "ref": "e3871",
           "role": "button"
         },
         {
@@ -1948,8 +1787,8 @@
             "y": 190
           },
           "name": "Bot",
-          "number": 3172,
-          "ref": "e3172",
+          "number": 3872,
+          "ref": "e3872",
           "role": "heading"
         },
         {
@@ -1959,8 +1798,8 @@
             "x": 297,
             "y": 243
           },
-          "number": 3173,
-          "ref": "e3173",
+          "number": 3873,
+          "ref": "e3873",
           "role": "LabelText"
         },
         {
@@ -1971,8 +1810,8 @@
             "y": 267
           },
           "name": "Name",
-          "number": 3174,
-          "ref": "e3174",
+          "number": 3874,
+          "ref": "e3874",
           "role": "textbox"
         },
         {
@@ -1983,8 +1822,8 @@
             "y": 324
           },
           "name": "On: the bot signs in to Discord",
-          "number": 3175,
-          "ref": "e3175",
+          "number": 3875,
+          "ref": "e3875",
           "role": "switch"
         },
         {
@@ -1995,8 +1834,8 @@
             "y": 361
           },
           "name": "Copy",
-          "number": 3176,
-          "ref": "e3176",
+          "number": 3876,
+          "ref": "e3876",
           "role": "button"
         },
         {
@@ -2007,8 +1846,8 @@
             "y": 433
           },
           "name": "Discord token",
-          "number": 3177,
-          "ref": "e3177",
+          "number": 3877,
+          "ref": "e3877",
           "role": "heading"
         },
         {
@@ -2018,8 +1857,8 @@
             "x": 297,
             "y": 486
           },
-          "number": 3178,
-          "ref": "e3178",
+          "number": 3878,
+          "ref": "e3878",
           "role": "LabelText"
         },
         {
@@ -2030,8 +1869,8 @@
             "y": 510
           },
           "name": "New token",
-          "number": 3179,
-          "ref": "e3179",
+          "number": 3879,
+          "ref": "e3879",
           "role": "textbox"
         },
         {
@@ -2042,8 +1881,8 @@
             "y": 665
           },
           "name": "Logs and admins",
-          "number": 3180,
-          "ref": "e3180",
+          "number": 3880,
+          "ref": "e3880",
           "role": "heading"
         },
         {
@@ -2053,8 +1892,8 @@
             "x": 297,
             "y": 719
           },
-          "number": 3181,
-          "ref": "e3181",
+          "number": 3881,
+          "ref": "e3881",
           "role": "LabelText"
         },
         {
@@ -2064,8 +1903,8 @@
             "x": 824,
             "y": 719
           },
-          "number": 3182,
-          "ref": "e3182",
+          "number": 3882,
+          "ref": "e3882",
           "role": "LabelText"
         },
         {
@@ -2075,8 +1914,8 @@
             "x": 297,
             "y": 816
           },
-          "number": 3183,
-          "ref": "e3183",
+          "number": 3883,
+          "ref": "e3883",
           "role": "LabelText"
         },
         {
@@ -2086,8 +1925,8 @@
             "x": 824,
             "y": 816
           },
-          "number": 3184,
-          "ref": "e3184",
+          "number": 3884,
+          "ref": "e3884",
           "role": "LabelText"
         },
         {
@@ -2098,8 +1937,8 @@
             "y": 840
           },
           "name": "Owner's Discord user id",
-          "number": 3185,
-          "ref": "e3185",
+          "number": 3885,
+          "ref": "e3885",
           "role": "textbox"
         },
         {
@@ -2109,8 +1948,8 @@
             "x": 297,
             "y": 936
           },
-          "number": 3186,
-          "ref": "e3186",
+          "number": 3886,
+          "ref": "e3886",
           "role": "LabelText"
         },
         {
@@ -2118,11 +1957,11 @@
             "height": 29,
             "width": 150,
             "x": 297,
-            "y": 1146
+            "y": 1065
           },
           "name": "Remove this bot",
-          "number": 3187,
-          "ref": "e3187",
+          "number": 3887,
+          "ref": "e3887",
           "role": "heading"
         },
         {
@@ -2130,11 +1969,11 @@
             "height": 36,
             "width": 212,
             "x": 1123,
-            "y": 1200
+            "y": 1119
           },
           "name": "Remove Cookie&Creams",
-          "number": 3188,
-          "ref": "e3188",
+          "number": 3888,
+          "ref": "e3888",
           "role": "button"
         },
         {
@@ -2145,8 +1984,8 @@
             "y": 591
           },
           "name": "Show the stored token",
-          "number": 3189,
-          "ref": "e3189",
+          "number": 3889,
+          "ref": "e3889",
           "role": "button"
         },
         {
@@ -2157,8 +1996,8 @@
             "y": 744
           },
           "name": "Log channel",
-          "number": 3190,
-          "ref": "e3190",
+          "number": 3890,
+          "ref": "e3890",
           "role": "combobox"
         },
         {
@@ -2169,8 +2008,8 @@
             "y": 753
           },
           "name": "Clear",
-          "number": 3191,
-          "ref": "e3191",
+          "number": 3891,
+          "ref": "e3891",
           "role": "button"
         },
         {
@@ -2181,8 +2020,8 @@
             "y": 744
           },
           "name": "Owner log channel",
-          "number": 3192,
-          "ref": "e3192",
+          "number": 3892,
+          "ref": "e3892",
           "role": "combobox"
         },
         {
@@ -2193,32 +2032,8 @@
             "y": 753
           },
           "name": "Clear",
-          "number": 3193,
-          "ref": "e3193",
-          "role": "button"
-        },
-        {
-          "box": {
-            "height": 36,
-            "width": 136,
-            "x": 1140,
-            "y": 852
-          },
-          "name": "Undo changes",
-          "number": 3194,
-          "ref": "e3194",
-          "role": "button"
-        },
-        {
-          "box": {
-            "height": 36,
-            "width": 68,
-            "x": 1284,
-            "y": 852
-          },
-          "name": "Save",
-          "number": 3195,
-          "ref": "e3195",
+          "number": 3893,
+          "ref": "e3893",
           "role": "button"
         },
         {
@@ -2228,8 +2043,8 @@
             "x": 69,
             "y": 67
           },
-          "number": 3196,
-          "ref": "e3196",
+          "number": 3894,
+          "ref": "e3894",
           "role": "LabelText"
         },
         {
@@ -2240,8 +2055,8 @@
             "y": 851
           },
           "name": "Remove @Moderator · Cookies&Cream Audios",
-          "number": 3197,
-          "ref": "e3197",
+          "number": 3895,
+          "ref": "e3895",
           "role": "button"
         },
         {
@@ -2252,8 +2067,8 @@
             "y": 846
           },
           "name": "Admin roles",
-          "number": 3198,
-          "ref": "e3198",
+          "number": 3896,
+          "ref": "e3896",
           "role": "combobox"
         },
         {
@@ -2264,8 +2079,8 @@
             "y": 960
           },
           "name": "Database",
-          "number": 3199,
-          "ref": "e3199",
+          "number": 3897,
+          "ref": "e3897",
           "role": "combobox"
         },
         {
@@ -2276,8 +2091,8 @@
             "y": 67
           },
           "name": "Bot",
-          "number": 3200,
-          "ref": "e3200",
+          "number": 3898,
+          "ref": "e3898",
           "role": "combobox"
         },
         {
@@ -2288,8 +2103,8 @@
             "y": 170
           },
           "name": "Home",
-          "number": 3201,
-          "ref": "e3201",
+          "number": 3899,
+          "ref": "e3899",
           "role": "link"
         },
         {
@@ -2300,8 +2115,8 @@
             "y": 203
           },
           "name": "Channels",
-          "number": 3202,
-          "ref": "e3202",
+          "number": 3900,
+          "ref": "e3900",
           "role": "link"
         },
         {
@@ -2312,8 +2127,8 @@
             "y": 236
           },
           "name": "Commands",
-          "number": 3203,
-          "ref": "e3203",
+          "number": 3901,
+          "ref": "e3901",
           "role": "link"
         },
         {
@@ -2324,8 +2139,8 @@
             "y": 269
           },
           "name": "Activity",
-          "number": 3204,
-          "ref": "e3204",
+          "number": 3902,
+          "ref": "e3902",
           "role": "link"
         },
         {
@@ -2336,8 +2151,8 @@
             "y": 302
           },
           "name": "Look",
-          "number": 3205,
-          "ref": "e3205",
+          "number": 3903,
+          "ref": "e3903",
           "role": "link"
         },
         {
@@ -2348,8 +2163,8 @@
             "y": 335
           },
           "name": "Settings",
-          "number": 3206,
-          "ref": "e3206",
+          "number": 3904,
+          "ref": "e3904",
           "role": "link"
         },
         {
@@ -2360,8 +2175,8 @@
             "y": 413
           },
           "name": "Suggestions",
-          "number": 3207,
-          "ref": "e3207",
+          "number": 3905,
+          "ref": "e3905",
           "role": "link"
         },
         {
@@ -2372,8 +2187,8 @@
             "y": 446
           },
           "name": "Databases",
-          "number": 3208,
-          "ref": "e3208",
+          "number": 3906,
+          "ref": "e3906",
           "role": "link"
         }
       ],
@@ -2387,23 +2202,27 @@
     "cls": {
       "entries": [
         {
-          "startTime": 174.7,
+          "startTime": 217.2,
           "value": 0
+        },
+        {
+          "startTime": 521,
+          "value": 0.0001
         }
       ],
       "score": 0
     },
-    "fcp": 144,
+    "fcp": 208,
     "hydration": null,
     "inp": null,
     "lcp": {
       "element": "span",
       "size": 4233,
-      "startTime": 196,
+      "startTime": 240,
       "url": null
     },
-    "ttfb": 3.9,
+    "ttfb": 5.4,
     "url": "http://host.docker.internal:5173/settings"
   },
-  "generatedAt": "2026-10-15T18:03:53.940Z"
+  "generatedAt": "2026-10-15T18:24:01.297Z"
 }

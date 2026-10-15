@@ -1,8 +1,19 @@
 # thehive.thatevilguy.com (Cloudflare tunnel -> here, plain HTTP) serves The Hive
-# only. Since 2026-10-06 Airy's control panel, its access-key and Discord login
-# and its /api are no longer served on this host; every other path opens the Hive.
+# only. Airy's control panel and its /api live on airy.thatevilguy.com.
 
 :8088 {
+	@airy host airy.thatevilguy.com
+	handle @airy {
+		handle /api/* {
+			reverse_proxy api:8080
+		}
+		handle {
+			root * /srv
+			try_files {path} /index.html
+			file_server
+		}
+	}
+
 	# CORS for the Hive Pocket app — its Capacitor WebView runs on the origin
 	# https://localhost, so browsers preflight every API call. Answer the
 	# preflight here (backends never see OPTIONS) and stamp Allow-Origin on

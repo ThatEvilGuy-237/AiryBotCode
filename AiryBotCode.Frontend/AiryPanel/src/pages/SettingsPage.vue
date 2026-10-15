@@ -31,14 +31,22 @@ const fresh = ref({ botId: '', botName: '', token: '' })
 const adding = ref(false)
 const addError = ref<string | null>(null)
 
-const dirty = computed(() => {
-  if (!draft.value || !bot.value) return false
+const changes = computed(() => {
+  if (!draft.value || !bot.value) return 0
   const a = draft.value
   const b = bot.value
-  return token.value.trim() !== '' || a.botName !== b.botName || a.enabled !== b.enabled || a.logChannelId !== b.logChannelId
-    || a.evilLogChannelId !== b.evilLogChannelId || a.evilId !== b.evilId || (a.adminRoleIds ?? '') !== (b.adminRoleIds ?? '')
-    || (a.databaseName ?? '') !== (b.databaseName ?? '')
+  return [
+    token.value.trim() !== '',
+    a.botName !== b.botName,
+    a.enabled !== b.enabled,
+    (a.logChannelId || '0') !== (b.logChannelId || '0'),
+    (a.evilLogChannelId || '0') !== (b.evilLogChannelId || '0'),
+    a.evilId !== b.evilId,
+    (a.adminRoleIds ?? '') !== (b.adminRoleIds ?? ''),
+    (a.databaseName ?? '') !== (b.databaseName ?? ''),
+  ].filter(Boolean).length
 })
+const dirty = computed(() => changes.value > 0)
 
 const many = (list: DiscordEntity[]) => new Set(list.map(e => e.guild)).size > 1
 const options = (list: DiscordEntity[], keep: string[]) => [
@@ -50,7 +58,10 @@ const adminIds = computed({
   set: (ids: string[]) => { if (draft.value) draft.value.adminRoleIds = ids.join(',') },
 })
 const roleOptions = computed(() => options(roles.value, adminIds.value))
-const databaseOptions = computed(() => [{ label: 'The shared database', value: '' }, ...databases.value.map(d => ({ label: d, value: d }))])
+const databaseOptions = computed(() => {
+  const own = databases.value.filter(d => d.toLowerCase().startsWith('airy') || d === draft.value?.databaseName)
+  return [{ label: 'The shared database', value: '' }, ...own.map(d => ({ label: d, value: d }))]
+})
 
 function reset() {
   draft.value = bot.value ? { ...bot.value, logChannelId: bot.value.logChannelId || '0', evilLogChannelId: bot.value.evilLogChannelId || '0', databaseName: bot.value.databaseName ?? '' } : null
@@ -191,16 +202,17 @@ async function add() {
           <Field label="Owner's Discord user id" hint="The account that gets the owner reports">
             <TextField v-model="draft.evilId" autocomplete="off" />
           </Field>
-          <Field label="Database" hint="Where this bot keeps its own data">
+          <Field label="Database" hint="Only Airy's databases are listed; make a new one under Databases">
             <Select :model-value="draft.databaseName ?? ''" :options="databaseOptions" @update:model-value="v => draft && (draft.databaseName = v || null)" />
           </Field>
         </div>
       </Card>
 
-      <div class="bar">
+      <div v-if="dirty || saveError" class="bar" role="region" aria-label="Unsaved changes">
         <Alert v-if="saveError" variant="danger" :title="saveError" dense />
+        <span class="state">{{ changes }} change{{ changes === 1 ? '' : 's' }}</span>
         <span class="spacer" />
-        <Button variant="ghost" :disabled="!dirty" @click="reset">Undo changes</Button>
+        <Button variant="ghost" @click="reset">Undo changes</Button>
         <Button type="submit" :loading="saving" :disabled="!dirty">Save</Button>
       </div>
 
@@ -307,6 +319,10 @@ h2 {
 }
 .spacer {
   flex: 1;
+}
+.state {
+  color: var(--color-text-dim);
+  font-size: var(--font-size-sm);
 }
 .drop {
   display: flex;

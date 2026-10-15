@@ -12,6 +12,7 @@
   "owner": "Thatevilguy",
   "envs": {
     "prod": {
+      "url": "https://airy.thatevilguy.com",
       "local": "http://127.0.0.1:8088",
       "ports": {
         "caddy": 8088,
@@ -26,7 +27,7 @@
       "start": "docker compose -p airybotcode -f docker-compose.yml up -d --no-build --no-deps api caddy airydevbot",
       "deploy": "./scripts/airy-deploy.sh prod (bot only: docker compose -f docker-compose.yml -p airybotcode up -d --build airydevbot)",
       "db": "airy-postgres-db/airy_db (the shared Postgres: every app's database lives here)",
-      "notes": "thehive.thatevilguy.com and the quick tunnel hit Caddy :8088 and show only The Hive. The Caddyfile is a one-file bind mount: an edit changes the inode, so restart the container."
+      "notes": "airy.thatevilguy.com (tunnel route to :8088) serves the panel (AiryPanel, built into the Caddy image) and /api; thehive.thatevilguy.com shows only The Hive. The Caddyfile is a bind mount: after an edit, restart the container."
     },
     "dev": {
       "local": "http://127.0.0.1:10000",

@@ -2,6 +2,26 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-15 · R4 Commands, Settings, Look; R5 Activity, Suggestions, Databases; R6 serving prepared
+
+- Pages: Commands (one-tap on/off with Undo, a drawer editor with the right control per setting kind, restart),
+  Settings (pickers by name, token write-only with reveal behind the access password, add and remove a bot, a save
+  bar that appears only with changes), Look (picture, message colours from it, use as Discord avatar), Activity
+  (counting per channel, level board), Suggestions (waiting first, approve or not now, public link), the public
+  ideas board `/suggest/:code` (no sign-in), Databases (list, make one, read-only table view).
+- A searchable channel picker by name with the server beside it, used everywhere one channel is chosen.
+- Kit (evil-ui, airy 0.1.4 to 0.1.11): Drawer named and focused, Autocomplete `badgeShows` and first results on
+  focus, scrim token, EmptyState padding on the scale, Airy phone sizes (switch hit area, search, picker, copy,
+  breadcrumbs, 48 px text fields), field hints in the text face.
+- API: theme request fields optional (a look without the old panel's theme data was refused), readable error texts.
+- Reviews: `docs/review/r3.md`, `r4.md` (R4 Blocker was a misread: the test uploaded a new picture by script;
+  High sticky bar and Mediums fixed).
+- R6 prepared: Caddy builds `AiryPanel` into `/srv`; host `airy.thatevilguy.com` serves it and proxies `/api`
+  (tested in a throwaway container on both networks; the Hive host unchanged); the old `AiryWebApp` and
+  `AiryLogin` are removed. Not deployed: waits for the tunnel route, the Discord redirect and the owner's go.
+- Evidence of member data (Activity, Suggestions, public board, tables) stays in the git-ignored
+  `docs/screenshots/private/`.
+
 ## 2026-10-15 · R2 shell and Home, R3 Channels
 
 - Panel `AiryBotCode.Frontend/AiryPanel` on `@airy/ui` 0.1.3: sign-in (password, then Discord) as a public route,

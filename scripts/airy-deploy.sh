@@ -43,7 +43,7 @@ deploy_prod() {
   git checkout main
   git pull --ff-only origin main || true
   docker compose -f docker-compose.yml -p airybotcode up -d --build
-  echo "✓ prod deployed → https://thatevilserver.tail2a87af.ts.net"
+  echo "✓ prod deployed → https://airy.thatevilguy.com"
 }
 
 case "${1:-}" in

@@ -1,6 +1,6 @@
 ---
 title: Airy panel, rebuilt from zero on @airy/ui
-status: R0 done 2026-10-15; R1 next
+status: R0 to R5 built 2026-10-15; R6 prepared, waits on the owner (tunnel route, Discord redirect, go)
 ---
 
 # Airy panel, rebuilt from zero on @airy/ui
@@ -61,11 +61,11 @@ Answers to the two questions asked: the whole panel, with Airy's own look.
 | Round | Content | Done when |
 |---|---|---|
 | R0 ✅ | inventory, identity, `@airy/ui` 0.1.0, app scaffold, icons, this plan | |
-| R1 | backend: bot Hive connection, Airy channels with answer rule, the worth-it decision, migration of the prod agent link, API DI fixed with a test that resolves every controller, webhook secret kept, decision watches removed | Airy tests green; on prod data the migration is a no-op twice |
-| R2 | panel shell: sign-in, bot switcher, sidebar, top bar with Update/Install, PWA, Home | evidence at 1440/375/320 |
-| R3 | Channels page | evidence, a live decision on dev |
-| R4 | Commands, Settings, Look | evidence |
-| R5 | Activity, Suggestions (+ public page), Databases | evidence |
+| R1 ✅ | backend: bot Hive connection, Airy channels with answer rule, the worth-it decision, migration of the prod agent link, API DI fixed with a test that resolves every controller, webhook secret kept, decision watches removed | Airy tests green; on prod data the migration is a no-op twice |
+| R2 ✅ | panel shell: sign-in, bot switcher, sidebar, top bar with Update/Install, PWA, Home | evidence at 1440/375/320 |
+| R3 ✅ | Channels page | evidence, a live decision on dev |
+| R4 ✅ | Commands, Settings, Look | evidence |
+| R5 ✅ | Activity, Suggestions (+ public page), Databases | evidence |
 | R6 | serving: Caddy host block, Discord redirect, CORS, old apps deleted, deploy | owner opens it on the phone |
 | R7 | design review of the whole panel, owner marks it | |
 
