@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using AiryBotCode.Api.Controllers;
 using AiryBotCode.Application.Hive;
 using AiryBotCode.Domain.database;
+using AiryBotCode.Infrastructure.Database.Persistence;
 using Xunit;
 
 namespace AiryBotCode.Tests
@@ -153,6 +154,14 @@ namespace AiryBotCode.Tests
 
             Assert.Contains("401", verdict.Error);
             Assert.Equal(WatchActions.Ignore, DecisionWatchRules.ActionFor(Watch("""{"yes":"answer"}"""), verdict).Kind);
+        }
+
+        [Fact]
+        public void TheTablesAtStartHaveNoBraceEfWouldReadAsAParameter()
+        {
+            var formatted = string.Format(AIDbContext.NewerTablesSql);
+
+            Assert.Contains("\"ChannelDecisionWatches\"", formatted);
         }
 
         [Fact]
