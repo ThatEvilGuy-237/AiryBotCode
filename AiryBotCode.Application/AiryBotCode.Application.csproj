@@ -26,4 +26,8 @@
   <ItemGroup>
     <Folder Include="Services\Database\BotSettings\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Hive\Texts\*.md" LogicalName="AiryBotCode.Hive.%(Filename).md" />
+  </ItemGroup>
 </Project>

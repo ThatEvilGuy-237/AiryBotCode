@@ -44,7 +44,7 @@ namespace AiryBotCode.Infrastructure.Database.Repository
             row.ChannelId = link.ChannelId;
             row.Name = link.Name;
             row.WebhookUrl = link.WebhookUrl;
-            row.Secret = link.Secret;
+            if (link.Secret is not null) row.Secret = link.Secret;
             row.Mode = link.Mode;
             row.Enabled = link.Enabled;
             await _context.SaveChangesAsync();

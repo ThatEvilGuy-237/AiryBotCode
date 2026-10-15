@@ -22,7 +22,7 @@ namespace AiryBotCode.Api.Controllers
         {
             if (!ulong.TryParse(botId, out var id)) return BadRequest("A valid botId is required.");
             var links = await _repository.GetForBotAsync(id);
-            return Ok(links.Select(ToDto));
+            return Ok(links.Where(l => l.Mode != "agent").Select(ToDto));
         }
 
         [HttpPost]
@@ -39,7 +39,7 @@ namespace AiryBotCode.Api.Controllers
                 Name = string.IsNullOrWhiteSpace(dto.Name) ? "Webhook" : dto.Name,
                 WebhookUrl = dto.WebhookUrl.Trim(),
                 Secret = string.IsNullOrWhiteSpace(dto.Secret) ? null : dto.Secret,
-                Mode = dto.Mode is "async" or "agent" ? dto.Mode : "sync",
+                Mode = dto.Mode is "async" ? "async" : "sync",
                 Enabled = dto.Enabled,
             });
             return StatusCode(201, ToDto(created));
@@ -59,7 +59,7 @@ namespace AiryBotCode.Api.Controllers
                 Name = string.IsNullOrWhiteSpace(dto.Name) ? "Webhook" : dto.Name,
                 WebhookUrl = (dto.WebhookUrl ?? string.Empty).Trim(),
                 Secret = string.IsNullOrWhiteSpace(dto.Secret) ? null : dto.Secret,
-                Mode = dto.Mode is "async" or "agent" ? dto.Mode : "sync",
+                Mode = dto.Mode is "async" ? "async" : "sync",
                 Enabled = dto.Enabled,
             });
             return ok ? NoContent() : NotFound();

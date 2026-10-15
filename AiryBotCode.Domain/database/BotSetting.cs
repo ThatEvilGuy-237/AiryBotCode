@@ -28,5 +28,9 @@ namespace AiryBotCode.Domain.database
         // JSON (accent L/C/hue + base hue/chroma). Both null = no image theme set.
         public string? ThemeImage { get; set; }
         public string? ThemeData { get; set; }
+
+        public string? HiveUrl { get; set; }
+        public string? HiveAgentId { get; set; }
+        public string? HiveAppKey { get; set; }
     }
 }

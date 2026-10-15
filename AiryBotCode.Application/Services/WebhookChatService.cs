@@ -23,7 +23,7 @@ namespace AiryBotCode.Application.Services
             "…nothing. Not you, it's me.\n-# my servers are down right now",
         };
 
-        private static string OfflineReply() => Offline[Random.Shared.Next(Offline.Length)];
+        public static string OfflineReply() => Offline[Random.Shared.Next(Offline.Length)];
 
         public WebhookChatService(IChannelWebhookRepository repository, HiveAgentClient agents)
         {

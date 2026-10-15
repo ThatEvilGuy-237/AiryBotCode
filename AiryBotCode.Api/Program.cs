@@ -13,6 +13,7 @@ using AiryBotCode.Infrastructure.Database.Repository.BotSettings;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Application.Services;
+using AiryBotCode.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddEvilTelemetry("airybotcode", "api");
@@ -59,19 +60,7 @@ builder.Services.AddAuthentication(options =>
 // Database access for the control panel (shares the bot's CommandSettings table).
 builder.Services.AddDbContext<AIDbContext>(options =>
     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-// Device pairings are short-lived and in-memory, so this must be a singleton —
-// a scoped instance would forget the request between the start call and the poll.
-builder.Services.AddSingleton<AiryBotCode.Api.Services.DevicePairingService>();
-
-builder.Services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
-builder.Services.AddScoped<IBotCommandRepository, BotCommandRepository>();
-builder.Services.AddScoped<IChannelWebhookRepository, ChannelWebhookRepository>();
-builder.Services.AddScoped<IBotSettingRepository, BotSettingRepository>();
-builder.Services.AddScoped<ISuggestionRepository, SuggestionRepository>();
-// The API registers its own DI (it doesn't call RegisterInfrastructure), so the
-// public suggestions share-code service must be wired here too.
-builder.Services.AddScoped<ISuggestionShareCodeRepository, SuggestionShareCodeRepository>();
-builder.Services.AddScoped<IShareCodeService, ShareCodeService>();
+builder.Services.AddPanelServices();
 
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
@@ -98,9 +87,6 @@ builder.Services.AddRateLimiter(options =>
         });
     });
 });
-// Powers the panel's channel/role pickers (reads guild data from Discord with the
-// stored bot token). Singleton so its short-lived per-bot cache is shared.
-builder.Services.AddSingleton<AiryBotCode.Api.Services.DiscordGuildLookup>();
 builder.Services.AddAuthorization();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

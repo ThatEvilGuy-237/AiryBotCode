@@ -55,24 +55,17 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var mentionsBot = message.MentionedUsers.Any(u => u.Id == botId);
                 var repliesToBot = message.Reference != null
                     && (message as SocketUserMessage)?.ReferencedMessage?.Author?.Id == botId;
-                var engage = await RunDecisionWatchesAsync(scope.ServiceProvider, message, botId, content, repliesToBot);
+                if (await AnswerInAiryChannelAsync(scope.ServiceProvider, message, botId, content, mentionsBot || repliesToBot))
+                {
+                    foreach (var Event in _messageAction)
+                        if (Event is IMessageAction handled) await handled.HandleMessageReceivedAsync(message);
+                    return;
+                }
 
-                // First-message consent gate: only for channels linked to a Hive chat
-                // (where messages are forwarded + stored). Until the user accepts the
-                // data-use notice, post the notice + Accept button and don't forward.
-                // Fail-open: any error in the check lets the message through so a
-                // missing table / DB hiccup never bricks the bot.
                 var link = await scope.ServiceProvider.GetRequiredService<IChannelWebhookRepository>()
                     .GetForChannelAsync(botId, message.Channel.Id);
-                if (link != null && engage == false && !mentionsBot && !repliesToBot)
-                    link = null;
                 if (link != null)
                 {
-                    // RequireMention gate: when this bot's HiveChat setting is on, only engage
-                    // when the message targets THIS bot — i.e. it @mentions the bot, or it's a
-                    // reply to one of the bot's own messages (a reply counts as a ping). botId is
-                    // the bot's Discord user id. Read per-bot from the settings repo (this handler
-                    // runs in a fresh scope, so a resolved command instance isn't hydrated).
                     var requireMention = false;
                     try
                     {
@@ -83,35 +76,13 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     }
                     catch (Exception sx) { Console.WriteLine($"[HiveChat] setting read failed, allowing through: {sx.Message}"); }
 
-                    if (requireMention && engage != true)
-                    {
-                        if (!mentionsBot && !repliesToBot)
-                            return;   // not targeted at this bot → stay silent
-                    }
+                    if (requireMention && !mentionsBot && !repliesToBot)
+                        return;
 
-                    var consented = true;
-                    try { consented = await scope.ServiceProvider.GetRequiredService<IUserConsentRepository>()
-                            .HasConsentAsync(botId, message.Author.Id); }
-                    catch (Exception cx) { Console.WriteLine($"[Consent] check failed, allowing through: {cx.Message}"); }
-                    if (!consented)
+                    if (!await HasConsentAsync(scope.ServiceProvider, botId, message.Author.Id))
                     {
-                        var evilId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetEvilId();
-                        var embed = ConsentFrontend.ConsentEmbed(evilId);
-                        var components = new ComponentBuilder()
-                            .WithButton("Accept", ConsentInteraction.BuildAcceptId(botId, message.Author.Id), ButtonStyle.Success)
-                            .Build();
-                        // DM the consent card so ONLY this user sees it (a channel message can't be
-                        // ephemeral). Fall back to the channel if their DMs are closed.
-                        try
-                        {
-                            var dm = await message.Author.CreateDMChannelAsync();
-                            await dm.SendMessageAsync(embed: embed, components: components);
-                        }
-                        catch
-                        {
-                            await message.Channel.SendMessageAsync(embed: embed, components: components);
-                        }
-                        return;   // gated until they accept
+                        await SendConsentAsync(scope.ServiceProvider, message, botId);
+                        return;
                     }
                 }
 
@@ -122,23 +93,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var reply = link == null ? null : await forwarder.TryForwardAsync(
                     botId, message.Channel.Id, message.Author.Id, message.Author.Username, content,
                     images, () => message.Channel.EnterTypingState());
-                if (!string.IsNullOrWhiteSpace(reply))
-                {
-                    // Discord caps a message at 2000 chars — split long replies so
-                    // they aren't rejected with "Message content is too long".
-                    var dedup = scope.ServiceProvider.GetRequiredService<RecentMessageDedup>();
-                    foreach (var chunk in SplitForDiscord(reply))
-                    {
-                        // Skip a chunk the agent already delivered live via the `say`
-                        // effect this run — avoids the say-then-finish-same-text double post.
-                        if (!dedup.TryReserve(message.Channel.Id, chunk))
-                        {
-                            Console.WriteLine($"[Webhook] reply chunk to {message.Channel.Id} suppressed — already said via effect.");
-                            continue;
-                        }
-                        await message.Channel.SendMessageAsync(chunk);
-                    }
-                }
+                await SendReplyAsync(scope.ServiceProvider, message, reply);
             }
             catch (Exception ex)
             {
@@ -154,57 +109,112 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             }
         }
 
-        private static async Task<bool?> RunDecisionWatchesAsync(IServiceProvider services, SocketMessage message, ulong botId, string content, bool repliesToBot)
+        private static async Task<bool> AnswerInAiryChannelAsync(IServiceProvider services, SocketMessage message, ulong botId, string content, bool targeted)
         {
-            if (string.IsNullOrWhiteSpace(content)) return null;
-            List<ChannelDecisionWatch> watches;
+            var channels = services.GetRequiredService<IAiryChannelRepository>();
+            AiryChannel? channel;
             try
             {
-                watches = await services.GetRequiredService<IChannelDecisionWatchRepository>().GetForChannelAsync(botId, message.Channel.Id);
+                channel = await channels.GetForChannelAsync(botId, message.Channel.Id);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[DecisionWatch] could not read the watches, none run: {ex.Message}");
-                return null;
+                Console.WriteLine($"[AiryChannel] could not read the channels: {ex.Message}");
+                return false;
             }
-            if (watches.Count == 0) return null;
+            if (channel is null) return false;
 
-            var client = services.GetRequiredService<HiveDecisionClient>();
-            var discord = services.GetService<DiscordSocketClient>();
-            var guild = (message.Channel as SocketGuildChannel)?.Guild;
-            var author = (message.Author as SocketGuildUser)?.Nickname ?? message.Author.Username;
-            var watchEvent = new WatchEvent(content, message.Channel.Name, message.Channel.Id, author, message.Author.Id,
-                discord?.CurrentUser?.Username ?? "the bot", repliesToBot, guild?.Id, message.Id);
-
-            var verdicts = await Task.WhenAll(watches.Select(async w => (Watch: w, Verdict: await client.DecideAsync(w, watchEvent))));
-            var outcomes = new List<(ChannelDecisionWatch, WatchAction)>();
-            foreach (var (watch, verdict) in verdicts)
+            var bot = await services.GetRequiredService<IBotSettingRepository>().GetBotSettingAsync(botId);
+            var hive = bot is null ? null : HiveConnection.Of(bot);
+            if (hive is null)
             {
-                if (verdict.Error is not null) Console.WriteLine($"[DecisionWatch] {watch.Name}: {verdict.Error}");
-                var action = DecisionWatchRules.ActionFor(watch, verdict);
-                outcomes.Add((watch, action));
-                try
-                {
-                    if (action.Kind == "react" && action.Emoji is { } emoji)
-                    {
-                        IEmote emote = Emote.TryParse(emoji, out var custom) ? custom : new Emoji(emoji);
-                        await message.AddReactionAsync(emote);
-                    }
-                    else if (action.Kind == WatchActions.Alert)
-                    {
-                        var alertId = watch.AlertChannelId != 0 ? watch.AlertChannelId : services.GetRequiredService<IConfigurationReader>().GetLogChannelId();
-                        if (alertId != 0 && discord?.GetChannel(alertId) is IMessageChannel alerts)
-                            await alerts.SendMessageAsync(DecisionWatchRules.AlertLine(watch, verdict, watchEvent, message.GetJumpUrl()), allowedMentions: AllowedMentions.None);
-                        else
-                            Console.WriteLine($"[DecisionWatch] {watch.Name}: no alert channel to post to.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[DecisionWatch] {watch.Name}: acting on '{verdict.Answer}' failed: {ex.Message}");
-                }
+                Console.WriteLine($"[AiryChannel] bot {botId} has no Hive connection; channel {message.Channel.Id} stays quiet.");
+                return true;
             }
-            return DecisionWatchRules.Engage(outcomes);
+
+            var consented = await HasConsentAsync(services, botId, message.Author.Id);
+            WorthVerdict? verdict = null;
+            if (!string.IsNullOrWhiteSpace(content) && AnswerRules.AsksHive(channel.AnswerMode, targeted, consented))
+            {
+                var botName = services.GetService<DiscordSocketClient>()?.CurrentUser?.Username ?? bot!.BotName ?? "Airy";
+                verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive, WorthEventFor(message, content, botName, botId));
+                if (verdict.Error is not null) Console.WriteLine($"[AiryChannel] channel {message.Channel.Id}: {verdict.Error}");
+                try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
+                catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
+            }
+            if (!AnswerRules.Answers(channel.AnswerMode, targeted, verdict)) return true;
+
+            if (!consented)
+            {
+                await SendConsentAsync(services, message, botId);
+                return true;
+            }
+
+            var images = ImageAttachments.Pick(
+                message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)));
+            AgentReply reply;
+            using (message.Channel.EnterTypingState())
+            {
+                reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
+                    hive.RunUrl, hive.AppKey, botId, message.Channel.Id, message.Author.Id, message.Author.Username, content, images);
+            }
+            await SendReplyAsync(services, message, reply.Text ?? (reply.Failed ? WebhookChatService.OfflineReply() : null));
+            return true;
+        }
+
+        private static WorthEvent WorthEventFor(SocketMessage message, string content, string botName, ulong botId)
+        {
+            static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.Username;
+            var recent = (message.Channel as ISocketMessageChannel)?
+                .GetCachedMessages(message, Direction.Before, WorthQuestion.MaxRecent)
+                .Where(m => !string.IsNullOrWhiteSpace(m.Content))
+                .OrderBy(m => m.Timestamp)
+                .Select(m => new RecentLine(m.Author.Id == botId ? botName : NameOf(m.Author), m.Content))
+                .ToList() ?? [];
+            return new WorthEvent(botName, message.Channel.Name, NameOf(message.Author), message.Author.Id, content, recent);
+        }
+
+        private static async Task<bool> HasConsentAsync(IServiceProvider services, ulong botId, ulong userId)
+        {
+            try { return await services.GetRequiredService<IUserConsentRepository>().HasConsentAsync(botId, userId); }
+            catch (Exception cx)
+            {
+                Console.WriteLine($"[Consent] check failed, allowing through: {cx.Message}");
+                return true;
+            }
+        }
+
+        private static async Task SendConsentAsync(IServiceProvider services, SocketMessage message, ulong botId)
+        {
+            var evilId = services.GetRequiredService<IConfigurationReader>().GetEvilId();
+            var embed = ConsentFrontend.ConsentEmbed(evilId);
+            var components = new ComponentBuilder()
+                .WithButton("Accept", ConsentInteraction.BuildAcceptId(botId, message.Author.Id), ButtonStyle.Success)
+                .Build();
+            try
+            {
+                var dm = await message.Author.CreateDMChannelAsync();
+                await dm.SendMessageAsync(embed: embed, components: components);
+            }
+            catch
+            {
+                await message.Channel.SendMessageAsync(embed: embed, components: components);
+            }
+        }
+
+        private static async Task SendReplyAsync(IServiceProvider services, SocketMessage message, string? reply)
+        {
+            if (string.IsNullOrWhiteSpace(reply)) return;
+            var dedup = services.GetRequiredService<RecentMessageDedup>();
+            foreach (var chunk in SplitForDiscord(reply))
+            {
+                if (!dedup.TryReserve(message.Channel.Id, chunk))
+                {
+                    Console.WriteLine($"[Webhook] reply chunk to {message.Channel.Id} suppressed — already said via effect.");
+                    continue;
+                }
+                await message.Channel.SendMessageAsync(chunk);
+            }
         }
 
         // Split text into <=max-char chunks for Discord, breaking on line then
