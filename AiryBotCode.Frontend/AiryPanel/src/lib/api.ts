@@ -66,7 +66,41 @@ export type HiveTry = { yes: boolean | null; sure: boolean; confidence: number; 
 
 export type CommandConfig = { commandName: string; enabled: boolean; settings?: import('./commands').Setting[] }
 
-export type Suggestion = { id: number; title: string; status: string }
+export type Suggestion = {
+  id: number
+  title: string
+  body: string
+  submittedBy: string | null
+  createdAt: string
+  status: 'new' | 'reviewed' | 'approved' | 'rejected' | string
+  responseWhy: string | null
+  responseEstimate: string | null
+  respondedAt: string | null
+  approved: boolean
+  approvedAt: string | null
+}
+
+export type ShareLink = { code: string; sharePath: string }
+
+export type CountingStatus = {
+  channelId: string
+  channelName: string | null
+  currentCount: number
+  highScore: number
+  bossActive: boolean
+  bossSpawnedAt: string | null
+  lastUserId: string | null
+  lastUserName: string | null
+  updatedAt: string | null
+}
+
+export type LevelUser = { rank: number; userId: string; userName: string | null; xp: number; level: number; lastXpAt: string | null }
+
+export type LevelBoard = { total: number; skip: number; take: number; users: LevelUser[] }
+
+export type TableInfo = { name: string; rowCount: number }
+
+export type TableData = { columns: string[]; rows: unknown[][] }
 
 export type CountingChannel = { channelId: string; channelName: string | null; currentCount: number; highScore: number }
 
@@ -154,6 +188,19 @@ export const api = {
   discordCategories: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/categories`),
   discordRoles: (botId: string) => call<DiscordEntity[]>('GET', `/api/settings/${botId}/discord/roles`),
   suggestions: () => call<Suggestion[]>('GET', '/api/suggestions'),
+  addSuggestion: (title: string, body: string) => call<Suggestion>('POST', '/api/suggestions', { title, body, submittedBy: null }),
+  approveSuggestion: (id: number) => call<unknown>('POST', `/api/suggestions/${id}/approve`),
+  rejectSuggestion: (id: number) => call<unknown>('POST', `/api/suggestions/${id}/reject`),
+  dropSuggestion: (id: number) => call<void>('DELETE', `/api/suggestions/${id}`),
+  shareLink: () => call<ShareLink>('GET', '/api/suggestions/sharelink'),
+  renewShareLink: () => call<ShareLink>('POST', '/api/suggestions/sharelink/regenerate'),
+  levels: (botId: string, skip: number, take = 25) => call<LevelBoard>('GET', `/api/featurestatus/${botId}/leveling?skip=${skip}&take=${take}`),
+  countingFull: (botId: string) => call<CountingStatus[]>('GET', `/api/featurestatus/${botId}/counting`),
+  createDatabase: (name: string) => call<{ name: string }>('POST', '/api/db/databases', { name }),
+  schemas: (db: string) => call<string[]>('GET', `/api/db/schemas?database=${encodeURIComponent(db)}`),
+  tables: (db: string, schema: string) => call<TableInfo[]>('GET', `/api/db/tables?schema=${encodeURIComponent(schema)}&database=${encodeURIComponent(db)}`),
+  tableData: (db: string, schema: string, table: string) =>
+    call<TableData>('GET', `/api/db/data?schema=${encodeURIComponent(schema)}&table=${encodeURIComponent(table)}&limit=100&database=${encodeURIComponent(db)}`),
   counting: (botId: string) => call<CountingChannel[]>('GET', `/api/featurestatus/${botId}/counting`),
 }
 
