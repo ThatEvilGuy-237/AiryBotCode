@@ -118,6 +118,7 @@ async function remove() {
           </div>
         </template>
 
+        <p class="listens">Airy reads along in these channels. When it answers, it knows what was said since it last spoke.</p>
         <form class="add" @submit.prevent="add">
           <div class="add-top">
             <Field label="Channel">
@@ -210,6 +211,10 @@ h2 {
 }
 .talks :deep([data-ui='card']) {
   display: grid;
+}
+.listens {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-dim);
 }
 .add {
   display: grid;

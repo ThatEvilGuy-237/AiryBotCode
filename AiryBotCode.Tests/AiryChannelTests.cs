@@ -302,6 +302,46 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void AiryHearsEverythingAndAnswersWithWhatWasSaidSinceItLastSpoke()
+        {
+            var log = new ChannelTranscript();
+            log.Hear(1, 10, new HeardLine(1, "kirra", "who is up for a quiz tonight?", false));
+            log.Hear(1, 10, new HeardLine(2, "Airy", "I am!", true));
+            log.Hear(1, 10, new HeardLine(3, "tomas", "same, 8 pm?", false));
+            log.Hear(1, 10, new HeardLine(4, "kirra", "8 works", false));
+            log.Hear(1, 10, new HeardLine(5, "tomas", "@Airy can you host it?", false));
+            log.Hear(1, 11, new HeardLine(6, "other", "elsewhere", false));
+
+            var since = log.SinceBotSpoke(1, 10, beforeMessageId: 5);
+            Assert.Equal(["same, 8 pm?", "8 works"], since.Select(l => l.Text));
+            Assert.Equal(["I am!", "same, 8 pm?", "8 works"], log.Recent(1, 10, 5, 3).Select(l => l.Text));
+            Assert.Empty(log.SinceBotSpoke(2, 10, 5));
+
+            var said = ChannelTalk.Message("Airy", "events", "tomas", "@Airy can you host it?", since);
+            Assert.Contains("#events since Airy last spoke", said);
+            Assert.Contains("tomas: same, 8 pm?", said);
+            Assert.EndsWith("@Airy can you host it?", said);
+            Assert.DoesNotContain("{{", said);
+            Assert.Equal("hello", ChannelTalk.Message("Airy", "events", "tomas", "hello", []));
+        }
+
+        [Fact]
+        public void TheLogKeepsThirtyLinesAndTheContextStaysSmall()
+        {
+            var log = new ChannelTranscript();
+            for (ulong i = 1; i <= 50; i++) log.Hear(1, 10, new HeardLine(i, "kirra", new string('x', 300) + i, false));
+            log.Hear(1, 10, new HeardLine(50, "kirra", "duplicate", false));
+            log.HearIfKnown(1, 99, new HeardLine(51, "Airy", "not a channel Airy listens in", true));
+
+            Assert.Equal(ChannelTranscript.Keep, log.Recent(1, 10, 0, 100).Count);
+            var since = log.SinceBotSpoke(1, 10, 0);
+            Assert.True(since.Count <= ChannelTranscript.MaxContextLines);
+            Assert.True(since.Sum(l => l.Text.Length + l.Author.Length + 2) <= ChannelTranscript.MaxContextChars);
+            Assert.EndsWith("50", since[^1].Text);
+            Assert.Empty(log.Recent(1, 99, 0, 5));
+        }
+
+        [Fact]
         public void EveryPanelControllerCanBeBuiltFromThePanelServices()
         {
             var services = new ServiceCollection()

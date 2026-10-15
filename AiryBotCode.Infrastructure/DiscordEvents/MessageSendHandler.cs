@@ -29,9 +29,11 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
         // TODO: this should be reworked to handel diffrent type of messages check that we want.
         public async Task HandelMessageSend(SocketMessage message)
         {
-            // Skip messages from bots (including this bot itself)
             if (message.Author.IsBot)
+            {
+                HearOwnLine(message);
                 return;
+            }
 
             // Channel → webhook chat: if this channel is linked, forward the message
             // to its webhook and relay any reply back.
@@ -133,11 +135,17 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             }
 
             var consented = await HasConsentAsync(services, botId, message.Author.Id);
+            var transcript = services.GetRequiredService<ChannelTranscript>();
+            var botName = services.GetService<DiscordSocketClient>()?.CurrentUser?.Username ?? bot!.BotName ?? "Airy";
+            var author = NameOf(message.Author);
+            if (consented) transcript.Hear(botId, message.Channel.Id, new HeardLine(message.Id, author, content, false));
             WorthVerdict? verdict = null;
             if (!string.IsNullOrWhiteSpace(content) && AnswerRules.AsksHive(channel.AnswerMode, targeted, consented))
             {
-                var botName = services.GetService<DiscordSocketClient>()?.CurrentUser?.Username ?? bot!.BotName ?? "Airy";
-                verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive, WorthEventFor(message, content, botName, botId));
+                var recent = transcript.Recent(botId, message.Channel.Id, message.Id, WorthQuestion.MaxRecent)
+                    .Select(l => new RecentLine(l.FromBot ? botName : l.Author, l.Text))
+                    .ToList();
+                verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive, new WorthEvent(botName, message.Channel.Name, author, message.Author.Id, content, recent));
                 if (verdict.Error is not null) Console.WriteLine($"[AiryChannel] channel {message.Channel.Id}: {verdict.Error}");
                 try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
                 catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
@@ -155,23 +163,31 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             AgentReply reply;
             using (message.Channel.EnterTypingState())
             {
+                var since = transcript.SinceBotSpoke(botId, message.Channel.Id, message.Id);
+                var said = ChannelTalk.Message(botName, message.Channel.Name, author, content, since);
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
-                    hive.RunUrl, hive.AppKey, botId, message.Channel.Id, message.Author.Id, message.Author.Username, content, images);
+                    hive.RunUrl, hive.AppKey, botId, message.Channel.Id, message.Author.Id, message.Author.Username, said, images);
             }
             await SendReplyAsync(services, message, reply.Text ?? (reply.Failed ? WebhookChatService.OfflineReply() : null));
             return true;
         }
 
-        private static WorthEvent WorthEventFor(SocketMessage message, string content, string botName, ulong botId)
+        private static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.Username;
+
+        private void HearOwnLine(SocketMessage message)
         {
-            static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.Username;
-            var recent = (message.Channel as ISocketMessageChannel)?
-                .GetCachedMessages(message, Direction.Before, WorthQuestion.MaxRecent)
-                .Where(m => !string.IsNullOrWhiteSpace(m.Content))
-                .OrderBy(m => m.Timestamp)
-                .Select(m => new RecentLine(m.Author.Id == botId ? botName : NameOf(m.Author), m.Content))
-                .ToList() ?? [];
-            return new WorthEvent(botName, message.Channel.Name, NameOf(message.Author), message.Author.Id, content, recent);
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var botId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
+                if (message.Author.Id != botId) return;
+                scope.ServiceProvider.GetRequiredService<ChannelTranscript>()
+                    .HearIfKnown(botId, message.Channel.Id, new HeardLine(message.Id, NameOf(message.Author), message.Content, true));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[AiryChannel] could not note the bot's own line: {ex.Message}");
+            }
         }
 
         private static async Task<bool> HasConsentAsync(IServiceProvider services, ulong botId, ulong userId)

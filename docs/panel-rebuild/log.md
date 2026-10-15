@@ -2,6 +2,16 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-15 · Airy listens in its channels
+
+Owner: the decision only decides whether to answer; Airy should keep listening so that when it answers it has the
+messages from above. The bot keeps a log per Airy channel (`ChannelTranscript`, last 30 lines from people who
+accepted the data notice plus Airy's own lines, memory only, empty after a restart). The worth-it decision reads its
+last 6 lines (before this the decision's context was always empty: the bot keeps no Discord message cache). When
+Airy answers, the agent gets what was said since Airy last spoke (at most 20 lines, 4000 characters) above the new
+message, from the template `Application/Hive/Texts/channel-talk.md`; that also lands in the Hive's conversation
+history. The Channels page says so in one line. Tests 150 of 150.
+
 ## 2026-10-15 · R4 Commands, Settings, Look; R5 Activity, Suggestions, Databases; R6 serving prepared
 
 - Pages: Commands (one-tap on/off with Undo, a drawer editor with the right control per setting kind, restart),
