@@ -154,13 +154,17 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 return true;
             }
 
+            var pictures = ChatPictures.Pick(message.Content, StickersOf(message));
             var images = ImageAttachments.Pick(
-                message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)));
+                    message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)))
+                .Concat(pictures.Select(p => p.Image))
+                .ToList();
             AgentReply reply;
             using (message.Channel.EnterTypingState())
             {
                 var since = transcript.SinceBotSpoke(botId, message.Channel.Id, message.Id);
-                var said = ChannelTalk.Message(botName, message.Channel.Name, $"{author} ({message.Author.Id})", content, since);
+                var said = ChannelTalk.Message(botName, message.Channel.Name, $"{author} ({message.Author.Id})", content, since,
+                    pictures.Select(p => p.Label).ToList());
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
                     hive.RunUrl, hive.AppKey, botId, message.Channel.Id, message.Author.Id, message.Author.Username, said, images);
             }
@@ -168,7 +172,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             return true;
         }
 
-        private static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.Username;
+        private static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.GlobalName ?? user.Username;
+
+        private static IReadOnlyList<StickerSeen> StickersOf(SocketMessage message) =>
+            message.Stickers.Select(s => new StickerSeen(s.Id, s.Name, (int)s.Format)).ToList();
 
         private static string Readable(SocketMessage message, ulong botId)
         {
@@ -176,9 +183,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 .GroupBy(u => u.Id)
                 .ToDictionary(g => g.Key, g => NameOf(g.First()));
             var guild = (message.Channel as SocketGuildChannel)?.Guild;
-            return MentionResolver.Rewrite(message.Content, id =>
+            var text = MentionResolver.Rewrite(message.Content, id =>
                 mentioned.TryGetValue(id, out var n) ? n
                     : (guild?.GetUser(id) is { } gu ? NameOf(gu) : null), botId);
+            return ChatPictures.Readable(text, StickersOf(message));
         }
 
         private void HearOwnLine(SocketMessage message)

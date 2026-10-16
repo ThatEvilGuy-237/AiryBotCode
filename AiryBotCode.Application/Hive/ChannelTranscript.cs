@@ -67,16 +67,21 @@ namespace AiryBotCode.Application.Hive
     {
         private static readonly Lazy<IReadOnlyDictionary<string, string>> Sections = new(() => WorthQuestion.ReadSections("channel-talk"));
 
-        public static string Message(string bot, string channel, string author, string message, IReadOnlyList<HeardLine> since)
+        public static string Message(string bot, string channel, string author, string message, IReadOnlyList<HeardLine> since, IReadOnlyList<string>? pictures = null)
         {
             var lines = string.Join("\n", since.Select(l => $"{l.Author}: {Flat(l.Text)}"));
-            return WorthQuestion.Fill(Sections.Value[since.Count == 0 ? "alone" : "with context"], new Dictionary<string, string>
+            var said = WorthQuestion.Fill(Sections.Value[since.Count == 0 ? "alone" : "with context"], new Dictionary<string, string>
             {
                 ["bot"] = bot,
                 ["channel"] = channel,
                 ["author"] = author,
                 ["lines"] = lines,
                 ["message"] = message,
+            });
+            if (pictures is not { Count: > 0 }) return said;
+            return said + "\n\n" + WorthQuestion.Fill(Sections.Value["pictures"], new Dictionary<string, string>
+            {
+                ["pictures"] = string.Join(", ", pictures),
             });
         }
 
