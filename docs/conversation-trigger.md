@@ -20,9 +20,13 @@ in, 50 out, 2 s.
 
 ## When she should talk (the set the questions are tuned on)
 
-`scripts/trigger-eval/cases.json` holds 44 situations with the wanted answer; `run.py <label>` asks the decider
-exactly as the bot does and writes `docs/trigger-eval/<label>.md`; `replies.py <label> <ids>` shows what she would
-say (throwaway sessions, a fake user, memory rows deleted after). Rerun the whole set after any wording change.
+`scripts/trigger-eval/cases.json` holds the situations with the wanted answer; `run.py <label> [ids|all] [model]`
+asks the same question text as the bot on Claude (plan, `claude -p`, Haiku 4.5 by default) and writes
+`docs/trigger-eval/<label>.md`; `replies.py <label> <ids> [model]` shows what she would say with her real prompt on
+Claude (`AIRY_PROMPT_FILE` tries a draft prompt). Rerun the whole set after any wording change.
+
+Owner's rule: tests never run on Airy's own GPT key, except at most 3 checks in total for what Claude cannot show
+(prod runs GPT-6 Luna). Rounds 1 to 3 below were run on her key before that rule; that was a mistake.
 
 | Situation | Best | Why |
 |---|---|---|
@@ -39,6 +43,9 @@ Results: round 1 (wording of f333f5f) 35 of 37, silent on "gn airy" and on a sec
 "rough day" only 68 %; round 2 (goodbyes, joiners, hard times named) 37 of 37, "rough day" 97 %; round 3 (same
 wording again) 37 of 37, only a grey-zone case changed, weakest real yes 74 % (someone joining her topic).
 She never spoke where she should stay out in any round.
+Round 4 and 5 on Claude Haiku 4.5: 34 of 37, then 36 of 39 with two "talking about her" cases; Haiku stays out of
+"airy was so funny earlier", "so bored, entertain me" and a second member joining her topic, which Luna joins.
+Haiku is the more careful proxy; the wording is not tuned toward it, so prod does not get chattier by accident.
 
 ## What made it better
 
@@ -64,6 +71,11 @@ She never spoke where she should stay out in any round.
   of the 44-case set closed, nothing else moved.
 - A placeholder for people who did not opt in: the teasing after someone's laugh now reads as teasing ("Was it a
   good laugh, or did he actually think he could get away with that?"), without anyone's words leaving Discord.
+- Telling her that Airy, the fox, the bot, she and her in the chat all mean her, in the prompt and in the join-in
+  message: a member's "does Airy's personality seem more refined?" got "Seems like the fox is learning to keep her
+  teeth sharp" (third person) before, and "I'll take 'more refined' as 'better at getting away with things,' then
+  :3" after (GPT-6 Luna, one of the 3 allowed checks). Claude models already answered in the first person, so this
+  slip only showed on Luna.
 - Running the same wording twice: the model varies, so one green run is not proof; two runs with the same
   verdicts on every graded case are.
 
