@@ -3,20 +3,42 @@
 When does Airy talk without being pinged, and what made that better or worse. Add new lessons at the end of
 each list, with the date and the numbers that showed it.
 
-## The rules (2026-10-16, f333f5f)
+## The rules (2026-10-16, 166da5c)
 
 | Situation | What happens | Wait | Limit |
 |---|---|---|---|
 | Ping or reply to Airy | answer at once, with everything said since she last spoke | none (1.5 s extra when a link has no preview yet) | none; cancels any waiting check |
 | Message within 5 minutes after Airy spoke | follow-up check: "does this continue the talk with her?" on the last 12 lines, her own lines included | 6 s of quiet | no cooldown |
 | Any other message from a member who consented | join-in check: "should she join, uninvited?" on everything said since she last spoke (up to 12 lines) | 20 s of quiet, or 8 messages, or 60 s at most | after joining in, no uninvited join-in in that channel for 10 minutes |
-| Message from someone who has not consented | not heard, not judged; a ping gets the consent message | | |
+| Message from someone who has not consented | kept as one line `someone (not opted in): (message not shared)`, no name, no words (several in a row become one line); never judged on its own; a ping gets the consent message | | |
 | A yes below 60 % confidence | counts as no | | |
 
 Where it lives: timings in `AiryBotCode.Application/Hive/ChannelWatch.cs` (`WatchTiming.Default`), the two
 questions in `Texts/worth-answering.md`, what Airy reads in `Texts/channel-talk.md`, her side in the agent prompt
 (`docs/hive-agent-discord.md`). Decider `airy-worth` on GPT-6 Luna, sure at 0.6; one check is about 240 tokens
 in, 50 out, 2 s.
+
+## When she should talk (the set the questions are tuned on)
+
+`scripts/trigger-eval/cases.json` holds 44 situations with the wanted answer; `run.py <label>` asks the decider
+exactly as the bot does and writes `docs/trigger-eval/<label>.md`; `replies.py <label> <ids>` shows what she would
+say (throwaway sessions, a fake user, memory rows deleted after). Rerun the whole set after any wording change.
+
+| Situation | Best | Why |
+|---|---|---|
+| Asks for her or talks about her without a ping ("where's the fox", "airy was funny earlier") | talk | it is about her |
+| A question to the room on her topics, a newcomer asking where to start | talk | she is the one who knows |
+| Members talking about her topics (audios, trance, hypnosis), even two of them | talk | the server's companion joins its own subject |
+| Someone having a hard time ("rough day, can't sleep"), someone bored asking for company | talk | a companion notices |
+| Greetings among members, reactions, memes, a bare link, an argument, a job for the mods, private or off-topic talk between two | stay out | nothing for her to add, or she would intrude |
+| Right after she spoke: an answer, a question, a tease, a story, a correction, a goodnight to her, someone else joining her topic | reply | the talk with her goes on |
+| Right after she spoke: "lol", "ok", "thanks", "true", "brb", members moving on | stay out | the exchange is closed |
+| Grey zone, the model picks: a lone greeting to the room (out), an announcement (talks), a question she cannot know like the next drop date (talks), a lone emote or face at her (out), someone laughing at her line (varies) | either | both are fine; watch how the room takes it |
+
+Results: round 1 (wording of f333f5f) 35 of 37, silent on "gn airy" and on a second member joining her topic,
+"rough day" only 68 %; round 2 (goodbyes, joiners, hard times named) 37 of 37, "rough day" 97 %; round 3 (same
+wording again) 37 of 37, only a grey-zone case changed, weakest real yes 74 % (someone joining her topic).
+She never spoke where she should stay out in any round.
 
 ## What made it better
 
@@ -38,6 +60,12 @@ in, 50 out, 2 s.
 - A plain tone section in her prompt (no sparkles, tease back instead of apologising).
 - Testing every wording on a fixed set of stretches through `/v1/decisions` with Airy's own key: a few hundred
   tokens per case, and a flip shows at once.
+- Naming goodbyes, members joining her topic and someone having a hard time in the questions: the last two misses
+  of the 44-case set closed, nothing else moved.
+- A placeholder for people who did not opt in: the teasing after someone's laugh now reads as teasing ("Was it a
+  good laugh, or did he actually think he could get away with that?"), without anyone's words leaving Discord.
+- Running the same wording twice: the model varies, so one green run is not proof; two runs with the same
+  verdicts on every graded case are.
 
 ## What made it worse
 
@@ -50,14 +78,16 @@ in, 50 out, 2 s.
   decider did not know she is the fox. Rerun the whole set after every wording change.
 - A custom emoji sent as text only: `<:evil_merc:id>` read as a name ("Oh, Evil Merc! I'll remember that"), and
   the automatic memory saved "the user is Evil Merc".
-- Only members who consented are heard: a laugh from someone else, which the owner's "He laughed you out"
-  referred to, never reached her, so she asked "What did the fox do?". Open, the owner's call.
+- Only members who consented were heard: a laugh from someone else, which the owner's "He laughed you out"
+  referred to, never reached her, so she asked "What did the fox do?". Fixed with the placeholder (owner's yes).
 - The first conversation-based version applied the 10-minute cooldown to follow-ups too; fixed the same day with
   the follow-up window.
+- Replies to a follow-up with no earlier turns in the session ran long and generic (a second member joining
+  her topic got four sentences of advice); in a real channel the session holds her earlier turns. Watch it.
 - The Discord app key holds only `agents.run` and `decisions.make`, so her memory and web tools fail when she is
   run from Discord; the owner chose to leave it that way for now.
 
-## Test sets (2026-10-16, GPT-6 Luna, final wording)
+## First test sets (2026-10-16, GPT-6 Luna, before the 44-case set)
 
 Join-in (nobody pinged, she has not spoken recently):
 
