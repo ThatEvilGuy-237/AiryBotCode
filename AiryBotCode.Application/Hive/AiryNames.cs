@@ -11,7 +11,7 @@ namespace AiryBotCode.Application.Hive
         {
             if (string.IsNullOrWhiteSpace(text)) return false;
             var names = Nicknames.Value.Append(botName).Where(n => !string.IsNullOrWhiteSpace(n)).Select(Regex.Escape);
-            return Regex.IsMatch(text, $@"(?<![\w@])({string.Join("|", names)})(?!\w)", RegexOptions.IgnoreCase);
+            return Regex.IsMatch(text, $@"(?<![\w@#/-])({string.Join("|", names)})(?![\w-])", RegexOptions.IgnoreCase);
         }
     }
 }

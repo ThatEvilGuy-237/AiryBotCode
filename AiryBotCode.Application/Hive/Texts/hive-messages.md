@@ -73,3 +73,7 @@ someone (not opted in)
 ## nicknames
 
 fox, foxy, kitsune
+
+## named
+
+named, answered

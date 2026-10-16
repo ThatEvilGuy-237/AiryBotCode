@@ -382,6 +382,10 @@ namespace AiryBotCode.Tests
         [InlineData("@Airy hello", false)]
         [InlineData("fairy tales and foxglove", false)]
         [InlineData("good morning all", false)]
+        [InlineData("#airy-talk is quiet today", false)]
+        [InlineData("look https://klipy.com/gifs/fox-dance", false)]
+        [InlineData("you are a sly fox.", true)]
+        [InlineData("kitsune energy", true)]
         public void HerNamesAreFoundAsWords(string text, bool found) => Assert.Equal(found, AiryNames.In(text, "Airy"));
 
         [Fact]

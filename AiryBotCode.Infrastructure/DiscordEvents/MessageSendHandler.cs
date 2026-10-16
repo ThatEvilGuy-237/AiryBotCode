@@ -208,13 +208,21 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     .ToList()
                 : transcript.SinceBotSpoke(botId, channelId, 0).Where(l => l.MessageId <= last.MessageId).ToList();
             if (stretch.Count == 0) stretch = unseen.ToList();
-            var lines = stretch.Select(l => new RecentLine(l.FromBot ? botName : l.Author, l.Text)).ToList();
-            var verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive,
-                new WorthEvent(botName, newest.Channel.Name, lines[^1].Author, newest.Author.Id, lines[^1].Text, lines.Take(lines.Count - 1).ToList(), followUp));
-            if (verdict.Error is not null) Console.WriteLine($"[AiryChannel] channel {channelId}: {verdict.Error}");
-            try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
-            catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
-            if (!AnswerRules.Answers(channel.AnswerMode, false, verdict)) return;
+            if (addressed)
+            {
+                try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, HiveTexts.Say("named"), null); }
+                catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
+            }
+            else
+            {
+                var lines = stretch.Select(l => new RecentLine(l.FromBot ? botName : l.Author, l.Text)).ToList();
+                var verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive,
+                    new WorthEvent(botName, newest.Channel.Name, lines[^1].Author, newest.Author.Id, lines[^1].Text, lines.Take(lines.Count - 1).ToList(), followUp));
+                if (verdict.Error is not null) Console.WriteLine($"[AiryChannel] channel {channelId}: {verdict.Error}");
+                try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
+                catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
+                if (!AnswerRules.Answers(channel.AnswerMode, false, verdict)) return;
+            }
             if (!invited)
             {
                 if (watch.CoolingDown(botId, channelId)) return;
