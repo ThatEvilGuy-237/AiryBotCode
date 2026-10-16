@@ -69,6 +69,20 @@ Answers to the two questions asked: the whole panel, with Airy's own look.
 | R6 | serving: Caddy host block, Discord redirect, CORS, old apps deleted, deploy | owner opens it on the phone |
 | R7 | design review of the whole panel, owner marks it | |
 
+## Deploy checklist (R6, one switch, owner chose 2026-10-16)
+
+1. Owner: tunnel route `airy.thatevilguy.com` to `http://localhost:8088`; Discord redirect
+   `https://airy.thatevilguy.com/api/auth/discord/redirect` on app 1318870826862379018; the go.
+2. Back up `airy_db`; set `Discord:RedirectUri` and `Discord:FrontendUri` (`https://airy.thatevilguy.com/login`) in the
+   mounted `AiryBotCode.Api/appsettings.json`.
+3. `docker compose -f docker-compose.yml -p airybotcode up -d --build api airydevbot caddy` (Caddy restart: a few seconds
+   for thehive.thatevilguy.com).
+4. Check the bot log: tables ensured, "Moved 1 Hive agent link" (#airy-talk-🚧 becomes When mentioned, listens).
+5. Add for Cookie&Creams (1437132076066406510), Listens and Answers on, rule When it's worth it:
+   `1295105016675303424` #adult-general and `1341725917642227803` #nsfw-general (Cookies&Cream Audios).
+6. Open the panel on the phone, sign in, check Home and Channels; drop the scratch database `airy_panel_dev`, stop the
+   dev API and Vite, revoke the dev Hive key "Airy panel test (dev)".
+
 ## Waiting on the owner
 
 - The tunnel route `airy.thatevilguy.com → http://localhost:8088` and the Discord redirect URL (R6).
