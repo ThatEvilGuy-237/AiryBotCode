@@ -13,3 +13,15 @@ Said since {{bot}} last spoke, oldest first:
 ## no recent
 
 (nothing before this)
+
+## follow-up
+
+{{bot}} is already in this conversation. Should she reply to what was said since she spoke? Yes when it answers her, asks her something, teases her or reacts to her in a way that invites a reply, or keeps talking to her. No when people moved on to each other, or it is a short reaction that closes the exchange (ok, lol, a lone emote) and needs nothing back.
+
+## follow-up state
+
+Channel: #{{channel}}
+
+Recent talk, oldest first ({{bot}}'s lines included):
+{{recent}}
+{{author}}: {{message}}

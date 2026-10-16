@@ -76,7 +76,7 @@ namespace AiryBotCode.Application.Hive
 
     public sealed record RecentLine(string Author, string Text);
 
-    public sealed record WorthEvent(string Bot, string Channel, string Author, ulong AuthorId, string Message, IReadOnlyList<RecentLine> Recent);
+    public sealed record WorthEvent(string Bot, string Channel, string Author, ulong AuthorId, string Message, IReadOnlyList<RecentLine> Recent, bool FollowUp = false);
 
     public static class WorthQuestion
     {
@@ -99,13 +99,13 @@ namespace AiryBotCode.Application.Hive
             };
             var body = new JsonObject
             {
-                ["state"] = Fill(Sections.Value["state"], fill),
+                ["state"] = Fill(Sections.Value[e.FollowUp ? "follow-up state" : "state"], fill),
                 ["questions"] = new JsonObject
                 {
                     [Key] = new JsonObject
                     {
                         ["type"] = "yesno",
-                        ["instructions"] = Fill(Sections.Value["instructions"], fill),
+                        ["instructions"] = Fill(Sections.Value[e.FollowUp ? "follow-up" : "instructions"], fill),
                     },
                 },
                 ["user"] = $"discord:{e.AuthorId}",

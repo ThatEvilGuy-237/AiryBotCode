@@ -5,7 +5,7 @@ namespace AiryBotCode.Tests
 {
     public class ChannelWatchTests
     {
-        private static readonly WatchTiming Fast = new(TimeSpan.FromMilliseconds(150), 3, TimeSpan.FromMilliseconds(600), TimeSpan.FromMilliseconds(400));
+        private static readonly WatchTiming Fast = new(TimeSpan.FromMilliseconds(150), 3, TimeSpan.FromMilliseconds(600), TimeSpan.FromMilliseconds(400), TimeSpan.FromMilliseconds(40), TimeSpan.FromMilliseconds(400));
 
         private static ChannelWatch Watch() => new(Fast, TimeProvider.System);
 
@@ -65,6 +65,29 @@ namespace AiryBotCode.Tests
             await Task.Delay(300);
             Assert.Equal(0, here);
             Assert.Equal(1, there);
+        }
+
+        [Fact]
+        public async Task A_follow_up_waits_only_a_short_moment()
+        {
+            var watch = Watch();
+            var checks = 0;
+            watch.Note(1, 10, () => { checks++; return Task.CompletedTask; }, followUp: true);
+            await Task.Delay(110);
+            Assert.Equal(1, checks);
+        }
+
+        [Fact]
+        public async Task After_speaking_the_channel_is_in_talk_for_a_while()
+        {
+            var watch = Watch();
+            Assert.False(watch.InTalk(1, 10));
+            watch.Spoke(1, 10);
+            Assert.True(watch.InTalk(1, 10));
+            Assert.False(watch.InTalk(1, 11));
+            Assert.False(watch.CoolingDown(1, 10));
+            await Task.Delay(450);
+            Assert.False(watch.InTalk(1, 10));
         }
 
         [Fact]

@@ -100,6 +100,19 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void AFollowUpAsksWhetherTheTalkWithAiryGoesOn()
+        {
+            var body = JsonNode.Parse(WorthQuestion.Body(Event(4) with { FollowUp = true }))!;
+            var instructions = body["questions"]![WorthQuestion.Key]!["instructions"]!.GetValue<string>();
+            var state = body["state"]!.GetValue<string>();
+            Assert.Contains("Airy is already in this conversation", instructions);
+            Assert.Contains("(Airy's lines included)", state);
+            Assert.Contains("Airy: line 2", state);
+            Assert.EndsWith("kirra: does anyone know when the event starts?", state);
+            Assert.DoesNotContain("{{", state + instructions);
+        }
+
+        [Fact]
         public void TheQuestionCarriesTheChannelTheAuthorTheMessageAndTheRecentTalk()
         {
             var body = JsonNode.Parse(WorthQuestion.Body(Event(9)))!;
