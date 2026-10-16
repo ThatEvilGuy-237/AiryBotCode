@@ -163,7 +163,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     .ToList();
                 var since = transcript.SinceBotSpoke(botId, message.Channel.Id, message.Id);
                 var said = ChannelTalk.Message(botName, message.Channel.Name, $"{author} ({message.Author.Id})", content, since,
-                    pictures.Select(p => p.Label).ToList());
+                    pictures.Select(p => p.Label).ToList(), since.Select(l => l.Text).Append(content).Any(t => AiryNames.In(t, botName)));
                 transcript.Seen(botId, message.Channel.Id, message.Id);
                 watch.Spoke(botId, message.Channel.Id);
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
@@ -242,9 +242,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     .ToList();
                 var labels = pictures.Select(p => p.Label).ToList();
                 var lastText = last.MessageId == newest.Id ? Readable(newest, botId, embeds) : last.Text;
+                var aboutYou = stretch.Any(l => !l.FromBot && AiryNames.In(l.Text, botName));
                 var said = followUp
-                    ? ChannelTalk.Message(botName, newest.Channel.Name, $"{last.Author} ({newest.Author.Id})", lastText, unseen.Take(unseen.Count - 1).ToList(), labels)
-                    : ChannelTalk.JoinIn(botName, newest.Channel.Name, $"{author} ({newest.Author.Id})", stretch, labels);
+                    ? ChannelTalk.Message(botName, newest.Channel.Name, $"{last.Author} ({newest.Author.Id})", lastText, unseen.Take(unseen.Count - 1).ToList(), labels, aboutYou)
+                    : ChannelTalk.JoinIn(botName, newest.Channel.Name, $"{author} ({newest.Author.Id})", stretch, labels, aboutYou);
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
                     hive.RunUrl, hive.AppKey, botId, channelId, newest.Author.Id, newest.Author.Username, said, images);
             }

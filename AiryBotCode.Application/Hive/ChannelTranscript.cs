@@ -92,7 +92,7 @@ namespace AiryBotCode.Application.Hive
     {
         private static readonly Lazy<IReadOnlyDictionary<string, string>> Sections = new(() => WorthQuestion.ReadSections("channel-talk"));
 
-        public static string Message(string bot, string channel, string author, string message, IReadOnlyList<HeardLine> since, IReadOnlyList<string>? pictures = null)
+        public static string Message(string bot, string channel, string author, string message, IReadOnlyList<HeardLine> since, IReadOnlyList<string>? pictures = null, bool aboutYou = false)
         {
             var lines = string.Join("\n", since.Select(l => $"{l.Author}: {Flat(l.Text)}"));
             var said = WorthQuestion.Fill(Sections.Value[since.Count == 0 ? "alone" : "with context"], new Dictionary<string, string>
@@ -103,10 +103,11 @@ namespace AiryBotCode.Application.Hive
                 ["lines"] = lines,
                 ["message"] = message,
             });
+            if (aboutYou) said += "\n\n" + Sections.Value["about you"];
             return WithPictures(said, pictures);
         }
 
-        public static string JoinIn(string bot, string channel, string author, IReadOnlyList<HeardLine> stretch, IReadOnlyList<string>? pictures = null)
+        public static string JoinIn(string bot, string channel, string author, IReadOnlyList<HeardLine> stretch, IReadOnlyList<string>? pictures = null, bool aboutYou = false)
         {
             var said = WorthQuestion.Fill(Sections.Value["joining in"], new Dictionary<string, string>
             {
@@ -115,6 +116,7 @@ namespace AiryBotCode.Application.Hive
                 ["author"] = author,
                 ["lines"] = string.Join("\n", stretch.Select(l => $"{l.Author}: {Flat(l.Text)}")),
             });
+            if (aboutYou) said += "\n\n" + Sections.Value["about you"];
             return WithPictures(said, pictures);
         }
 

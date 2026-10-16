@@ -83,6 +83,14 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void A_message_that_names_her_reminds_her_it_is_about_her()
+        {
+            var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "she is the mark 3 of airy development", [], null, aboutYou: true);
+            Assert.Contains("she is the mark 3 of airy development\n\nHere Airy, the fox and the bot mean you", said);
+            Assert.DoesNotContain("Here Airy", ChannelTalk.Message("Airy", "events", "Evil (42)", "hi", []));
+        }
+
+        [Fact]
         public void The_message_says_which_pictures_are_the_emoji()
         {
             var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "I am :evil_merc:", [], [":evil_merc:"]);
