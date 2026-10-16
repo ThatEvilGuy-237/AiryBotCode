@@ -322,7 +322,7 @@ namespace AiryBotCode.Tests
             Assert.Contains("tomas: same, 8 pm?", said);
             Assert.EndsWith("@Airy can you host it?", said);
             Assert.DoesNotContain("{{", said);
-            Assert.Equal("hello", ChannelTalk.Message("Airy", "events", "tomas", "hello", []));
+            Assert.Equal("tomas (42) writes in #events:\nhello", ChannelTalk.Message("Airy", "events", "tomas (42)", "hello", []));
         }
 
         [Fact]

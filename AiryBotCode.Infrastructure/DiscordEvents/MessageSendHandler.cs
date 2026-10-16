@@ -46,13 +46,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 // Resolve raw mentions (<@id> / bare @id) to "DisplayName (id)" so the
                 // flow + memory see a name, not a snowflake. Prefer the users Discord
                 // already resolved on the message; fall back to a guild lookup.
-                var mentioned = message.MentionedUsers
-                    .GroupBy(u => u.Id)
-                    .ToDictionary(g => g.Key, g => (g.First() as SocketGuildUser)?.Nickname ?? g.First().Username);
-                var guild = (message.Channel as SocketGuildChannel)?.Guild;
-                var content = MentionResolver.Rewrite(message.Content, id =>
-                    mentioned.TryGetValue(id, out var n) ? n
-                        : (guild?.GetUser(id) is { } gu ? (gu.Nickname ?? gu.Username) : null));
+                var content = Readable(message, botId);
 
                 var mentionsBot = message.MentionedUsers.Any(u => u.Id == botId);
                 var repliesToBot = message.Reference != null
@@ -166,7 +160,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             using (message.Channel.EnterTypingState())
             {
                 var since = transcript.SinceBotSpoke(botId, message.Channel.Id, message.Id);
-                var said = ChannelTalk.Message(botName, message.Channel.Name, author, content, since);
+                var said = ChannelTalk.Message(botName, message.Channel.Name, $"{author} ({message.Author.Id})", content, since);
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
                     hive.RunUrl, hive.AppKey, botId, message.Channel.Id, message.Author.Id, message.Author.Username, said, images);
             }
@@ -176,6 +170,17 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 
         private static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.Username;
 
+        private static string Readable(SocketMessage message, ulong botId)
+        {
+            var mentioned = message.MentionedUsers
+                .GroupBy(u => u.Id)
+                .ToDictionary(g => g.Key, g => NameOf(g.First()));
+            var guild = (message.Channel as SocketGuildChannel)?.Guild;
+            return MentionResolver.Rewrite(message.Content, id =>
+                mentioned.TryGetValue(id, out var n) ? n
+                    : (guild?.GetUser(id) is { } gu ? NameOf(gu) : null), botId);
+        }
+
         private void HearOwnLine(SocketMessage message)
         {
             try
@@ -184,7 +189,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var botId = scope.ServiceProvider.GetRequiredService<IConfigurationReader>().GetBotId();
                 if (message.Author.Id != botId) return;
                 scope.ServiceProvider.GetRequiredService<ChannelTranscript>()
-                    .HearIfKnown(botId, message.Channel.Id, new HeardLine(message.Id, NameOf(message.Author), message.Content, true));
+                    .HearIfKnown(botId, message.Channel.Id, new HeardLine(message.Id, NameOf(message.Author), Readable(message, botId), true));
             }
             catch (Exception ex)
             {

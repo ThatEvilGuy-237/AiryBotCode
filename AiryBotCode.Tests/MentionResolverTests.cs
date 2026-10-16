@@ -21,6 +21,14 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void The_bots_own_mention_is_its_name_without_the_id()
+        {
+            Assert.Equal("@Kit", MentionResolver.Rewrite("<@222222222222222222>", Names, self: 222222222222222222));
+            Assert.Equal("hi @Kit, ask Evil (124654654000000000)",
+                MentionResolver.Rewrite("hi <@!222222222222222222>, ask <@124654654000000000>", Names, self: 222222222222222222));
+        }
+
+        [Fact]
         public void Resolves_nickname_form_mention()
         {
             var outp = MentionResolver.Rewrite("<@!222222222222222222> ping", Names);

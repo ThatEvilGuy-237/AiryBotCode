@@ -69,9 +69,8 @@ namespace AiryBotCode.Application.Hive
 
         public static string Message(string bot, string channel, string author, string message, IReadOnlyList<HeardLine> since)
         {
-            if (since.Count == 0) return message;
             var lines = string.Join("\n", since.Select(l => $"{l.Author}: {Flat(l.Text)}"));
-            return WorthQuestion.Fill(Sections.Value["with context"], new Dictionary<string, string>
+            return WorthQuestion.Fill(Sections.Value[since.Count == 0 ? "alone" : "with context"], new Dictionary<string, string>
             {
                 ["bot"] = bot,
                 ["channel"] = channel,
