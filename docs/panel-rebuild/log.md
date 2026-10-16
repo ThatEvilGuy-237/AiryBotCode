@@ -2,6 +2,12 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-16 · One rule for every channel
+
+Owner: a ping always gets an answer, in every channel; anything else only when it is worth it. That is the
+"When it's worth it" rule (a mention or reply skips the decision and answers), so #airy-talk-🚧 moved from When
+mentioned to When it's worth it on prod; all four Cookie&Creams channels now share it.
+
 ## 2026-10-16 · Panel deployed; waits only on the tunnel route
 
 Owner: deploy now. Backup `~/backups/airy-2026-10-16-panel` (airy_db and the API settings), `Discord:FrontendUri` set
