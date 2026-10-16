@@ -5,6 +5,7 @@ import { discordSignInUrl, openGate } from '@/lib/api'
 
 const password = ref('')
 const gate = ref<string | null>(null)
+const discordUrl = ref<string | null>(null)
 const busy = ref(false)
 const error = ref<string | null>(null)
 const step = computed(() => (gate.value ? 2 : 1))
@@ -14,7 +15,9 @@ async function next() {
   busy.value = true
   error.value = null
   try {
-    gate.value = await openGate(password.value)
+    const token = await openGate(password.value)
+    discordUrl.value = await discordSignInUrl(token)
+    gate.value = token
   } catch (e) {
     error.value = e instanceof Error ? e.message : 'Signing in failed.'
   } finally {
@@ -24,6 +27,7 @@ async function next() {
 
 function back() {
   gate.value = null
+  discordUrl.value = null
   password.value = ''
 }
 </script>
@@ -50,7 +54,7 @@ function back() {
         <h1 id="signin-title">Now sign in with Discord</h1>
         <p class="lead">Only Discord accounts allowed to run Airy get in.</p>
         <div class="form">
-          <Button :href="discordSignInUrl(gate!)"><Icon name="log-in" :size="16" />Sign in with Discord</Button>
+          <Button :href="discordUrl ?? undefined"><Icon name="log-in" :size="16" />Sign in with Discord</Button>
           <Button variant="ghost" @click="back">Back</Button>
         </div>
       </template>

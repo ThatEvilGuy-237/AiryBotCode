@@ -360,6 +360,16 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void TheDiscordSignInAddressComesFromTheApisOwnSettings()
+        {
+            var url = AuthController.AuthorizeUrl("1318870826862379018", "https://thehive.thatevilguy.com/api/auth/discord/redirect", "gate token");
+
+            Assert.StartsWith("https://discord.com/api/oauth2/authorize?client_id=1318870826862379018", url);
+            Assert.Contains("redirect_uri=https%3A%2F%2Fthehive.thatevilguy.com%2Fapi%2Fauth%2Fdiscord%2Fredirect", url);
+            Assert.Contains("&scope=identify&state=gate%20token", url);
+        }
+
+        [Fact]
         public void EveryPanelControllerCanBeBuiltFromThePanelServices()
         {
             var services = new ServiceCollection()

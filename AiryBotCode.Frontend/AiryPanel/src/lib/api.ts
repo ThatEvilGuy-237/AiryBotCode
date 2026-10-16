@@ -222,14 +222,13 @@ export async function openGate(password: string): Promise<string> {
   return ((await response.json()) as { token: string }).token
 }
 
-export function discordSignInUrl(gateToken: string): string {
-  const client = import.meta.env.VITE_DISCORD_CLIENT_ID ?? '1318870826862379018'
-  const query = new URLSearchParams({
-    client_id: client,
-    redirect_uri: `${location.origin}/api/auth/discord/redirect`,
-    response_type: 'code',
-    scope: 'identify',
-    state: gateToken,
-  })
-  return `https://discord.com/api/oauth2/authorize?${query}`
+export async function discordSignInUrl(gateToken: string): Promise<string> {
+  let response: Response
+  try {
+    response = await fetch(`/api/auth/discord/start?state=${encodeURIComponent(gateToken)}`)
+  } catch {
+    throw new ApiError(0, 'Airy could not be reached.')
+  }
+  if (!response.ok) throw new ApiError(response.status, readError(await response.text(), response.status))
+  return ((await response.json()) as { url: string }).url
 }

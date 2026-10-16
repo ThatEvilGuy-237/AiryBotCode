@@ -76,6 +76,20 @@ namespace AiryBotCode.Api.Controllers
             return Ok(new { token = GenerateGateToken() });
         }
 
+        [HttpGet("discord/start")]
+        public IActionResult DiscordStart([FromQuery] string? state)
+        {
+            if (string.IsNullOrWhiteSpace(state)) return BadRequest("state is the gate token.");
+            return Ok(new { url = AuthorizeUrl(_configuration["Discord:ClientId"] ?? "", _configuration["Discord:RedirectUri"] ?? "", state) });
+        }
+
+        public static string AuthorizeUrl(string clientId, string redirectUri, string state) =>
+            "https://discord.com/api/oauth2/authorize"
+            + $"?client_id={Uri.EscapeDataString(clientId)}"
+            + $"&redirect_uri={Uri.EscapeDataString(redirectUri)}"
+            + "&response_type=code&scope=identify"
+            + $"&state={Uri.EscapeDataString(state)}";
+
         [HttpGet("discord/redirect")]
         public async Task<IActionResult> DiscordRedirect([FromQuery] string code, [FromQuery] string state)
         {
