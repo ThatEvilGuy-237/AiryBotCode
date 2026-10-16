@@ -38,11 +38,45 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void A_tenor_gif_reads_as_a_gif_with_its_words_and_comes_as_its_still_frame()
+        {
+            var raw = "when the build fails https://tenor.com/view/facepalm-face-gif-12345678 <:evil_merc:1292212189163163719>";
+            EmbedSeen[] embeds = [new("Gifv", "https://tenor.com/view/facepalm-face-gif-12345678", "https://media.tenor.com/0SyZFIR7vv8AAAAe/facepalm-face.png")];
+            Assert.Equal("when the build fails [gif: facepalm face] :evil_merc:", ChatPictures.Readable(raw, [], embeds));
+            var picked = ChatPictures.Pick(raw, [], embeds);
+            Assert.Equal(["[gif: facepalm face]", ":evil_merc:"], picked.Select(p => p.Label));
+            Assert.Equal("https://media.tenor.com/0SyZFIR7vv8AAAAe/facepalm-face.png", picked[0].Image.Url);
+            Assert.Equal("image/png", picked[0].Image.Mime);
+        }
+
+        [Fact]
+        public void A_gif_link_without_a_preview_still_reads_as_a_gif()
+        {
+            Assert.Equal("[gif: cat dance]", ChatPictures.Readable("https://tenor.com/nl/view/cat-dance-gif-998877", []));
+            Assert.Equal("[gif: happy dog]", ChatPictures.Readable("https://giphy.com/gifs/happy-dog-xT9IgG50Fb7Mi0prBC", []));
+            Assert.Equal("[gif]", ChatPictures.Readable("https://media.example.org/x/funny.gif", []));
+            Assert.Empty(ChatPictures.Pick("https://tenor.com/view/cat-dance-gif-998877", [], []));
+            Assert.True(ChatPictures.HasLink("look https://tenor.com/view/cat-dance-gif-998877"));
+            Assert.False(ChatPictures.HasLink("no link here"));
+        }
+
+        [Fact]
+        public void An_image_link_comes_as_a_picture_and_other_links_stay_as_they_are()
+        {
+            var raw = "see https://i.example.org/pic.jpg and https://example.org/article";
+            EmbedSeen[] embeds = [new("Image", "https://i.example.org/pic.jpg", "https://i.example.org/pic.jpg"), new("Article", "https://example.org/article", "https://example.org/og.png")];
+            Assert.Equal("see [image] and https://example.org/article", ChatPictures.Readable(raw, [], embeds));
+            var picked = Assert.Single(ChatPictures.Pick(raw, [], embeds));
+            Assert.Equal("[image]", picked.Label);
+            Assert.Equal("image/jpeg", picked.Image.Mime);
+        }
+
+        [Fact]
         public void The_message_says_which_pictures_are_the_emoji()
         {
             var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "I am :evil_merc:", [], [":evil_merc:"]);
             Assert.StartsWith("Evil (42) writes in #events:\nI am :evil_merc:", said);
-            Assert.Contains("in this order: :evil_merc:. They are Discord emotes", said);
+            Assert.Contains("in this order: :evil_merc:. They are reactions, not shared photos", said);
             Assert.DoesNotContain("{{", said);
             Assert.DoesNotContain("pictures", ChannelTalk.Message("Airy", "events", "Evil (42)", "hi", []));
         }

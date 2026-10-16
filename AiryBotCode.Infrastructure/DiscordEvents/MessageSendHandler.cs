@@ -154,14 +154,16 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 return true;
             }
 
-            var pictures = ChatPictures.Pick(message.Content, StickersOf(message));
-            var images = ImageAttachments.Pick(
-                    message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)))
-                .Concat(pictures.Select(p => p.Image))
-                .ToList();
             AgentReply reply;
             using (message.Channel.EnterTypingState())
             {
+                var embeds = await EmbedsSoonAsync(message);
+                if (embeds.Count > 0) content = Readable(message, botId, embeds);
+                var pictures = ChatPictures.Pick(message.Content, StickersOf(message), embeds);
+                var images = ImageAttachments.Pick(
+                        message.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)))
+                    .Concat(pictures.Select(p => p.Image))
+                    .ToList();
                 var since = transcript.SinceBotSpoke(botId, message.Channel.Id, message.Id);
                 var said = ChannelTalk.Message(botName, message.Channel.Name, $"{author} ({message.Author.Id})", content, since,
                     pictures.Select(p => p.Label).ToList());
@@ -177,7 +179,26 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
         private static IReadOnlyList<StickerSeen> StickersOf(SocketMessage message) =>
             message.Stickers.Select(s => new StickerSeen(s.Id, s.Name, (int)s.Format)).ToList();
 
-        private static string Readable(SocketMessage message, ulong botId)
+        private static IReadOnlyList<EmbedSeen> EmbedsOf(IMessage message) =>
+            message.Embeds.Select(e => new EmbedSeen(e.Type.ToString(), e.Url, e.Thumbnail?.Url ?? e.Image?.Url)).ToList();
+
+        private static async Task<IReadOnlyList<EmbedSeen>> EmbedsSoonAsync(SocketMessage message)
+        {
+            if (message.Embeds.Count > 0 || !ChatPictures.HasLink(message.Content)) return EmbedsOf(message);
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1.5));
+                var fresh = await message.Channel.GetMessageAsync(message.Id, CacheMode.AllowDownload);
+                return fresh is null ? EmbedsOf(message) : EmbedsOf(fresh);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[AiryChannel] could not read the link previews: {ex.Message}");
+                return EmbedsOf(message);
+            }
+        }
+
+        private static string Readable(SocketMessage message, ulong botId, IReadOnlyList<EmbedSeen>? embeds = null)
         {
             var mentioned = message.MentionedUsers
                 .GroupBy(u => u.Id)
@@ -186,7 +207,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             var text = MentionResolver.Rewrite(message.Content, id =>
                 mentioned.TryGetValue(id, out var n) ? n
                     : (guild?.GetUser(id) is { } gu ? NameOf(gu) : null), botId);
-            return ChatPictures.Readable(text, StickersOf(message));
+            return ChatPictures.Readable(text, StickersOf(message), embeds ?? EmbedsOf(message));
         }
 
         private void HearOwnLine(SocketMessage message)
