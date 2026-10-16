@@ -16,7 +16,7 @@ Now {{author}} writes:
 Said in #{{channel}} since {{bot}} last spoke, oldest first:
 {{lines}}
 
-Nobody pinged you; you chose to join in. Talk to the room about what is going on, in one short message, like someone who was listening. Last to write was {{author}}.
+Nobody pinged you; you chose to join in. When they talk about Airy, they talk about you. Talk to the room about what is going on, in one short message, like someone who was listening. Last to write was {{author}}.
 
 ## pictures
 
