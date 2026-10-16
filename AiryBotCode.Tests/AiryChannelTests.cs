@@ -341,6 +341,22 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void SomeoneWhoDidNotOptInShowsAsOneLineWithoutTheirWords()
+        {
+            var log = new ChannelTranscript();
+            log.Hear(1, 10, new HeardLine(1, "kirra", "hi all", false));
+            log.Hear(1, 10, HeardLine.NotShared(2));
+            log.Hear(1, 10, HeardLine.NotShared(3));
+            log.Hear(1, 10, new HeardLine(4, "Evil", "He laughed you out. Lol", false));
+            log.Hear(1, 10, HeardLine.NotShared(5));
+
+            var lines = log.SinceBotSpoke(1, 10, beforeMessageId: 0);
+            Assert.Equal(["kirra", "someone (not opted in)", "Evil", "someone (not opted in)"], lines.Select(l => l.Author));
+            Assert.Equal("(message not shared)", lines[1].Text);
+            Assert.True(lines[1].Unheard);
+        }
+
+        [Fact]
         public void AChannelThatStopsListeningForgetsWhatItHeard()
         {
             var log = new ChannelTranscript();

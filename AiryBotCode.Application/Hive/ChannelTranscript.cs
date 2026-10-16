@@ -2,7 +2,11 @@ using System.Collections.Concurrent;
 
 namespace AiryBotCode.Application.Hive
 {
-    public sealed record HeardLine(ulong MessageId, string Author, string Text, bool FromBot);
+    public sealed record HeardLine(ulong MessageId, string Author, string Text, bool FromBot, bool Unheard = false)
+    {
+        public static HeardLine NotShared(ulong messageId) =>
+            new(messageId, HiveTexts.Say("unheard author"), HiveTexts.Say("unheard text"), false, true);
+    }
 
     public class ChannelTranscript
     {
@@ -19,6 +23,7 @@ namespace AiryBotCode.Application.Hive
             lock (lines)
             {
                 if (lines.Any(l => l.MessageId == line.MessageId)) return;
+                if (line.Unheard && lines.Count > 0 && lines[^1].Unheard) return;
                 lines.Add(line);
                 if (lines.Count > Keep) lines.RemoveRange(0, lines.Count - Keep);
             }

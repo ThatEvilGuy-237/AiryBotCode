@@ -133,7 +133,8 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             var botName = BotNameOf(services, message, bot!);
             var author = NameOf(message.Author);
             if (AnswerRules.Hears(channel.Listens, consented)) transcript.Hear(botId, message.Channel.Id, new HeardLine(message.Id, author, content, false));
-            else if (!channel.Listens) transcript.Forget(botId, message.Channel.Id);
+            else if (channel.Listens) transcript.Hear(botId, message.Channel.Id, HeardLine.NotShared(message.Id));
+            else transcript.Forget(botId, message.Channel.Id);
             if (!channel.Enabled) return true;
             var watch = services.GetRequiredService<ChannelWatch>();
             if (targeted) watch.Cancel(botId, message.Channel.Id);
