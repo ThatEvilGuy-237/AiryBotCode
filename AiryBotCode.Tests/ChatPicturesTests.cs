@@ -42,7 +42,7 @@ namespace AiryBotCode.Tests
         {
             var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "I am :evil_merc:", [], [":evil_merc:"]);
             Assert.StartsWith("Evil (42) writes in #events:\nI am :evil_merc:", said);
-            Assert.EndsWith("in this order: :evil_merc:", said);
+            Assert.Contains("in this order: :evil_merc:. They are Discord emotes", said);
             Assert.DoesNotContain("{{", said);
             Assert.DoesNotContain("pictures", ChannelTalk.Message("Airy", "events", "Evil (42)", "hi", []));
         }

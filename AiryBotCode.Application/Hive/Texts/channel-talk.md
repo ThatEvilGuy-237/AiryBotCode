@@ -13,4 +13,4 @@ Now {{author}} writes:
 
 ## pictures
 
-The custom emoji and stickers in this message also come as small pictures, after any attached images, in this order: {{pictures}}
+The emotes and stickers in this message come as small pictures after any attached images, in this order: {{pictures}}. They are Discord emotes, not shared photos: read them like emoji, as part of what was said.
