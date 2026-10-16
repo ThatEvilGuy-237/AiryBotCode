@@ -63,7 +63,7 @@ namespace AiryBotCode.Application.Hive
     {
         public static bool Hears(bool listens, bool consented) => listens && consented;
 
-        public static bool AsksHive(string mode, bool targeted, bool consented) =>
+        public static bool Watches(string mode, bool targeted, bool consented) =>
             mode == AnswerModes.Decide && !targeted && consented;
 
         public static bool Answers(string mode, bool targeted, WorthVerdict? verdict) => mode switch
@@ -81,8 +81,8 @@ namespace AiryBotCode.Application.Hive
     public static class WorthQuestion
     {
         public const string Key = "worth";
-        public const int MaxRecent = 6;
-        public const int MaxLine = 400;
+        public const int MaxRecent = 12;
+        public const int MaxLine = 300;
 
         private static readonly Lazy<IReadOnlyDictionary<string, string>> Sections = new(() => ReadSections("worth-answering"));
 

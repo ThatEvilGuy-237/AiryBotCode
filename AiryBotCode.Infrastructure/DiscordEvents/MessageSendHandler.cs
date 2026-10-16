@@ -51,7 +51,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var mentionsBot = message.MentionedUsers.Any(u => u.Id == botId);
                 var repliesToBot = message.Reference != null
                     && (message as SocketUserMessage)?.ReferencedMessage?.Author?.Id == botId;
-                if (await AnswerInAiryChannelAsync(scope.ServiceProvider, message, botId, content, mentionsBot || repliesToBot))
+                if (await AnswerInAiryChannelAsync(_serviceProvider, scope.ServiceProvider, message, botId, content, mentionsBot || repliesToBot))
                 {
                     foreach (var Event in _messageAction)
                         if (Event is IMessageAction handled) await handled.HandleMessageReceivedAsync(message);
@@ -105,7 +105,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             }
         }
 
-        private static async Task<bool> AnswerInAiryChannelAsync(IServiceProvider services, SocketMessage message, ulong botId, string content, bool targeted)
+        private static async Task<bool> AnswerInAiryChannelAsync(IServiceProvider root, IServiceProvider services, SocketMessage message, ulong botId, string content, bool targeted)
         {
             var channels = services.GetRequiredService<IAiryChannelRepository>();
             AiryChannel? channel;
@@ -130,23 +130,19 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 
             var consented = await HasConsentAsync(services, botId, message.Author.Id);
             var transcript = services.GetRequiredService<ChannelTranscript>();
-            var botName = services.GetService<DiscordSocketClient>()?.CurrentUser?.Username ?? bot!.BotName ?? "Airy";
+            var botName = BotNameOf(services, message, bot!);
             var author = NameOf(message.Author);
             if (AnswerRules.Hears(channel.Listens, consented)) transcript.Hear(botId, message.Channel.Id, new HeardLine(message.Id, author, content, false));
             else if (!channel.Listens) transcript.Forget(botId, message.Channel.Id);
             if (!channel.Enabled) return true;
-            WorthVerdict? verdict = null;
-            if (!string.IsNullOrWhiteSpace(content) && AnswerRules.AsksHive(channel.AnswerMode, targeted, consented))
+            var watch = services.GetRequiredService<ChannelWatch>();
+            if (targeted) watch.Cancel(botId, message.Channel.Id);
+            else if (!string.IsNullOrWhiteSpace(content) && AnswerRules.Watches(channel.AnswerMode, targeted, consented))
             {
-                var recent = transcript.Recent(botId, message.Channel.Id, message.Id, WorthQuestion.MaxRecent)
-                    .Select(l => new RecentLine(l.FromBot ? botName : l.Author, l.Text))
-                    .ToList();
-                verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive, new WorthEvent(botName, message.Channel.Name, author, message.Author.Id, content, recent));
-                if (verdict.Error is not null) Console.WriteLine($"[AiryChannel] channel {message.Channel.Id}: {verdict.Error}");
-                try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
-                catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
+                watch.Note(botId, message.Channel.Id, () => JoinInAsync(root, message, botId));
+                return true;
             }
-            if (!AnswerRules.Answers(channel.AnswerMode, targeted, verdict)) return true;
+            if (!AnswerRules.Answers(channel.AnswerMode, targeted, null)) return true;
 
             if (!consented)
             {
@@ -173,6 +169,55 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             await SendReplyAsync(services, message, reply.Text ?? (reply.Failed ? WebhookChatService.OfflineReply() : null));
             return true;
         }
+
+        private static async Task JoinInAsync(IServiceProvider root, SocketMessage newest, ulong botId)
+        {
+            using var scope = root.CreateScope();
+            var services = scope.ServiceProvider;
+            var channelId = newest.Channel.Id;
+            var channels = services.GetRequiredService<IAiryChannelRepository>();
+            var channel = await channels.GetForChannelAsync(botId, channelId);
+            if (channel is null || !channel.Enabled || channel.AnswerMode != AnswerModes.Decide) return;
+            var watch = services.GetRequiredService<ChannelWatch>();
+            if (watch.CoolingDown(botId, channelId)) return;
+            var bot = await services.GetRequiredService<IBotSettingRepository>().GetBotSettingAsync(botId);
+            var hive = bot is null ? null : HiveConnection.Of(bot);
+            if (hive is null) return;
+
+            var transcript = services.GetRequiredService<ChannelTranscript>();
+            var botName = BotNameOf(services, newest, bot!);
+            var author = NameOf(newest.Author);
+            var stretch = transcript.SinceBotSpoke(botId, channelId, 0);
+            if (stretch.Count == 0) stretch = [new HeardLine(newest.Id, author, Readable(newest, botId), false)];
+            var lines = stretch.Select(l => new RecentLine(l.FromBot ? botName : l.Author, l.Text)).ToList();
+            var verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive,
+                new WorthEvent(botName, newest.Channel.Name, lines[^1].Author, newest.Author.Id, lines[^1].Text, lines.Take(lines.Count - 1).ToList()));
+            if (verdict.Error is not null) Console.WriteLine($"[AiryChannel] channel {channelId}: {verdict.Error}");
+            try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
+            catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
+            if (!AnswerRules.Answers(channel.AnswerMode, false, verdict) || watch.CoolingDown(botId, channelId)) return;
+            watch.Joined(botId, channelId);
+
+            AgentReply reply;
+            using (newest.Channel.EnterTypingState())
+            {
+                var embeds = await EmbedsSoonAsync(newest);
+                var pictures = ChatPictures.Pick(newest.Content, StickersOf(newest), embeds);
+                var images = ImageAttachments.Pick(
+                        newest.Attachments.Select(a => ((string?)a.Url, (string?)a.Filename, (string?)a.ContentType)))
+                    .Concat(pictures.Select(p => p.Image))
+                    .ToList();
+                var said = ChannelTalk.JoinIn(botName, newest.Channel.Name, $"{author} ({newest.Author.Id})", stretch,
+                    pictures.Select(p => p.Label).ToList());
+                reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
+                    hive.RunUrl, hive.AppKey, botId, channelId, newest.Author.Id, newest.Author.Username, said, images);
+            }
+            if (reply.Text is not null) await SendReplyAsync(services, newest, reply.Text);
+        }
+
+        private static string BotNameOf(IServiceProvider services, SocketMessage message, BotSetting bot) =>
+            (message.Channel as SocketGuildChannel)?.Guild.CurrentUser is { } me ? NameOf(me)
+                : services.GetService<DiscordSocketClient>()?.CurrentUser?.Username ?? bot.BotName ?? "Airy";
 
         private static string NameOf(IUser user) => (user as SocketGuildUser)?.Nickname ?? user.GlobalName ?? user.Username;
 

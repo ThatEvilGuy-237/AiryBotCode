@@ -72,6 +72,17 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void Joining_in_shows_the_stretch_and_says_nobody_pinged()
+        {
+            HeardLine[] stretch = [new(1, "kirra", "anyone watched the new audio?", false), new(2, "tomas", "not yet https://tenor.com/view/cat-dance-gif-1", false)];
+            var said = ChannelTalk.JoinIn("Airy", "events", "tomas (7)", stretch);
+            Assert.StartsWith("Said in #events since Airy last spoke, oldest first:\nkirra: anyone watched the new audio?\ntomas: not yet", said);
+            Assert.Contains("Nobody pinged you; you chose to join in.", said);
+            Assert.EndsWith("Last to write was tomas (7).", said);
+            Assert.DoesNotContain("{{", said);
+        }
+
+        [Fact]
         public void The_message_says_which_pictures_are_the_emoji()
         {
             var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "I am :evil_merc:", [], [":evil_merc:"]);

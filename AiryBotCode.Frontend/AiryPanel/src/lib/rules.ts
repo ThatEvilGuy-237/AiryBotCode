@@ -9,5 +9,5 @@ export const ruleLabels: Record<AnswerMode, string> = {
 export const ruleHelp: Record<AnswerMode, string> = {
   always: 'Every message.',
   mention: 'When someone mentions Airy or replies to it.',
-  decide: 'The Hive picks the messages worth an answer. Mentions always count.',
+  decide: 'Airy follows the talk and joins in when the Hive finds it worth it, at most once every 10 minutes. Mentions are always answered.',
 }

@@ -63,17 +63,17 @@ namespace AiryBotCode.Tests
         [InlineData(AnswerModes.Decide, true, true)]
         public void AChannelAnswersByItsRuleWithoutAskingTheHive(string mode, bool targeted, bool answers)
         {
-            Assert.False(AnswerRules.AsksHive(mode, targeted, consented: true) && mode != AnswerModes.Decide);
+            Assert.False(AnswerRules.Watches(mode, targeted, consented: true) && mode != AnswerModes.Decide);
             Assert.Equal(answers, AnswerRules.Answers(mode, targeted, null));
         }
 
         [Fact]
         public void AWorthItChannelAsksOnlyForUnaddressedMessagesFromPeopleWhoAccepted()
         {
-            Assert.True(AnswerRules.AsksHive(AnswerModes.Decide, targeted: false, consented: true));
-            Assert.False(AnswerRules.AsksHive(AnswerModes.Decide, targeted: true, consented: true));
-            Assert.False(AnswerRules.AsksHive(AnswerModes.Decide, targeted: false, consented: false));
-            Assert.False(AnswerRules.AsksHive(AnswerModes.Always, targeted: false, consented: true));
+            Assert.True(AnswerRules.Watches(AnswerModes.Decide, targeted: false, consented: true));
+            Assert.False(AnswerRules.Watches(AnswerModes.Decide, targeted: true, consented: true));
+            Assert.False(AnswerRules.Watches(AnswerModes.Decide, targeted: false, consented: false));
+            Assert.False(AnswerRules.Watches(AnswerModes.Always, targeted: false, consented: true));
         }
 
         [Fact]
@@ -107,16 +107,18 @@ namespace AiryBotCode.Tests
             var state = body["state"]!.GetValue<string>();
 
             Assert.Equal("yesno", question["type"]!.GetValue<string>());
-            Assert.Contains("Should Airy reply", question["instructions"]!.GetValue<string>());
+            Assert.Contains("Should Airy join this conversation", question["instructions"]!.GetValue<string>());
             Assert.Contains("#general", state);
-            Assert.Contains("from kirra", state);
-            Assert.Contains("when the event starts", state);
-            Assert.DoesNotContain("line 3", state);
-            Assert.Contains("Airy: line 4", state);
-            Assert.Contains("tomas: line 9", state);
+            Assert.EndsWith("kirra: does anyone know when the event starts?", state);
+            Assert.Contains("tomas: line 1", state);
+            Assert.Contains("Airy: line 8", state);
+            Assert.Contains("tomas: line 9\nkirra:", state);
             Assert.DoesNotContain("{{", state);
             Assert.Equal("discord:30", body["user"]!.GetValue<string>());
-            Assert.Contains("(none)", JsonNode.Parse(WorthQuestion.Body(Event(0)))!["state"]!.GetValue<string>());
+            Assert.Contains("(nothing before this)", JsonNode.Parse(WorthQuestion.Body(Event(0)))!["state"]!.GetValue<string>());
+            var long_ = JsonNode.Parse(WorthQuestion.Body(Event(15)))!["state"]!.GetValue<string>();
+            Assert.DoesNotContain("tomas: line 3\n", long_);
+            Assert.Contains("Airy: line 4", long_);
         }
 
         [Fact]

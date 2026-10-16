@@ -2,6 +2,20 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-16 · Worth it = the conversation, not one line
+
+Owner: the decision should look at several messages. A "When it's worth it" channel no longer asks per message:
+the bot waits until the room is quiet for 20 s (or 8 messages, or 60 s at most), then asks once whether Airy
+should join the talk since she last spoke (up to 12 lines). A yes lets her join in with the stretch as context
+("Nobody pinged you; you chose to join in."), then she stays out uninvited for 10 minutes per channel. A ping or
+reply cancels the wait and is answered at once. Question text in `Texts/worth-answering.md`, tuned on six
+stretches (fox teasing, chatter, a question to the room, trance talk, named without a ping, private talk): all
+as intended on GPT-6 Luna. Also in this round: emotes, stickers, GIF and image links reach her as pictures, the
+writer's display name, her own name from the server ("Airy", was "Airy bot").
+
+Open, owner's call: only consented people are heard, so other people's lines (a laugh, a question) are missing
+from her context.
+
 ## 2026-10-16 · One rule for every channel
 
 Owner: a ping always gets an answer, in every channel; anything else only when it is worth it. That is the

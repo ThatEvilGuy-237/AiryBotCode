@@ -78,6 +78,23 @@ namespace AiryBotCode.Application.Hive
                 ["lines"] = lines,
                 ["message"] = message,
             });
+            return WithPictures(said, pictures);
+        }
+
+        public static string JoinIn(string bot, string channel, string author, IReadOnlyList<HeardLine> stretch, IReadOnlyList<string>? pictures = null)
+        {
+            var said = WorthQuestion.Fill(Sections.Value["joining in"], new Dictionary<string, string>
+            {
+                ["bot"] = bot,
+                ["channel"] = channel,
+                ["author"] = author,
+                ["lines"] = string.Join("\n", stretch.Select(l => $"{l.Author}: {Flat(l.Text)}")),
+            });
+            return WithPictures(said, pictures);
+        }
+
+        private static string WithPictures(string said, IReadOnlyList<string>? pictures)
+        {
             if (pictures is not { Count: > 0 }) return said;
             return said + "\n\n" + WorthQuestion.Fill(Sections.Value["pictures"], new Dictionary<string, string>
             {
