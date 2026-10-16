@@ -78,6 +78,9 @@ Haiku is the more careful proxy; the wording is not tuned toward it, so prod doe
   teeth sharp" (third person) before, and "I'll take 'more refined' as 'better at getting away with things,' then
   :3" after (GPT-6 Luna, one of the 3 allowed checks). Claude models already answered in the first person, so this
   slip only showed on Luna.
+- Tone, a little more playful again (owner: "a little more like before"): "a playful friend, warm and a little
+  cheeky", the fox showing now and then, an emoji once in a while. Naming ":3" in the prompt put it in half the
+  replies (3 to 4 of 6 on Haiku); leaving it out gave one emoticon in six. Checked on Claude only.
 - Running the same wording twice: the model varies, so one green run is not proof; two runs with the same
   verdicts on every graded case are.
 
