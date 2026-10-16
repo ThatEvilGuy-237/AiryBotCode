@@ -15,6 +15,22 @@ namespace AiryBotCode.Application.Hive
         public const int MaxContextChars = 4000;
 
         private readonly ConcurrentDictionary<(ulong Bot, ulong Channel), List<HeardLine>> _channels = new();
+        private readonly ConcurrentDictionary<(ulong Bot, ulong Channel), ulong> _seen = new();
+
+        public void Seen(ulong botId, ulong channelId, ulong messageId) =>
+            _seen.AddOrUpdate((botId, channelId), messageId, (_, before) => Math.Max(before, messageId));
+
+        public bool Knows(ulong botId, ulong channelId) => _channels.ContainsKey((botId, channelId));
+
+        public IReadOnlyList<HeardLine> Unseen(ulong botId, ulong channelId)
+        {
+            if (!_channels.TryGetValue((botId, channelId), out var lines)) return [];
+            var seen = _seen.TryGetValue((botId, channelId), out var id) ? id : 0;
+            lock (lines)
+            {
+                return lines.Where(l => !l.FromBot && !l.Unheard && l.MessageId > seen).ToList();
+            }
+        }
 
         public void Hear(ulong botId, ulong channelId, HeardLine line)
         {
@@ -29,7 +45,11 @@ namespace AiryBotCode.Application.Hive
             }
         }
 
-        public void Forget(ulong botId, ulong channelId) => _channels.TryRemove((botId, channelId), out _);
+        public void Forget(ulong botId, ulong channelId)
+        {
+            _channels.TryRemove((botId, channelId), out _);
+            _seen.TryRemove((botId, channelId), out _);
+        }
 
         public void HearIfKnown(ulong botId, ulong channelId, HeardLine line)
         {

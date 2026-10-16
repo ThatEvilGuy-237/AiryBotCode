@@ -69,3 +69,7 @@ someone (not opted in)
 ## unheard text
 
 (message not shared)
+
+## nicknames
+
+fox, foxy, kitsune

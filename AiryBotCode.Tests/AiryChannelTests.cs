@@ -357,6 +357,34 @@ namespace AiryBotCode.Tests
         }
 
         [Fact]
+        public void OnlyLinesAfterTheLastOneAiryReadAreUnseen()
+        {
+            var log = new ChannelTranscript();
+            log.Hear(1, 10, new HeardLine(100, "kirra", "aaaa i wish", false));
+            log.Seen(1, 10, 100);
+            log.Hear(1, 10, new HeardLine(101, "kirra", "turn my brain off please", false));
+            log.Hear(1, 10, new HeardLine(102, "Airy", "I get that.", true));
+            log.Hear(1, 10, HeardLine.NotShared(103));
+            Assert.Equal(["turn my brain off please"], log.Unseen(1, 10).Select(l => l.Text));
+            log.Seen(1, 10, 101);
+            Assert.Empty(log.Unseen(1, 10));
+            log.Seen(1, 10, 50);
+            Assert.Empty(log.Unseen(1, 10));
+            Assert.True(log.Knows(1, 10));
+            log.Forget(1, 10);
+            Assert.False(log.Knows(1, 10));
+        }
+
+        [Theory]
+        [InlineData("Isn't that right foxy fox airy", true)]
+        [InlineData("AIRY what do you think", true)]
+        [InlineData("the fox is back", true)]
+        [InlineData("@Airy hello", false)]
+        [InlineData("fairy tales and foxglove", false)]
+        [InlineData("good morning all", false)]
+        public void HerNamesAreFoundAsWords(string text, bool found) => Assert.Equal(found, AiryNames.In(text, "Airy"));
+
+        [Fact]
         public void AChannelThatStopsListeningForgetsWhatItHeard()
         {
             var log = new ChannelTranscript();

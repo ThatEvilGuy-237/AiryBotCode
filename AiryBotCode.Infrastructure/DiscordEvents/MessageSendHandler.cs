@@ -140,7 +140,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             if (targeted) watch.Cancel(botId, message.Channel.Id);
             else if (!string.IsNullOrWhiteSpace(content) && AnswerRules.Watches(channel.AnswerMode, targeted, consented))
             {
-                watch.Note(botId, message.Channel.Id, () => JoinInAsync(root, message, botId), watch.InTalk(botId, message.Channel.Id));
+                watch.Note(botId, message.Channel.Id, () => JoinInAsync(root, message, botId), watch.InTalk(botId, message.Channel.Id) || AiryNames.In(content, botName));
                 return true;
             }
             if (!AnswerRules.Answers(channel.AnswerMode, targeted, null)) return true;
@@ -164,6 +164,8 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 var since = transcript.SinceBotSpoke(botId, message.Channel.Id, message.Id);
                 var said = ChannelTalk.Message(botName, message.Channel.Name, $"{author} ({message.Author.Id})", content, since,
                     pictures.Select(p => p.Label).ToList());
+                transcript.Seen(botId, message.Channel.Id, message.Id);
+                watch.Spoke(botId, message.Channel.Id);
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
                     hive.RunUrl, hive.AppKey, botId, message.Channel.Id, message.Author.Id, message.Author.Username, said, images);
             }
@@ -179,20 +181,33 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             var channels = services.GetRequiredService<IAiryChannelRepository>();
             var channel = await channels.GetForChannelAsync(botId, channelId);
             if (channel is null || !channel.Enabled || channel.AnswerMode != AnswerModes.Decide) return;
-            var watch = services.GetRequiredService<ChannelWatch>();
-            var followUp = watch.InTalk(botId, channelId);
-            if (!followUp && watch.CoolingDown(botId, channelId)) return;
             var bot = await services.GetRequiredService<IBotSettingRepository>().GetBotSettingAsync(botId);
             var hive = bot is null ? null : HiveConnection.Of(bot);
             if (hive is null) return;
 
+            var watch = services.GetRequiredService<ChannelWatch>();
             var transcript = services.GetRequiredService<ChannelTranscript>();
             var botName = BotNameOf(services, newest, bot!);
             var author = NameOf(newest.Author);
+            var unseen = transcript.Knows(botId, channelId)
+                ? transcript.Unseen(botId, channelId)
+                : [new HeardLine(newest.Id, author, Readable(newest, botId), false)];
+            if (unseen.Count == 0) return;
+            var last = unseen[^1];
+            var followUp = watch.InTalk(botId, channelId);
+            var addressed = unseen.Any(l => AiryNames.In(l.Text, botName));
+            var invited = followUp || addressed;
+            if (!invited && watch.CoolingDown(botId, channelId)) return;
+
+            var unseenIds = unseen.Select(l => l.MessageId).ToHashSet();
             var stretch = followUp
-                ? transcript.Recent(botId, channelId, 0, WorthQuestion.MaxRecent)
-                : transcript.SinceBotSpoke(botId, channelId, 0);
-            if (stretch.Count == 0) stretch = [new HeardLine(newest.Id, author, Readable(newest, botId), false)];
+                ? transcript.Recent(botId, channelId, 0, WorthQuestion.MaxRecent * 2)
+                    .Where(l => !unseenIds.Contains(l.MessageId) && (l.FromBot || l.MessageId < last.MessageId))
+                    .Concat(unseen)
+                    .TakeLast(WorthQuestion.MaxRecent)
+                    .ToList()
+                : transcript.SinceBotSpoke(botId, channelId, 0).Where(l => l.MessageId <= last.MessageId).ToList();
+            if (stretch.Count == 0) stretch = unseen.ToList();
             var lines = stretch.Select(l => new RecentLine(l.FromBot ? botName : l.Author, l.Text)).ToList();
             var verdict = await services.GetRequiredService<HiveAnswerClient>().AskAsync(hive,
                 new WorthEvent(botName, newest.Channel.Name, lines[^1].Author, newest.Author.Id, lines[^1].Text, lines.Take(lines.Count - 1).ToList(), followUp));
@@ -200,11 +215,13 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             try { await channels.RecordDecisionAsync(channel.Id, DateTime.UtcNow, verdict.Summary, verdict.Error); }
             catch (Exception ex) { Console.WriteLine($"[AiryChannel] could not record the decision: {ex.Message}"); }
             if (!AnswerRules.Answers(channel.AnswerMode, false, verdict)) return;
-            if (!followUp)
+            if (!invited)
             {
                 if (watch.CoolingDown(botId, channelId)) return;
                 watch.Joined(botId, channelId);
             }
+            transcript.Seen(botId, channelId, unseen.Max(l => l.MessageId));
+            watch.Spoke(botId, channelId);
 
             AgentReply reply;
             using (newest.Channel.EnterTypingState())
@@ -216,9 +233,9 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     .Concat(pictures.Select(p => p.Image))
                     .ToList();
                 var labels = pictures.Select(p => p.Label).ToList();
+                var lastText = last.MessageId == newest.Id ? Readable(newest, botId, embeds) : last.Text;
                 var said = followUp
-                    ? ChannelTalk.Message(botName, newest.Channel.Name, $"{author} ({newest.Author.Id})", Readable(newest, botId, embeds),
-                        transcript.SinceBotSpoke(botId, channelId, newest.Id), labels)
+                    ? ChannelTalk.Message(botName, newest.Channel.Name, $"{last.Author} ({newest.Author.Id})", lastText, unseen.Take(unseen.Count - 1).ToList(), labels)
                     : ChannelTalk.JoinIn(botName, newest.Channel.Name, $"{author} ({newest.Author.Id})", stretch, labels);
                 reply = await services.GetRequiredService<HiveAgentClient>().RunAsync(
                     hive.RunUrl, hive.AppKey, botId, channelId, newest.Author.Id, newest.Author.Username, said, images);

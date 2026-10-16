@@ -706,5 +706,93 @@
     "yeah she actually gets jokes now"
    ]
   ]
+ },
+ {
+  "id": "f-good-bot",
+  "kind": "follow-up",
+  "want": "yes",
+  "why": "praise aimed at her",
+  "lines": [
+   [
+    "Airy",
+    "Got it, Evil. I misread the emote as your name. Won't call you Merc again."
+   ],
+   [
+    "Evil",
+    "Good bot"
+   ]
+  ]
+ },
+ {
+  "id": "f-not-answering",
+  "kind": "follow-up",
+  "want": "yes",
+  "why": "complains she is quiet",
+  "lines": [
+   [
+    "Airy",
+    "Got it, Evil. Won't happen again."
+   ],
+   [
+    "Evil",
+    "Good bot"
+   ],
+   [
+    "Evil",
+    "not answering again huh.."
+   ]
+  ]
+ },
+ {
+  "id": "f-written-meanwhile",
+  "kind": "follow-up",
+  "want": "yes",
+  "why": "a plea sent while she was writing",
+  "lines": [
+   [
+    "KiraZ",
+    "aaaa i wish i was way more vulnerable to stuff like this"
+   ],
+   [
+    "Airy",
+    "I get that. Sometimes it takes the right voice to click. What gets closest for you?"
+   ],
+   [
+    "KiraZ",
+    "like... just turn my brain off please :plead:"
+   ]
+  ]
+ },
+ {
+  "id": "j-addressed",
+  "kind": "join-in",
+  "want": "yes",
+  "why": "addresses her by nickname",
+  "lines": [
+   [
+    "someone (not opted in)",
+    "(message not shared)"
+   ],
+   [
+    "Evil",
+    "I wouldn't be that sure about it.."
+   ],
+   [
+    "Evil",
+    "Isn't that right foxy fox airy"
+   ]
+  ]
+ },
+ {
+  "id": "j-about-her-dumb",
+  "kind": "join-in",
+  "want": "yes",
+  "why": "talks about her flaws",
+  "lines": [
+   [
+    "Evil",
+    "But she is dumb currently and doesn't see the difference between her and others"
+   ]
+  ]
  }
 ]
