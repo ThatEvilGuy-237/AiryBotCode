@@ -2,6 +2,19 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-16 · Bot and API on prod with the owner's channels (panel exposure later)
+
+Owner: the port does not matter now; make the setup and data work, expose the panel later. Backed up airy_db
+(`~/backups/airy-2026-10-16-predeploy`), rebuilt only `api` and `airydevbot` (main 97bc6ae; Caddy untouched). The bot
+made the tables and moved the agent link: #airy-talk-🚧 (When mentioned, listens) on one Hive connection
+(http://spine:7000, agent Airy); the API's simultaneous move hit the unique index and rolled back, no duplicate.
+Added through the prod API for Cookie&Creams, listening and answering When it's worth it: #adult-general
+1295105016675303424, #nsfw-general 1341725917642227803, #adult-memes 1327630989547012137. The API container was
+not on the Hive network, so its check could not reach Spine; it joins `hive` now (20caa75). Prod check: reachable,
+runs the agent Airy, cannot decide (the key lacks decisions.make), so the worth-it channels answer when mentioned.
+Sign-in now takes the Discord address from the API's settings, and Caddy will route the already registered callback
+on thehive.thatevilguy.com to the API at its next restart, so only the tunnel route is needed later.
+
 ## 2026-10-15 · Two switches per channel: Listens and Answers
 
 Owner: while listening is still being worked on, each channel gets a switch to stop listening, and one for

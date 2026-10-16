@@ -1,6 +1,6 @@
 ---
 title: Airy panel, rebuilt from zero on @airy/ui
-status: R0 to R5 built 2026-10-15; R6 prepared, waits on the owner (tunnel route, Discord redirect, go)
+status: R0 to R5 built; bot and API on prod 2026-10-16 with the owner's channels; panel exposure (Caddy + tunnel route) later
 ---
 
 # Airy panel, rebuilt from zero on @airy/ui
@@ -71,15 +71,14 @@ Answers to the two questions asked: the whole panel, with Airy's own look.
 
 ## Deploy checklist (R6, one switch, owner chose 2026-10-16)
 
-1. Owner: tunnel route `airy.thatevilguy.com` to `http://localhost:8088`; Discord redirect
-   `https://airy.thatevilguy.com/api/auth/discord/redirect` on app 1318870826862379018; the go.
-2. Back up `airy_db`; set `Discord:RedirectUri` and `Discord:FrontendUri` (`https://airy.thatevilguy.com/login`) in the
-   mounted `AiryBotCode.Api/appsettings.json`.
-3. `docker compose -f docker-compose.yml -p airybotcode up -d --build api airydevbot caddy` (Caddy restart: a few seconds
-   for thehive.thatevilguy.com).
+1. Owner: tunnel route `airy.thatevilguy.com` to `http://localhost:8088` and the go. No Discord change needed: the
+   registered callback on thehive.thatevilguy.com is routed to the API.
+2. Back up `airy_db`; set `Discord:FrontendUri` to `https://airy.thatevilguy.com/login` in the mounted
+   `AiryBotCode.Api/appsettings.json` (RedirectUri stays on thehive).
+3. `docker compose -f docker-compose.yml -p airybotcode up -d --build --no-deps caddy` and restart the API for the new
+   setting (Caddy restart: a few seconds for thehive.thatevilguy.com).
 4. Check the bot log: tables ensured, "Moved 1 Hive agent link" (#airy-talk-🚧 becomes When mentioned, listens).
-5. Add for Cookie&Creams (1437132076066406510), Listens and Answers on, rule When it's worth it:
-   `1295105016675303424` #adult-general and `1341725917642227803` #nsfw-general (Cookies&Cream Audios).
+5. Done 2026-10-16 (bot and API deployed first): #adult-general, #nsfw-general and #adult-memes added for Cookie&Creams.
 6. Open the panel on the phone, sign in, check Home and Channels; drop the scratch database `airy_panel_dev`, stop the
    dev API and Vite, revoke the dev Hive key "Airy panel test (dev)".
 
