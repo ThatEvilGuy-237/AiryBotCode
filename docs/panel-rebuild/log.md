@@ -2,6 +2,16 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-16 · Panel deployed; waits only on the tunnel route
+
+Owner: deploy now. Backup `~/backups/airy-2026-10-16-panel` (airy_db and the API settings), `Discord:FrontendUri` set
+to `https://airy.thatevilguy.com/login` (RedirectUri stays on thehive, already registered), Caddy image rebuilt from
+main fa31686 and recreated (thehive answered again within 20 s), API restarted. Checked through the live Caddy: the
+airy host serves the panel (deep links, `/login`, `version.json`, `sw.js`) and `/api` (401 unsigned); the sign-in
+start returns the Discord address with the thehive callback; thehive keeps `/hive/` (200), Spine ping (200) and `/`
+to `/hive/`; from outside, thehive's `/hive/` is 200 and the callback reaches the API. `airy.thatevilguy.com` has no
+DNS until the owner adds the tunnel's public hostname.
+
 ## 2026-10-16 · Bot and API on prod with the owner's channels (panel exposure later)
 
 Owner: the port does not matter now; make the setup and data work, expose the panel later. Backed up airy_db

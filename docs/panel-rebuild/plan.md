@@ -1,6 +1,6 @@
 ---
 title: Airy panel, rebuilt from zero on @airy/ui
-status: R0 to R5 built; bot and API on prod 2026-10-16 with the owner's channels; panel exposure (Caddy + tunnel route) later
+status: deployed 2026-10-16 (bot, API, panel in Caddy); public only once the tunnel route airy.thatevilguy.com exists
 ---
 
 # Airy panel, rebuilt from zero on @airy/ui
