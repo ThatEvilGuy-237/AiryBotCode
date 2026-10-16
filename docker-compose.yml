@@ -31,6 +31,9 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json
+    networks:
+      - default
+      - hive
 
   # Reverse proxy behind Tailscale: password gate, serves the SPA + /api over
   # plain HTTP on 127.0.0.1:8088. Tailscale Serve/Funnel terminates TLS and
