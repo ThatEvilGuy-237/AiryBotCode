@@ -3,15 +3,17 @@
 When does Airy talk without being pinged, and what made that better or worse. Add new lessons at the end of
 each list, with the date and the numbers that showed it.
 
-## The rules (2026-10-16, 166da5c)
+## The rules (2026-10-16, 39a1b2f)
 
 | Situation | What happens | Wait | Limit |
 |---|---|---|---|
 | Ping or reply to Airy | answer at once, with everything said since she last spoke | none (1.5 s extra when a link has no preview yet) | none; cancels any waiting check |
+| Her name or nickname in a message (Airy, fox, foxy, kitsune; not `#airy-talk` or a link) | answer without a check; the message gets a reminder that Airy, the fox, the bot, she and her mean her | 6 s of quiet | no cooldown |
 | Message within 5 minutes after Airy spoke | follow-up check: "does this continue the talk with her?" on the last 12 lines, her own lines included | 6 s of quiet | no cooldown |
 | Any other message from a member who consented | join-in check: "should she join, uninvited?" on everything said since she last spoke (up to 12 lines) | 20 s of quiet, or 8 messages, or 60 s at most | after joining in, no uninvited join-in in that channel for 10 minutes |
 | Message from someone who has not consented | kept as one line `someone (not opted in): (message not shared)`, no name, no words (several in a row become one line); never judged on its own; a ping gets the consent message | | |
 | A yes below 60 % confidence | counts as no | | |
+| Any check | looks only at lines Airy has not read yet (lines that came in while she was writing count); nothing new means no check | | |
 
 Where it lives: timings in `AiryBotCode.Application/Hive/ChannelWatch.cs` (`WatchTiming.Default`), the two
 questions in `Texts/worth-answering.md`, what Airy reads in `Texts/channel-talk.md`, her side in the agent prompt
@@ -79,6 +81,25 @@ Haiku is the more careful proxy; the wording is not tuned toward it, so prod doe
 - Running the same wording twice: the model varies, so one green run is not proof; two runs with the same
   verdicts on every graded case are.
 
+## Review of the real traffic (2026-10-16, 16:33 to 19:43 UTC, four channels)
+
+About 30 messages from members who opted in, read against the Discord timeline. Answered and right to: every ping
+and reply, the questions and stories aimed at her, a member's long answers to her question in #nsfw-general.
+Stayed out and right to: lone emotes and faces, a member settling a rules question with someone else, a scream,
+"live laugh sleep". Members who have not opted in (most of the room) were never answered, as the consent rule says.
+
+Wrong, and what changed:
+
+| What happened | Should have | Fix |
+|---|---|---|
+| A member asked about "Airy's personality"; she answered about "the fox" and "her" | answer as I | prompt rule, then a reminder next to any message that names her (one GPT check: "I'm still in the testing phase...") |
+| "she is the mark 3 of airy development" got "She's Airy Mark 3..." | answer as I | same reminder |
+| She called the owner "Merc" an hour after the emoji fix | his name | a stale "what you remember" block from before the wipe sat at the top of the channel's stored conversation; deleted (memory wipes must include `role = 'memory'` rows of live conversations) |
+| "Less uwu like" and "But she dumb currently..." got no check at all | answer (talk about her) | most likely lost in a bot restart for a deploy at that minute; deploys now build first and swap in seconds |
+| "just turn my brain off please" came while she was writing; the later check saw her own line as the newest and said no | answer | checks look only at lines she has not read |
+| "Isn't that right foxy fox airy" waited 20 s, other messages kept resetting the wait; the owner pinged first | answer within seconds | a named message is answered after 6 s, no check |
+| "Good bot" judged a closer (no 91 %); "not answering again huh" only 62 % | answer | praise for her and complaints that she is quiet are a yes; a named one needs no check |
+
 ## What made it worse
 
 - Per-message checks: "And now?" was a yes but unsure (56 %), so she stayed silent, and a build-up over several
@@ -96,6 +117,10 @@ Haiku is the more careful proxy; the wording is not tuned toward it, so prod doe
   the follow-up window.
 - Replies to a follow-up with no earlier turns in the session ran long and generic (a second member joining
   her topic got four sentences of advice); in a real channel the session holds her earlier turns. Watch it.
+- Deploying in the middle of a conversation: each bot restart drops the waiting checks and anything said during
+  it. Build first, swap last, and deploy in quiet moments.
+- Leaving "something aimed at her" to the decider: its verdict wobbles between runs, so a named message is now a
+  rule, not a question.
 - The Discord app key holds only `agents.run` and `decisions.make`, so her memory and web tools fail when she is
   run from Discord; the owner chose to leave it that way for now.
 
