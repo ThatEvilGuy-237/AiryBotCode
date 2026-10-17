@@ -1,6 +1,6 @@
 ---
 title: Airy's conversation code, rework plan
-status: in progress 2026-10-17
+status: steps 1 to 6 done 2026-10-17 (cf95d36 .. ); review and deploy next
 ---
 
 # Airy's conversation code, rework plan
@@ -86,11 +86,11 @@ included.
 
 | # | Step | Done when |
 |---|---|---|
-| 1 | Characterisation tests: the exact agent messages and check bodies for a set of inputs, taken from the current code | tests green on the current code |
-| 2 | `Texts`, `ConversationSettings`, new names, files moved into `Conversation/` | all tests green, same strings |
-| 3 | `ChatMessage`, `IChatChannel`, Discord mapper and channel | handler builds, tests green |
-| 4 | `ConversationRules` and `AiryConversation`, one run at a time per channel; handler thin | flow tests with fakes: ping, named, follow-up, join-in, cooldown, unread lines, consent, not listening, two runs |
-| 5 | Prompt sections and apply script; memory reset script | dry run shows no diff against prod |
-| 6 | Docs: one design page, lessons, the review | links checked |
+| 1 ✅ | Characterisation tests: the exact agent messages and check bodies for a set of inputs, taken from the current code | tests green on the current code |
+| 2 ✅ | `Texts`, `ConversationSettings`, new names, files moved into `Conversation/` | all tests green, same strings |
+| 3 ✅ | `ChatMessage`, `IChatChannel`, Discord mapper and channel | handler builds, tests green |
+| 4 ✅ | `ConversationRules` and `AiryConversation`, one run at a time per channel; handler thin | flow tests with fakes: ping, named, follow-up, join-in, cooldown, unread lines, consent, not listening, two runs |
+| 5 ✅ | Prompt sections and apply script; memory reset script | dry run shows no diff against prod |
+| 6 ✅ | Docs: one design page, lessons, the review | links checked |
 | 7 | Fresh review by a reviewer agent; fix what holds | no open finding |
 | 8 | Deploy at a quiet moment, check live | bot up, one real exchange looks right |
