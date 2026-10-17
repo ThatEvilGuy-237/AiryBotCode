@@ -1,6 +1,6 @@
 ---
 title: Airy's conversation code, rework plan
-status: steps 1 to 7 done 2026-10-17; deploy next
+status: done 2026-10-17, deployed 08:05 UTC (0400d64)
 ---
 
 # Airy's conversation code, rework plan
@@ -93,7 +93,7 @@ included.
 | 5 ✅ | Prompt sections and apply script; memory reset script | dry run shows no diff against prod |
 | 6 ✅ | Docs: one design page, lessons, the review | links checked |
 | 7 ✅ | Fresh review by a reviewer agent; fix what holds | no open finding |
-| 8 | Deploy at a quiet moment, check live | bot up, one real exchange looks right |
+| 8 ✅ | Deploy at a quiet moment, check live | bot up, one real exchange looks right |
 
 ## Review (step 7)
 
