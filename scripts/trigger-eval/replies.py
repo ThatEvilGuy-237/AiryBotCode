@@ -1,3 +1,4 @@
+import importlib.util
 import json
 import os
 import re
@@ -45,6 +46,13 @@ def message(case, sec):
                                       "lines": "\n".join(f"{a}: {t}" for a, t in since), "message": lines[-1][1]})
 
 
+def prompt_from_git():
+    spec = importlib.util.spec_from_file_location("apply", ROOT / "scripts/airy-prompt/apply.py")
+    apply = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(apply)
+    return apply.merge(persona(), apply.SECTIONS)
+
+
 def persona():
     sql = f"select system_prompt from spine.agent where id='{AGENT}'"
     out = subprocess.run(["docker", "exec", "airy-postgres-db", "psql", "-U", "airy_user", "-d", "hive_cookie_cream", "-tAc", sql],
@@ -56,7 +64,7 @@ def main():
     label, ids = sys.argv[1], sys.argv[2].split(",")
     model = sys.argv[3] if len(sys.argv) > 3 else MODEL
     sec = sections()
-    system = Path(os.environ["AIRY_PROMPT_FILE"]).read_text() if os.environ.get("AIRY_PROMPT_FILE") else persona()
+    system = Path(os.environ["AIRY_PROMPT_FILE"]).read_text() if os.environ.get("AIRY_PROMPT_FILE") else prompt_from_git()
     rows = []
     for case in [c for c in CASES if c["id"] in ids]:
         said = (claude(system, message(case, sec), model).get("result") or "").strip()
