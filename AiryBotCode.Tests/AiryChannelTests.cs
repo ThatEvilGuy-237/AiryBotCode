@@ -1,3 +1,4 @@
+using AiryBotCode.Application.Conversation;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -44,8 +45,8 @@ namespace AiryBotCode.Tests
                 throw new HttpRequestException("connection refused");
         }
 
-        private static WorthEvent Event(int recent = 2) => new("Airy", "general", "kirra", 30, "does anyone know when the event starts?",
-            Enumerable.Range(1, recent).Select(i => new RecentLine(i % 2 == 0 ? "Airy" : "tomas", $"line {i}")).ToList());
+        private static CheckRequest Event(int recent = 2) => new("Airy", "general", "kirra", 30, "does anyone know when the event starts?",
+            Enumerable.Range(1, recent).Select(i => new CheckLine(i % 2 == 0 ? "Airy" : "tomas", $"line {i}")).ToList());
 
         [Fact]
         public void TheTablesAtStartHaveNoBraceEfWouldReadAsAParameter()
@@ -63,27 +64,27 @@ namespace AiryBotCode.Tests
         [InlineData(AnswerModes.Decide, true, true)]
         public void AChannelAnswersByItsRuleWithoutAskingTheHive(string mode, bool targeted, bool answers)
         {
-            Assert.False(AnswerRules.Watches(mode, targeted, consented: true) && mode != AnswerModes.Decide);
-            Assert.Equal(answers, AnswerRules.Answers(mode, targeted, null));
+            Assert.False(ConversationRules.WaitsForCheck(mode, targeted, member: true) && mode != AnswerModes.Decide);
+            Assert.Equal(answers, ConversationRules.Answers(mode, targeted, null));
         }
 
         [Fact]
         public void AWorthItChannelAsksOnlyForUnaddressedMessagesFromPeopleWhoAccepted()
         {
-            Assert.True(AnswerRules.Watches(AnswerModes.Decide, targeted: false, consented: true));
-            Assert.False(AnswerRules.Watches(AnswerModes.Decide, targeted: true, consented: true));
-            Assert.False(AnswerRules.Watches(AnswerModes.Decide, targeted: false, consented: false));
-            Assert.False(AnswerRules.Watches(AnswerModes.Always, targeted: false, consented: true));
+            Assert.True(ConversationRules.WaitsForCheck(AnswerModes.Decide, pinged: false, member: true));
+            Assert.False(ConversationRules.WaitsForCheck(AnswerModes.Decide, pinged: true, member: true));
+            Assert.False(ConversationRules.WaitsForCheck(AnswerModes.Decide, pinged: false, member: false));
+            Assert.False(ConversationRules.WaitsForCheck(AnswerModes.Always, pinged: false, member: true));
         }
 
         [Fact]
         public void OnlyASureYesMakesAiryAnswerAnUnaddressedMessage()
         {
-            Assert.True(AnswerRules.Answers(AnswerModes.Decide, false, new WorthVerdict(true, true, 0.9, "d", null)));
-            Assert.False(AnswerRules.Answers(AnswerModes.Decide, false, new WorthVerdict(true, false, 0.4, "d", null)));
-            Assert.False(AnswerRules.Answers(AnswerModes.Decide, false, new WorthVerdict(false, true, 0.9, "d", null)));
-            Assert.False(AnswerRules.Answers(AnswerModes.Decide, false, WorthVerdict.Failed("down")));
-            Assert.True(AnswerRules.Answers(AnswerModes.Decide, true, WorthVerdict.Failed("down")));
+            Assert.True(ConversationRules.Answers(AnswerModes.Decide, false, new CheckVerdict(true, true, 0.9, "d", null)));
+            Assert.False(ConversationRules.Answers(AnswerModes.Decide, false, new CheckVerdict(true, false, 0.4, "d", null)));
+            Assert.False(ConversationRules.Answers(AnswerModes.Decide, false, new CheckVerdict(false, true, 0.9, "d", null)));
+            Assert.False(ConversationRules.Answers(AnswerModes.Decide, false, CheckVerdict.Failed("down")));
+            Assert.True(ConversationRules.Answers(AnswerModes.Decide, true, CheckVerdict.Failed("down")));
         }
 
         [Fact]
@@ -102,8 +103,8 @@ namespace AiryBotCode.Tests
         [Fact]
         public void AFollowUpAsksWhetherTheTalkWithAiryGoesOn()
         {
-            var body = JsonNode.Parse(WorthQuestion.Body(Event(4) with { FollowUp = true }))!;
-            var instructions = body["questions"]![WorthQuestion.Key]!["instructions"]!.GetValue<string>();
+            var body = JsonNode.Parse(JoinCheck.Body(Event(4) with { FollowUp = true }))!;
+            var instructions = body["questions"]![JoinCheck.Key]!["instructions"]!.GetValue<string>();
             var state = body["state"]!.GetValue<string>();
             Assert.Contains("Airy is already in this conversation", instructions);
             Assert.Contains("(Airy's lines included)", state);
@@ -115,8 +116,8 @@ namespace AiryBotCode.Tests
         [Fact]
         public void TheQuestionCarriesTheChannelTheAuthorTheMessageAndTheRecentTalk()
         {
-            var body = JsonNode.Parse(WorthQuestion.Body(Event(9)))!;
-            var question = body["questions"]![WorthQuestion.Key]!;
+            var body = JsonNode.Parse(JoinCheck.Body(Event(9)))!;
+            var question = body["questions"]![JoinCheck.Key]!;
             var state = body["state"]!.GetValue<string>();
 
             Assert.Equal("yesno", question["type"]!.GetValue<string>());
@@ -128,8 +129,8 @@ namespace AiryBotCode.Tests
             Assert.Contains("tomas: line 9\nkirra:", state);
             Assert.DoesNotContain("{{", state);
             Assert.Equal("discord:30", body["user"]!.GetValue<string>());
-            Assert.Contains("(nothing before this)", JsonNode.Parse(WorthQuestion.Body(Event(0)))!["state"]!.GetValue<string>());
-            var long_ = JsonNode.Parse(WorthQuestion.Body(Event(15)))!["state"]!.GetValue<string>();
+            Assert.Contains("(nothing before this)", JsonNode.Parse(JoinCheck.Body(Event(0)))!["state"]!.GetValue<string>());
+            var long_ = JsonNode.Parse(JoinCheck.Body(Event(15)))!["state"]!.GetValue<string>();
             Assert.DoesNotContain("tomas: line 3\n", long_);
             Assert.Contains("Airy: line 4", long_);
         }
@@ -137,32 +138,32 @@ namespace AiryBotCode.Tests
         [Fact]
         public void TheHivesAnswerIsReadIntoAVerdict()
         {
-            var yes = WorthQuestion.Read(DecidedYes);
+            var yes = JoinCheck.Read(DecidedYes);
             Assert.True(yes.SaysAnswer);
             Assert.Equal("yes 88%", yes.Summary);
             Assert.Equal("6c1f2b9e-0000-4000-8000-000000000001", yes.DecisionId);
 
-            var failed = WorthQuestion.Read("""{"id":"x","status":"failed","error":"No answer for worth: no decider.","answers":{}}""");
+            var failed = JoinCheck.Read("""{"id":"x","status":"failed","error":"No answer for worth: no decider.","answers":{}}""");
             Assert.Equal("No answer for worth: no decider.", failed.Error);
             Assert.Equal("failed", failed.Summary);
-            Assert.NotNull(WorthQuestion.Read("<html>").Error);
-            Assert.Equal("no, unsure 51%", WorthQuestion.Read("""{"status":"decided","answers":{"worth":{"answer":false,"confidence":0.51,"sure":false}}}""").Summary);
+            Assert.NotNull(JoinCheck.Read("<html>").Error);
+            Assert.Equal("no, unsure 51%", JoinCheck.Read("""{"status":"decided","answers":{"worth":{"answer":false,"confidence":0.51,"sure":false}}}""").Summary);
         }
 
         [Fact]
         public async Task AiryAsksWithItsOwnKeyAndSaysWhatARefusalMeans()
         {
             var hub = new Hub(_ => (HttpStatusCode.OK, DecidedYes));
-            var verdict = await new HiveAnswerClient(new HttpClient(hub)).AskAsync(Hive, Event());
+            var verdict = await new HiveDecisionClient(new HttpClient(hub)).AskAsync(Hive, Event());
 
             Assert.True(verdict.SaysAnswer);
             var (request, _) = hub.Seen.Single();
             Assert.Equal("http://spine:7000/v1/decisions", request.RequestUri!.ToString());
             Assert.Equal("hive_ak_test", request.Headers.GetValues("X-Hive-App-Key").Single());
 
-            var refused = await new HiveAnswerClient(new HttpClient(new Hub(_ => (HttpStatusCode.Forbidden, "{}")))).AskAsync(Hive, Event());
+            var refused = await new HiveDecisionClient(new HttpClient(new Hub(_ => (HttpStatusCode.Forbidden, "{}")))).AskAsync(Hive, Event());
             Assert.Contains("decisions.make", refused.Error);
-            var down = await new HiveAnswerClient(new HttpClient(new Down())).AskAsync(Hive, Event());
+            var down = await new HiveDecisionClient(new HttpClient(new Down())).AskAsync(Hive, Event());
             Assert.Contains("connection refused", down.Error);
         }
 
@@ -174,20 +175,20 @@ namespace AiryBotCode.Tests
                 "/v1/agents" => (HttpStatusCode.OK, $$"""[{"id":"{{AgentId}}","name":"Airy"}]"""),
                 _ => (HttpStatusCode.Forbidden, """{"error":"missing scope"}"""),
             });
-            var check = await new HiveAnswerClient(new HttpClient(hub)).CheckAsync("http://spine:7000/", "hive_ak_test", AgentId);
+            var check = await new HiveDecisionClient(new HttpClient(hub)).CheckAsync("http://spine:7000/", "hive_ak_test", AgentId);
 
             Assert.True(check.Reachable && check.CanRun && check.AgentFound);
             Assert.False(check.CanDecide);
             Assert.Equal("Airy", check.Agents.Single().Name);
             Assert.Contains(check.Problems, p => p.Contains("decisions.make"));
 
-            var unknown = await new HiveAnswerClient(new HttpClient(new Hub(_ => (HttpStatusCode.Unauthorized, "{}")))).CheckAsync("http://spine:7000", "bad", null);
+            var unknown = await new HiveDecisionClient(new HttpClient(new Hub(_ => (HttpStatusCode.Unauthorized, "{}")))).CheckAsync("http://spine:7000", "bad", null);
             Assert.Contains(unknown.Problems, p => p.Contains("does not know this key"));
-            var down = await new HiveAnswerClient(new HttpClient(new Down())).CheckAsync("http://spine:7000", "k", null);
+            var down = await new HiveDecisionClient(new HttpClient(new Down())).CheckAsync("http://spine:7000", "k", null);
             Assert.False(down.Reachable);
 
             var noDecider = new Hub(r => r.RequestUri!.AbsolutePath == "/v1/agents" ? (HttpStatusCode.OK, "[]") : (HttpStatusCode.OK, "[]"));
-            var empty = await new HiveAnswerClient(new HttpClient(noDecider)).CheckAsync("http://spine:7000", "k", AgentId);
+            var empty = await new HiveDecisionClient(new HttpClient(noDecider)).CheckAsync("http://spine:7000", "k", AgentId);
             Assert.True(empty.CanDecide);
             Assert.Contains(empty.Problems, p => p.Contains("no decider"));
             Assert.Contains(empty.Problems, p => p.Contains("chosen agent"));
@@ -305,7 +306,7 @@ namespace AiryBotCode.Tests
         {
             var bot = new BotSetting { BotId = 7, BotName = "Airy", HiveUrl = "http://spine:7000", HiveAgentId = AgentId, HiveAppKey = "hive_ak_kept" };
             var bots = new Bots(bot);
-            var controller = new HiveConnectionController(bots, new HiveAnswerClient(new HttpClient(new Down())));
+            var controller = new HiveConnectionController(bots, new HiveDecisionClient(new HttpClient(new Down())));
 
             var put = await controller.Put("7", new HiveConnectionDto { Url = "http://127.0.0.1:7002/", AgentId = AgentId, AppKey = " " });
             Assert.IsType<NoContentResult>(put);
@@ -319,57 +320,57 @@ namespace AiryBotCode.Tests
         [Fact]
         public void AiryHearsEverythingAndAnswersWithWhatWasSaidSinceItLastSpoke()
         {
-            var log = new ChannelTranscript();
-            log.Hear(1, 10, new HeardLine(1, "kirra", "who is up for a quiz tonight?", false));
-            log.Hear(1, 10, new HeardLine(2, "Airy", "I am!", true));
-            log.Hear(1, 10, new HeardLine(3, "tomas", "same, 8 pm?", false));
-            log.Hear(1, 10, new HeardLine(4, "kirra", "8 works", false));
-            log.Hear(1, 10, new HeardLine(5, "tomas", "@Airy can you host it?", false));
-            log.Hear(1, 11, new HeardLine(6, "other", "elsewhere", false));
+            var log = new ChannelLog();
+            log.Hear(1, 10, new LogLine(1, "kirra", "who is up for a quiz tonight?"));
+            log.Hear(1, 10, new LogLine(2, "Airy", "I am!", FromAiry: true));
+            log.Hear(1, 10, new LogLine(3, "tomas", "same, 8 pm?"));
+            log.Hear(1, 10, new LogLine(4, "kirra", "8 works"));
+            log.Hear(1, 10, new LogLine(5, "tomas", "@Airy can you host it?"));
+            log.Hear(1, 11, new LogLine(6, "other", "elsewhere"));
 
-            var since = log.SinceBotSpoke(1, 10, beforeMessageId: 5);
+            var since = log.SinceAiry(1, 10, exceptMessageId: 5);
             Assert.Equal(["same, 8 pm?", "8 works"], since.Select(l => l.Text));
-            Assert.Equal(["I am!", "same, 8 pm?", "8 works"], log.Recent(1, 10, 5, 3).Select(l => l.Text));
-            Assert.Empty(log.SinceBotSpoke(2, 10, 5));
+            Assert.Equal(["same, 8 pm?", "8 works", "@Airy can you host it?"], log.Recent(1, 10, 3).Select(l => l.Text));
+            Assert.Empty(log.SinceAiry(2, 10, 5));
 
-            var said = ChannelTalk.Message("Airy", "events", "tomas", "@Airy can you host it?", since);
+            var said = AgentMessage.Reply("Airy", "events", "tomas", "@Airy can you host it?", since);
             Assert.Contains("#events since Airy last spoke", said);
             Assert.Contains("tomas: same, 8 pm?", said);
             Assert.EndsWith("@Airy can you host it?", said);
             Assert.DoesNotContain("{{", said);
-            Assert.Equal("tomas (42) writes in #events:\nhello", ChannelTalk.Message("Airy", "events", "tomas (42)", "hello", []));
+            Assert.Equal("tomas (42) writes in #events:\nhello", AgentMessage.Reply("Airy", "events", "tomas (42)", "hello", []));
         }
 
         [Fact]
         public void SomeoneWhoDidNotOptInShowsAsOneLineWithoutTheirWords()
         {
-            var log = new ChannelTranscript();
-            log.Hear(1, 10, new HeardLine(1, "kirra", "hi all", false));
-            log.Hear(1, 10, HeardLine.NotShared(2));
-            log.Hear(1, 10, HeardLine.NotShared(3));
-            log.Hear(1, 10, new HeardLine(4, "Evil", "He laughed you out. Lol", false));
-            log.Hear(1, 10, HeardLine.NotShared(5));
+            var log = new ChannelLog();
+            log.Hear(1, 10, new LogLine(1, "kirra", "hi all"));
+            log.Hear(1, 10, LogLine.Placeholder(2));
+            log.Hear(1, 10, LogLine.Placeholder(3));
+            log.Hear(1, 10, new LogLine(4, "Evil", "He laughed you out. Lol"));
+            log.Hear(1, 10, LogLine.Placeholder(5));
 
-            var lines = log.SinceBotSpoke(1, 10, beforeMessageId: 0);
+            var lines = log.SinceAiry(1, 10, exceptMessageId: 0);
             Assert.Equal(["kirra", "someone (not opted in)", "Evil", "someone (not opted in)"], lines.Select(l => l.Author));
             Assert.Equal("(message not shared)", lines[1].Text);
-            Assert.True(lines[1].Unheard);
+            Assert.True(lines[1].NotShared);
         }
 
         [Fact]
         public void OnlyLinesAfterTheLastOneAiryReadAreUnseen()
         {
-            var log = new ChannelTranscript();
-            log.Hear(1, 10, new HeardLine(100, "kirra", "aaaa i wish", false));
-            log.Seen(1, 10, 100);
-            log.Hear(1, 10, new HeardLine(101, "kirra", "turn my brain off please", false));
-            log.Hear(1, 10, new HeardLine(102, "Airy", "I get that.", true));
-            log.Hear(1, 10, HeardLine.NotShared(103));
-            Assert.Equal(["turn my brain off please"], log.Unseen(1, 10).Select(l => l.Text));
-            log.Seen(1, 10, 101);
-            Assert.Empty(log.Unseen(1, 10));
-            log.Seen(1, 10, 50);
-            Assert.Empty(log.Unseen(1, 10));
+            var log = new ChannelLog();
+            log.Hear(1, 10, new LogLine(100, "kirra", "aaaa i wish"));
+            log.MarkRead(1, 10, 100);
+            log.Hear(1, 10, new LogLine(101, "kirra", "turn my brain off please"));
+            log.Hear(1, 10, new LogLine(102, "Airy", "I get that.", FromAiry: true));
+            log.Hear(1, 10, LogLine.Placeholder(103));
+            Assert.Equal(["turn my brain off please"], log.Unread(1, 10).Select(l => l.Text));
+            log.MarkRead(1, 10, 101);
+            Assert.Empty(log.Unread(1, 10));
+            log.MarkRead(1, 10, 50);
+            Assert.Empty(log.Unread(1, 10));
             Assert.True(log.Knows(1, 10));
             log.Forget(1, 10);
             Assert.False(log.Knows(1, 10));
@@ -391,17 +392,17 @@ namespace AiryBotCode.Tests
         [Fact]
         public void AChannelThatStopsListeningForgetsWhatItHeard()
         {
-            var log = new ChannelTranscript();
-            log.Hear(1, 10, new HeardLine(1, "kirra", "hello", false));
+            var log = new ChannelLog();
+            log.Hear(1, 10, new LogLine(1, "kirra", "hello"));
 
-            Assert.True(AnswerRules.Hears(listens: true, consented: true));
-            Assert.False(AnswerRules.Hears(listens: false, consented: true));
-            Assert.False(AnswerRules.Hears(listens: true, consented: false));
+            Assert.True(ConversationRules.Hears(listens: true, member: true));
+            Assert.False(ConversationRules.Hears(listens: false, member: true));
+            Assert.False(ConversationRules.Hears(listens: true, member: false));
 
             log.Forget(1, 10);
-            Assert.Empty(log.Recent(1, 10, 0, 5));
-            log.HearIfKnown(1, 10, new HeardLine(2, "Airy", "still here?", true));
-            Assert.Empty(log.Recent(1, 10, 0, 5));
+            Assert.Empty(log.Recent(1, 10, 5));
+            log.HearOwn(1, 10, new LogLine(2, "Airy", "still here?", FromAiry: true));
+            Assert.Empty(log.Recent(1, 10, 5));
             var dto = AiryChannelsController.ToDto(new AiryChannel { Id = 1, ChannelId = 10, AnswerMode = AnswerModes.Mention, Enabled = false, Listens = true }, new Dictionary<string, DiscordEntity>());
             Assert.Equal((false, true), (dto.Enabled, dto.Listens));
         }
@@ -409,17 +410,17 @@ namespace AiryBotCode.Tests
         [Fact]
         public void TheLogKeepsThirtyLinesAndTheContextStaysSmall()
         {
-            var log = new ChannelTranscript();
-            for (ulong i = 1; i <= 50; i++) log.Hear(1, 10, new HeardLine(i, "kirra", new string('x', 300) + i, false));
-            log.Hear(1, 10, new HeardLine(50, "kirra", "duplicate", false));
-            log.HearIfKnown(1, 99, new HeardLine(51, "Airy", "not a channel Airy listens in", true));
+            var log = new ChannelLog();
+            for (ulong i = 1; i <= 50; i++) log.Hear(1, 10, new LogLine(i, "kirra", new string('x', 300) + i));
+            log.Hear(1, 10, new LogLine(50, "kirra", "duplicate"));
+            log.HearOwn(1, 99, new LogLine(51, "Airy", "not a channel Airy listens in", FromAiry: true));
 
-            Assert.Equal(ChannelTranscript.Keep, log.Recent(1, 10, 0, 100).Count);
-            var since = log.SinceBotSpoke(1, 10, 0);
-            Assert.True(since.Count <= ChannelTranscript.MaxContextLines);
-            Assert.True(since.Sum(l => l.Text.Length + l.Author.Length + 2) <= ChannelTranscript.MaxContextChars);
+            Assert.Equal(ConversationSettings.Default.LogLines, log.Recent(1, 10, 100).Count);
+            var since = log.SinceAiry(1, 10, 0);
+            Assert.True(since.Count <= ConversationSettings.Default.ContextLines);
+            Assert.True(since.Sum(l => l.Text.Length + l.Author.Length + 2) <= ConversationSettings.Default.ContextChars);
             Assert.EndsWith("50", since[^1].Text);
-            Assert.Empty(log.Recent(1, 99, 0, 5));
+            Assert.Empty(log.Recent(1, 99, 5));
         }
 
         [Fact]

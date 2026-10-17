@@ -61,19 +61,3 @@ The Hive's answer was not a yes or a no.
 ## unreadable
 
 The Hive's answer could not be read.
-
-## unheard author
-
-someone (not opted in)
-
-## unheard text
-
-(message not shared)
-
-## nicknames
-
-fox, foxy, kitsune
-
-## named
-
-named, answered

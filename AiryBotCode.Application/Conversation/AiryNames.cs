@@ -1,11 +1,11 @@
 using System.Text.RegularExpressions;
 
-namespace AiryBotCode.Application.Hive
+namespace AiryBotCode.Application.Conversation
 {
     public static class AiryNames
     {
         private static readonly Lazy<IReadOnlyList<string>> Nicknames = new(() =>
-            HiveTexts.Say("nicknames").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+            Texts.Section("conversation", "nicknames").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 
         public static bool In(string? text, string botName)
         {

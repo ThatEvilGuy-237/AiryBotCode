@@ -1,3 +1,4 @@
+using AiryBotCode.Application.Conversation;
 using AiryBotCode.Application.Hive;
 using Xunit;
 
@@ -5,7 +6,7 @@ namespace AiryBotCode.Tests
 {
     public class ChannelWatchTests
     {
-        private static readonly WatchTiming Fast = new(TimeSpan.FromMilliseconds(150), 3, TimeSpan.FromMilliseconds(600), TimeSpan.FromMilliseconds(400), TimeSpan.FromMilliseconds(40), TimeSpan.FromMilliseconds(400));
+        private static readonly ConversationSettings Fast = new() { Quiet = TimeSpan.FromMilliseconds(150), MaxMessages = 3, MaxWait = TimeSpan.FromMilliseconds(600), Cooldown = TimeSpan.FromMilliseconds(400), QuickQuiet = TimeSpan.FromMilliseconds(40), InTalkFor = TimeSpan.FromMilliseconds(400) };
 
         private static ChannelWatch Watch() => new(Fast, TimeProvider.System);
 
@@ -14,9 +15,9 @@ namespace AiryBotCode.Tests
         {
             var watch = Watch();
             var checks = 0;
-            watch.Note(1, 10, () => { checks++; return Task.CompletedTask; });
+            watch.CheckAfterPause(1, 10, () => { checks++; return Task.CompletedTask; });
             await Task.Delay(60);
-            watch.Note(1, 10, () => { checks++; return Task.CompletedTask; });
+            watch.CheckAfterPause(1, 10, () => { checks++; return Task.CompletedTask; });
             await Task.Delay(60);
             Assert.Equal(0, checks);
             await Task.Delay(300);
@@ -31,7 +32,7 @@ namespace AiryBotCode.Tests
             for (var i = 1; i <= 3; i++)
             {
                 var n = i;
-                watch.Note(1, 10, () => { seen.Add(n); return Task.CompletedTask; });
+                watch.CheckAfterPause(1, 10, () => { seen.Add(n); return Task.CompletedTask; });
             }
             await Task.Delay(50);
             Assert.Equal([3], seen);
@@ -45,7 +46,7 @@ namespace AiryBotCode.Tests
             var started = DateTime.UtcNow;
             while (checks == 0 && DateTime.UtcNow - started < TimeSpan.FromSeconds(2))
             {
-                watch.Note(1, 10, () => { checks++; return Task.CompletedTask; });
+                watch.CheckAfterPause(1, 10, () => { checks++; return Task.CompletedTask; });
                 await Task.Delay(100);
                 watch.Cancel(2, 20);
             }
@@ -59,8 +60,8 @@ namespace AiryBotCode.Tests
             var watch = Watch();
             var here = 0;
             var there = 0;
-            watch.Note(1, 10, () => { here++; return Task.CompletedTask; });
-            watch.Note(1, 11, () => { there++; return Task.CompletedTask; });
+            watch.CheckAfterPause(1, 10, () => { here++; return Task.CompletedTask; });
+            watch.CheckAfterPause(1, 11, () => { there++; return Task.CompletedTask; });
             watch.Cancel(1, 10);
             await Task.Delay(300);
             Assert.Equal(0, here);
@@ -72,7 +73,7 @@ namespace AiryBotCode.Tests
         {
             var watch = Watch();
             var checks = 0;
-            watch.Note(1, 10, () => { checks++; return Task.CompletedTask; }, followUp: true);
+            watch.CheckAfterPause(1, 10, () => { checks++; return Task.CompletedTask; }, quick: true);
             await Task.Delay(110);
             Assert.Equal(1, checks);
         }

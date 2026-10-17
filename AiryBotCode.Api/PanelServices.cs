@@ -23,7 +23,7 @@ namespace AiryBotCode.Api
             services.AddScoped<IShareCodeService, ShareCodeService>();
             services.AddScoped<ICountingStateRepository, CountingStateRepository>();
             services.AddScoped<ILevelUserRepository, LevelUserRepository>();
-            services.AddSingleton(new HiveAnswerClient(new HttpClient { Timeout = TimeSpan.FromSeconds(15) }));
+            services.AddSingleton(new HiveDecisionClient(new HttpClient { Timeout = TimeSpan.FromSeconds(15) }));
             return services;
         }
     }

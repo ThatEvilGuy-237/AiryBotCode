@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
+using AiryBotCode.Application.Hive;
 
-namespace AiryBotCode.Application.Hive
+namespace AiryBotCode.Application.Conversation
 {
     public sealed record ChatPicture(string Label, ForwardedImage Image);
 
@@ -10,7 +11,6 @@ namespace AiryBotCode.Application.Hive
 
     public static class ChatPictures
     {
-        public const int Max = 4;
         private const int LottieFormat = 3;
         private const int GifFormat = 4;
         private static readonly Regex Custom = new(@"<a?:(\w{2,32}):(\d{16,20})>", RegexOptions.Compiled);
@@ -54,7 +54,7 @@ namespace AiryBotCode.Application.Hive
                 picked.Add(new ChatPicture($":{name}:",
                     new ForwardedImage($"https://cdn.discordapp.com/emojis/{id}.png?size=96", $"{name}.png", "image/png")));
             }
-            return picked.Take(Max).ToList();
+            return picked.Take(ConversationSettings.Default.MaxPictures).ToList();
         }
 
         private static string? LinkLabel(string url, IReadOnlyList<EmbedSeen> embeds)

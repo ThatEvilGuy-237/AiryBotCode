@@ -1,3 +1,4 @@
+using AiryBotCode.Application.Conversation;
 using AiryBotCode.Application.Hive;
 using Xunit;
 
@@ -74,8 +75,8 @@ namespace AiryBotCode.Tests
         [Fact]
         public void Joining_in_shows_the_stretch_and_says_nobody_pinged()
         {
-            HeardLine[] stretch = [new(1, "kirra", "anyone watched the new audio?", false), new(2, "tomas", "not yet https://tenor.com/view/cat-dance-gif-1", false)];
-            var said = ChannelTalk.JoinIn("Airy", "events", "tomas (7)", stretch);
+            LogLine[] stretch = [new(1, "kirra", "anyone watched the new audio?"), new(2, "tomas", "not yet https://tenor.com/view/cat-dance-gif-1")];
+            var said = AgentMessage.JoinIn("Airy", "events", "tomas (7)", stretch);
             Assert.StartsWith("Said in #events since Airy last spoke, oldest first:\nkirra: anyone watched the new audio?\ntomas: not yet", said);
             Assert.Contains("Nobody pinged you; you chose to join in.", said);
             Assert.EndsWith("Last to write was tomas (7).", said);
@@ -85,19 +86,19 @@ namespace AiryBotCode.Tests
         [Fact]
         public void A_message_that_names_her_reminds_her_it_is_about_her()
         {
-            var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "she is the mark 3 of airy development", [], null, aboutYou: true);
+            var said = AgentMessage.Reply("Airy", "events", "Evil (42)", "she is the mark 3 of airy development", [], null, aboutYou: true);
             Assert.Contains("she is the mark 3 of airy development\n\nHere Airy, the fox and the bot mean you", said);
-            Assert.DoesNotContain("Here Airy", ChannelTalk.Message("Airy", "events", "Evil (42)", "hi", []));
+            Assert.DoesNotContain("Here Airy", AgentMessage.Reply("Airy", "events", "Evil (42)", "hi", []));
         }
 
         [Fact]
         public void The_message_says_which_pictures_are_the_emoji()
         {
-            var said = ChannelTalk.Message("Airy", "events", "Evil (42)", "I am :evil_merc:", [], [":evil_merc:"]);
+            var said = AgentMessage.Reply("Airy", "events", "Evil (42)", "I am :evil_merc:", [], [":evil_merc:"]);
             Assert.StartsWith("Evil (42) writes in #events:\nI am :evil_merc:", said);
             Assert.Contains("in this order: :evil_merc:. They are reactions, not shared photos", said);
             Assert.DoesNotContain("{{", said);
-            Assert.DoesNotContain("pictures", ChannelTalk.Message("Airy", "events", "Evil (42)", "hi", []));
+            Assert.DoesNotContain("pictures", AgentMessage.Reply("Airy", "events", "Evil (42)", "hi", []));
         }
     }
 }

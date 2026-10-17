@@ -1,3 +1,4 @@
+using AiryBotCode.Application.Conversation;
 using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +12,9 @@ namespace AiryBotCode.Api.Controllers
     public class HiveConnectionController : ControllerBase
     {
         private readonly IBotSettingRepository _bots;
-        private readonly HiveAnswerClient _hive;
+        private readonly HiveDecisionClient _hive;
 
-        public HiveConnectionController(IBotSettingRepository bots, HiveAnswerClient hive)
+        public HiveConnectionController(IBotSettingRepository bots, HiveDecisionClient hive)
         {
             _bots = bots;
             _hive = hive;
@@ -100,7 +101,7 @@ namespace AiryBotCode.Api.Controllers
             var hive = HiveConnection.Of(bot);
             if (hive is null) return BadRequest("Connect the Hive first.");
             var channel = string.IsNullOrWhiteSpace(dto.Channel) ? "general" : dto.Channel.Trim().TrimStart('#');
-            var verdict = await _hive.AskAsync(hive, new WorthEvent(bot.BotName ?? "Airy", channel, "someone", 0, dto.Message.Trim(), []));
+            var verdict = await _hive.AskAsync(hive, new CheckRequest(bot.BotName ?? "Airy", channel, "someone", 0, dto.Message.Trim(), []));
             return Ok(new { verdict.Yes, verdict.Sure, verdict.Confidence, verdict.DecisionId, verdict.Error, verdict.Summary, Answers = verdict.SaysAnswer });
         }
 

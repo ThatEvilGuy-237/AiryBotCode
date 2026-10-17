@@ -37,9 +37,10 @@ namespace AiryBotCode.Application
             services.AddScoped<DiscordService>();
             services.AddSingleton(new Hive.HiveAgentClient(new System.Net.Http.HttpClient { Timeout = TimeSpan.FromMinutes(5) }));
             services.AddScoped<WebhookChatService>();
-            services.AddSingleton<Hive.ChannelTranscript>();
-            services.AddSingleton(_ => new Hive.ChannelWatch());
-            services.AddSingleton(new Hive.HiveAnswerClient(new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(20) }));
+            services.AddSingleton(Conversation.ConversationSettings.Default);
+            services.AddSingleton(sp => new Conversation.ChannelLog(sp.GetRequiredService<Conversation.ConversationSettings>()));
+            services.AddSingleton(sp => new Conversation.ChannelWatch(sp.GetRequiredService<Conversation.ConversationSettings>(), TimeProvider.System));
+            services.AddSingleton(new Hive.HiveDecisionClient(new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(20) }));
             services.AddScoped<IGiveAwayUserService, GiveAwayUserService>();
             services.AddScoped<GiveAwayUserService>();
 

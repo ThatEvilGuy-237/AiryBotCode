@@ -8,7 +8,7 @@ from pathlib import Path
 from run import claude
 
 ROOT = Path(__file__).resolve().parents[2]
-TALK = ROOT / "AiryBotCode.Application/Hive/Texts/channel-talk.md"
+TALK = ROOT / "AiryBotCode.Application/Conversation/Texts/agent-message.md"
 CASES = json.loads(Path(__file__).with_name("cases.json").read_text())
 AGENT = "2d7b492e-27f2-49e0-8261-c9330aa3df60"
 MODEL = "claude-sonnet-5-5"

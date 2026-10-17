@@ -1,18 +1,7 @@
 using System.Collections.Concurrent;
 
-namespace AiryBotCode.Application.Hive
+namespace AiryBotCode.Application.Conversation
 {
-    public sealed record WatchTiming(TimeSpan Quiet, int MaxMessages, TimeSpan MaxWait, TimeSpan Cooldown, TimeSpan FollowUpQuiet, TimeSpan FollowUpWindow)
-    {
-        public static readonly WatchTiming Default = new(
-            Quiet: TimeSpan.FromSeconds(20),
-            MaxMessages: 8,
-            MaxWait: TimeSpan.FromSeconds(60),
-            Cooldown: TimeSpan.FromMinutes(10),
-            FollowUpQuiet: TimeSpan.FromSeconds(6),
-            FollowUpWindow: TimeSpan.FromMinutes(5));
-    }
-
     public class ChannelWatch
     {
         private sealed class Stretch
@@ -26,20 +15,20 @@ namespace AiryBotCode.Application.Hive
         }
 
         private readonly ConcurrentDictionary<(ulong Bot, ulong Channel), Stretch> _channels = new();
-        private readonly WatchTiming _timing;
+        private readonly ConversationSettings _settings;
         private readonly TimeProvider _clock;
 
-        public ChannelWatch() : this(WatchTiming.Default, TimeProvider.System)
+        public ChannelWatch() : this(ConversationSettings.Default, TimeProvider.System)
         {
         }
 
-        public ChannelWatch(WatchTiming timing, TimeProvider clock)
+        public ChannelWatch(ConversationSettings settings, TimeProvider clock)
         {
-            _timing = timing;
+            _settings = settings;
             _clock = clock;
         }
 
-        public void Note(ulong botId, ulong channelId, Func<Task> check, bool followUp = false)
+        public void CheckAfterPause(ulong botId, ulong channelId, Func<Task> check, bool quick = false)
         {
             var stretch = _channels.GetOrAdd((botId, channelId), _ => new Stretch());
             CancellationTokenSource timer;
@@ -51,9 +40,9 @@ namespace AiryBotCode.Application.Hive
                 stretch.Count++;
                 stretch.Check = check;
                 stretch.Timer?.Cancel();
-                var quiet = followUp ? _timing.FollowUpQuiet : _timing.Quiet;
-                var left = _timing.MaxWait - (now - stretch.First);
-                due = stretch.Count >= _timing.MaxMessages ? TimeSpan.Zero
+                var quiet = quick ? _settings.QuickQuiet : _settings.Quiet;
+                var left = _settings.MaxWait - (now - stretch.First);
+                due = stretch.Count >= _settings.MaxMessages ? TimeSpan.Zero
                     : left < quiet ? (left < TimeSpan.Zero ? TimeSpan.Zero : left)
                     : quiet;
                 timer = new CancellationTokenSource();
@@ -79,7 +68,7 @@ namespace AiryBotCode.Application.Hive
             if (!_channels.TryGetValue((botId, channelId), out var stretch)) return false;
             lock (stretch)
             {
-                return stretch.Joined is { } at && _clock.GetUtcNow() - at < _timing.Cooldown;
+                return stretch.Joined is { } at && _clock.GetUtcNow() - at < _settings.Cooldown;
             }
         }
 
@@ -97,7 +86,7 @@ namespace AiryBotCode.Application.Hive
             if (!_channels.TryGetValue((botId, channelId), out var stretch)) return false;
             lock (stretch)
             {
-                return stretch.Spoke is { } at && _clock.GetUtcNow() - at < _timing.FollowUpWindow;
+                return stretch.Spoke is { } at && _clock.GetUtcNow() - at < _settings.InTalkFor;
             }
         }
 

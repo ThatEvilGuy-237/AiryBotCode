@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-TEXTS = ROOT / "AiryBotCode.Application/Hive/Texts/worth-answering.md"
+TEXTS = ROOT / "AiryBotCode.Application/Conversation/Texts/join-check.md"
 CASES = Path(__file__).with_name("cases.json")
 MODEL = "claude-haiku-4-5-20251001"
 SURE_AT = 0.6
@@ -49,8 +49,8 @@ def body(case, sec):
         "recent": "\n".join(recent) if recent else sec["no recent"],
     }
     return {
-        "state": fill(sec["follow-up state" if follow else "state"], values),
-        "questions": {"worth": {"type": "yesno", "instructions": fill(sec["follow-up" if follow else "instructions"], values)}},
+        "state": fill(sec["follow-up state" if follow else "join-in state"], values),
+        "questions": {"worth": {"type": "yesno", "instructions": fill(sec["follow-up" if follow else "join-in"], values)}},
         "user": "discord:100000000000000001",
     }
 

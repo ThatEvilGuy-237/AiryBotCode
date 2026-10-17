@@ -28,6 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Hive\Texts\*.md" LogicalName="AiryBotCode.Hive.%(Filename).md" />
+    <EmbeddedResource Include="Hive\Texts\*.md;Conversation\Texts\*.md" LogicalName="AiryBotCode.Texts.%(Filename).md" />
   </ItemGroup>
 </Project>
