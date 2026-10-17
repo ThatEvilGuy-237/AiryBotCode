@@ -62,7 +62,7 @@ namespace AiryBotCode.Bot.Bots
             // Assign Event liseners
             Console.WriteLine("[INFO] Hooking up Discord events...");
             _client.Ready += _slashCommandHandler.RegisterCommandsAsync;
-            _client.MessageReceived += _messageSendHandler.HandelMessageSend;
+            _client.MessageReceived += m => { _ = Task.Run(() => _messageSendHandler.HandelMessageSend(m)); return Task.CompletedTask; };
             _client.SlashCommandExecuted += _slashCommandHandler.HandleInteractionAsync;
             _client.ButtonExecuted += _buttonPressHandler.HandleButtonInteraction;
             _client.ModalSubmitted += _formHandler.HandleFormInteraction;

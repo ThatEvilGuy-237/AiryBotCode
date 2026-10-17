@@ -15,8 +15,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
 
         public IDisposable Typing() => message.Channel.EnterTypingState();
 
-        public async Task SendAsync(string text)
+        public async Task<IReadOnlyList<SentMessage>> SendAsync(string text)
         {
+            var sent = new List<SentMessage>();
+            var guild = (message.Channel as SocketGuildChannel)?.Guild;
             foreach (var chunk in Split(text))
             {
                 if (!dedup.TryReserve(message.Channel.Id, chunk))
@@ -24,8 +26,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                     Console.WriteLine($"[AiryChannel] reply chunk to {message.Channel.Id} skipped: already said through an effect.");
                     continue;
                 }
-                await message.Channel.SendMessageAsync(chunk);
+                var posted = await message.Channel.SendMessageAsync(chunk);
+                sent.Add(new SentMessage(posted.Id, ChatPictures.Readable(DiscordChat.Names(chunk, guild, botId), [], [])));
             }
+            return sent;
         }
 
         public async Task AskConsentAsync()

@@ -1,6 +1,6 @@
 ---
 title: Airy's conversation code, rework plan
-status: steps 1 to 6 done 2026-10-17 (cf95d36 .. ); review and deploy next
+status: steps 1 to 7 done 2026-10-17; deploy next
 ---
 
 # Airy's conversation code, rework plan
@@ -92,5 +92,25 @@ included.
 | 4 ✅ | `ConversationRules` and `AiryConversation`, one run at a time per channel; handler thin | flow tests with fakes: ping, named, follow-up, join-in, cooldown, unread lines, consent, not listening, two runs |
 | 5 ✅ | Prompt sections and apply script; memory reset script | dry run shows no diff against prod |
 | 6 ✅ | Docs: one design page, lessons, the review | links checked |
-| 7 | Fresh review by a reviewer agent; fix what holds | no open finding |
+| 7 ✅ | Fresh review by a reviewer agent; fix what holds | no open finding |
 | 8 | Deploy at a quiet moment, check live | bot up, one real exchange looks right |
+
+## Review (step 7)
+
+A reviewer agent compared the rework with 39a1b2f, ran the tests under load and resolved the real DI with scope
+checks. What it found and what was done:
+
+| # | Finding | Done |
+|---|---|---|
+| 1 | a ping could be answered twice when a check that already covered it held the turn | an answer re-reads under the turn; a ping already read is skipped (test) |
+| 2 | the decider was asked inside the turn, so a ping waited for it (up to 20 s) | the decider is asked outside the turn (test) |
+| 3 | her next answer could start before Discord echoed her last one, so she saw lines she had answered | her reply goes into the log when sent (test) |
+| 4, 5 | the other message actions ran after the answer, and the old webhook path skipped them in two cases | actions run first for every message; deliberate change: in linked webhook channels (dev bot only) levels and the spam catcher now see unmentioned messages too |
+| 6 | a gif word or emote name with "airy" or "fox" counted as naming her | labels and `:emote:` names are ignored (test) |
+| 7 | a follow-up was sent with the newest message's writer id, not the last unread line's | log lines carry the writer id (test) |
+| 9 | channel settings could be stale after waiting for the turn | read again under the turn |
+| 11 | settings only partly injected | injected into the flow; text builders keep the defaults |
+| 12 | reading a message outside a try skipped the actions | inside a try, actions run first anyway |
+| 14 | the non-prod bots ran the handler on the gateway task | they run it on its own task like the prod bot |
+| 8, 10, 13 | name fallback "Airy" without a guild, no timeout on the turn (the agent call has its own 5 min), several small DB scopes per message | left as is |
+| tests | Always, Mention, agent failure, decider failure, 8 messages at once, timing margins | added or widened; the Discord mapper and channel still have no tests (they need live Discord objects) |

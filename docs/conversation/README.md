@@ -10,12 +10,12 @@ mentioned, When it's worth it) and a Listens switch. This page is the design as 
 | Word | Meaning |
 |---|---|
 | ping | a Discord mention of Airy or a reply to one of her messages |
-| named | her name or a nickname (Airy, fox, foxy, kitsune) in a message, without a ping; `#airy-talk` and links do not count |
+| named | her name or a nickname (Airy, fox, foxy, kitsune) in a message, without a ping; `#airy-talk`, links, gif words and emote names do not count |
 | member | someone who opted in (the consent button); only members are heard and answered |
-| channel log | the last 30 lines of a channel: members' lines, Airy's own, and one placeholder line `someone (not opted in): (message not shared)` for people who did not opt in, without their name or words |
+| channel log | the last 30 lines of a channel, kept in memory (a restart empties it): members' lines, Airy's own, and one placeholder line `someone (not opted in): (message not shared)` for people who did not opt in, without their name or words |
 | read | lines Airy has been given in a run; later lines are unread |
 | in talk | Airy spoke in the channel in the last 5 minutes |
-| check | one question to the Hive decider `airy-worth` about the unread lines: a join-in check (not in talk) or a follow-up check (in talk); only a sure yes (60 % or more) counts |
+| check | one question to the Hive decider `airy-worth` about the unread lines: a join-in check (not in talk) or a follow-up check (in talk); only a yes the decider marks sure counts (`airy-worth` is sure at 0.6) |
 | cooldown | after joining in uninvited, 10 minutes without uninvited join-ins in that channel |
 
 ## The flow
@@ -38,20 +38,22 @@ flowchart TD
   K -- otherwise --> J[join-in check] -- sure yes --> J2[join in, cooldown starts]
 ```
 
-One answer at a time per channel: a check that comes due while she is still writing waits, and then sees only what
-she has not read. Every answer marks the lines it was given as read.
+One answer at a time per channel. The decider is asked outside that turn, so a ping never waits for it; the answer
+itself waits for the turn and then reads the unread lines again, so lines that came in meanwhile are included and a
+ping that an earlier answer already covered is not answered twice. Every answer marks the lines it was given as read,
+and her own reply goes into the log the moment it is sent, before Discord echoes it back.
 
 ## Rules in numbers
 
 | Situation | What happens | Wait | Limit |
 |---|---|---|---|
-| Ping or reply | answer at once with everything said since she last spoke | none (1.5 s more when a link has no preview yet) | cancels a waiting check |
-| Named | answer without a check; the message gets a reminder that Airy, the fox, the bot, she and her mean her | 6 s of quiet | no cooldown |
+| Ping or reply | answer with everything said since she last spoke | none, unless another answer in the channel is being written (1.5 s more when a link has no preview yet) | cancels a waiting check |
+| Named, in a When it's worth it channel | when any unread line names her, answer without a check; the message gets a reminder that Airy, the fox, the bot, she and her mean her | 6 s of quiet | no cooldown |
 | In talk | follow-up check on the last 12 lines, her own included | 6 s of quiet | no cooldown |
 | Anything else from a member | join-in check on what was said since she last spoke (up to 12 lines) | 20 s of quiet, or 8 messages, or 60 s | 10 min cooldown after joining in |
 | Not a member | placeholder line only; a ping gets the consent message | | |
 
-All limits live in one record, `ConversationSettings`.
+All limits are defined in `ConversationSettings`; the flow, the log and the watch get it injected, the text builders read its defaults.
 
 ## What she gets
 
@@ -80,7 +82,7 @@ and continuity stay in the Hive only.
 | `ChatMessage`, `IChatChannel`, `IConversationStore` | a Discord message as plain data; what the flow needs from Discord and from the database |
 | `ChatPictures`, `AiryNames`, `Texts`, `ConversationSettings` | pictures and labels; her names; the markdown loader; every limit |
 | `Infrastructure/DiscordEvents/DiscordChat`, `DiscordChatChannel` | Discord to `ChatMessage`; typing, sending (split at 2000, no repeats), consent, link previews |
-| `MessageSendHandler` | calls the flow, keeps the old webhook forwarding apart, runs the other message actions |
+| `MessageSendHandler` | runs the other message actions first (levels, spam catcher, counting), then the flow, and keeps the old webhook forwarding apart |
 | `Hive/HiveDecisionClient`, `HiveAgentClient` | the decider call and the agent run, behind `IHiveDecider` and `IHiveAgent` |
 
 ## Testing

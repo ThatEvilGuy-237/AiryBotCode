@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 
 namespace AiryBotCode.Application.Conversation
 {
-    public sealed record LogLine(ulong MessageId, string Author, string Text, bool FromAiry = false, bool NotShared = false)
+    public sealed record LogLine(ulong MessageId, string Author, string Text, bool FromAiry = false, bool NotShared = false, ulong AuthorId = 0)
     {
         public static LogLine Placeholder(ulong messageId) =>
             new(messageId, Texts.Section("conversation", "not shared author"), Texts.Section("conversation", "not shared text"), NotShared: true);
@@ -57,6 +57,15 @@ namespace AiryBotCode.Application.Conversation
             lock (channel)
             {
                 channel.ReadUpTo = Math.Max(channel.ReadUpTo, messageId);
+            }
+        }
+
+        public bool IsRead(ulong botId, ulong channelId, ulong messageId)
+        {
+            if (!_channels.TryGetValue((botId, channelId), out var channel)) return false;
+            lock (channel)
+            {
+                return messageId <= channel.ReadUpTo;
             }
         }
 

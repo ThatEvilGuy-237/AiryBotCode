@@ -15,11 +15,11 @@ namespace AiryBotCode.Tests
 
         private static readonly ConversationSettings Fast = new()
         {
-            Quiet = TimeSpan.FromMilliseconds(80),
-            QuickQuiet = TimeSpan.FromMilliseconds(20),
+            Quiet = TimeSpan.FromMilliseconds(120),
+            QuickQuiet = TimeSpan.FromMilliseconds(40),
             MaxMessages = 8,
-            MaxWait = TimeSpan.FromMilliseconds(600),
-            Cooldown = TimeSpan.FromMilliseconds(1500),
+            MaxWait = TimeSpan.FromMilliseconds(800),
+            Cooldown = TimeSpan.FromMilliseconds(1200),
             InTalkFor = TimeSpan.FromMilliseconds(300),
         };
 
@@ -45,11 +45,13 @@ namespace AiryBotCode.Tests
         {
             public Func<CheckRequest, CheckVerdict> Answer = _ => new CheckVerdict(true, true, 0.9, "d", null);
             public readonly List<CheckRequest> Asked = [];
+            public TaskCompletionSource? Hold;
 
-            public Task<CheckVerdict> AskAsync(HiveConnection hive, CheckRequest check, CancellationToken ct = default)
+            public async Task<CheckVerdict> AskAsync(HiveConnection hive, CheckRequest check, CancellationToken ct = default)
             {
                 lock (Asked) Asked.Add(check);
-                return Task.FromResult(Answer(check));
+                if (Hold is { } hold) await hold.Task;
+                return Answer(check);
             }
         }
 
@@ -57,6 +59,7 @@ namespace AiryBotCode.Tests
         {
             public readonly List<string> Said = [];
             public TaskCompletionSource? Hold;
+            public bool Fail;
             public int Running;
             public int MostAtOnce;
 
@@ -71,7 +74,7 @@ namespace AiryBotCode.Tests
                 }
                 if (Hold is { } hold) await hold.Task;
                 Interlocked.Decrement(ref Running);
-                return new AgentReply($"reply {Said.Count}", false);
+                return Fail ? new AgentReply(null, true) : new AgentReply($"reply {Said.Count}", false);
             }
         }
 
@@ -80,17 +83,23 @@ namespace AiryBotCode.Tests
             private static ulong _nextId = 900_000;
             public readonly List<string> Sent = [];
             public int ConsentAsks;
+            public TimeSpan EchoAfter = TimeSpan.Zero;
 
             public string BotName => "Airy";
 
             public IDisposable Typing() => new Nothing();
 
-            public Task SendAsync(string text)
+            public Task<IReadOnlyList<SentMessage>> SendAsync(string text)
             {
                 lock (Sent) Sent.Add(text);
                 var id = Interlocked.Increment(ref _nextId);
-                conversation().OnOwnMessage(new ChatMessage(id, Bot, Room, "airy-talk", Bot, "Airy", "airy", text, text, false, [], [], []));
-                return Task.CompletedTask;
+                var echo = new ChatMessage(id, Bot, Room, "airy-talk", Bot, "Airy", "airy", text, text, false, [], [], []);
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(EchoAfter);
+                    conversation().OnOwnMessage(echo);
+                });
+                return Task.FromResult<IReadOnlyList<SentMessage>>([new SentMessage(id, text)]);
             }
 
             public Task AskConsentAsync()
@@ -118,7 +127,7 @@ namespace AiryBotCode.Tests
 
         public AiryConversationTests()
         {
-            _airy = new AiryConversation(_store, new ChannelLog(Fast), new ChannelWatch(Fast, TimeProvider.System), _decider, _agent);
+            _airy = new AiryConversation(_store, new ChannelLog(Fast), new ChannelWatch(Fast, TimeProvider.System), _decider, _agent, Fast);
             _channel = new Channel(() => _airy);
         }
 
@@ -191,7 +200,7 @@ namespace AiryBotCode.Tests
         {
             await Say(Evil, "isn't that right foxy fox airy");
 
-            await Until(() => _channel.Sent.Count == 1, 400);
+            await Until(() => _channel.Sent.Count == 1, 1000);
             Assert.Empty(_decider.Asked);
             Assert.Equal(["named, answered"], _store.Records);
             Assert.Contains("Here Airy, the fox and the bot mean you", _agent.Said[0]);
@@ -203,7 +212,7 @@ namespace AiryBotCode.Tests
             await Say(Evil, "@Airy hey", pinged: true);
             await Say(Evil, "Good bot");
 
-            await Until(() => _channel.Sent.Count == 2, 400);
+            await Until(() => _channel.Sent.Count == 2, 1000);
             var check = Assert.Single(_decider.Asked);
             Assert.True(check.FollowUp);
             Assert.Contains(check.Recent, l => l.Author == "Airy" && l.Text == "reply 1");
@@ -213,14 +222,145 @@ namespace AiryBotCode.Tests
         [Fact]
         public async Task After_joining_in_uninvited_she_stays_out_of_new_talk_until_the_cooldown_ends()
         {
+            var started = DateTime.UtcNow;
             await Say(Kira, "how do you even get into trance?");
             await Until(() => _channel.Sent.Count == 1);
-            await Task.Delay(Fast.InTalkFor + TimeSpan.FromMilliseconds(50));
+            await Task.Delay(Fast.InTalkFor + TimeSpan.FromMilliseconds(150));
 
             await Say(Kira, "which audio is best for that?");
-            await Task.Delay(Fast.Quiet + TimeSpan.FromMilliseconds(150));
+            await Task.Delay(Fast.Quiet + TimeSpan.FromMilliseconds(200));
             Assert.Single(_decider.Asked);
+
+            var left = Fast.Cooldown - (DateTime.UtcNow - started) + TimeSpan.FromMilliseconds(100);
+            if (left > TimeSpan.Zero) await Task.Delay(left);
+            await Say(Kira, "anyone?");
+            await Until(() => _decider.Asked.Count == 2);
+            Assert.Equal("anyone?", _decider.Asked[1].Message);
+        }
+
+        [Fact]
+        public async Task A_ping_already_answered_by_a_check_is_not_answered_twice()
+        {
+            _agent.Hold = new TaskCompletionSource();
+            var first = Say(Evil, "@Airy hey", pinged: true);
+            await Until(() => _agent.Said.Count == 1);
+            await Say(Kira, "good bot");
+            await Task.Delay(Fast.QuickQuiet + TimeSpan.FromMilliseconds(80));
+            var second = Say(Evil, "@Airy and you?", pinged: true);
+            _agent.Hold.SetResult();
+            await first;
+            await second;
+            await Task.Delay(Fast.QuickQuiet + TimeSpan.FromMilliseconds(150));
+
+            Assert.Equal(2, _agent.Said.Count);
+            Assert.Equal(2, _channel.Sent.Count);
+            Assert.Contains("@Airy and you?", _agent.Said[1]);
+        }
+
+        [Fact]
+        public async Task A_ping_does_not_wait_for_a_slow_decider()
+        {
+            _decider.Hold = new TaskCompletionSource();
+            await Say(Kira, "anyone know a good first audio?");
+            await Until(() => _decider.Asked.Count == 1);
+
+            await Say(Evil, "@Airy quick one", pinged: true);
+            Assert.Single(_agent.Said);
+            _decider.Hold.SetResult();
+            await Task.Delay(200);
             Assert.Single(_channel.Sent);
+        }
+
+        [Fact]
+        public async Task Her_answer_counts_as_said_before_Discord_echoes_it_back()
+        {
+            _channel.EchoAfter = TimeSpan.FromMilliseconds(300);
+            _agent.Hold = new TaskCompletionSource();
+            var first = Say(Kira, "@Airy first", pinged: true);
+            await Until(() => _agent.Said.Count == 1);
+            var second = Say(Evil, "@Airy second", pinged: true);
+            _agent.Hold.SetResult();
+            await first;
+            await second;
+
+            Assert.DoesNotContain("@Airy first", _agent.Said[1]);
+            Assert.StartsWith("Evil (405) writes in #airy-talk:", _agent.Said[1]);
+        }
+
+        [Fact]
+        public async Task In_Always_every_member_message_is_answered_and_others_get_the_consent_message()
+        {
+            _store.Row!.AnswerMode = AnswerModes.Always;
+            await Say(Kira, "hello room");
+            await Say(Stranger, "hi");
+
+            Assert.Single(_agent.Said);
+            Assert.Equal(1, _channel.ConsentAsks);
+            Assert.Empty(_decider.Asked);
+        }
+
+        [Fact]
+        public async Task In_When_mentioned_only_pings_are_answered_even_when_named()
+        {
+            _store.Row!.AnswerMode = AnswerModes.Mention;
+            await Say(Kira, "airy are you there?");
+            await Task.Delay(Fast.Quiet + TimeSpan.FromMilliseconds(100));
+            Assert.Empty(_agent.Said);
+
+            await Say(Kira, "@Airy are you there?", pinged: true);
+            Assert.Single(_agent.Said);
+        }
+
+        [Fact]
+        public async Task When_the_agent_fails_a_ping_gets_the_offline_line_and_a_check_gets_nothing()
+        {
+            _agent.Fail = true;
+            await Say(Evil, "@Airy hello", pinged: true);
+            Assert.Single(_channel.Sent);
+            Assert.DoesNotContain("reply", _channel.Sent[0]);
+
+            await Say(Evil, "airy?");
+            await Until(() => _agent.Said.Count == 2, 1000);
+            await Task.Delay(100);
+            Assert.Single(_channel.Sent);
+        }
+
+        [Fact]
+        public async Task When_the_decider_fails_she_stays_quiet_and_the_failure_is_recorded()
+        {
+            _decider.Answer = _ => CheckVerdict.Failed("down");
+            await Say(Kira, "how do you get into trance?");
+
+            await Until(() => _store.Records.Count == 1);
+            await Task.Delay(100);
+            Assert.Equal(["failed"], _store.Records);
+            Assert.Empty(_agent.Said);
+        }
+
+        [Fact]
+        public async Task A_gif_or_emote_with_her_name_in_it_does_not_count_as_naming_her()
+        {
+            await Say(Kira, "[gif: airy dance] :fox:");
+
+            await Until(() => _decider.Asked.Count == 1);
+            Assert.Empty(_store.Records.Where(r => r == "named, answered"));
+        }
+
+        [Fact]
+        public async Task Eight_messages_without_a_pause_are_checked_at_once()
+        {
+            for (var i = 1; i <= Fast.MaxMessages; i++) await Say(Kira, $"line {i}");
+            await Until(() => _decider.Asked.Count == 1, 100);
+            Assert.Equal("line 8", _decider.Asked[0].Message);
+        }
+
+        [Fact]
+        public async Task A_follow_up_goes_to_the_person_who_wrote_the_last_unread_line()
+        {
+            await Say(Evil, "@Airy hey", pinged: true);
+            await Say(Kira, "same question as evil");
+            await Until(() => _agent.Said.Count == 2, 1000);
+            Assert.StartsWith("KiraZ (501) writes in #airy-talk:", _agent.Said[1]);
         }
 
         [Fact]

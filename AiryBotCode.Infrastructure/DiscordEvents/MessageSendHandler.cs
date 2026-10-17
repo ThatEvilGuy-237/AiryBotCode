@@ -38,26 +38,20 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 return;
             }
 
-            var chat = DiscordChat.Read(message, botId);
-            var channel = new DiscordChatChannel(message, botId, config.GetEvilId(),
-                services.GetRequiredService<RecentMessageDedup>(), services.GetRequiredService<ConversationSettings>());
-            if (!await AnswerAsAiryAsync(conversation, chat, channel))
-                await ForwardToWebhookAsync(services, message, chat, channel);
-
             foreach (var action in _messageAction.OfType<IMessageAction>())
                 await action.HandleMessageReceivedAsync(message);
-        }
 
-        private static async Task<bool> AnswerAsAiryAsync(AiryConversation conversation, ChatMessage chat, IChatChannel channel)
-        {
             try
             {
-                return await conversation.OnMessageAsync(chat, channel);
+                var chat = DiscordChat.Read(message, botId);
+                var channel = new DiscordChatChannel(message, botId, config.GetEvilId(),
+                    services.GetRequiredService<RecentMessageDedup>(), services.GetRequiredService<ConversationSettings>());
+                if (!await conversation.OnMessageAsync(chat, channel))
+                    await ForwardToWebhookAsync(services, message, chat, channel);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[AiryChannel] message {chat.Id} in {chat.ChannelId} failed: {ex.Message}");
-                return true;
+                Console.WriteLine($"[AiryChannel] message {message.Id} in {message.Channel.Id} failed: {ex.Message}");
             }
         }
 

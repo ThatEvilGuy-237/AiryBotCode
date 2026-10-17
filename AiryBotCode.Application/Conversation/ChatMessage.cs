@@ -21,8 +21,10 @@ namespace AiryBotCode.Application.Conversation
 
         public IReadOnlyList<ChatPicture> Pictures() => ChatPictures.Pick(RawText, Stickers, Embeds);
 
-        public LogLine Line() => new(Id, AuthorName, Text);
+        public LogLine Line() => new(Id, AuthorName, Text, AuthorId: AuthorId);
     }
+
+    public sealed record SentMessage(ulong Id, string Text);
 
     public interface IChatChannel
     {
@@ -30,7 +32,7 @@ namespace AiryBotCode.Application.Conversation
 
         IDisposable Typing();
 
-        Task SendAsync(string text);
+        Task<IReadOnlyList<SentMessage>> SendAsync(string text);
 
         Task AskConsentAsync();
 

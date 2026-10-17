@@ -12,9 +12,7 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
             embeds ??= EmbedsOf(message);
             var stickers = message.Stickers.Select(s => new StickerSeen(s.Id, s.Name, (int)s.Format)).ToList();
             var mentioned = message.MentionedUsers.GroupBy(u => u.Id).ToDictionary(g => g.Key, g => NameOf(g.First()));
-            var guild = (message.Channel as SocketGuildChannel)?.Guild;
-            var text = MentionResolver.Rewrite(message.Content, id =>
-                mentioned.TryGetValue(id, out var n) ? n : guild?.GetUser(id) is { } user ? NameOf(user) : null, botId);
+            var text = Names(message.Content, (message.Channel as SocketGuildChannel)?.Guild, botId, mentioned);
             var pinged = message.MentionedUsers.Any(u => u.Id == botId)
                 || (message.Reference is not null && (message as SocketUserMessage)?.ReferencedMessage?.Author?.Id == botId);
             return new ChatMessage(
@@ -32,6 +30,10 @@ namespace AiryBotCode.Infrastructure.DiscordEvents
                 stickers,
                 embeds);
         }
+
+        public static string Names(string content, SocketGuild? guild, ulong botId, IReadOnlyDictionary<ulong, string>? mentioned = null) =>
+            MentionResolver.Rewrite(content, id =>
+                mentioned is not null && mentioned.TryGetValue(id, out var n) ? n : guild?.GetUser(id) is { } user ? NameOf(user) : null, botId);
 
         public static IReadOnlyList<EmbedSeen> EmbedsOf(IMessage message) =>
             message.Embeds.Select(e => new EmbedSeen(e.Type.ToString(), e.Url, e.Thumbnail?.Url ?? e.Image?.Url)).ToList();
