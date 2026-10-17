@@ -12,7 +12,12 @@ namespace AiryBotCode.Application.Hive
 
     public sealed record HiveCheck(bool Reachable, bool CanRun, bool AgentFound, bool CanDecide, IReadOnlyList<HiveAgentChoice> Agents, IReadOnlyList<string> Deciders, IReadOnlyList<string> Problems);
 
-    public class HiveDecisionClient
+    public interface IHiveDecider
+    {
+        Task<CheckVerdict> AskAsync(HiveConnection hive, CheckRequest check, CancellationToken ct = default);
+    }
+
+    public class HiveDecisionClient : IHiveDecider
     {
         private readonly HttpClient _http;
 
@@ -21,13 +26,13 @@ namespace AiryBotCode.Application.Hive
             _http = http;
         }
 
-        public async Task<CheckVerdict> AskAsync(HiveConnection hive, CheckRequest e, CancellationToken ct = default)
+        public async Task<CheckVerdict> AskAsync(HiveConnection hive, CheckRequest check, CancellationToken ct = default)
         {
             try
             {
                 using var request = new HttpRequestMessage(HttpMethod.Post, hive.DecisionsUrl)
                 {
-                    Content = new StringContent(JoinCheck.Body(e), Encoding.UTF8, "application/json"),
+                    Content = new StringContent(JoinCheck.Body(check), Encoding.UTF8, "application/json"),
                 };
                 request.Headers.TryAddWithoutValidation(HiveAgentClient.AppKeyHeader, hive.AppKey);
                 using var response = await _http.SendAsync(request, ct);

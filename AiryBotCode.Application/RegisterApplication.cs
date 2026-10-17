@@ -36,11 +36,15 @@ namespace AiryBotCode.Application
             services.AddScoped<LogService>();
             services.AddScoped<DiscordService>();
             services.AddSingleton(new Hive.HiveAgentClient(new System.Net.Http.HttpClient { Timeout = TimeSpan.FromMinutes(5) }));
+            services.AddSingleton<Hive.IHiveAgent>(sp => sp.GetRequiredService<Hive.HiveAgentClient>());
             services.AddScoped<WebhookChatService>();
             services.AddSingleton(Conversation.ConversationSettings.Default);
             services.AddSingleton(sp => new Conversation.ChannelLog(sp.GetRequiredService<Conversation.ConversationSettings>()));
             services.AddSingleton(sp => new Conversation.ChannelWatch(sp.GetRequiredService<Conversation.ConversationSettings>(), TimeProvider.System));
             services.AddSingleton(new Hive.HiveDecisionClient(new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(20) }));
+            services.AddSingleton<Hive.IHiveDecider>(sp => sp.GetRequiredService<Hive.HiveDecisionClient>());
+            services.AddSingleton<Conversation.IConversationStore, Conversation.ConversationStore>();
+            services.AddSingleton<Conversation.AiryConversation>();
             services.AddScoped<IGiveAwayUserService, GiveAwayUserService>();
             services.AddScoped<GiveAwayUserService>();
 

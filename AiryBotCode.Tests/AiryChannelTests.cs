@@ -58,33 +58,41 @@ namespace AiryBotCode.Tests
         }
 
         [Theory]
-        [InlineData(AnswerModes.Always, false, true)]
-        [InlineData(AnswerModes.Mention, false, false)]
-        [InlineData(AnswerModes.Mention, true, true)]
-        [InlineData(AnswerModes.Decide, true, true)]
-        public void AChannelAnswersByItsRuleWithoutAskingTheHive(string mode, bool targeted, bool answers)
-        {
-            Assert.False(ConversationRules.WaitsForCheck(mode, targeted, member: true) && mode != AnswerModes.Decide);
-            Assert.Equal(answers, ConversationRules.Answers(mode, targeted, null));
-        }
+        [InlineData(AnswerModes.Always, true, true, true, MessageStep.AnswerNow)]
+        [InlineData(AnswerModes.Always, false, true, true, MessageStep.AnswerNow)]
+        [InlineData(AnswerModes.Always, false, false, true, MessageStep.AskConsent)]
+        [InlineData(AnswerModes.Mention, true, true, true, MessageStep.AnswerNow)]
+        [InlineData(AnswerModes.Mention, true, false, true, MessageStep.AskConsent)]
+        [InlineData(AnswerModes.Mention, false, true, true, MessageStep.Quiet)]
+        [InlineData(AnswerModes.Decide, true, true, false, MessageStep.AnswerNow)]
+        [InlineData(AnswerModes.Decide, true, false, true, MessageStep.AskConsent)]
+        [InlineData(AnswerModes.Decide, false, true, true, MessageStep.CheckLater)]
+        [InlineData(AnswerModes.Decide, false, true, false, MessageStep.Quiet)]
+        [InlineData(AnswerModes.Decide, false, false, true, MessageStep.Quiet)]
+        public void EachMessageGetsOneStepByTheChannelRule(string mode, bool pinged, bool member, bool hasText, MessageStep step) =>
+            Assert.Equal(step, ConversationRules.OnMessage(new AiryChannel { AnswerMode = mode, Enabled = true }, pinged, member, hasText));
 
         [Fact]
-        public void AWorthItChannelAsksOnlyForUnaddressedMessagesFromPeopleWhoAccepted()
-        {
-            Assert.True(ConversationRules.WaitsForCheck(AnswerModes.Decide, pinged: false, member: true));
-            Assert.False(ConversationRules.WaitsForCheck(AnswerModes.Decide, pinged: true, member: true));
-            Assert.False(ConversationRules.WaitsForCheck(AnswerModes.Decide, pinged: false, member: false));
-            Assert.False(ConversationRules.WaitsForCheck(AnswerModes.Always, pinged: false, member: true));
-        }
+        public void AChannelWithAnswersOffStaysQuietEvenWhenPinged() =>
+            Assert.Equal(MessageStep.Quiet, ConversationRules.OnMessage(new AiryChannel { AnswerMode = AnswerModes.Always, Enabled = false }, true, true, true));
+
+        [Theory]
+        [InlineData(false, true, true, false, CheckStep.Skip)]
+        [InlineData(true, true, false, true, CheckStep.AnswerNamed)]
+        [InlineData(true, true, true, false, CheckStep.AnswerNamed)]
+        [InlineData(true, false, true, true, CheckStep.AskFollowUp)]
+        [InlineData(true, false, false, false, CheckStep.AskJoinIn)]
+        [InlineData(true, false, false, true, CheckStep.Skip)]
+        public void ACheckAnswersNamesFollowsUpInTalkAndJoinsInOnlyOutsideTheCooldown(bool unread, bool named, bool inTalk, bool cooling, CheckStep step) =>
+            Assert.Equal(step, ConversationRules.OnCheck(unread, named, inTalk, cooling));
 
         [Fact]
-        public void OnlyASureYesMakesAiryAnswerAnUnaddressedMessage()
+        public void OnlyASureYesCountsAsAnswer()
         {
-            Assert.True(ConversationRules.Answers(AnswerModes.Decide, false, new CheckVerdict(true, true, 0.9, "d", null)));
-            Assert.False(ConversationRules.Answers(AnswerModes.Decide, false, new CheckVerdict(true, false, 0.4, "d", null)));
-            Assert.False(ConversationRules.Answers(AnswerModes.Decide, false, new CheckVerdict(false, true, 0.9, "d", null)));
-            Assert.False(ConversationRules.Answers(AnswerModes.Decide, false, CheckVerdict.Failed("down")));
-            Assert.True(ConversationRules.Answers(AnswerModes.Decide, true, CheckVerdict.Failed("down")));
+            Assert.True(new CheckVerdict(true, true, 0.9, "d", null).SaysAnswer);
+            Assert.False(new CheckVerdict(true, false, 0.4, "d", null).SaysAnswer);
+            Assert.False(new CheckVerdict(false, true, 0.9, "d", null).SaysAnswer);
+            Assert.False(CheckVerdict.Failed("down").SaysAnswer);
         }
 
         [Fact]

@@ -6,7 +6,13 @@ namespace AiryBotCode.Application.Hive
 {
     public record AgentReply(string? Text, bool Failed);
 
-    public class HiveAgentClient
+    public interface IHiveAgent
+    {
+        Task<AgentReply> RunAsync(string runUrl, string appKey, ulong botId, ulong channelId, ulong authorId,
+            string author, string content, IReadOnlyList<ForwardedImage>? images, CancellationToken cancellationToken = default);
+    }
+
+    public class HiveAgentClient : IHiveAgent
     {
         public const string AppKeyHeader = "X-Hive-App-Key";
 
