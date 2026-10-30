@@ -116,4 +116,28 @@ export async function discordSignIn(): Promise<boolean> {
   }
 }
 
-export const discordStart = '/api/auth/external/discord/start'
+export function discordStart(next: string): string {
+  const back = next === '/' ? '/login' : `/login?${new URLSearchParams({ next })}`
+  return `/api/auth/external/discord/start?${new URLSearchParams({ mode: 'browser', next: back })}`
+}
+
+const externalMessages: Record<string, string> = {
+  'no-email': 'This Discord account is not linked to an Airy account yet. Sign in with your password.',
+  'sign-in-and-link': 'This Discord account is not linked to an Airy account yet. Sign in with your password.',
+  'no-access': 'This account has no access to Airy.',
+  'invite-only': 'This account has no access to Airy.',
+  blocked: 'This account was blocked from Airy.',
+  locked: 'This account is locked. Ask the owner to open it.',
+  'state-used': 'That Discord sign-in ran out. Try again.',
+  'state-expired': 'That Discord sign-in ran out. Try again.',
+  'state-not-bound': 'That Discord sign-in ran out. Try again.',
+  'state-mismatch': 'That Discord sign-in ran out. Try again.',
+  'provider-error': 'Discord did not sign you in.',
+  'provider-refused': 'Discord did not sign you in.',
+  'provider-unavailable': 'Discord could not be reached. Try again in a minute.',
+  'too-many-attempts': 'Too many tries. Wait a minute and try again.',
+}
+
+export function externalMessage(reason: string): string {
+  return externalMessages[reason] ?? 'Signing in with Discord did not work.'
+}

@@ -56,9 +56,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=db-dev;Port=5432;Database=${AIRY_DEV_DATABASE:-airy_db_dev};Username=airy_user;Password=${POSTGRES_PASSWORD}
       - PublicUrl=http://localhost:10000/api
-      - Discord__SignIn=false
+      - Discord__SignIn=${AIRY_DEV_DISCORD_SIGNIN:-false}
+      - Discord__ClientId=${AIRY_DEV_DISCORD_CLIENT_ID:-}
+      - Discord__ClientSecret=${AIRY_DEV_DISCORD_CLIENT_SECRET:-}
       - Proxies__ClientHeader=CF-Connecting-IP
-      - Proxies__Addresses__0=${AIRY_DEV_CADDY_ADDRESS:-}
+      - Proxies__Networks__0=${AIRY_DEV_PROXY_NETWORK:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
 

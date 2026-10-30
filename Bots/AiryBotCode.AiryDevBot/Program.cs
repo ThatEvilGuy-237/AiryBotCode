@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AiryBotCode.Bot.Bots;
 using Microsoft.Extensions.Configuration;
 using Evil.Sdk.Telemetry;
+using Evil.Sdk.Telemetry.Configuration;
 
 namespace AiryBotCode
 {
@@ -32,11 +33,7 @@ namespace AiryBotCode
             var telemetryEndpoint = baseConfig["Telemetry:Endpoint"];
             var telemetryProtocol = baseConfig["Telemetry:Protocol"];
             var environment = baseConfig["Telemetry:Environment"] ?? "production";
-            using var telemetry = EvilTelemetry.Start("airybotcode", "bots", environment, options =>
-            {
-                options.Endpoint = telemetryEndpoint;
-                options.Protocol = telemetryProtocol;
-            });
+            using var telemetry = EvilTelemetry.Start("airybotcode", "bots", environment, new EvilTelemetrySettings(telemetryEndpoint, telemetryProtocol));
             ServiceRegistration.Telemetry = telemetry;
 
             // Read the roster (enabled rows) from the control database.

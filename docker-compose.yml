@@ -16,7 +16,10 @@ services:
   # Control-panel API (ASP.NET on the Evil SDK). Reachable internally only, through
   # Caddy (/api/* on airy.thatevilguy.com). Airy's database with its own role
   # airybotcode_app and the users database with evil_users_airy, both from
-  # AiryBotCode-data (600). Deploy: ./scripts/airy-deploy.sh prod (this service only).
+  # AiryBotCode-data (600). The visitor's address is CF-Connecting-IP, read only from
+  # a peer on this project's default network (its subnet, filled in by the deploy),
+  # so a recreated Caddy at a new address is still trusted.
+  # Deploy: ./scripts/airy-deploy.sh prod (this service only).
   api:
     build:
       context: .
@@ -35,8 +38,7 @@ services:
       - PublicUrl=https://airy.thatevilguy.com/api
       - Discord__SignIn=false
       - Proxies__ClientHeader=CF-Connecting-IP
-      - Proxies__Addresses__0=${AIRY_CADDY_ADDRESS_0:-}
-      - Proxies__Addresses__1=${AIRY_CADDY_ADDRESS_1:-}
+      - Proxies__Networks__0=${AIRY_PROXY_NETWORK:-}
       - Telemetry__Endpoint=http://host.docker.internal:4318
       - Telemetry__Protocol=http/protobuf
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
@@ -48,9 +50,10 @@ services:
       - default
       - hive
 
-  # Reverse proxy behind Tailscale: password gate, serves the SPA + /api over
-  # plain HTTP on 127.0.0.1:8088. Tailscale Serve/Funnel terminates TLS and
-  # proxies to this port.
+  # Reverse proxy on 127.0.0.1:8088 (plain HTTP): serves the panel files and /api
+  # for airy.thatevilguy.com and The Hive's routes. TLS ends at the Cloudflare
+  # tunnel in front of it (never Tailscale). Sign-in is the API's (Evil SDK); the
+  # old password gate is gone. Never restarted by a deploy: it also serves The Hive.
   caddy:
     build:
       context: .

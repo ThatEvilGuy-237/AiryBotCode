@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { csrfToken, nextPath, signInMessage, unsafe } from '../auth'
+import { csrfToken, discordStart, externalMessage, nextPath, signInMessage, unsafe } from '../auth'
 import { ago } from '../time'
 
 describe('sessions and times', () => {
@@ -31,6 +31,24 @@ describe('sessions and times', () => {
     expect(signInMessage(403, 'no-access')).toBe('This account has no access to Airy.')
     expect(signInMessage(403, 'blocked')).toBe('This account was blocked from Airy.')
     expect(signInMessage(400, 'login-incomplete')).toBe('Enter your user name and your password.')
+  })
+
+  it('starts Discord in a browser session that comes back to the sign-in page with the page it was going to', () => {
+    expect(discordStart('/')).toBe('/api/auth/external/discord/start?mode=browser&next=%2Flogin')
+    expect(discordStart('/settings?bot=1')).toBe('/api/auth/external/discord/start?mode=browser&next=%2Flogin%3Fnext%3D%252Fsettings%253Fbot%253D1')
+  })
+
+  it('says why a Discord sign-in came back refused in words', () => {
+    expect(externalMessage('no-email')).toBe('This Discord account is not linked to an Airy account yet. Sign in with your password.')
+    expect(externalMessage('no-access')).toBe('This account has no access to Airy.')
+    expect(externalMessage('blocked')).toBe('This account was blocked from Airy.')
+    expect(externalMessage('locked')).toBe('This account is locked. Ask the owner to open it.')
+    expect(externalMessage('state-used')).toBe('That Discord sign-in ran out. Try again.')
+    expect(externalMessage('state-expired')).toBe('That Discord sign-in ran out. Try again.')
+    expect(externalMessage('provider-error')).toBe('Discord did not sign you in.')
+    expect(externalMessage('provider-unavailable')).toBe('Discord could not be reached. Try again in a minute.')
+    expect(externalMessage('too-many-attempts')).toBe('Too many tries. Wait a minute and try again.')
+    expect(externalMessage('something-new')).toBe('Signing in with Discord did not work.')
   })
 
   it('says how long ago in words', () => {

@@ -15,8 +15,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-caddy_addresses() {
-  docker inspect "$1" --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}'
+network_subnet() {
+  docker network inspect "$1" --format '{{(index .IPAM.Config 0).Subnet}}'
 }
 
 wait_ready() {
@@ -32,8 +32,7 @@ wait_ready() {
 deploy_dev() {
   local project=(-f docker-compose.dev.yml -p airybotcode-dev)
   docker compose "${project[@]}" up -d --build db-dev caddy-dev
-  read -r -a dev_caddy <<< "$(caddy_addresses airybotcode-dev-caddy-dev-1)"
-  AIRY_DEV_CADDY_ADDRESS="${dev_caddy[0]}" docker compose "${project[@]}" up -d --build --no-deps api-dev
+  AIRY_DEV_PROXY_NETWORK="$(network_subnet airybotcode-dev_default)" docker compose "${project[@]}" up -d --build --no-deps api-dev
   wait_ready http://127.0.0.1:10000/api/ready localhost:10000
   echo "✓ dev running (local only) → http://127.0.0.1:10000"
 }
@@ -55,8 +54,10 @@ deploy_prod() {
     docker image inspect "$image:latest" >/dev/null 2>&1 && docker tag "$image:latest" "$image:prev"
   done
   AIRY_COMMIT="$commit" docker compose -f docker-compose.yml -p airybotcode build api caddy
-  read -r -a caddy <<< "$(caddy_addresses airybotcode-caddy-1)"
-  AIRY_COMMIT="$commit" AIRY_CADDY_ADDRESS_0="${caddy[0]:-}" AIRY_CADDY_ADDRESS_1="${caddy[1]:-}" \
+  local network
+  network="$(network_subnet airybotcode_default)"
+  [ -n "$network" ] || { echo "✗ no subnet for airybotcode_default: the api would trust no proxy" >&2; exit 1; }
+  AIRY_COMMIT="$commit" AIRY_PROXY_NETWORK="$network" \
     docker compose -f docker-compose.yml -p airybotcode up -d --no-deps --no-build api
   wait_ready http://127.0.0.1:8088/api/ready airy.thatevilguy.com
   local panel

@@ -2,7 +2,6 @@ using System.Threading.RateLimiting;
 using AiryBotCode.Api;
 using AiryBotCode.Infrastructure.Database.Persistence;
 using Evil.Sdk;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +13,8 @@ var airyDatabase = config.GetConnectionString("DefaultConnection")
 var usersDatabase = config.GetConnectionString("Users")
     ?? throw new InvalidOperationException("ConnectionStrings:Users is not set: the users database connection of this app's own role");
 var pathBase = config["PathBase"] ?? "/api";
-var proxies = (config.GetSection("Proxies:Addresses").Get<string[]>() ?? []).Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
+var proxies = (config.GetSection("Proxies:Networks").Get<string[]>() ?? []).Concat(config.GetSection("Proxies:Addresses").Get<string[]>() ?? [])
+    .Where(a => !string.IsNullOrWhiteSpace(a)).ToArray();
 var clientHeader = config["Proxies:ClientHeader"];
 var publicUrl = config["PublicUrl"];
 var discord = new DiscordSignIn(config.GetValue<bool>("Discord:SignIn"), config["Discord:ClientId"], config["Discord:ClientSecret"]);
@@ -28,15 +28,12 @@ var sessionRules = new SessionRules(Browser: true, IdleTimeout: TimeSpan.FromHou
 var evil = builder.AddEvil("airybotcode", "api", "Airy")
     .Commit(commit)
     .Telemetry(telemetryEndpoint, telemetryProtocol)
-    .Proxies(proxies)
+    .Proxies(proxies, clientHeader: clientHeader)
     .Users(usersDatabase, userRules)
     .Sessions(sessionRules)
     .Audit();
 if (discord.On)
     evil.PublicUrl(publicUrl!).Discord(discord.App);
-
-if (!string.IsNullOrWhiteSpace(clientHeader))
-    builder.Services.PostConfigure<ForwardedHeadersOptions>(forwarded => forwarded.ForwardedForHeaderName = clientHeader);
 
 builder.Services.AddSingleton(new AiryDatabase(airyDatabase));
 builder.Services.AddDbContext<AIDbContext>(options => options.UseNpgsql(airyDatabase));

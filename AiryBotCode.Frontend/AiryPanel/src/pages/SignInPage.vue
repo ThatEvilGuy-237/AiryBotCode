@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { BrandMark, Button, Field, Icon, TextField } from '@airy/ui'
-import { discordSignIn, discordStart, nextPath, signIn } from '@/lib/auth'
+import { Alert, BrandMark, Button, Field, Icon, TextField } from '@airy/ui'
+import { discordSignIn, discordStart, externalMessage, nextPath, signIn } from '@/lib/auth'
 
 const route = useRoute()
 const router = useRouter()
@@ -11,6 +11,8 @@ const password = ref('')
 const busy = ref(false)
 const error = ref<string | null>(null)
 const discord = ref(false)
+const refused = typeof route.query.error === 'string' ? externalMessage(route.query.error) : null
+const discordHref = computed(() => discordStart(nextPath(route.query.next)))
 
 onMounted(async () => {
   discord.value = await discordSignIn()
@@ -38,6 +40,7 @@ async function submit() {
       <BrandMark name="Airy" :size="40" class="mark" />
       <h1 id="signin-title">Sign in to Airy</h1>
       <p class="lead">With your Evil account.</p>
+      <Alert v-if="refused" variant="danger" :title="refused" dense />
       <form class="form" @submit.prevent="submit">
         <Field label="User name or email">
           <TextField v-model="login" autocomplete="username" autocapitalize="none" spellcheck="false" />
@@ -49,7 +52,7 @@ async function submit() {
       </form>
       <template v-if="discord">
         <p class="or" aria-hidden="true">or</p>
-        <Button variant="ghost" :href="discordStart"><Icon name="log-in" :size="16" />Sign in with Discord</Button>
+        <Button variant="ghost" :href="discordHref"><Icon name="log-in" :size="16" />Sign in with Discord</Button>
       </template>
     </section>
   </main>

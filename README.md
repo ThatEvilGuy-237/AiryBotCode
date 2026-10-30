@@ -36,6 +36,7 @@ This project follows the principles of **Clean Architecture** to create a scalab
 -   **`AiryBotCode.Application`**: Orchestrates the application's use cases and commands (e.g., `UserlogsCommand`). It depends on the Domain layer but not on the Infrastructure or Bot layers.
 -   **`AiryBotCode.Infrastructure`**: Contains implementations for external concerns, such as database access (Entity Framework Core), Discord API interactions, and event handlers (`SlashCommandHandler`, `ButtonPressHandler`).
 -   **`Bots`**: The presentation layer and entry point of the application. This layer contains the executable bot projects (e.g., `AiryBotCode.AiryDevBot`) and is responsible for dependency injection, configuration, and starting the bot.
+-   **`AiryBotCode.Api`** and **`AiryBotCode.Frontend/AiryPanel`**: the control panel, an ASP.NET API (controllers) and a Vue panel served by Caddy on `airy.thatevilguy.com`. Sign-in is an Evil account through the private Evil SDK (`Evil.Sdk`): only people with access to the `airybotcode` app get in. Discord sign-in is built and stays off until its redirect URL is registered with Discord.
 
 ---
 
@@ -48,6 +49,8 @@ AiryBotCode/
 ├── Bots/
 │   ├── AiryBotCode.AiryBot/         # Main bot executable
 │   └── AiryBotCode.AiryDevBot/      # Development bot executable
+├── AiryBotCode.Api/                 # Control panel API (Evil SDK sign-in)
+├── AiryBotCode.Frontend/AiryPanel/  # Control panel (Vue)
 ├── AiryBotCode.Application/         # Application logic, commands, services
 ├── AiryBotCode.Domain/              # Core domain entities and business logic
 ├── AiryBotCode.Infrastructure/      # Database, external services, event handlers
@@ -63,7 +66,8 @@ Follow these steps to get a local copy up and running.
 
 ### Prerequisites
 
--   [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+-   [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+-   The private Evil SDK feed: `nuget.config` maps `Evil.*` (the panel's sign-in and the bot's telemetry) to a local folder feed and everything else to nuget.org, so a restore without that feed fails on purpose. Docker builds get it as the `evil-feed` build context.
 -   [Docker](https://www.docker.com/products/docker-desktop/) (for running a PostgreSQL database)
 -   A Discord Bot Token ([how to create one](https://discord.com/developers/docs/topics/oauth2#bots))
 
