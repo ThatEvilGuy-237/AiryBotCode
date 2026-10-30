@@ -10,14 +10,8 @@ if [ -z "$($PG "select 1 from pg_database where datname='$DB'")" ]; then
   $PG "create database $DB" >/dev/null
   docker exec -i airy-postgres-db pg_restore -U airy_user -d "$DB" --no-owner < "$DUMP"
 fi
-CS=$(python3 - "$DB" <<'PY'
-import json, sys
-d = json.load(open('AiryBotCode.Api/appsettings.json'))
-parts = dict(p.split('=', 1) for p in d['ConnectionStrings']['DefaultConnection'].split(';') if p)
-parts.update(Host='127.0.0.1', Port='5432', Database=sys.argv[1])
-print(';'.join(f'{k}={v}' for k, v in parts.items()))
-PY
-)
+PGPW=$(sed -n 's/^POSTGRES_PASSWORD=//p' .env)
+CS="Host=127.0.0.1;Port=5432;Database=$DB;Username=airy_user;Password=$PGPW"
 USERS=$(sed -n 's/^ConnectionStrings__Users=//p' /mnt/hdd/projects/AiryBotCode-data/evil-users.dev.env | sed 's/^Host=[^;]*;/Host=127.0.0.1;/')
 export ConnectionStrings__DefaultConnection="$CS" ConnectionStrings__Users="$USERS" Discord__SignIn=false
 export ASPNETCORE_ENVIRONMENT=Production ASPNETCORE_URLS=http://127.0.0.1:$PORT
