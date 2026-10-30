@@ -26,15 +26,15 @@
       ],
       "start": "docker compose -p airybotcode -f docker-compose.yml up -d --no-build --no-deps api caddy (the bot airydevbot is off by the owner's decision since 2026-10-21; start it by name only when the owner says so)",
       "deploy": "./scripts/airy-deploy.sh prod (main only: builds the api and caddy images, recreates the api service alone, copies the panel files into the running Caddy; never airydevbot, never airy-postgres-db, never restarts Caddy)",
-      "db": "airy-postgres-db/airy_db (the shared Postgres: every app's database lives here); the panel API uses its own role airybotcode_app (airy_db.public only), sign-in on evil_users (role evil_users_airy)",
-      "notes": "airy.thatevilguy.com (tunnel route to :8088) serves the panel (AiryPanel, built into the Caddy image and copied into the running one on deploy) and /api (the API on the Evil SDK under the path base /api; sign-in with the Evil account, only people with an airybotcode grant get in). Discord sign-in is built but off until the owner adds https://airy.thatevilguy.com/api/auth/external/discord/callback in the Discord developer portal and the SDK can open a browser session from it. thehive.thatevilguy.com shows only The Hive. The Caddyfile is a bind mount: after an edit, the next Caddy restart (a maintenance window) picks it up."
+      "db": "airy-postgres-db/airy_db, API role airybotcode_app (public schema only); sign-in on evil_users (evil_users_airy)",
+      "notes": "airy.thatevilguy.com (tunnel route to :8088, not added yet) serves the panel and /api (Evil SDK, path base /api, Evil account sign-in, airybotcode grant needed). Discord sign-in built, off. Caddyfile is a bind mount: an edit waits for the next Caddy restart."
     },
     "dev": {
       "local": "http://127.0.0.1:10000",
       "ports": {
         "caddy": 10000
       },
-      "branch": "feature branches (the dev stack builds the checkout it is started from)",
+      "branch": "main",
       "runs": [
         {
           "compose": "airybotcode-dev"
@@ -50,7 +50,7 @@
         "panel-vite": 5173,
         "panel-api": 8202
       },
-      "start": "AiryBotCode.Frontend/AiryPanel: npm run dev (Vite on 172.17.0.1:5173, /api proxied to 127.0.0.1:8202); the API: scripts/panel-dev-api.sh (dotnet run on 127.0.0.1:8202 against the scratch database airy_panel_dev, a copy of prod airy_db, and evil_users_dev)",
+      "start": "AiryPanel: npm run dev (Vite 172.17.0.1:5173, /api to 127.0.0.1:8202); API: scripts/panel-dev-api.sh (dotnet run on 127.0.0.1:8202, scratch database airy_panel_dev, evil_users_dev)",
       "notes": "Panel rebuild loop (docs/panel-rebuild). The scratch database is a restore of the newest prod backup; drop it when the rebuild ships."
     }
   },
@@ -62,7 +62,7 @@
       "Never point hooks, OAuth or API calls at the *.ts.net Funnel host.",
       "Docker builds leave root-owned obj/bin: chown before a host dotnet build or test.",
       "Carries the shared Postgres and prod Caddy: never restart them outside a maintenance window; prod deploys recreate the api service only.",
-      "The SDK comes from the feed (nuget.config maps Evil.* to /mnt/hdd/projects/evil-sdk-data/feed, Docker builds get it as the evil-feed context); pin the exact version."
+      "Evil.* comes from the feed (nuget.config; Docker builds get the evil-feed context); pin the exact version."
     ]
   }
 }
