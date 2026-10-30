@@ -2,6 +2,30 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-30 · L6: sign-in on the Evil SDK
+
+Rollout loop L6 of `evil-sdk-research/07-rollout-design.md`. The access-password gate, the Discord-only sign-in, the
+24 h JWT and the device pairing are gone. The panel API runs on `Evil.Sdk` 0.1.2 from the feed
+(`AddEvil("airybotcode", "api")`: users, sessions as browser cookies, audit, proxies, telemetry) under the path base
+`/api`, so Caddy's `/api/*` route stays as it is. Sign-in is the Evil account (user name or email, password); only
+people with an `airybotcode` grant get in; the database explorer keeps its A5 limits and is the owner's only;
+showing a stored bot token needs a sign-in in the last 5 minutes (the panel asks for the password then). Discord
+sign-in is wired (`Discord:SignIn`) and off. Everything moved to .NET 10 (EF Core 10, Npgsql 10); the vendored
+`Evil.Log.Telemetry` left for `Evil.Sdk.Telemetry` (the bot too). The API connects to `airy_db` with its own role
+`airybotcode_app` (data rights on `public` only, refused by pg_hba in every other database), made by
+`scripts/airy-db-role.py`.
+
+- Tests: 242 of 242 (C#, net10; one removed with the old Discord controller), panel 34 of 34, vue-tsc clean.
+- Dev stack (`./scripts/airy-deploy.sh dev`, a scrubbed copy of prod's `airy_db` public schema, `evil_users_dev`):
+  `scripts/auth-check.mjs` 46 of 46; route walk `scripts/api-walk.mjs`, the pre-L6 image against the new one on the
+  same copy, 55 calls: 55 same status, 52 same body (3 differ only in trace ids).
+- Import dry run on dev: 1 row (the owner by `BotSettings.EvilId`), grant and Discord login added to the existing dev
+  owner, rerun "already imported".
+- Browser: sign-in through the form (wrong, then right, lands on `next`), the token prompt after a stale sign-in, sign
+  out; a member has no Databases entry. Shots in `docs/screenshots/l6-evil-sdk/`; sign-in page 0 / 0 / 5 probe
+  findings at 320 / 375 / 1440 (all five the kit's desktop field size, older than L6), axe 0. Design review: 0
+  Blocker, 0 High, 1 Medium (enabled and focus states missing from the shots, added), 1 Low (desktop field size).
+
 ## 2026-10-16 · Worth it = the conversation, not one line
 
 Owner: the decision should look at several messages. A "When it's worth it" channel no longer asks per message:

@@ -13,24 +13,37 @@ services:
       - postgres_data:/var/lib/postgresql/data/pgdata
     restart: always
 
-  # Control-panel API (ASP.NET). Reachable internally as api:8080; exposed only
-  # through Caddy. Edit AiryBotCode.Api/appsettings.json (mounted) to set secrets.
+  # Control-panel API (ASP.NET on the Evil SDK). Reachable internally only, through
+  # Caddy (/api/* on airy.thatevilguy.com). Airy's database with its own role
+  # airybotcode_app and the users database with evil_users_airy, both from
+  # AiryBotCode-data (600). Deploy: ./scripts/airy-deploy.sh prod (this service only).
   api:
     build:
       context: .
       dockerfile: Api.dockerfile
+      additional_contexts:
+        evil-feed: /mnt/hdd/projects/evil-sdk-data/feed
+      args:
+        COMMIT: ${AIRY_COMMIT:-}
     depends_on:
       - db
     restart: always
+    env_file:
+      - /mnt/hdd/projects/AiryBotCode-data/airy-db.env
+      - /mnt/hdd/projects/AiryBotCode-data/evil-users.env
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - PublicUrl=https://airy.thatevilguy.com/api
+      - Discord__SignIn=false
+      - Proxies__ClientHeader=CF-Connecting-IP
+      - Proxies__Addresses__0=${AIRY_CADDY_ADDRESS_0:-}
+      - Proxies__Addresses__1=${AIRY_CADDY_ADDRESS_1:-}
+      - Telemetry__Endpoint=http://host.docker.internal:4318
+      - Telemetry__Protocol=http/protobuf
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
-      - OTEL_SERVICE_NAME=airy-api
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json
+      - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json:ro
     networks:
       - default
       - hive
@@ -74,6 +87,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      additional_contexts:
+        evil-feed: /mnt/hdd/projects/evil-sdk-data/feed
       args:
         PROJECT_PATH: "Bots/AiryBotCode.AiryDevBot/AiryBotCode.AiryDevBot.csproj"
         DLL_NAME: "AiryBotCode.AiryDevBot.dll"
@@ -87,10 +102,9 @@ services:
     # mounted appsettings.json (which is "localhost" for host runs).
     environment:
       - Database__Host=db
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://host.docker.internal:4318
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - Telemetry__Endpoint=http://host.docker.internal:4318
+      - Telemetry__Protocol=http/protobuf
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=prod
-      - OTEL_SERVICE_NAME=airy-bots
     volumes:
       - ./Bots/AiryBotCode.AiryDevBot/appsettings.json:/app/appsettings.json
     # Default network (db) + the Hive's network so the bot can subscribe to the

@@ -1,14 +1,14 @@
+using Evil.Sdk;
 using AiryBotCode.Application.Conversation;
 using AiryBotCode.Application.Hive;
 using AiryBotCode.Application.Interfaces.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
 {
-    [Authorize]
+    [EvilAuthorize]
     [ApiController]
-    [Route("api/settings/{botId}/hive")]
+    [Route("settings/{botId}/hive")]
     public class HiveConnectionController : ControllerBase
     {
         private readonly IBotSettingRepository _bots;

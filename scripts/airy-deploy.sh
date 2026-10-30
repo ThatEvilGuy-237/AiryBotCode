@@ -1,62 +1,79 @@
 #!/usr/bin/env bash
-# AiryBotCode — deploy + promote helper. Mirrors The Hive's scripts/hive-deploy.sh.
+# AiryBotCode deploy helper.
 #
-#   ./scripts/airy-deploy.sh dev      # build+run the feature branch → airybotcode-dev (LOCAL :10000)
+#   ./scripts/airy-deploy.sh dev      # the dev stack from this checkout (LOCAL 127.0.0.1:10000, own Postgres)
 #   ./scripts/airy-deploy.sh dev-bot  # dev stack + the OPTIONAL dev bot (needs AIRY_DEVBOT_DEV_TOKEN)
-#   ./scripts/airy-deploy.sh prod     # build+run `main` → airybotcode stack (/)  [production, online]
-#   ./scripts/airy-deploy.sh promote  # merge feature branch → main (ff), push, then deploy prod
+#   ./scripts/airy-deploy.sh prod     # main → the api service and the panel files, nothing else
 #
-# Workflow: commit on the feature branch → `dev` runs it on the LOCAL-ONLY dev
-# panel (127.0.0.1:10000, not public) for you to test → when a feature is good,
-# `promote` merges it to main and deploys prod FROM main. Production (online)
-# always tracks `main`; dev is local-only.
+# prod never touches airydevbot (the bot is off by the owner's decision), never airy-postgres-db, and never
+# restarts Caddy (it also serves The Hive): it builds the api and caddy images, recreates the api service alone
+# (--no-deps), then copies the new panel files into the running Caddy's /srv. The rebuilt Caddy image holds the
+# same files for its next restart. The previous images stay as :prev.
 #
-# Two parallel environments, fully isolated:
-#   dev   = feature branch, project airybotcode-dev, own Postgres, panel+API only, LOCAL :10000
-#   prod  = branch `main`,  project airybotcode,     airy-postgres-db, panel+API+bot, online /
-#
-# AiryBotCode is a PUBLIC repo: appsettings.json (secrets) is gitignored and must
-# stay that way. This script never commits — it only merges already-committed work.
+# AiryBotCode is a PUBLIC repo: appsettings.json, .env and every credential stay out of git
+# (credentials live in /mnt/hdd/projects/AiryBotCode-data, mode 600).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-# The feature branch dev work lands on. Override with FEATURE_BRANCH=... if needed.
-FEATURE_BRANCH="${FEATURE_BRANCH:-channel-webhooks}"
+caddy_addresses() {
+  docker inspect "$1" --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}'
+}
+
+wait_ready() {
+  local url=$1 host=$2
+  for _ in $(seq 1 60); do
+    if [ "$(curl -s -o /dev/null -w '%{http_code}' -H "Host: $host" "$url")" = "200" ]; then return 0; fi
+    sleep 2
+  done
+  echo "✗ $url did not answer 200" >&2
+  return 1
+}
 
 deploy_dev() {
-  docker compose -f docker-compose.dev.yml -p airybotcode-dev up -d --build
+  local project=(-f docker-compose.dev.yml -p airybotcode-dev)
+  docker compose "${project[@]}" up -d --build db-dev caddy-dev
+  read -r -a dev_caddy <<< "$(caddy_addresses airybotcode-dev-caddy-dev-1)"
+  AIRY_DEV_CADDY_ADDRESS="${dev_caddy[0]}" docker compose "${project[@]}" up -d --build --no-deps api-dev
+  wait_ready http://127.0.0.1:10000/api/ready localhost:10000
   echo "✓ dev running (local only) → http://127.0.0.1:10000"
 }
 
-# Bring up the OPTIONAL dev bot too (profile "bot"). Needs AIRY_DEVBOT_DEV_TOKEN
-# (+ AIRY_DEVBOT_DEV_BOTID) in .env — a SEPARATE Discord bot, not prod's.
 deploy_dev_bot() {
   if ! grep -q '^AIRY_DEVBOT_DEV_TOKEN=.\+' .env 2>/dev/null; then
     echo "⚠ AIRY_DEVBOT_DEV_TOKEN is not set in .env — set a SEPARATE dev bot token first."
-    echo "  (the bot will start but won't log in to Discord without it)"
   fi
   docker compose -f docker-compose.dev.yml -p airybotcode-dev --profile bot up -d --build
   echo "✓ dev + dev bot running (local only) → http://127.0.0.1:10000"
 }
 
 deploy_prod() {
-  git checkout main
-  git pull --ff-only origin main || true
-  docker compose -f docker-compose.yml -p airybotcode up -d --build
-  echo "✓ prod deployed → https://airy.thatevilguy.com"
+  [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ] || { echo "✗ prod deploys main only" >&2; exit 1; }
+  [ -z "$(git status --porcelain --untracked-files=no)" ] || { echo "✗ the tree has uncommitted changes" >&2; exit 1; }
+  local commit
+  commit="$(git rev-parse --short HEAD)"
+  for image in airybotcode-api airybotcode-caddy; do
+    docker image inspect "$image:latest" >/dev/null 2>&1 && docker tag "$image:latest" "$image:prev"
+  done
+  AIRY_COMMIT="$commit" docker compose -f docker-compose.yml -p airybotcode build api caddy
+  read -r -a caddy <<< "$(caddy_addresses airybotcode-caddy-1)"
+  AIRY_COMMIT="$commit" AIRY_CADDY_ADDRESS_0="${caddy[0]:-}" AIRY_CADDY_ADDRESS_1="${caddy[1]:-}" \
+    docker compose -f docker-compose.yml -p airybotcode up -d --no-deps --no-build api
+  wait_ready http://127.0.0.1:8088/api/ready airy.thatevilguy.com
+  local panel
+  panel="$(mktemp -d)"
+  local holder
+  holder="$(docker create airybotcode-caddy:latest)"
+  docker cp "$holder:/srv/." "$panel/"
+  docker rm "$holder" >/dev/null
+  docker cp "$panel/." airybotcode-caddy-1:/srv/
+  rm -rf "$panel"
+  echo "✓ prod deployed $commit → https://airy.thatevilguy.com (api recreated, panel files copied, Caddy not restarted)"
 }
 
 case "${1:-}" in
   dev)      deploy_dev ;;
   dev-bot)  deploy_dev_bot ;;
   prod)     deploy_prod ;;
-  promote)
-    echo "Promoting $FEATURE_BRANCH → main…"
-    git checkout main && git pull --ff-only origin main || true
-    git merge --ff-only "$FEATURE_BRANCH"
-    git push origin main
-    deploy_prod
-    ;;
   *)
-    echo "usage: $0 {dev|dev-bot|prod|promote}"; exit 1 ;;
+    echo "usage: $0 {dev|dev-bot|prod}"; exit 1 ;;
 esac

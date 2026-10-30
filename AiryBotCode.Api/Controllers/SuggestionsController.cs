@@ -1,10 +1,10 @@
+using Evil.Sdk;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Application.Interfaces.Service;
 using AiryBotCode.Domain.database;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
@@ -13,8 +13,8 @@ namespace AiryBotCode.Api.Controllers
     // idea; the maintainer later adds a review (why it's good + a time estimate)
     // and the team can mark it approved. All endpoints require a JWT.
     [ApiController]
-    [Authorize]
-    [Route("api/[controller]")]
+    [EvilAuthorize]
+    [Route("[controller]")]
     public class SuggestionsController : ControllerBase
     {
         private readonly ISuggestionRepository _repository;

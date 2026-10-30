@@ -1,13 +1,13 @@
+using Evil.Sdk;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Domain.database;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
 {
-    [Authorize]
+    [EvilAuthorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ChannelWebhooksController : ControllerBase
     {
         private readonly IChannelWebhookRepository _repository;

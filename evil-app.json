@@ -24,44 +24,45 @@
           "compose": "airybotcode"
         }
       ],
-      "start": "docker compose -p airybotcode -f docker-compose.yml up -d --no-build --no-deps api caddy airydevbot",
-      "deploy": "./scripts/airy-deploy.sh prod (bot only: docker compose -f docker-compose.yml -p airybotcode up -d --build airydevbot)",
-      "db": "airy-postgres-db/airy_db (the shared Postgres: every app's database lives here)",
-      "notes": "airy.thatevilguy.com (tunnel route to :8088) serves the panel (AiryPanel, built into the Caddy image) and /api; thehive.thatevilguy.com shows only The Hive. The Caddyfile is a bind mount: after an edit, restart the container."
+      "start": "docker compose -p airybotcode -f docker-compose.yml up -d --no-build --no-deps api caddy (the bot airydevbot is off by the owner's decision since 2026-10-21; start it by name only when the owner says so)",
+      "deploy": "./scripts/airy-deploy.sh prod (main only: builds the api and caddy images, recreates the api service alone, copies the panel files into the running Caddy; never airydevbot, never airy-postgres-db, never restarts Caddy)",
+      "db": "airy-postgres-db/airy_db (the shared Postgres: every app's database lives here); the panel API uses its own role airybotcode_app (airy_db.public only), sign-in on evil_users (role evil_users_airy)",
+      "notes": "airy.thatevilguy.com (tunnel route to :8088) serves the panel (AiryPanel, built into the Caddy image and copied into the running one on deploy) and /api (the API on the Evil SDK under the path base /api; sign-in with the Evil account, only people with an airybotcode grant get in). Discord sign-in is built but off until the owner adds https://airy.thatevilguy.com/api/auth/external/discord/callback in the Discord developer portal and the SDK can open a browser session from it. thehive.thatevilguy.com shows only The Hive. The Caddyfile is a bind mount: after an edit, the next Caddy restart (a maintenance window) picks it up."
     },
     "dev": {
       "local": "http://127.0.0.1:10000",
       "ports": {
         "caddy": 10000
       },
-      "branch": "channel-webhooks",
+      "branch": "feature branches (the dev stack builds the checkout it is started from)",
       "runs": [
         {
           "compose": "airybotcode-dev"
         }
       ],
-      "start": "docker compose -f docker-compose.dev.yml -p airybotcode-dev up -d --build",
+      "start": "./scripts/airy-deploy.sh dev (db-dev, caddy-dev, api-dev; 127.0.0.1:10000 and 172.17.0.1:10000 for the browser container)",
       "deploy": "./scripts/airy-deploy.sh dev",
-      "db": "db-dev container/airy_db_dev",
-      "notes": "Local only, own Postgres. Stopped since late September."
+      "db": "db-dev container/airy_db_dev (own Postgres); sign-in on evil_users_dev (role evil_users_dev_airy)",
+      "notes": "Local only. The API runs in Development (it owns the dev schema there). Checks: scripts/auth-check.mjs (the synthetic dev owner from evil-sdk-data/dev-owner.login), scripts/api-walk.mjs (old build against new on one copy)."
     },
     "tools": {
       "ports": {
         "panel-vite": 5173,
         "panel-api": 8202
       },
-      "start": "AiryBotCode.Frontend/AiryPanel: npm run dev (Vite on 172.17.0.1:5173, /api proxied to 127.0.0.1:8202); the API: scripts/panel-dev-api.sh (dotnet run on 127.0.0.1:8202 against the scratch database airy_panel_dev, a copy of prod airy_db)",
+      "start": "AiryBotCode.Frontend/AiryPanel: npm run dev (Vite on 172.17.0.1:5173, /api proxied to 127.0.0.1:8202); the API: scripts/panel-dev-api.sh (dotnet run on 127.0.0.1:8202 against the scratch database airy_panel_dev, a copy of prod airy_db, and evil_users_dev)",
       "notes": "Panel rebuild loop (docs/panel-rebuild). The scratch database is a restore of the newest prod backup; drop it when the rebuild ships."
     }
   },
   "flow": {
     "branch": "main",
-    "promote": "Feature work may sit on the airy-deploy.sh FEATURE_BRANCH (today channel-webhooks); ./scripts/airy-deploy.sh promote fast-forwards it into main, pushes and deploys prod.",
+    "promote": "Work lands on a feature branch, is checked on the dev stack (./scripts/airy-deploy.sh dev), merged into main and pushed; ./scripts/airy-deploy.sh prod deploys main.",
     "rules": [
-      "Public repo: appsettings.json holds secrets and stays gitignored.",
+      "Public repo: appsettings.json, .env and every credential stay out of git; credentials live in /mnt/hdd/projects/AiryBotCode-data (700, files 600).",
       "Never point hooks, OAuth or API calls at the *.ts.net Funnel host.",
       "Docker builds leave root-owned obj/bin: chown before a host dotnet build or test.",
-      "Carries the shared Postgres and prod Caddy: restart only in a maintenance window."
+      "Carries the shared Postgres and prod Caddy: never restart them outside a maintenance window; prod deploys recreate the api service only.",
+      "The SDK comes from the feed (nuget.config maps Evil.* to /mnt/hdd/projects/evil-sdk-data/feed, Docker builds get it as the evil-feed context); pin the exact version."
     ]
   }
 }
