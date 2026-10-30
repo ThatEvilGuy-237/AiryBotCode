@@ -38,44 +38,43 @@ services:
       timeout: 3s
       retries: 10
 
-  # Dev API. Reuses the prod appsettings (so the gate password + JWT secret match
-  # prod and you can log in), but overrides the DB to the isolated db-dev and the
-  # CORS origin to the local dev URL via environment variables.
+  # Dev API on the Evil SDK against evil_users_dev (the dev role's credential from
+  # AiryBotCode-data). No prod appsettings: the dev API needs only its two databases.
   api-dev:
     build:
       context: .
       dockerfile: Api.dockerfile
+      additional_contexts:
+        evil-feed: /mnt/hdd/projects/evil-sdk-data/feed
     depends_on:
       db-dev:
         condition: service_healthy
     restart: unless-stopped
+    env_file:
+      - /mnt/hdd/projects/AiryBotCode-data/evil-users.dev.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db-dev;Port=5432;Database=airy_db_dev;Username=airy_user;Password=${POSTGRES_PASSWORD}
-      - Database__Host=db-dev
-      - Database__Name=airy_db_dev
-      - Cors__AllowedOrigins__0=http://127.0.0.1:10000
-      - Cors__AllowedOrigins__1=http://localhost:10000
-    volumes:
-      - ./AiryBotCode.Api/appsettings.json:/app/appsettings.json:ro
+      - ConnectionStrings__DefaultConnection=Host=db-dev;Port=5432;Database=${AIRY_DEV_DATABASE:-airy_db_dev};Username=airy_user;Password=${POSTGRES_PASSWORD}
+      - PublicUrl=http://localhost:10000/api
+      - Discord__SignIn=false
+      - Proxies__ClientHeader=CF-Connecting-IP
+      - Proxies__Addresses__0=${AIRY_DEV_CADDY_ADDRESS:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-  # Reverse proxy serving the dev panel + login SPA on 127.0.0.1:10000 (local
-  # only). The image bakes the local dev URL as the API base so the panel's API
-  # calls target :10000. The dev Caddyfile (listens on :10000) is mounted over the
-  # one baked into the image.
+  # Reverse proxy serving the dev panel on 127.0.0.1:10000 (local only) and on the
+  # docker bridge (172.17.0.1:10000) for the browser container. The dev Caddyfile
+  # (listens on :10000) is mounted over the one baked into the image.
   caddy-dev:
     build:
       context: .
       dockerfile: Caddy.dockerfile
-      args:
-        API_BASE: http://127.0.0.1:10000
     depends_on:
       - api-dev
     restart: unless-stopped
-    env_file:
-      - .env
     ports:
       - "127.0.0.1:10000:10000"
+      - "172.17.0.1:10000:10000"
     volumes:
       - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
       - caddy_dev_data:/data
@@ -105,6 +104,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      additional_contexts:
+        evil-feed: /mnt/hdd/projects/evil-sdk-data/feed
       args:
         PROJECT_PATH: "Bots/AiryBotCode.AiryDevBot/AiryBotCode.AiryDevBot.csproj"
         DLL_NAME: "AiryBotCode.AiryDevBot.dll"

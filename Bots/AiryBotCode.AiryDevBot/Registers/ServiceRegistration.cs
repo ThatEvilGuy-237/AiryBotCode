@@ -1,4 +1,4 @@
-﻿using Evil.Log.Telemetry;
+﻿using Evil.Sdk.Telemetry;
 using AiryBotCode.Bot.Bots;
 using AiryBotCode.Infrastructure.Configuration;
 using AiryBotCode.Infrastructure.Registers;

@@ -1,14 +1,36 @@
 import { describe, expect, it } from 'vitest'
-import { expiresAt } from '../auth'
+import { csrfToken, nextPath, signInMessage, unsafe } from '../auth'
 import { ago } from '../time'
 
-const jwt = (payload: object) => `x.${btoa(JSON.stringify(payload)).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_')}.y`
+describe('sessions and times', () => {
+  it('reads the CSRF token from its cookie only', () => {
+    const jar = { value: 'other=1' }
+    Object.defineProperty(document, 'cookie', { configurable: true, get: () => jar.value })
+    expect(csrfToken()).toBe('')
+    jar.value = 'other=1; __Host-evil-csrf=abc%2Fdef'
+    expect(csrfToken()).toBe('abc/def')
+  })
 
-describe('tokens and times', () => {
-  it('reads the expiry of a token and refuses junk', () => {
-    expect(expiresAt(jwt({ exp: 1800000000 }))).toBe(1800000000000)
-    expect(expiresAt('junk')).toBeNull()
-    expect(expiresAt(null)).toBeNull()
+  it('sends the CSRF header on writes only', () => {
+    expect(['POST', 'PUT', 'DELETE', 'PATCH'].every(unsafe)).toBe(true)
+    expect(['GET', 'HEAD', 'OPTIONS', 'get'].some(unsafe)).toBe(false)
+  })
+
+  it('goes back only to a page of the panel after signing in', () => {
+    expect(nextPath('/settings?bot=1')).toBe('/settings?bot=1')
+    expect(nextPath('//evil.example/x')).toBe('/')
+    expect(nextPath('https://evil.example/')).toBe('/')
+    expect(nextPath('/login?next=/x')).toBe('/')
+    expect(nextPath(undefined)).toBe('/')
+    expect(nextPath(['/a'])).toBe('/')
+  })
+
+  it('says why a sign-in failed in words', () => {
+    expect(signInMessage(401, '')).toBe('That user name or password is not right.')
+    expect(signInMessage(429, '')).toBe('Too many tries. Wait a minute and try again.')
+    expect(signInMessage(403, 'no-access')).toBe('This account has no access to Airy.')
+    expect(signInMessage(403, 'blocked')).toBe('This account was blocked from Airy.')
+    expect(signInMessage(400, 'login-incomplete')).toBe('Enter your user name and your password.')
   })
 
   it('says how long ago in words', () => {

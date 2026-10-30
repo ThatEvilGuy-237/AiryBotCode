@@ -18,6 +18,7 @@ parts.update(Host='127.0.0.1', Port='5432', Database=sys.argv[1])
 print(';'.join(f'{k}={v}' for k, v in parts.items()))
 PY
 )
-export ConnectionStrings__DefaultConnection="$CS" Database__Host=127.0.0.1 Database__Port=5432 Database__Name=$DB
-export ASPNETCORE_ENVIRONMENT=Production ASPNETCORE_URLS=http://127.0.0.1:$PORT OTEL_SDK_DISABLED=true
+USERS=$(sed -n 's/^ConnectionStrings__Users=//p' /mnt/hdd/projects/AiryBotCode-data/evil-users.dev.env | sed 's/^Host=[^;]*;/Host=127.0.0.1;/')
+export ConnectionStrings__DefaultConnection="$CS" ConnectionStrings__Users="$USERS" Discord__SignIn=false
+export ASPNETCORE_ENVIRONMENT=Production ASPNETCORE_URLS=http://127.0.0.1:$PORT
 exec dotnet run --no-launch-profile --project AiryBotCode.Api

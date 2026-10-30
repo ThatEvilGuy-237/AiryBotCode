@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isSignedIn } from './lib/auth'
+import { isOwner, nextPath, whoAmI } from './lib/auth'
 import Shell from './layouts/Shell.vue'
 import HomePage from './pages/HomePage.vue'
 import SignInPage from './pages/SignInPage.vue'
@@ -28,17 +28,20 @@ export const router = createRouter({
         { path: 'look', name: 'look', component: LookPage, meta: { title: 'Look' } },
         { path: 'activity', name: 'activity', component: ActivityPage, meta: { title: 'Activity' } },
         { path: 'suggestions', name: 'suggestions', component: SuggestionsPage, meta: { title: 'Suggestions' } },
-        { path: 'databases', name: 'databases', component: DatabasesPage, meta: { title: 'Databases' } },
-        { path: 'databases/:db', name: 'database', component: DatabasesPage, props: true, meta: { title: 'Databases' } },
+        { path: 'databases', name: 'databases', component: DatabasesPage, meta: { title: 'Databases', owner: true } },
+        { path: 'databases/:db', name: 'database', component: DatabasesPage, props: true, meta: { title: 'Databases', owner: true } },
       ],
     },
     { path: '/:rest(.*)*', redirect: '/' },
   ],
 })
 
-router.beforeEach(to => {
-  if (to.name === 'login' && isSignedIn()) return '/'
-  if (!to.meta.public && !isSignedIn()) return '/login'
+router.beforeEach(async to => {
+  if (to.name === 'suggest') return true
+  const signedIn = (await whoAmI()) !== null
+  if (to.name === 'login') return signedIn ? nextPath(to.query.next) : true
+  if (!signedIn) return { name: 'login', query: to.fullPath === '/' ? {} : { next: to.fullPath } }
+  if (to.meta.owner && !isOwner.value) return '/'
   return true
 })
 

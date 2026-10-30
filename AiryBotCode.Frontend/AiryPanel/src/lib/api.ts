@@ -1,10 +1,12 @@
-import { signOut, token } from './auth'
+import { csrfToken, forget, unsafe } from './auth'
 
 export class ApiError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(public status: number, message: string, public reason = '') {
     super(message)
   }
 }
+
+export const Reauthenticate = 'reauthenticate'
 
 export type Bot = {
   botId: string
@@ -127,25 +129,41 @@ export function readError(raw: string, status: number): string {
   }
 }
 
+function reasonOf(raw: string): string {
+  try {
+    const body = JSON.parse(raw) as { reason?: unknown }
+    return typeof body?.reason === 'string' ? body.reason : ''
+  } catch {
+    return ''
+  }
+}
+
 async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const headers: Record<string, string> = body === undefined ? {} : { 'Content-Type': 'application/json' }
+  const csrf = unsafe(method) ? csrfToken() : ''
+  if (csrf) headers['X-Evil-Csrf'] = csrf
   let response: Response
   try {
     response = await fetch(path, {
       method,
-      headers: {
-        ...(token.value ? { Authorization: `Bearer ${token.value}` } : {}),
-        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-      },
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers,
       body: body === undefined ? undefined : JSON.stringify(body),
     })
   } catch {
     throw new ApiError(0, 'Airy could not be reached.')
   }
-  if (response.status === 401) {
-    signOut()
-    throw new ApiError(401, 'Signed out.')
+  if (!response.ok) {
+    const raw = await response.text()
+    const reason = reasonOf(raw)
+    if (response.status === 401 && reason !== Reauthenticate) {
+      forget()
+      location.assign('/login')
+      throw new ApiError(401, 'Signed out.', reason)
+    }
+    throw new ApiError(response.status, readError(raw, response.status), reason)
   }
-  if (!response.ok) throw new ApiError(response.status, readError(await response.text(), response.status))
   if (response.status === 204) return undefined as T
   const text = await response.text()
   return (text ? JSON.parse(text) : undefined) as T
@@ -156,7 +174,7 @@ export const api = {
   addBot: (bot: Bot & { token: string }) => call<Bot>('POST', '/api/settings', bot),
   saveBot: (bot: Bot & { token?: string }) => call<Bot>('PUT', `/api/settings/${bot.botId}`, bot),
   dropBot: (botId: string) => call<void>('DELETE', `/api/settings/${botId}`),
-  revealToken: (botId: string, password: string) => call<{ token: string }>('POST', `/api/settings/${botId}/token`, { password }),
+  revealToken: (botId: string) => call<{ token: string }>('POST', `/api/settings/${botId}/token`),
   databases: () => call<string[]>('GET', '/api/db/databases'),
   look: (botId: string) => call<BotLook>('GET', `/api/settings/${botId}/theme`),
   saveLook: (botId: string, look: { primary: string; accent: string; image: string | null }) =>
@@ -197,38 +215,9 @@ export const api = {
   renewShareLink: () => call<ShareLink>('POST', '/api/suggestions/sharelink/regenerate'),
   levels: (botId: string, skip: number, take = 25) => call<LevelBoard>('GET', `/api/featurestatus/${botId}/leveling?skip=${skip}&take=${take}`),
   countingFull: (botId: string) => call<CountingStatus[]>('GET', `/api/featurestatus/${botId}/counting`),
-  createDatabase: (name: string) => call<{ name: string }>('POST', '/api/db/databases', { name }),
   schemas: (db: string) => call<string[]>('GET', `/api/db/schemas?database=${encodeURIComponent(db)}`),
   tables: (db: string, schema: string) => call<TableInfo[]>('GET', `/api/db/tables?schema=${encodeURIComponent(schema)}&database=${encodeURIComponent(db)}`),
   tableData: (db: string, schema: string, table: string) =>
     call<TableData>('GET', `/api/db/data?schema=${encodeURIComponent(schema)}&table=${encodeURIComponent(table)}&limit=100&database=${encodeURIComponent(db)}`),
   counting: (botId: string) => call<CountingChannel[]>('GET', `/api/featurestatus/${botId}/counting`),
-}
-
-export async function openGate(password: string): Promise<string> {
-  let response: Response
-  try {
-    response = await fetch('/api/auth/gate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    })
-  } catch {
-    throw new ApiError(0, 'Airy could not be reached.')
-  }
-  if (response.status === 401 || response.status === 403) throw new ApiError(response.status, 'That password is not right.')
-  if (response.status === 429) throw new ApiError(429, 'Too many tries. Wait a minute and try again.')
-  if (!response.ok) throw new ApiError(response.status, `Airy answered ${response.status}.`)
-  return ((await response.json()) as { token: string }).token
-}
-
-export async function discordSignInUrl(gateToken: string): Promise<string> {
-  let response: Response
-  try {
-    response = await fetch(`/api/auth/discord/start?state=${encodeURIComponent(gateToken)}`)
-  } catch {
-    throw new ApiError(0, 'Airy could not be reached.')
-  }
-  if (!response.ok) throw new ApiError(response.status, readError(await response.text(), response.status))
-  return ((await response.json()) as { url: string }).url
 }

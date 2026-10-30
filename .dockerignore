@@ -2,5 +2,8 @@
 **/obj
 **/node_modules
 **/dist
+**/appsettings.json
+**/appsettings.*.json
 .git
+.worktrees
 .env

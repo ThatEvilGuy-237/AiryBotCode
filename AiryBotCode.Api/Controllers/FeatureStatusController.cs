@@ -1,9 +1,9 @@
+using Evil.Sdk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AiryBotCode.Application.Interfaces.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
@@ -14,8 +14,8 @@ namespace AiryBotCode.Api.Controllers
     // Snowflake ids are serialized as STRINGS (precision-safe; the panel never
     // JSON.parse/Number's them).
     [ApiController]
-    [Authorize]
-    [Route("api/[controller]")]
+    [EvilAuthorize]
+    [Route("[controller]")]
     public class FeatureStatusController : ControllerBase
     {
         private readonly ICountingStateRepository _counting;

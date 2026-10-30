@@ -18,7 +18,7 @@ namespace AiryBotCode.Api.Controllers
     // the code is the auth.
     [ApiController]
     [AllowAnonymous]
-    [Route("api/public/suggestions")]
+    [Route("public/suggestions")]
     public class PublicSuggestionsController : ControllerBase
     {
         // Caps on the unauthenticated create surface (reject, don't silently truncate).

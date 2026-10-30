@@ -1,6 +1,6 @@
+using Evil.Sdk;
 using AiryBotCode.Application.Interfaces.Repository;
 using AiryBotCode.Domain.database;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
@@ -10,9 +10,9 @@ namespace AiryBotCode.Api.Controllers
     /// commands a bot runs (enable/disable) and each command's settings. All
     /// endpoints are scoped to a bot via the required <c>botId</c>. Requires a JWT.
     /// </summary>
-    [Authorize]
+    [EvilAuthorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class CommandsController : ControllerBase
     {
         private readonly ICommandSettingsRepository _repository;

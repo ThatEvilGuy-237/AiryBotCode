@@ -3,7 +3,7 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ActionPill, AppSidebar, BrandMark, Button, Icon, SidebarItem, SidebarSection, ToastHost, useAppUpdate, useInstallPrompt } from '@airy/ui'
 import BotSwitcher from '@/components/BotSwitcher.vue'
-import { signOut } from '@/lib/auth'
+import { isOwner, signOut } from '@/lib/auth'
 import { botId, loadBots } from '@/lib/bots'
 
 const route = useRoute()
@@ -54,7 +54,7 @@ onMounted(() => {
         </SidebarSection>
         <SidebarSection label="All bots" name="all">
           <SidebarItem to="/suggestions" icon="inbox" label="Suggestions" />
-          <SidebarItem to="/databases" icon="database" label="Databases" />
+          <SidebarItem v-if="isOwner" to="/databases" icon="database" label="Databases" />
         </SidebarSection>
       </AppSidebar>
     </div>

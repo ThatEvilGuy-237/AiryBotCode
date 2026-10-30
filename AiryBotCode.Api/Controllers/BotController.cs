@@ -1,5 +1,5 @@
+using Evil.Sdk;
 using AiryBotCode.Application.Interfaces.Repository;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiryBotCode.Api.Controllers
@@ -9,9 +9,9 @@ namespace AiryBotCode.Api.Controllers
     /// sharing the database, so a reload is requested by bumping a control row;
     /// the bot polls it and restarts itself (it runs under Docker `restart: always`).
     /// </summary>
-    [Authorize]
+    [EvilAuthorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class BotController : ControllerBase
     {
         private readonly ICommandSettingsRepository _repository;

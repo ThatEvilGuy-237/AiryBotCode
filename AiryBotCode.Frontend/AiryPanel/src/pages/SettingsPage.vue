@@ -3,7 +3,8 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Alert, Button, Card, ConfirmDialog, CopyButton, Field, Icon, Modal, MultiSelect, PageHeader, Select, TextField, Toggle, useToast } from '@airy/ui'
 import ChannelPicker from '@/components/ChannelPicker.vue'
-import { api, ApiError, type Bot, type DiscordEntity } from '@/lib/api'
+import { api, ApiError, Reauthenticate, type Bot, type DiscordEntity } from '@/lib/api'
+import { confirmPassword } from '@/lib/auth'
 import { bot, botId, loadBots, pickBot } from '@/lib/bots'
 import { parseIdList } from '@/lib/discordIds'
 
@@ -98,13 +99,29 @@ async function save() {
 async function reveal() {
   if (!botId.value) return
   revealing.value = true
+  try {
+    revealed.value = (await api.revealToken(botId.value)).token
+  } catch (e) {
+    if (e instanceof ApiError && e.reason === Reauthenticate) {
+      revealError.value = null
+      revealOpen.value = true
+    } else toast.error(e instanceof Error ? e.message : 'The token could not be shown.')
+  } finally {
+    revealing.value = false
+  }
+}
+
+async function confirmAndReveal() {
+  if (!botId.value || !revealPassword.value) return
+  revealing.value = true
   revealError.value = null
   try {
-    revealed.value = (await api.revealToken(botId.value, revealPassword.value)).token
-    revealOpen.value = false
+    await confirmPassword(revealPassword.value)
     revealPassword.value = ''
+    revealed.value = (await api.revealToken(botId.value)).token
+    revealOpen.value = false
   } catch (e) {
-    revealError.value = e instanceof ApiError && e.status === 403 ? 'That password is not right.' : e instanceof Error ? e.message : 'The token could not be shown.'
+    revealError.value = e instanceof Error ? e.message : 'The token could not be shown.'
   } finally {
     revealing.value = false
   }
@@ -183,7 +200,7 @@ async function add() {
             <CopyButton :value="revealed" label="Copy" size="sm" />
             <Button variant="ghost" size="sm" @click="revealed = null">Hide</Button>
           </div>
-          <div v-else-if="bot?.hasToken"><Button variant="ghost" size="sm" @click="revealOpen = true"><Icon name="eye" :size="16" />Show the stored token</Button></div>
+          <div v-else-if="bot?.hasToken"><Button variant="ghost" size="sm" :loading="revealing && !revealOpen" @click="reveal"><Icon name="eye" :size="16" />Show the stored token</Button></div>
         </div>
       </Card>
 
@@ -226,14 +243,14 @@ async function add() {
     </form>
 
     <Modal :open="revealOpen" title="Show the stored token" size="sm" @close="revealOpen = false">
-      <form class="modal-form" @submit.prevent="reveal">
-        <Field label="Access password" :error="revealError ?? undefined">
+      <form class="modal-form" @submit.prevent="confirmAndReveal">
+        <Field label="Your password" hint="Showing a token needs a fresh sign-in" :error="revealError ?? undefined">
           <TextField v-model="revealPassword" type="password" autocomplete="current-password" />
         </Field>
       </form>
       <template #footer>
         <Button variant="ghost" @click="revealOpen = false">Cancel</Button>
-        <Button :loading="revealing" :disabled="!revealPassword" @click="reveal">Show</Button>
+        <Button :loading="revealing" :disabled="!revealPassword" @click="confirmAndReveal">Show</Button>
       </template>
     </Modal>
 

@@ -1,5 +1,4 @@
-using AiryBotCode.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+using Evil.Sdk;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
@@ -20,9 +19,9 @@ namespace AiryBotCode.Api.Controllers
         public static bool AllowsSchema(string requested) => string.Equals(requested, Schema, StringComparison.Ordinal);
     }
 
-    [Authorize]
+    [EvilScope(EvilScopes.Admin)]
     [ApiController]
-    [Route("api/db")]
+    [Route("db")]
     public class DbExplorerController : ControllerBase
     {
         private readonly string _connectionString;
@@ -36,9 +35,9 @@ namespace AiryBotCode.Api.Controllers
 
         private const string RedactionMask = "••••••••";
 
-        public DbExplorerController(IConfiguration configuration)
+        public DbExplorerController(AiryDatabase database)
         {
-            _connectionString = new ConfigurationReader(configuration).GetDatabaseConnectionString();
+            _connectionString = database.ConnectionString;
             _ownDatabase = new NpgsqlConnectionStringBuilder(_connectionString).Database ?? string.Empty;
         }
 

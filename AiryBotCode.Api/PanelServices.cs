@@ -11,7 +11,6 @@ namespace AiryBotCode.Api
     {
         public static IServiceCollection AddPanelServices(this IServiceCollection services)
         {
-            services.AddSingleton<Services.DevicePairingService>();
             services.AddSingleton<Services.DiscordGuildLookup>();
             services.AddScoped<ICommandSettingsRepository, CommandSettingsRepository>();
             services.AddScoped<IBotCommandRepository, BotCommandRepository>();

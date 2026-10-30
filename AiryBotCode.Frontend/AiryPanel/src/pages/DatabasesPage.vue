@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
-import { Alert, Button, Card, EmptyState, Field, Icon, Modal, PageHeader, Select, Skeleton, Table, TableColumn, TextField, useToast } from '@airy/ui'
-import { api, ApiError, type TableData, type TableInfo } from '@/lib/api'
+import { RouterLink } from 'vue-router'
+import { Alert, Button, Card, EmptyState, Field, Icon, PageHeader, Select, Skeleton, Table, TableColumn, useToast } from '@airy/ui'
+import { api, type TableData, type TableInfo } from '@/lib/api'
 
 const props = defineProps<{ db?: string }>()
-const router = useRouter()
 const toast = useToast()
 
 const databases = ref<string[] | null>(null)
 const error = ref<string | null>(null)
-const creating = ref(false)
-const name = ref('')
-const createBusy = ref(false)
-const createError = ref<string | null>(null)
 
 const schemas = ref<string[]>([])
 const schema = ref('')
@@ -23,7 +18,6 @@ const data = ref<TableData | null>(null)
 const dataLoading = ref(false)
 const dbError = ref<string | null>(null)
 
-const validName = computed(() => /^[a-z][a-z0-9_]{1,62}$/.test(name.value.trim()))
 const rows = computed(() => (data.value?.rows ?? []).map((r, i) => ({ __row: i, ...Object.fromEntries((data.value?.columns ?? []).map((c, j) => [c, cell(r[j])])) })))
 
 function cell(v: unknown): string {
@@ -82,23 +76,6 @@ async function pick(t: string) {
   }
 }
 
-async function create() {
-  createBusy.value = true
-  createError.value = null
-  try {
-    const made = await api.createDatabase(name.value.trim())
-    creating.value = false
-    name.value = ''
-    toast.success(`Database ${made.name} made`)
-    await loadList()
-    router.push(`/databases/${made.name}`)
-  } catch (e) {
-    createError.value = e instanceof ApiError && e.status === 409 ? 'A database with that name exists.' : e instanceof Error ? e.message : 'Making it failed.'
-  } finally {
-    createBusy.value = false
-  }
-}
-
 watch(() => props.db, db => {
   if (db) openDb(db)
   else loadList()
@@ -109,11 +86,7 @@ watch(schema, loadTables)
 <template>
   <div class="page">
     <template v-if="!db">
-      <PageHeader title="Databases" subtitle="// the shared Postgres; reading only, except making a new one">
-        <template #actions>
-          <Button variant="outline" @click="creating = true"><Icon name="plus" :size="16" />New database</Button>
-        </template>
-      </PageHeader>
+      <PageHeader title="Databases" subtitle="// Airy's own database, reading only" />
       <Alert v-if="error" variant="danger" :title="error">
         <template #actions><Button size="sm" variant="outline" @click="loadList">Try again</Button></template>
       </Alert>
@@ -169,17 +142,6 @@ watch(schema, loadTables)
       </div>
     </template>
 
-    <Modal :open="creating" title="New database" size="sm" @close="creating = false">
-      <form class="form" @submit.prevent="create">
-        <Field label="Name" hint="Lowercase letters, digits and _" :error="name && !validName ? 'Start with a letter; lowercase, digits and _ only' : createError ?? undefined">
-          <TextField v-model="name" autocomplete="off" />
-        </Field>
-      </form>
-      <template #footer>
-        <Button variant="ghost" @click="creating = false">Cancel</Button>
-        <Button :loading="createBusy" :disabled="!validName" @click="create">Make it</Button>
-      </template>
-    </Modal>
   </div>
 </template>
 

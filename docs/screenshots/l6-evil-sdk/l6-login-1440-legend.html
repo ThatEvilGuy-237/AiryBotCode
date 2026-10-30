@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><title>l6-login 1440</title>
+<style>
+  body { margin:0; background:#0b0b12; color:#e6e6ef; font:14px/1.45 "DejaVu Sans",sans-serif; display:flex; align-items:flex-start; }
+  .shot { flex:none; } .shot img { display:block; max-width:900px; height:auto; }
+  .legend { width:520px; padding:20px 22px; }
+  h1 { font-size:15px; margin:0 0 4px; } .sum { color:#9a9ab0; margin:0 0 16px; font-size:13px; }
+  ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+  li { display:flex; gap:10px; align-items:flex-start; }
+  .n { flex:none; min-width:24px; height:22px; padding:0 4px; border-radius:4px; color:#0b0b12; font-weight:700; font-size:13px; display:grid; place-items:center; }
+  b { font-size:12px; letter-spacing:.04em; } .lab { color:#fff; margin-left:6px; }
+  p { margin:2px 0 0; color:#b9b9cc; font-size:13px; } .done { color:#7fd6a0; }
+</style>
+<div class="shot"><img src="l6-login-1440-findings.png" alt="findings overlay"></div>
+<div class="legend"><h1>l6-login at 1440px</h1>
+<p class="sum">5 boxes: 5 not a defect here; axe 0 violations, 17 passes. Numbers match the boxes.</p><ul><li><span class="n" style="background:#e8b04b">1</span>
+        <div><b style="color:#e8b04b">NOT A DEFECT HERE</b>
+        <span class="lab">(no text)</span>
+        <p>15px is the kit&#x27;s desktop field text; the 16px rule is the iOS zoom rule for phones, and the 375 and 320 shots have no finding</p><p class="done">Done: kept: desktop field size is an open owner call, the pre-L6 page had the same</p></div></li><li><span class="n" style="background:#e8b04b">2</span>
+        <div><b style="color:#e8b04b">NOT A DEFECT HERE</b>
+        <span class="lab">(no text)</span>
+        <p>same as #1</p><p class="done">Done: kept</p></div></li><li><span class="n" style="background:#e8b04b">3</span>
+        <div><b style="color:#e8b04b">NOT A DEFECT HERE</b>
+        <span class="lab">input</span>
+        <p>350x41 hit area is above the desktop floor of 24px (WCAG 2.5.8); 44px is the touch rule, met at 375 and 320</p><p class="done">Done: kept</p></div></li><li><span class="n" style="background:#e8b04b">4</span>
+        <div><b style="color:#e8b04b">NOT A DEFECT HERE</b>
+        <span class="lab">input</span>
+        <p>same as #3</p><p class="done">Done: kept</p></div></li><li><span class="n" style="background:#e8b04b">5</span>
+        <div><b style="color:#e8b04b">NOT A DEFECT HERE</b>
+        <span class="lab">Sign in</span>
+        <p>350x36 hit area, above the 24px desktop floor; the button is 48px tall on phones</p><p class="done">Done: kept</p></div></li></ul></div>
