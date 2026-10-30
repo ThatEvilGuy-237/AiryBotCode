@@ -5,13 +5,16 @@
 import pkg from 'pg';
 const { Client } = pkg;
 
-// PostgreSQL connection config
+if (!process.env.PGPASSWORD) {
+  console.error('❌ Set PGPASSWORD, e.g. PGPASSWORD="$(cat /mnt/hdd/projects/AiryBotCode-data/airy-user.secret)" node scripts/clearDatabase.js (PGHOST, PGPORT, PGUSER, PGDATABASE override the defaults).');
+  process.exit(1);
+}
 const client = new Client({
-  host: 'localhost',       // Postgres server host
-  port: 5432,              // Postgres port
-  user: 'airy_user',       // Postgres user
-  password: 'Forest_Carrot_93@Night', // Postgres password
-  database: 'airy_db'      // Connect directly to your main app database
+  host: process.env.PGHOST || '127.0.0.1',
+  port: Number(process.env.PGPORT || 5432),
+  user: process.env.PGUSER || 'airy_user',
+  password: process.env.PGPASSWORD,
+  database: process.env.PGDATABASE || 'airy_db'
 });
 
 async function clearTables() {

@@ -16,7 +16,8 @@
       "local": "http://127.0.0.1:8088",
       "ports": {
         "caddy": 8088,
-        "postgres": "0.0.0.0:5432"
+        "postgres": 5432,
+        "postgres-docker": "172.17.0.1:5432"
       },
       "branch": "main",
       "runs": [

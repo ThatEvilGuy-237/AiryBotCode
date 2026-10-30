@@ -27,7 +27,7 @@ services:
     environment:
       POSTGRES_DB: airy_db_dev
       POSTGRES_USER: airy_user
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_DEV_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data/pgdata
@@ -54,7 +54,7 @@ services:
       - /mnt/hdd/projects/AiryBotCode-data/evil-users.dev.env
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=db-dev;Port=5432;Database=${AIRY_DEV_DATABASE:-airy_db_dev};Username=airy_user;Password=${POSTGRES_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Host=db-dev;Port=5432;Database=${AIRY_DEV_DATABASE:-airy_db_dev};Username=airy_user;Password=${POSTGRES_DEV_PASSWORD}
       - PublicUrl=http://localhost:10000/api
       - Discord__SignIn=${AIRY_DEV_DISCORD_SIGNIN:-false}
       - Discord__ClientId=${AIRY_DEV_DISCORD_CLIENT_ID:-}
