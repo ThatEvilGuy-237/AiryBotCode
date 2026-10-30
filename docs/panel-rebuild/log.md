@@ -2,6 +2,30 @@
 
 Newest first. Plan: `plan.md`.
 
+## 2026-10-30 · G13: Evil SDK 0.1.4 (Discord into a browser session, visitor address by network)
+
+- `Evil.Sdk` and `Evil.Sdk.Telemetry` 0.1.4. The API trusts `CF-Connecting-IP` from any peer on this project's default
+  network (`Proxies:Networks`, the subnet `airy-deploy.sh` reads from `docker network inspect airybotcode_default`), so a
+  recreated Caddy at a new address keeps every visitor in their own throttle bucket; the app-level
+  `ForwardedHeadersOptions` patch and the two Caddy addresses are gone. Measured on dev: Caddy recreated from 172.25.0.4
+  to .5, the per-address lockout check still passed.
+- Discord sign-in, still off in prod (`Discord__SignIn=false`) until the owner adds
+  `https://airy.thatevilguy.com/api/auth/external/discord/callback` in the Discord developer portal: the button now
+  starts `auth/external/discord/start?mode=browser&next=/login?next=<page>`; the SDK's callback opens the browser session
+  and comes back to `/login`, which goes on to the page; a refusal comes back as `/login?...&error=<reason>` and the
+  sign-in page says why in words (an Alert above the form). Going on: set `Discord__SignIn=true` in compose and deploy.
+- The bot calls `EvilTelemetry.Start` with an `EvilTelemetrySettings` record (no lambda). Its image built once under a
+  throwaway tag (removed); the bot was not started.
+- Checks: panel tests 36 / 36 (Discord start link, refusal messages), vue-tsc clean, `dotnet test` 242 / 242;
+  dev `scripts/auth-check.mjs` 46 / 46 (twice, the second after recreating the dev Caddy);
+  `scripts/discord-browser-check.mjs` 11 / 11 on dev with Discord on and a dummy client (302 to Discord with scope
+  identify, PKCE and the callback under the public URL; refusals as redirects with `error`; bad `next` refused);
+  shots `docs/screenshots/g13/` at 375, 1440 and 320: probe 0 at 375 and 320, at 1440 the kit's desktop field and
+  button heights and 15 px field text (touch rules, not desktop defects, as in L6), axe 0 at all three.
+- Prod: `./scripts/airy-deploy.sh prod` 16:33 to 16:35 UTC, api recreated alone, Caddy not restarted (up since
+  2026-10-16), the bot untouched (exited since 2026-10-22). `scripts/prod-check.mjs` 18 / 18 (synthetic person made and
+  deleted, the forwarded client address seen by the API, not Caddy's).
+
 ## 2026-10-30 · L6: sign-in on the Evil SDK
 
 Rollout loop L6 of `evil-sdk-research/07-rollout-design.md`. The access-password gate, the Discord-only sign-in, the
