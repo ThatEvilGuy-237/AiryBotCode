@@ -25,6 +25,15 @@ sign-in is wired (`Discord:SignIn`) and off. Everything moved to .NET 10 (EF Cor
   out; a member has no Databases entry. Shots in `docs/screenshots/l6-evil-sdk/`; sign-in page 0 / 0 / 5 probe
   findings at 320 / 375 / 1440 (all five the kit's desktop field size, older than L6), axe 0. Design review: 0
   Blocker, 0 High, 1 Medium (enabled and focus states missing from the shots, added), 1 Low (desktop field size).
+- Prod (a22aadb, 12:50 to 12:53 UTC, `./scripts/airy-deploy.sh prod`): backups first (`airy_db`, `evil_users`, the API
+  settings file, the running panel files, pg_hba, in `AiryBotCode-data/backups/pre-l6`; images `:pre-l6`); role
+  `airybotcode_app` made (reads the 11 public tables, refused on `spine`, DDL, `evil_users`, `dnd_db`); import 1 row
+  (the owner's grant with the owner flag and the Discord login; every `BotSettings.EvilId`, 3 of 3, resolves to the
+  owner); only the api container was recreated, the panel files copied into the running Caddy (up 13 days, not
+  restarted), the bot and Postgres untouched. `scripts/prod-check.mjs` through the local Caddy entry
+  (`airy.thatevilguy.com` has no public DNS record yet: the tunnel route is still the owner's): 18 of 18. Sign-in
+  page on prod 0 / 0 / 5 at 320 / 375 / 1440 (desktop field size), axe 0, CLS 0. The API's settings file keeps
+  only the Discord client and log levels; the gate password, JWT secret and superuser connection left it.
 
 ## 2026-10-16 · Worth it = the conversation, not one line
 

@@ -1,0 +1,564 @@
+{
+  "ok": false,
+  "url": "http://airy.localhost:10000/login",
+  "flutter": false,
+  "project": null,
+  "round": "l6-prod-login",
+  "dir": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk",
+  "images": [
+    {
+      "label": "Image 1: 1440x900 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440.png"
+    },
+    {
+      "label": "Image 2: 1440 viewport, 5 findings boxed (red = probe, orange = axe)",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440-findings.png"
+    },
+    {
+      "label": "Image 3: 1440 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440-annotated.png"
+    },
+    {
+      "label": "Image 4: 375x812 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-375.png"
+    },
+    {
+      "label": "Image 5: 375 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-375-annotated.png"
+    },
+    {
+      "label": "Image 6: 320x568 viewport",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-320.png"
+    },
+    {
+      "label": "Image 7: 320 viewport, interactive elements labelled",
+      "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-320-annotated.png"
+    }
+  ],
+  "viewports": {
+    "320": {
+      "viewport": [
+        320,
+        568
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-320.png",
+      "screenshotSize": [
+        320,
+        568
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 43,
+          "incomplete": 0,
+          "passes": 17,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-320-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-320-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 408,
+            "width": 288,
+            "x": 16,
+            "y": 80
+          },
+          "name": "Sign in to Airy",
+          "number": 36,
+          "ref": "e36",
+          "role": "region"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 238,
+            "x": 41,
+            "y": 161
+          },
+          "name": "Sign in to Airy",
+          "number": 37,
+          "ref": "e37",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 118,
+            "x": 41,
+            "y": 252
+          },
+          "number": 38,
+          "ref": "e38",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 48,
+            "width": 238,
+            "x": 41,
+            "y": 275
+          },
+          "name": "User name or email",
+          "number": 39,
+          "ref": "e39",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 58,
+            "x": 41,
+            "y": 335
+          },
+          "number": 40,
+          "ref": "e40",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 48,
+            "width": 238,
+            "x": 41,
+            "y": 359
+          },
+          "name": "Password",
+          "number": 41,
+          "ref": "e41",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 238,
+            "x": 41,
+            "y": 419
+          },
+          "name": "Sign in",
+          "number": 42,
+          "ref": "e42",
+          "role": "button"
+        }
+      ],
+      "ok": true
+    },
+    "375": {
+      "viewport": [
+        375,
+        812
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-375.png",
+      "screenshotSize": [
+        375,
+        812
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [],
+        "smalltext": [],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 43,
+          "incomplete": 0,
+          "passes": 17,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [],
+      "overlay": null,
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-375-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-375-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 408,
+            "width": 343,
+            "x": 16,
+            "y": 202
+          },
+          "name": "Sign in to Airy",
+          "number": 29,
+          "ref": "e29",
+          "role": "region"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 293,
+            "x": 41,
+            "y": 283
+          },
+          "name": "Sign in to Airy",
+          "number": 30,
+          "ref": "e30",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 118,
+            "x": 41,
+            "y": 374
+          },
+          "number": 31,
+          "ref": "e31",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 48,
+            "width": 293,
+            "x": 41,
+            "y": 397
+          },
+          "name": "User name or email",
+          "number": 32,
+          "ref": "e32",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 58,
+            "x": 41,
+            "y": 457
+          },
+          "number": 33,
+          "ref": "e33",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 48,
+            "width": 293,
+            "x": 41,
+            "y": 481
+          },
+          "name": "Password",
+          "number": 34,
+          "ref": "e34",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 44,
+            "width": 293,
+            "x": 41,
+            "y": 541
+          },
+          "name": "Sign in",
+          "number": 35,
+          "ref": "e35",
+          "role": "button"
+        }
+      ],
+      "ok": true
+    },
+    "1440": {
+      "viewport": [
+        1440,
+        900
+      ],
+      "screenshot": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440.png",
+      "screenshotSize": [
+        1440,
+        900
+      ],
+      "probe": {
+        "overflow": [],
+        "overlap": [],
+        "targets": [
+          {
+            "h": 41,
+            "hit": [
+              350,
+              42
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              545,
+              453,
+              350,
+              41
+            ],
+            "w": 350
+          },
+          {
+            "h": 41,
+            "hit": [
+              350,
+              42
+            ],
+            "kind": "small-target",
+            "name": "input",
+            "rect": [
+              545,
+              529,
+              350,
+              41
+            ],
+            "w": 350
+          },
+          {
+            "h": 36,
+            "hit": [
+              350,
+              36
+            ],
+            "kind": "small-target",
+            "name": "Sign in",
+            "rect": [
+              545,
+              581,
+              350,
+              36
+            ],
+            "w": 350
+          }
+        ],
+        "smalltext": [
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              545,
+              453,
+              350,
+              41
+            ],
+            "size": 15,
+            "text": ""
+          },
+          {
+            "kind": "small-field-text",
+            "limit": 16,
+            "rect": [
+              545,
+              529,
+              350,
+              41
+            ],
+            "size": 15,
+            "text": ""
+          }
+        ],
+        "spacing": [],
+        "scrollers": []
+      },
+      "probeErrors": {},
+      "a11y": {
+        "counts": {
+          "inapplicable": 43,
+          "incomplete": 0,
+          "passes": 17,
+          "violations": 0
+        },
+        "violations": []
+      },
+      "findings": [
+        {
+          "n": 1,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            545,
+            453,
+            350,
+            41
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 2,
+          "source": "probe",
+          "kind": "smalltext/small-field-text",
+          "label": "",
+          "rect": [
+            545,
+            529,
+            350,
+            41
+          ],
+          "detail": "15px text, under 16px"
+        },
+        {
+          "n": 3,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            545,
+            453,
+            350,
+            41
+          ],
+          "detail": "350x41"
+        },
+        {
+          "n": 4,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "input",
+          "rect": [
+            545,
+            529,
+            350,
+            41
+          ],
+          "detail": "350x41"
+        },
+        {
+          "n": 5,
+          "source": "probe",
+          "kind": "targets/small-target",
+          "label": "Sign in",
+          "rect": [
+            545,
+            581,
+            350,
+            36
+          ],
+          "detail": "350x36"
+        }
+      ],
+      "overlay": {
+        "path": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440-findings.png",
+        "boxes": 5
+      },
+      "legend": {
+        "md": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440-legend.md",
+        "html": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-1440-legend.html"
+      },
+      "annotations": [
+        {
+          "box": {
+            "height": 385,
+            "width": 400,
+            "x": 520,
+            "y": 258
+          },
+          "name": "Sign in to Airy",
+          "number": 22,
+          "ref": "e22",
+          "role": "region"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 350,
+            "x": 545,
+            "y": 339
+          },
+          "name": "Sign in to Airy",
+          "number": 23,
+          "ref": "e23",
+          "role": "heading"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 118,
+            "x": 545,
+            "y": 429
+          },
+          "number": 24,
+          "ref": "e24",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 41,
+            "width": 350,
+            "x": 545,
+            "y": 453
+          },
+          "name": "User name or email",
+          "number": 25,
+          "ref": "e25",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 20,
+            "width": 58,
+            "x": 545,
+            "y": 505
+          },
+          "number": 26,
+          "ref": "e26",
+          "role": "LabelText"
+        },
+        {
+          "box": {
+            "height": 41,
+            "width": 350,
+            "x": 545,
+            "y": 529
+          },
+          "name": "Password",
+          "number": 27,
+          "ref": "e27",
+          "role": "textbox"
+        },
+        {
+          "box": {
+            "height": 36,
+            "width": 350,
+            "x": 545,
+            "y": 581
+          },
+          "name": "Sign in",
+          "number": 28,
+          "ref": "e28",
+          "role": "button"
+        }
+      ],
+      "ok": false
+    }
+  },
+  "crops": {},
+  "dark": null,
+  "tree": "/workspace/AiryBotCode/docs/screenshots/l6-evil-sdk/l6-prod-login-tree.txt",
+  "vitals": {
+    "cls": {
+      "entries": [],
+      "score": 0
+    },
+    "fcp": 140,
+    "hydration": null,
+    "inp": null,
+    "lcp": {
+      "element": "h1",
+      "size": 5022,
+      "startTime": 140,
+      "url": null
+    },
+    "ttfb": 18.5,
+    "url": "http://airy.localhost:10000/login"
+  },
+  "generatedAt": "2026-10-30T12:57:23.773Z"
+}

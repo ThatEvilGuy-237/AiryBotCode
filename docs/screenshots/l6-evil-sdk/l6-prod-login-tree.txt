@@ -1,0 +1,7 @@
+- region "Sign in to Airy" [ref=e36]
+  - heading "Sign in to Airy" [level=1, ref=e37]
+  - LabelText "User name or email" [ref=e38] clickable [cursor:pointer]
+  - textbox "User name or email" [ref=e39]
+  - LabelText "Password" [ref=e40] clickable [cursor:pointer]
+  - textbox "Password" [ref=e41]
+  - button "Sign in" [disabled, ref=e42]
