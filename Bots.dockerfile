@@ -1,5 +1,5 @@
 # Stage 1: Build the applications
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.403 AS build
 WORKDIR /src
 
 # Copy all .csproj files and the .sln file first to leverage Docker layer caching
@@ -25,7 +25,7 @@ RUN dotnet publish "Bots/AiryBotCode.AiryDevBot/AiryBotCode.AiryDevBot.csproj" -
 RUN dotnet publish "Bots/AiryBotCode.AiryDevSecondBot/AiryBotCode.AiryDevSecondBot.csproj" -c Release -o /app/publish/AiryDevSecondBot
 
 # Stage 2: Create the final, lean runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.14
 
 WORKDIR /app
 

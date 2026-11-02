@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.403 AS build
 WORKDIR /source
 COPY --from=evil-feed . /feed
 COPY . .
@@ -6,7 +6,7 @@ RUN sed -i 's#value="/mnt/hdd/projects/evil-sdk-data/feed"#value="/feed"#' nuget
 RUN dotnet restore AiryBotCode.Api/AiryBotCode.Api.csproj
 RUN dotnet publish AiryBotCode.Api/AiryBotCode.Api.csproj -c Release -o /app --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.14
 WORKDIR /app
 COPY --from=build /app .
 ARG COMMIT=""
